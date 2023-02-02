@@ -1,3 +1,30 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html{
+    text-decoration-thickness: 0.2rem;
+}
+
+button{
+    padding: 0.5rem 1rem 0.5rem 1rem;
+    border-width: 2px;
+    border-radius: 0.75rem;
+    box-shadow: 1px 1px 3px 2px rgba(0, 0, 0, 0.5);
+
+    &:not(:disabled):hover{
+       animation: buttonUp 0.2s forwards ease-in-out;
+    }
+
+    &:disabled{
+        background-color: #FEFBF8;
+        color: rgb(177, 177, 177);
+        border-color: rgb(175, 175, 175);
+        box-shadow: none;
+    }
+}
+
+@keyframes buttonUp {
+    100%{box-shadow: 3px 3px 5px 4px rgba(0, 0, 0, 0.5);
+        transform: translateY(-0.2rem);}
+}

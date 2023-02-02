@@ -42,7 +42,7 @@ module.exports = {
 			nunito: ["Nunito", "sans-serif"],
 		},
 		fontSize: {
-			sm: "1.25rem",
+			sm: "1.15rem",
 			base: "1.5rem",
 			lg: "2rem",
 			xl: "2.25rem",
