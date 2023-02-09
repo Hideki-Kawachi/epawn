@@ -1,10 +1,19 @@
 import Head from "next/head";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
+import ClerkHome from "../components/home/clerkHome";
 import Header from "../components/header";
+import ManagerHome from "../components/home/managerHome";
 import NavBar from "../components/navBar";
 
 export default function Home() {
+	const [role, setRole] = useState("manager");
+
+	const roleShow = {
+		manager: <ManagerHome></ManagerHome>,
+		clerk: <ClerkHome></ClerkHome>,
+	};
+
 	return (
 		<div>
 			<Head>
@@ -15,10 +24,9 @@ export default function Home() {
 				/>
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
-			{/* <Header currentUser={"Kawachi, Hideki"}></Header> */}
+			<Header currentUser={"Kawachi, Hideki"}></Header>
 			<NavBar></NavBar>
-			<p>test 1</p>
-			<Link href="/signIn">GO TO SIGNIN</Link>
+			{roleShow[role]}
 		</div>
 	);
 }
