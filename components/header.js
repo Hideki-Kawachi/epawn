@@ -12,7 +12,7 @@ function Header({ currentUser }) {
 			</span>
 			<Link href={"/signIn"}>
 				<a
-					className="text-base font-semibold text-red-500 font-nunito"
+					className="text-base font-semibold text-red-500 font-nunito hover:underline"
 					onClick={() => logout()}
 				>
 					Logout

@@ -1,6 +1,6 @@
 import React from "react";
 import Header from "../../components/header";
-import NavBar from "../../components/navBar";
+import NavBar from "../../components/navigation/navBar";
 
 function Search() {
 	return (

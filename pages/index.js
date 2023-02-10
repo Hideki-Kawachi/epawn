@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import ClerkHome from "../components/home/clerkHome";
 import Header from "../components/header";
 import ManagerHome from "../components/home/managerHome";
-import NavBar from "../components/navBar";
+import NavBar from "../components/navigation/navBar";
 
 export default function Home() {
 	const [role, setRole] = useState("manager");

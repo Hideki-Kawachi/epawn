@@ -31,6 +31,8 @@ nav{
             border-left: 0.25rem theme('colors.green.300') solid;
             animation: none;
 
+            color: theme('colors.green.300');
+
             h1{
                 color: theme('colors.green.300');
                 font-size: theme('fontSize.base');

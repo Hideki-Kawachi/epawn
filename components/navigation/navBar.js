@@ -1,9 +1,20 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import PawnNav from "./pawnNav";
 
 function NavBar() {
+	//for testing
+	const currentUser = {
+		firstName: "Hideki",
+		lastName: "Kawachi",
+		middleName: "Luz",
+		role: "clerk",
+		branch: "Sta.Ana",
+	};
+
 	const [url, setURL] = useState("none");
+	const [pawnHover, setPawnHover] = useState(false);
 
 	useEffect(() => {
 		//console.log(window.location.pathname);
@@ -47,33 +58,37 @@ function NavBar() {
 					<h1>Home</h1>
 				</a>
 			</Link>
-			<Link href={"/pawn"}>
-				<a id="nav-pawn" className="nav-button">
-					<svg
-						width="35"
-						height="35"
-						viewBox="0 0 35 35"
-						fill="none"
-						xmlns="http://www.w3.org/2000/svg"
-					>
-						<path
-							d="M8.7513 4.375H26.2513L32.0846 13.125L17.5013 32.0833L2.91797 13.125L8.7513 4.375Z"
-							stroke="#19947D"
-							strokeWidth="3"
-							strokeLinecap="round"
-							strokeLinejoin="round"
-						/>
-						<path
-							d="M18.9596 4.375L23.3346 13.125L17.5013 32.0833L11.668 13.125L16.043 4.375M2.91797 13.125H32.0846"
-							stroke="#19947D"
-							strokeWidth="2.5"
-							strokeLinecap="round"
-							strokeLinejoin="round"
-						/>
-					</svg>
-					<h1>Pawn</h1>
-				</a>
-			</Link>
+			<a
+				id="nav-pawn"
+				className="nav-button"
+				onMouseEnter={() => setPawnHover(true)}
+				onMouseLeave={() => setPawnHover(false)}
+			>
+				<svg
+					width="35"
+					height="35"
+					viewBox="0 0 35 35"
+					fill="none"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<path
+						d="M8.7513 4.375H26.2513L32.0846 13.125L17.5013 32.0833L2.91797 13.125L8.7513 4.375Z"
+						stroke="#19947D"
+						strokeWidth="3"
+						strokeLinecap="round"
+						strokeLinejoin="round"
+					/>
+					<path
+						d="M18.9596 4.375L23.3346 13.125L17.5013 32.0833L11.668 13.125L16.043 4.375M2.91797 13.125H32.0846"
+						stroke="#19947D"
+						strokeWidth="2.5"
+						strokeLinecap="round"
+						strokeLinejoin="round"
+					/>
+				</svg>
+				<h1>Pawn</h1>
+				{pawnHover ? <PawnNav role={currentUser.role}></PawnNav> : <></>}
+			</a>
 			<Link href={"/redeem"}>
 				<a id="nav-redeem" className="nav-button">
 					<svg
