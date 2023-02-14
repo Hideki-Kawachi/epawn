@@ -1,6 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@layer base {
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
 
 html{
     text-decoration-thickness: 0.2rem;
@@ -14,6 +21,11 @@ html{
     padding: 100px;
 }
 
+#detailscard{
+border-radius: 20px;
+box-shadow: 50px;
+background-color: #FEFBF8;
+}
 nav{
     display: flex;
     flex-direction: column;
