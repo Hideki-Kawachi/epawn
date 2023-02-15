@@ -37,7 +37,7 @@ function NavBar() {
 	}, [url]);
 
 	return (
-		<nav className="absolute h-full bg-blue-500 w-fit">
+		<nav className="absolute h-full bg-blue-500 w-fit z-50">
 			<div className="relative aspect-square">
 				<Image src={"/logo_transparent.png"} layout="fill"></Image>
 			</div>
