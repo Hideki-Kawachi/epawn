@@ -6,10 +6,10 @@ function DetailsCard() {
     <>
       <div
         id="detailscard"
-        className="drop-shadow-lg flex text-base font-nunito pr-20"
+        className="drop-shadow-lg flex text-base font-nunito pr-10"
       >
         {/* Left Side of the Card (Details) */}
-        <div className="m-10">
+        <div className="m-10 ">
           <span className="font-bold pr-7">PT Number:</span>
           <input className="border rounded-md stroke-gray-500 px-3" />
           <p className="text-sm text-gray-300 pl-[163px]">Format: X-XXXX </p>
@@ -19,7 +19,7 @@ function DetailsCard() {
           {/* Customer Details */}
           <p className="font-bold pr-7">Customer Details:</p>
           <div className="flex">
-            <div className="text-right ml-5">
+            <div className="text-right ml-5 min-w-fit">
               <p className="">Full Name:</p>
               <p className="">Contact Number:</p>
               <p className="">Address:</p>
@@ -54,10 +54,10 @@ function DetailsCard() {
           </div>
         </div>
         {/* Right Side Side of the Card (Computations) */}
-        <div className="">
-          <div className="mt-20 p-10 bg-gray-100 border-2 border-gray-500 rounded-xl">
+        <div className="min-w-fit">
+          <div className="mt-20 p-10 bg-gray-100 border-2 border-gray-500 rounded-xl ">
             <p className="font-bold pr-7">Computations</p>
-            <div className="flex">
+            <div className="flex min-w-fit pr-10">
               <div className="text-right">
                 <p>Loan Amount:</p>
                 <p>Interest (3.5%):</p>
@@ -68,16 +68,15 @@ function DetailsCard() {
                 <p>Amount Paid:</p>
                 <br />
                 <p>
-                  <i>New</i> Amount of Loan:
+                  <i>New</i> Loan Amount:
                 </p>
               </div>
-              <div className="text-right ml-10">
+              <div className="text-right ml-10 pr-10 min-w-fit">
                 <br />
-
                 <p> Php 3,203.50 </p>
                 <p> 3,203.50 </p>
               </div>
-              <div className="text-right">
+              <div className="text-right min-w-fit">
                 <p className="font-bold mr-3">Php 95,000.00</p>
                 <br />
                 <br />
@@ -90,7 +89,6 @@ function DetailsCard() {
                   />
                 </p>
                 <p>
-                  {" "}
                   <input
                     type="number"
                     className="text-right border rounded-md stroke-gray-500 px-3 w-40"
