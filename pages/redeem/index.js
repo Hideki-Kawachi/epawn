@@ -4,6 +4,7 @@ import NavBar from "../../components/navigation/navBar";
 import DetailsCard from "../../components/redeem/detailscard";
 import ItemCard from "../../components/itemcard";
 import CheckItem from "../../components/redeem/checkItemBox";
+import DeleteItem from "../../components/redeem/deleteItem";
 function Redeem() {
 	return (
     <>
@@ -11,8 +12,10 @@ function Redeem() {
       <Header currentUser={"Kawachi, Hideki"}></Header>
       {/* First Half */}
 
-      <div id="main-content-area" className="flex-col">
-        <p className="font-nunito text-green-500 text-xl font-bold">Redeem</p>
+      <div id="main-content-area" className="flex-col bg-gray-150">
+        <p className="font-dosis text-green-500 text-xl font-semibold underline mb-5">
+          Redeem
+        </p>
         <div className="flex">
           <DetailsCard></DetailsCard>
         </div>
@@ -49,15 +52,15 @@ function Redeem() {
           </div>
 
           {/*Items for Redemption */}
-          <div className="mt-20">
+          <div className="mt-20 ">
             <p className="font-nunito font-bold  text-base ml-10">
               Items for Redemption:{" "}
             </p>
-            <div className=" p-5 mx-10 max-h-[450px] overflow-y-scroll border-2">
-              <ItemCard></ItemCard>
-              <ItemCard></ItemCard>
-              <ItemCard></ItemCard>
-              <ItemCard></ItemCard>
+            <div className="bg-white p-5 mx-10 max-h-[450px] overflow-y-scroll border-2">
+              <DeleteItem></DeleteItem>
+              <DeleteItem></DeleteItem>
+              <DeleteItem></DeleteItem>
+              <DeleteItem></DeleteItem>
             </div>
           </div>
         </div>

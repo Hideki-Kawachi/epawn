@@ -33,11 +33,12 @@ module.exports = {
         400: "#464543",
         300: "#8E8C89",
         200: "#CDCCCA",
-        150: "#FEFEFE",
+        150: "#F2F2F2",
         100: "#FEFBF8",
       },
       yellow: "#FFEA00",
       light: "#FAEDCB",
+      white: "#FEFEFE",
     },
     fontFamily: {
       dosis: ["Dosis", "sans-serif"],

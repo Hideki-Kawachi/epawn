@@ -12,6 +12,10 @@ function ItemCard() {
           <b>Type: </b>
           Ring
         </p>
+        <p>
+          <b>Price: </b>
+          Php 80,000
+        </p>
       </div>
       <div className="mt-5 mr-5">
         <button className="bg-green-300 text-white">View Details</button>
