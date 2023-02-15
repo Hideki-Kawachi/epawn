@@ -23,7 +23,13 @@ html{
     flex-direction: column;
 }
 
-input{
+input:not([type="file"]){
+    border: 2px solid gray;
+    border-radius: 0.5rem;
+    padding: 0px 5px 0px 5px
+}
+
+select{
     border: 2px solid gray;
     border-radius: 0.5rem;
     padding: 0px 5px 0px 5px

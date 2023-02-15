@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Header from "../../components/header";
 import NavBar from "../../components/navigation/navBar";
+import NewItemList from "../../components/pawn/newTransaction/newItemList";
 
 function NewCustomer() {
 	const [firstName, setFirstName] = useState("");
@@ -8,7 +9,10 @@ function NewCustomer() {
 	const [middleName, setMiddleName] = useState("");
 	const [askPrice, setAskPrice] = useState(0);
 	const [askPriceShow, setAskPriceShow] = useState("0");
-	const [itemList, setItemList] = useState([]);
+	const [itemIDs, setItemIDs] = useState(0);
+	const [itemList, setItemList] = useState([
+		{ id: itemIDs, name: "", type: "", image: "" },
+	]);
 
 	function isDigit(value) {
 		return /^-?\d+$/.test(value);
@@ -96,13 +100,26 @@ function NewCustomer() {
 							<button
 								className="ml-6 font-semibold text-gray-100 bg-green-300"
 								type="button"
+								onClick={() => {
+									setItemList([
+										...itemList,
+										{
+											id: itemIDs + 1,
+											name: "",
+											type: "",
+											image: "",
+										},
+									]);
+									setItemIDs(itemIDs + 1);
+								}}
 							>
 								Add Item
 							</button>
 						</span>
-						<div className="w-full bg-green-100 h-[50vh] border-gray-500 border-solid border-2 p-2">
-							<p>ASHKDLAKj</p>
-						</div>
+						<NewItemList
+							itemList={itemList}
+							setItemList={setItemList}
+						></NewItemList>
 					</div>
 				</form>
 			</div>
