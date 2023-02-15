@@ -7,7 +7,7 @@ import ManagerHome from "../components/home/managerHome";
 import NavBar from "../components/navigation/navBar";
 
 export default function Home() {
-	const [role, setRole] = useState("manager");
+	const [role, setRole] = useState("clerk");
 
 	const roleShow = {
 		manager: <ManagerHome></ManagerHome>,

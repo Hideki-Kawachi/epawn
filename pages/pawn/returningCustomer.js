@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../../components/header";
 import NavBar from "../../components/navigation/navBar";
 
@@ -8,7 +8,7 @@ function ReturningCustomer() {
 			<NavBar></NavBar>
 			<Header currentUser={"Kawachi, Hideki"}></Header>
 			<div id="main-content-area">
-				<p>RETURNING CUSTOMER</p>
+				<span>ReturningCustomer</span>
 			</div>
 		</>
 	);
