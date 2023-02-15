@@ -37,7 +37,7 @@ function NavBar() {
 	}, [url]);
 
 	return (
-		<nav className="absolute h-full bg-blue-500 w-fit z-50">
+		<nav className="absolute z-50 h-full bg-blue-500 w-fit">
 			<div className="relative aspect-square">
 				<Image src={"/logo_transparent.png"} layout="fill"></Image>
 			</div>
@@ -58,7 +58,7 @@ function NavBar() {
 					<h1>Home</h1>
 				</a>
 			</Link>
-			<a
+			<div
 				id="nav-pawn"
 				className="nav-button"
 				onMouseEnter={() => setPawnHover(true)}
@@ -88,7 +88,7 @@ function NavBar() {
 				</svg>
 				<h1>Pawn</h1>
 				{pawnHover ? <PawnNav role={currentUser.role}></PawnNav> : <></>}
-			</a>
+			</div>
 			<Link href={"/redeem"}>
 				<a id="nav-redeem" className="nav-button">
 					<svg
