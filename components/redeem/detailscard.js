@@ -1,13 +1,21 @@
-import React from "react";
-
-
+import React, {useState} from "react";
+import Modal from "react-modal";
+import AuthorizedRep from "../modals/authorizedRep";
 function DetailsCard() {
+  const [isOriginal, setOriginal] = useState("original");
+  const [repModal, setRepModal] = useState(false); 
+  function repOpen(){
+    setRepModal(true);
+  }
   return (
     <>
       <div
         id="detailscard"
         className="drop-shadow-lg flex text-base font-nunito pr-10"
       >
+        <Modal isOpen={repModal} ariaHideApp={false} className="modal">
+              <AuthorizedRep trigger={repModal} setTrigger={setRepModal}/>
+        </Modal>
         {/* Left Side of the Card (Details) */}
         <div className="m-10 ">
           <span className="font-bold pr-7">PT Number:</span>
@@ -51,6 +59,38 @@ function DetailsCard() {
             </div>
           </div>
 
+          <div className="flex">
+            <div className="text-right ml-10 min-w-fit">
+              <p className="font-bold">Redeemed by: </p>
+            </div>
+            <div className="text-right ml-5 min-w-fit">
+              <select
+                className="px-5"
+                onChange={(e) => setOriginal(e.target.value)}
+              >
+                <option key="00" value="original">
+                  {" "}
+                  Original Customer{" "}
+                </option>
+                <option key="01" value="authorized">
+                  {" "}
+                  Authorized Rep.{" "}
+                </option>
+              </select>
+              {isOriginal == "authorized" ? (
+                <button
+                  className="bg-green-300 ml-2 text-sm text-white px-5"
+                  onClick={repOpen}
+                >
+                  {" "}
+                  Add Details{" "}
+                </button>
+              ) : (
+                <></>
+              )}
+            </div>
+          </div>
+
           <hr className="h-px my-8 bg-gray-500 border-0" />
 
           {/* Pawn Details */}
@@ -89,7 +129,7 @@ function DetailsCard() {
         </div>
         {/* Right Side Side of the Card (Computations) */}
         <div className="min-w-fit">
-          <div className="mt-20 p-10 bg-gray-100 border-2 border-gray-500 rounded-xl ">
+          <div className="mt-20 p-10 bg-gray-100 border-2  rounded-xl ">
             <p className="font-bold pr-7">Computations</p>
             <div className="flex min-w-fit pr-10">
               <div className="text-right">
@@ -99,6 +139,8 @@ function DetailsCard() {
                 <p>Total Interest:</p>
                 <p>Penalties (1%):</p>
                 <p>Other Charges:</p>
+                <p>Total Items for Redemption:</p>
+                <p>Partial Payments:</p>
                 <p>Amount Paid:</p>
                 <br />
                 <p>
@@ -122,12 +164,9 @@ function DetailsCard() {
                     className="text-right border rounded-md stroke-gray-500 px-3 w-40 mb-1"
                   />
                 </p>
-                <p>
-                  <input
-                    type="number"
-                    className="text-right border rounded-md stroke-gray-500 px-3 w-40"
-                  />
-                </p>
+                <p className="mr-3">0.00</p>
+                <p className="mr-0.5">(3,471.50)</p>
+                <p className="mr-3">95,000.00</p>
                 <hr className="my-3" />
                 <p className="font-bold mr-3">Php 95,000.00</p>
               </div>

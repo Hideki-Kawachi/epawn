@@ -12,11 +12,23 @@
 html{
     text-decoration-thickness: 0.2rem;
 }
-
+.modal{
+    opacity: 0px;
+}
 #main-content-area{
     display: flex;
     margin-left: 7.5rem;
     min-height: 100vh;
+    padding: 100px;
+    align-items: center;
+    flex-direction: column;
+}
+
+#modal-content-area{
+    display: flex;
+    margin-left: 7.5rem;
+    min-height: fit-content;
+    min-width: fit-content;
     padding: 100px;
     align-items: center;
     flex-direction: column;

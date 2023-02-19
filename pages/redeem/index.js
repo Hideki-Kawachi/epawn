@@ -1,16 +1,43 @@
-import React from "react";
+import React, {useState} from "react";
 import Header from "../../components/header";
 import NavBar from "../../components/navigation/navBar";
 import DetailsCard from "../../components/redeem/detailscard";
-import ItemCard from "../../components/itemcard";
 import CheckItem from "../../components/redeem/checkItemBox";
 import DeleteItem from "../../components/redeem/deleteItem";
+import Modal from "react-modal";
+import Submit from "../../components/modals/submitRedeem";
+import Cancel from "../../components/modals/cancel";
+import PawnDetails from "../../components/modals/pawnDetails";
+
 function Redeem() {
-	return (
+  // Modals
+  const [submitModal, setSubmitOpen] = useState(false); //Submit
+  const [cancelModal, setCancelOpen] = useState(false); //Cancel
+  const [customerModal, setCustomerOpen] = useState(false); //View Customer Details
+  const [historyModal, setHistoryOpen] = useState(false); //Pawn History
+ 
+
+
+  function submitForm() {
+    setSubmitOpen(true);
+  }
+
+    function cancelForm() {
+      setCancelOpen(true);
+    }
+  return (
     <>
       <NavBar></NavBar>
       <Header currentUser={"Kawachi, Hideki"}></Header>
       {/* First Half */}
+
+      <Modal isOpen={submitModal} ariaHideApp={false} className="modal">
+        <Submit trigger={submitModal} setTrigger={setSubmitOpen} />
+      </Modal>
+
+      <Modal isOpen={cancelModal} ariaHideApp={false} className="modal">
+        <Cancel trigger={cancelModal} setTrigger={setCancelOpen} />
+      </Modal>
 
       <div id="main-content-area" className="flex-col bg-gray-150">
         <p className="font-dosis text-green-500 text-xl font-semibold underline mb-5">
@@ -62,6 +89,24 @@ function Redeem() {
               <DeleteItem></DeleteItem>
               <DeleteItem></DeleteItem>
             </div>
+          </div>
+        </div>
+        <div className="mt-5 flex flex-row ml-[1180px]">
+          <div>
+            <button
+              className="bg-red-300 text-white text-base px-10 mx-2 my-5"
+              onClick={cancelForm}
+            >
+              Cancel
+            </button>
+          </div>
+          <div>
+            <button
+              className="bg-green-300 text-white text-base px-10 mx-2 my-5"
+              onClick={submitForm}
+            >
+              Submit
+            </button>
           </div>
         </div>
       </div>
