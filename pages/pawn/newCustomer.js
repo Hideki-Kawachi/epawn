@@ -3,8 +3,14 @@ import React, { useEffect, useState } from "react";
 import Header from "../../components/header";
 import NavBar from "../../components/navigation/navBar";
 import NewItemList from "../../components/pawn/newTransaction/newItemList";
+import Modal from "react-modal";
+import Cancel from "../../components/modals/cancel";
 
 function NewCustomer() {
+	// MODALS
+	const [submitModal, setSubmitOpen] = useState(false); //Submit
+	const [cancelModal, setCancelOpen] = useState(false); //Cancel
+
 	const [firstName, setFirstName] = useState("");
 	const [lastName, setLastName] = useState("");
 	const [middleName, setMiddleName] = useState("");
@@ -14,6 +20,7 @@ function NewCustomer() {
 	const [itemList, setItemList] = useState([
 		{ id: itemIDs, name: "", type: "", image: "" },
 	]);
+	const [error, setError] = useState(false);
 
 	const router = useRouter();
 
@@ -43,19 +50,57 @@ function NewCustomer() {
 	}
 
 	function sendForm() {
-		if (askPrice <= 0) {
-			console.log("WRONG");
+		let errorTemp = false;
+
+		if (itemList.length == 0) {
+			errorTemp = true;
 		} else {
-			// fetch something
-			console.log("SUBMITTED");
-			router.replace("/");
+			itemList.forEach((item) => {
+				if (item.name.length == 0 || item.image.length == 0) {
+					errorTemp = true;
+				}
+			});
 		}
+
+		if (
+			firstName.length == 0 ||
+			lastName.length == 0 ||
+			middleName.length == 0 ||
+			askPrice == 0 ||
+			errorTemp
+		) {
+			setError(true);
+		} else {
+			console.log("SUBMIT");
+		}
+	}
+
+	useEffect(() => {
+		console.log("error!");
+	}, [error]);
+
+	function cancelContentShow() {
+		return (
+			<>
+				Are you sure you want to cancel the <b>Pawn</b>?
+				<br />
+				<br />
+				All unsubmitted data will be lost.
+			</>
+		);
 	}
 
 	return (
 		<>
 			<NavBar></NavBar>
 			<Header currentUser={"Kawachi, Hideki"}></Header>
+			<Modal isOpen={cancelModal} ariaHideApp={false} className="modal">
+				<Cancel
+					trigger={cancelModal}
+					setTrigger={setCancelOpen}
+					content={cancelContentShow()}
+				/>
+			</Modal>
 			<div id="main-content-area">
 				<div className="font-semibold text-center font-dosis">
 					<h1 className="text-2xl underline">PAWN</h1>
@@ -112,7 +157,7 @@ function NewCustomer() {
 						<span>
 							Item List:
 							<button
-								className="ml-6 font-semibold text-gray-100 bg-green-300"
+								className="ml-6 font-semibold text-white bg-green-300"
 								type="button"
 								onClick={() => {
 									setItemList([
@@ -135,13 +180,19 @@ function NewCustomer() {
 							setItemList={setItemList}
 						></NewItemList>
 						<div className="flex justify-end gap-5">
-							<button className="bg-red-500">CANCEL</button>
 							<button
-								className="bg-green-300"
-								type="submit"
+								className="px-10 mx-2 my-5 bg-red-300"
+								type="button"
+								onClick={() => setCancelOpen(true)}
+							>
+								Cancel
+							</button>
+							<button
+								className="px-10 mx-2 my-5 bg-green-300"
+								type="button"
 								onClick={() => sendForm()}
 							>
-								SUBMIT
+								Submit
 							</button>
 						</div>
 					</div>

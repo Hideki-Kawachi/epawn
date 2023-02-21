@@ -22,6 +22,7 @@ html{
     padding: 100px;
     align-items: center;
     flex-direction: column;
+    background-color: theme('colors.gray.150');
 }
 
 #modal-content-area{
@@ -150,7 +151,7 @@ input[type='checkbox']{
     height: 32px;
 }
 
-button{
+button:not(.x-button){
     width: fit-content;
     height: fit-content;
     padding: 0.5rem 1rem 0.5rem 1rem;
@@ -170,6 +171,16 @@ button{
         color: rgb(177, 177, 177);
         border-color: rgb(175, 175, 175);
         box-shadow: none;
+    }
+}
+
+.x-button{
+
+    &:hover{
+        svg path{
+            fill: theme('colors.red.100');
+        }
+        
     }
 }
 

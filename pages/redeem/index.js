@@ -53,7 +53,7 @@ function Redeem() {
 				/>
 			</Modal>
 
-			<div id="main-content-area" className="flex-col bg-gray-150">
+			<div id="main-content-area" className="flex-col">
 				<p className="mb-5 text-xl font-semibold text-green-500 underline font-dosis">
 					Redeem
 				</p>
