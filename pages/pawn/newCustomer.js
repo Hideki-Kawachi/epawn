@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import Header from "../../components/header";
 import NavBar from "../../components/navigation/navBar";
@@ -13,6 +14,8 @@ function NewCustomer() {
 	const [itemList, setItemList] = useState([
 		{ id: itemIDs, name: "", type: "", image: "" },
 	]);
+
+	const router = useRouter();
 
 	function isDigit(value) {
 		return /^-?\d+$/.test(value);
@@ -36,6 +39,16 @@ function NewCustomer() {
 		} else if (askPrice < 9) {
 			setAskPrice(0);
 			setAskPriceShow("0");
+		}
+	}
+
+	function sendForm() {
+		if (askPrice <= 0) {
+			console.log("WRONG");
+		} else {
+			// fetch something
+			console.log("SUBMITTED");
+			router.replace("/");
 		}
 	}
 
@@ -91,6 +104,7 @@ function NewCustomer() {
 								type="text"
 								id="askPrice"
 								className="ml-2"
+								required
 								value={askPriceShow}
 								onChange={(e) => convertPrice(e.target.value)}
 							></input>
@@ -120,6 +134,16 @@ function NewCustomer() {
 							itemList={itemList}
 							setItemList={setItemList}
 						></NewItemList>
+						<div className="flex justify-end gap-5">
+							<button className="bg-red-500">CANCEL</button>
+							<button
+								className="bg-green-300"
+								type="submit"
+								onClick={() => sendForm()}
+							>
+								SUBMIT
+							</button>
+						</div>
 					</div>
 				</form>
 			</div>
