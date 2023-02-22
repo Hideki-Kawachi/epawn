@@ -1,12 +1,20 @@
 import React, {useState} from "react";
 import Modal from "react-modal";
 import AuthorizedRep from "../modals/authorizedRep";
+import CustomerDetails from "../modals/customerDetails";
 function DetailsCard() {
   const [isOriginal, setOriginal] = useState("original");
   const [repModal, setRepModal] = useState(false); 
+  const [customerModal, setCustomerModal] = useState(false);
+
   function repOpen(){
     setRepModal(true);
   }
+
+    function customerOpen() {
+      setCustomerModal(true);
+    }
+
   return (
     <>
       <div
@@ -15,6 +23,10 @@ function DetailsCard() {
       >
         <Modal isOpen={repModal} ariaHideApp={false} className="modal">
               <AuthorizedRep trigger={repModal} setTrigger={setRepModal}/>
+        </Modal>
+
+        <Modal isOpen={customerModal} ariaHideApp={false} className="modal">
+              <CustomerDetails trigger={customerModal} setTrigger={setCustomerModal}/>
         </Modal>
         {/* Left Side of the Card (Details) */}
         <div className="m-10 ">
@@ -27,7 +39,8 @@ function DetailsCard() {
           {/* Customer Details */}
           <p className="font-bold pr-7">
             Customer Details:
-            <span className="ml-3 hover:cursor-pointer inline-block">
+            {/* View Customer Details Button */}
+            <span className="ml-3 hover:cursor-pointer inline-block" onClick={customerOpen}> 
               <svg
                 width="30 "
                 height="30"
