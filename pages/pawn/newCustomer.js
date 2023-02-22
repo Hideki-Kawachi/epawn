@@ -5,11 +5,12 @@ import NavBar from "../../components/navigation/navBar";
 import NewItemList from "../../components/pawn/newTransaction/newItemList";
 import Modal from "react-modal";
 import Cancel from "../../components/modals/cancel";
+import AskPrice from "../../components/modals/askPrice";
 
 function NewCustomer() {
 	// MODALS
-	const [submitModal, setSubmitOpen] = useState(false); //Submit
-	const [cancelModal, setCancelOpen] = useState(false); //Cancel
+	const [submitOpen, setSubmitOpen] = useState(false); //Submit
+	const [cancelOpen, setCancelOpen] = useState(false); //Cancel
 
 	const [firstName, setFirstName] = useState("");
 	const [lastName, setLastName] = useState("");
@@ -21,6 +22,7 @@ function NewCustomer() {
 		{ id: itemIDs, name: "", type: "", image: "" },
 	]);
 	const [error, setError] = useState(false);
+	const [sendForm, setSendForm] = useState(false);
 
 	const router = useRouter();
 
@@ -49,7 +51,7 @@ function NewCustomer() {
 		}
 	}
 
-	function sendForm() {
+	function checkForm() {
 		let errorTemp = false;
 
 		if (itemList.length == 0) {
@@ -71,7 +73,7 @@ function NewCustomer() {
 		) {
 			setError(true);
 		} else {
-			console.log("SUBMIT");
+			setSubmitOpen(true);
 		}
 	}
 
@@ -90,16 +92,41 @@ function NewCustomer() {
 		);
 	}
 
+	useEffect(() => {
+		if (sendForm) {
+			console.log(
+				"POST FORM TO API",
+				firstName,
+				" ",
+				middleName,
+				" ",
+				lastName,
+				"---",
+				askPrice
+			);
+			console.log("ITEM LIST: ", itemList);
+		}
+	}, [sendForm]);
+
 	return (
 		<>
 			<NavBar></NavBar>
 			<Header currentUser={"Kawachi, Hideki"}></Header>
-			<Modal isOpen={cancelModal} ariaHideApp={false} className="modal">
+			<Modal isOpen={cancelOpen} ariaHideApp={false} className="modal">
 				<Cancel
-					trigger={cancelModal}
+					trigger={cancelOpen}
 					setTrigger={setCancelOpen}
 					content={cancelContentShow()}
 				/>
+			</Modal>
+			<Modal isOpen={submitOpen} ariaHideApp={false} className="modal">
+				<AskPrice
+					firstName={firstName}
+					lastName={lastName}
+					askPrice={askPrice}
+					setSubmitOpen={setSubmitOpen}
+					setSendForm={setSendForm}
+				></AskPrice>
 			</Modal>
 			<div id="main-content-area">
 				<div className="font-semibold text-center font-dosis">
@@ -190,7 +217,7 @@ function NewCustomer() {
 							<button
 								className="px-10 mx-2 my-5 bg-green-300"
 								type="button"
-								onClick={() => sendForm()}
+								onClick={() => checkForm()}
 							>
 								Submit
 							</button>
