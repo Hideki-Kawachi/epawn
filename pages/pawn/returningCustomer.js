@@ -24,6 +24,10 @@ function ReturningCustomer() {
 			<NavBar></NavBar>
 			<Header currentUser={"Kawachi, Hideki"}></Header>
 			<div id="main-content-area">
+				<div className="font-semibold text-center font-dosis">
+					<h1 className="text-2xl underline">PAWN</h1>
+					<span className="text-lg">Returning Customer</span>
+				</div>
 				<ReturnTable columns={columns} data={ReturningCustomerData} />
 			</div>
 		</>

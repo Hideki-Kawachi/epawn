@@ -77,10 +77,6 @@ function NewCustomer() {
 		}
 	}
 
-	useEffect(() => {
-		console.log("error!");
-	}, [error]);
-
 	function cancelContentShow() {
 		return (
 			<>

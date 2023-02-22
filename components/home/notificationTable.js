@@ -1,13 +1,28 @@
-import React, { useState } from "react";
+import React from "react";
 import {
 	useFilters,
 	useGlobalFilter,
 	usePagination,
+	useSortBy,
 	useTable,
 } from "react-table";
-import GlobalFilter from "../../../components/globalFilter";
 
-function ReturnTable({ columns, data }) {
+function NotificationTable({ data }) {
+	const columns = React.useMemo(
+		() => [
+			{
+				Header: "Transaction",
+				accessor: "transaction",
+			},
+			{ Header: "Customer Name", accessor: "customerName" },
+			{ Header: "PT Number", accessor: "ptNumber" },
+			{ Header: "Date", accessor: "date" },
+			{ Header: "Time", accessor: "time" },
+			{ Header: "Status", accessor: "status" },
+		],
+		[]
+	);
+
 	const {
 		getTableProps,
 		getTableBodyProps,
@@ -28,25 +43,22 @@ function ReturnTable({ columns, data }) {
 			columns,
 			data,
 		},
+
 		useFilters,
 		useGlobalFilter,
+		useSortBy,
 		usePagination
 	);
 
-	function clickUser(userID) {
-		console.log("user id from table is:", userID);
-	}
-
 	return (
 		<>
-			<GlobalFilter setGlobalFilter={setGlobalFilter}></GlobalFilter>
 			<table {...getTableProps()} className="w-3/4 text-base">
 				<thead>
 					{headerGroups.map((headerGroup) => (
 						<tr {...headerGroup.getHeaderGroupProps()}>
 							{headerGroup.headers.map((column) => (
 								<th
-									{...column.getHeaderProps()}
+									{...column.getHeaderProps(column.getSortByToggleProps())}
 									className="border-4 border-gray-500 border-solid"
 								>
 									{column.render("Header")}
@@ -61,7 +73,7 @@ function ReturnTable({ columns, data }) {
 						return (
 							<tr
 								{...row.getRowProps()}
-								onClick={() => clickUser(row.cells[0].value)}
+								onClick={() => console.log("CLICK ROW")}
 								className="cursor-pointer hover:bg-green-100"
 							>
 								{row.cells.map((cell) => {
@@ -103,4 +115,4 @@ function ReturnTable({ columns, data }) {
 	);
 }
 
-export default ReturnTable;
+export default NotificationTable;
