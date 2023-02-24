@@ -43,12 +43,12 @@ function CustomerDetails({ trigger, setTrigger }) {
               </p>
             </div>
             <div className="ml-32 mt-[69px] font-dosis text-sm">
-              <p className="text-green-500 text-right font-semibold hover:underline hover:text-green-400 hover:cursor-pointer">
+              <a className="text-green-500 block text-right font-semibold hover:underline hover:text-green-400 hover:cursor-pointer">
                 View Valid ID
-              </p>
-              <p className="text-green-500 text-right  font-semibold hover:underline hover:text-green-400 hover:cursor-pointer">
+              </a>
+              <a className="text-green-500 text-right block font-semibold hover:underline hover:text-green-400 hover:cursor-pointer">
                 View Customer Info Sheet
-              </p>
+              </a>
             </div>
           </div>
           {/* Header Row End */}
@@ -113,15 +113,15 @@ function CustomerDetails({ trigger, setTrigger }) {
             {/* Other Details */}
             <div className="flex flex-row">
               <div className="font-nunito font-bold text-right">
-                <p>Contact Number(s):</p>
+                <p>Contact Number:</p>
                 <p>Email Address:</p>
                 <p>Complexion:</p>
                 <p>Identifying Mark:</p>
               </div>
 
               <div className="mx-5 text-left">
-                <p>Joseph</p>
-                <p>Dela Cruz</p>
+                <p>0917 530 1700</p>
+                <p>josephdcruz@gmail.com</p>
                 <p>Fair</p>
                 <p>----------------</p>
               </div>
