@@ -1,39 +1,15 @@
-import React, {useState, useEffect} from "react";
+import React, {useState} from "react";
 import Modal from "react-modal";
 import PawnDetails
  from "./modals/pawnDetails";
 function ItemCard({itemName, itemType, itemPrice}) {
   const [pawnModal, setPawnOpen] = useState(false); //View Pawn Item Detials
-  const [defaultName, setName]= useState();
-  const [defaultType, setType] = useState();
-  const [defaultPrice, setPrice] = useState();
+
 
   function viewDetails(){
     setPawnOpen(true)
   }
   
-  function setDefault(){
-    if(itemName == null)
-      setName("Default Item");
-    else
-      setName(itemName)
-    
-    if (itemType ==  null)
-      setType("Default Watch")
-    else
-      setType(itemType)
-
-    if (itemPrice == null)
-      setPrice("Php Morbillion")
-    else
-      setPrice(itemPrice)
-  }
-
-  useEffect (()=>{
-    let ignore = false;
-    if(!ignore) setDefault()
-    return () => { ignore = true; }
-  });
 
   return (
     <div className="bg-light shadow-md flex font-nunito rounded-lg h-fit m-5">
@@ -50,15 +26,15 @@ function ItemCard({itemName, itemType, itemPrice}) {
       <div className="m-5 w-96">
         <p>
           <b>Name: </b>
-          {defaultName}
+          {itemName}
         </p>
         <p>
           <b>Type: </b>
-          {defaultType}
+          {itemType}
         </p>
         <p>
           <b>Price: </b>
-          {defaultPrice}
+          {itemPrice}
         </p>
       </div>
       <div className="mt-5 mr-5">

@@ -23,9 +23,6 @@ function Renew() {
   let itemList = [];
   itemList = JSON.parse(data);
 
-  useEffect(() => {
-    countCheck();
-  });
 
   function submitForm() {
     setSubmitOpen(true);
@@ -66,8 +63,11 @@ function Renew() {
       </Modal>
 
       <div id="main-content-area" className="flex-col ">
-        <p className="mb-5 text-xl font-semibold text-green-500 underline font-dosis">
+        <p className="text-xl font-semibold text-green-500 underline font-dosis">
           Renew
+        </p>
+        <p className="mb-5 text-lg text-green-500 font-dosis">
+          On-site Renewal
         </p>
         <div className="flex">
           <DetailsCardRenew></DetailsCardRenew>
@@ -85,9 +85,24 @@ function Renew() {
 
             <div className="flex font-nunito text-base my-10 ml-10 mr-32 ">
               <div className="text-right ml-5">
-                <p><b><i>New </i></b>Date Loan Granted:</p>
-                <p><b><i>New </i></b>Maturity Date:</p>
-                <p><b><i>New </i></b>Expiry Date of Redemption:</p>
+                <p>
+                  <b>
+                    <i>New </i>
+                  </b>
+                  Date Loan Granted:
+                </p>
+                <p>
+                  <b>
+                    <i>New </i>
+                  </b>
+                  Maturity Date:
+                </p>
+                <p>
+                  <b>
+                    <i>New </i>
+                  </b>
+                  Expiry Date of Redemption:
+                </p>
               </div>
               <div className="text-left ml-8">
                 <p>12/09/2022</p>

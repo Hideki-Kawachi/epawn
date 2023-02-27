@@ -26,9 +26,9 @@ function Redeem() {
 	itemList = JSON.parse(data)
 	
 
-	useEffect(() => {
-		countCheck();
-    });
+	// useEffect(() => {
+	// 	countCheck();
+  //   });
 
 	function submitForm() {
 		setSubmitOpen(true);
