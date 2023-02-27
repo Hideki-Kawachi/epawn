@@ -125,7 +125,8 @@ function Redeem() {
                   </p>
                   <p className="font-nunito text-gray-300 text-center text-sm">
                     {" "}
-                    Select the items and click "Add to Redeem" to add the items for redemption.
+                    Select the items and click <i>Add to Redeem</i> to add the
+                    items for redemption.
                   </p>
                 </div>
               ) : (
