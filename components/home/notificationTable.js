@@ -67,10 +67,9 @@ function NotificationTable({ data }) {
 				<select
 					className="h-fit"
 					onChange={(e) => setFilter("transaction", e.target.value)}
+					defaultValue={""}
 				>
-					<option value={""} selected>
-						All
-					</option>
+					<option value={""}>All</option>
 					<option value={"Pawn"}>Pawn</option>
 					<option value={"Renew"}>Renew</option>
 					<option value={"Redeem"}>Redeem</option>
@@ -79,10 +78,9 @@ function NotificationTable({ data }) {
 				<select
 					className="h-fit"
 					onChange={(e) => setFilter("status", e.target.value)}
+					defaultValue={""}
 				>
-					<option value={""} selected>
-						All
-					</option>
+					<option value={""}>All</option>
 					<option value={"Pawn"}>Pawn</option>
 					<option value={"Renew"}>Renew</option>
 					<option value={"Redeem"}>Redeem</option>
@@ -97,7 +95,6 @@ function NotificationTable({ data }) {
 									column.Header !== "Transaction" &&
 									column.Header.toString() !== "Status"
 								) {
-									console.log("NOT HEADER", column.Header);
 									return (
 										<th
 											{...column.getHeaderProps(column.getSortByToggleProps())}
@@ -109,7 +106,7 @@ function NotificationTable({ data }) {
 													? column.isSortedDesc
 														? "↑"
 														: "↓"
-													: ""}
+													: "-"}
 											</span>
 										</th>
 									);
