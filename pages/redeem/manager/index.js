@@ -1,19 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
-import Header from "../../components/header";
-import NavBar from "../../components/navigation/navBar";
-import DetailsCardRenew from "../../components/renew/detailscard";
+import Header from "../../../components/header";
+import NavBar from "../../../components/navigation/navBar";
+import DetailsCard from "../../../components/redeem/detailsManager";
 import Modal from "react-modal";
-import Submit from "../../components/modals/submitRedeem";
-import Cancel from "../../components/modals/cancel";
-import PawnDetails from "../../components/modals/pawnDetails";
+import Submit from "../../../components/modals/submitRedeem";
+import Cancel from "../../../components/modals/cancel";
+import PawnDetails from "../../../components/modals/pawnDetails";
 import ItemMockData from "./ITEMS_MOCK_DATA";
-import ItemCard from "../../components/itemcard";
+import ItemCard from "../../../components/itemcard";
 
-function Renew() {
+function RedeemManager() {
   // Modals
   const [submitModal, setSubmitOpen] = useState(false); //Submit
   const [cancelModal, setCancelOpen] = useState(false); //Cancel
-  const [customerModal, setCustomerOpen] = useState(false); //View Customer Details
   const [historyModal, setHistoryOpen] = useState(false); //Pawn History
   const [PTNumber, setPTNumber] = useState("A-123456");
   const [checkedBoxes, setCheck] = useState();
@@ -23,6 +22,9 @@ function Renew() {
   let itemList = [];
   itemList = JSON.parse(data);
 
+  // useEffect(() => {
+  // 	countCheck();
+  //   });
 
   function submitForm() {
     setSubmitOpen(true);
@@ -62,60 +64,42 @@ function Renew() {
         />
       </Modal>
 
-      <div id="main-content-area" className="flex-col ">
-        <p className="text-xl font-semibold text-green-500 underline font-dosis">
-          Renew
-        </p>
-        <p className="mb-5 text-lg text-green-500 font-dosis">
-          On-site Renewal
+      <div id="main-content-area" className="flex-col">
+        <p className="mb-5 text-xl font-semibold text-green-500 underline font-dosis">
+          Redeem
         </p>
         <div className="flex">
-          <DetailsCardRenew></DetailsCardRenew>
+          <DetailsCard></DetailsCard>
         </div>
 
         {/* Second Half */}
 
-        <div className="flex rounded-xl bg-white shadow-lg mt-20 py-10">
+        <div className="flex">
           {/* Remaining Items  */}
 
-          <div className="px-5">
+          <div className="mt-20">
             <p className="ml-10 text-base font-bold font-nunito">
-              New Pawn Details:{" "}
+              Remaining Items:{" "}
             </p>
-
-            <div className="flex font-nunito text-base my-10 ml-10 mr-32 ">
-              <div className="text-right ml-5">
-                <p>
-                  <b>
-                    <i>New </i>
-                  </b>
-                  Date Loan Granted:
-                </p>
-                <p>
-                  <b>
-                    <i>New </i>
-                  </b>
-                  Maturity Date:
-                </p>
-                <p>
-                  <b>
-                    <i>New </i>
-                  </b>
-                  Expiry Date of Redemption:
-                </p>
-              </div>
-              <div className="text-left ml-8">
-                <p>12/09/2022</p>
-                <p>01/09/2022</p>
-                <p>02/09/2022</p>
-              </div>
+            {/* plan: CheckItem is ItemCard w/ Check*/}
+            <div className="bg-white p-5 mx-10 w-[720px] h-[450px] overflow-y-scroll border-2">
+              {itemList.map((items, index) => (
+                <ItemCard
+                  key={index}
+                  itemName={items.Name}
+                  itemType={items.Type}
+                  itemPrice={items.Price}
+                ></ItemCard>
+              ))}
             </div>
           </div>
 
-          {/*Items*/}
-          <div className="">
-            <p className="ml-10 text-base font-bold font-nunito">Items: </p>
-            <div className="bg-white px-5 mx-10 w-[720px] h-[280px] overflow-y-scroll border-2">
+          {/*Items for Redemption */}
+          <div className="mt-20 ">
+            <p className="ml-10 text-base font-bold font-nunito">
+              Items for Redemption:{" "}
+            </p>
+            <div className="bg-white p-5 mx-10 w-[720px] h-[450px] overflow-y-scroll border-2">
               {itemList.map((items, index) => (
                 <ItemCard
                   key={index}
@@ -150,4 +134,4 @@ function Renew() {
   );
 }
 
-export default Renew;
+export default RedeemManager;

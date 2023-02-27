@@ -89,7 +89,7 @@ function NavBar() {
 				<h1>Pawn</h1>
 				{pawnHover ? <PawnNav role={currentUser.role}></PawnNav> : <></>}
 			</div>
-			<Link href={"/redeem"}>
+			<Link href={"/redeem/clerk"}>
 				<a id="nav-redeem" className="nav-button">
 					<svg
 						width="53"
@@ -133,7 +133,7 @@ function NavBar() {
 					<h1>Redeem</h1>
 				</a>
 			</Link>
-			<Link href={"/renew"}>
+			<Link href={"/renew/clerk"}>
 				<a id="nav-renew" className="nav-button">
 					<svg
 						width="50"

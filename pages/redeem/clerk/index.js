@@ -1,56 +1,57 @@
 import React, { useState, useEffect, useRef } from "react";
-import Header from "../../components/header";
-import NavBar from "../../components/navigation/navBar";
-import DetailsCard from "../../components/redeem/detailscard";
-import CheckItem from "../../components/redeem/checkItemBox";
-import DeleteItem from "../../components/redeem/deleteItem";
+import Header from "../../../components/header";
+import NavBar from "../../../components/navigation/navBar";
+import DetailsCard from "../../../components/redeem/detailsCard";
 import Modal from "react-modal";
-import Submit from "../../components/modals/submitRedeem";
-import Cancel from "../../components/modals/cancel";
-import PawnDetails from "../../components/modals/pawnDetails";
-import ItemMockData from "./ITEMS_MOCK_DATA"
+import Submit from "../../../components/modals/submitRedeem";
+import Cancel from "../../../components/modals/cancel";
+import PawnDetails from "../../../components/modals/pawnDetails";
+import CheckItem from "../../../components/redeem/checkItemBox";
+import DeleteItem from "../../../components/redeem/deleteItem";
+import ItemMockData from "./ITEMS_MOCK_DATA";
+import ItemCard from "../../../components/itemcard";
 
 
-function Redeem() {
-	// Modals
-	const [submitModal, setSubmitOpen] = useState(false); //Submit
-	const [cancelModal, setCancelOpen] = useState(false); //Cancel
-	const [customerModal, setCustomerOpen] = useState(false); //View Customer Details
-	const [historyModal, setHistoryOpen] = useState(false); //Pawn History
-	const [PTNumber, setPTNumber] = useState("A-123456");
-	const [checkedBoxes, setCheck] = useState();
-	const redeem = [];
-	let data = JSON.stringify(ItemMockData)
-	let mockData = JSON.parse(data)
-	let itemList = [];
-	itemList = JSON.parse(data)
-	
+function RedeemClerk() {
+  // Modals
+  const [submitModal, setSubmitOpen] = useState(false); //Submit
+  const [cancelModal, setCancelOpen] = useState(false); //Cancel
+  const [customerModal, setCustomerOpen] = useState(false); //View Customer Details
+  const [historyModal, setHistoryOpen] = useState(false); //Pawn History
+  const [computationModal, setCompOpen] = useState(false); //View Computations
+  const [PTNumber, setPTNumber] = useState("A-123456");
+  const [checkedBoxes, setCheck] = useState();
+  const redeem = [];
+  let data = JSON.stringify(ItemMockData);
+  let mockData = JSON.parse(data);
+  let itemList = [];
+  itemList = JSON.parse(data);
 
-	// useEffect(() => {
-	// 	countCheck();
+  // useEffect(() => {
+  // 	countCheck();
   //   });
 
-	function submitForm() {
-		setSubmitOpen(true);
-	}
-	function countCheck(){
-		setCheck(document.querySelectorAll('input[type="checkbox"]:checked'));
-	}
-	function cancelForm() {
-		setCancelOpen(true);
-	}
+  function submitForm() {
+    setSubmitOpen(true);
+  }
+  function countCheck() {
+    setCheck(document.querySelectorAll('input[type="checkbox"]:checked'));
+  }
+  function cancelForm() {
+    setCancelOpen(true);
+  }
 
-	function cancelContentShow() {
-		return (
-			<>
-				Are you sure you want to cancel <b> Redemption</b> of <br />
-				<b>{PTNumber}</b>? <br /> <br />
-				All unsubmitted data will be lost.
-			</>
-		);
-	}
+  function cancelContentShow() {
+    return (
+      <>
+        Are you sure you want to cancel <b> Redemption</b> of <br />
+        <b>{PTNumber}</b>? <br /> <br />
+        All unsubmitted data will be lost.
+      </>
+    );
+  }
 
-	return (
+  return (
     <>
       <NavBar></NavBar>
       <Header currentUser={"Kawachi, Hideki"}></Header>
@@ -71,6 +72,9 @@ function Redeem() {
       <div id="main-content-area" className="flex-col">
         <p className="mb-5 text-xl font-semibold text-green-500 underline font-dosis">
           Redeem
+        </p>
+        <p className="mb-5 text-xl font-bold text-green-500 underline font-dosis">
+          <a href="/redeem/manager">Temporary button to Manager Redeem</a>
         </p>
         <div className="flex">
           <DetailsCard></DetailsCard>
@@ -158,4 +162,4 @@ function Redeem() {
   );
 }
 
-export default Redeem;
+export default RedeemClerk;

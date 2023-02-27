@@ -2,12 +2,17 @@ import React, {useState} from "react";
 import Modal from "react-modal";
 import AuthorizedRep from "../modals/authorizedRep";
 import CustomerDetails from "../modals/customerDetails";
-
-function DetailsCardRenew() {
+import ViewComputation from "../modals/viewComputations";
+function DetailsCard() {
   const [isOriginal, setOriginal] = useState("original");
   const [repModal, setRepModal] = useState(false); 
   const [customerModal, setCustomerModal] = useState(false);
-
+  const [computationModal, setCompOpen] = useState(false);
+ 
+  function compOpen(){
+    setCompOpen(true)
+  }
+ 
   function repOpen(){
     setRepModal(true);
   }
@@ -25,7 +30,9 @@ function DetailsCardRenew() {
         <Modal isOpen={repModal} ariaHideApp={false} className="modal">
           <AuthorizedRep trigger={repModal} setTrigger={setRepModal} />
         </Modal>
-
+        <Modal isOpen={computationModal} ariaHideApp={false} className="modal">
+          <ViewComputation trigger={computationModal} setTrigger={setCompOpen}/>
+        </Modal>
         <Modal isOpen={customerModal} ariaHideApp={false} className="modal">
           <CustomerDetails
             trigger={customerModal}
@@ -79,6 +86,38 @@ function DetailsCardRenew() {
             </div>
           </div>
 
+          <div className="flex">
+            <div className="text-right ml-10 min-w-fit">
+              <p className="font-bold">Redeemed by: </p>
+            </div>
+            <div className="text-right ml-5 min-w-fit">
+              <select
+                className="px-5"
+                onChange={(e) => setOriginal(e.target.value)}
+              >
+                <option key="00" value="original">
+                  {" "}
+                  Original Customer{" "}
+                </option>
+                <option key="01" value="authorized">
+                  {" "}
+                  Authorized Rep.{" "}
+                </option>
+              </select>
+              {isOriginal == "authorized" ? (
+                <button
+                  className="bg-green-300 ml-2 text-sm text-white px-5"
+                  onClick={repOpen}
+                >
+                  {" "}
+                  Add Details{" "}
+                </button>
+              ) : (
+                <></>
+              )}
+            </div>
+          </div>
+
           <hr className="h-px my-8 bg-gray-500 border-0" />
 
           {/* Pawn Details */}
@@ -118,47 +157,53 @@ function DetailsCardRenew() {
         {/* Right Side Side of the Card (Computations) */}
         <div className="min-w-fit">
           <div className="mt-20 p-10 bg-gray-100 border-2  rounded-xl ">
-            <p className="font-bold pr-7">Computations</p>
+            <p className="font-bold pr-7">
+              Computations:{/* View Computations Button */}
+              <span
+                className="ml-3 hover:cursor-pointer inline-block"
+                onClick={compOpen}
+              >
+                <svg
+                  width="30 "
+                  height="30"
+                  viewBox="0 -1 40 30"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M20.5007 7.6875C11.959 7.6875 4.6644 13.0004 1.70898 20.5C4.6644 27.9996 11.959 33.3125 20.5007 33.3125C29.0423 33.3125 36.3369 27.9996 39.2923 20.5C36.3369 13.0004 29.0423 7.6875 20.5007 7.6875ZM20.5007 29.0417C15.7857 29.0417 11.959 25.215 11.959 20.5C11.959 15.785 15.7857 11.9583 20.5007 11.9583C25.2157 11.9583 29.0423 15.785 29.0423 20.5C29.0423 25.215 25.2157 29.0417 20.5007 29.0417ZM20.5007 15.375C17.6648 15.375 15.3757 17.6642 15.3757 20.5C15.3757 23.3358 17.6648 25.625 20.5007 25.625C23.3365 25.625 25.6257 23.3358 25.6257 20.5C25.6257 17.6642 23.3365 15.375 20.5007 15.375Z"
+                    fill="black"
+                    className="hover:fill-gray-300"
+                  />
+                </svg>
+              </span>
+            </p>
             <div className="flex min-w-fit pr-10">
               <div className="text-right">
                 <p>Loan Amount:</p>
-                <p>Interest (3.5%):</p>
-                <p>Adv. Interest:</p>
-                <p>Total Interest:</p>
-                <p>Penalties (1%):</p>
-                <p>Other Charges:</p>
-                <p className="mt-3">Amount Paid:</p>
-                <br />
-                <p>
+                <p>Total Amount to be Paid:</p>
+                <p>Partial Payments</p>
+                <p>Cash Tendered:</p>
+                <p>Change:</p>
+                <p className="mt-7">
                   <i>New</i> Loan Amount:
                 </p>
               </div>
-              <div className="text-right ml-10 pr-10 min-w-fit">
-                <br />
-                <p> Php 3,203.50 </p>
-                <p> 3,203.50 </p>
-              </div>
-              <div className="text-right min-w-fit">
+
+              <div className="ml-10 text-right min-w-fit">
                 <p className="font-bold mr-3">Php 95,000.00</p>
-                <br />
-                <br />
-                <p className="mr-3">6,528.50</p>
+                <p className="mr-3"> 10,000.00 </p>
+                <p className="mr-0.5">(10,000.00)</p>
+                <p>
+                  <input
+                    type="number"
+                    className="text-right border rounded-md stroke-gray-500 px-3 w-40 mb-1"
+                  />
+                </p>
                 <p className="mr-3">0.00</p>
-                <p>
-                  <input
-                    type="number"
-                    className="text-right border rounded-md stroke-gray-500 px-3 w-40 mb-1"
-                  />
-                </p>
-                <p>
-                  {" "}
-                  <input
-                    type="number"
-                    className="text-right border rounded-md stroke-gray-500 px-3 w-40 mb-1"
-                  />
-                </p>
+
                 <hr className="my-3" />
-                <p className="font-bold mr-3">Php 95,000.00</p>
+                <p className="font-bold mr-3">Php 91,528.00</p>
               </div>
             </div>
           </div>
@@ -168,4 +213,4 @@ function DetailsCardRenew() {
   );
 }
 
-export default DetailsCardRenew;
+export default DetailsCard;
