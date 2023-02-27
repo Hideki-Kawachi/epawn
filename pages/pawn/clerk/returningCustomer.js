@@ -1,9 +1,9 @@
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import Header from "../../components/header";
-import NavBar from "../../components/navigation/navBar";
-import ReturnTable from "../../components/pawn/ongoingTransaction/returnTable";
-import ReturningCustomerData from "../../components/tempData/returningCustomer.json";
+import Header from "../../../components/header";
+import NavBar from "../../../components/navigation/navBar";
+import ReturnTable from "../../../components/pawn/ongoingTransaction/returnTable";
+import ReturningCustomerData from "../../../components/tempData/returningCustomer.json";
 
 function ReturningCustomer() {
 	const columns = React.useMemo(

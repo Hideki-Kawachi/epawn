@@ -1,11 +1,11 @@
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import Header from "../../components/header";
-import NavBar from "../../components/navigation/navBar";
-import NewItemList from "../../components/pawn/newTransaction/newItemList";
+import Header from "../../../components/header";
+import NavBar from "../../../components/navigation/navBar";
+import NewItemList from "../../../components/pawn/newTransaction/newItemList";
 import Modal from "react-modal";
-import Cancel from "../../components/modals/cancel";
-import AskPrice from "../../components/modals/askPrice";
+import Cancel from "../../../components/modals/cancel";
+import AskPrice from "../../../components/modals/askPrice";
 
 function NewCustomer() {
 	// MODALS
