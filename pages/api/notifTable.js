@@ -8,16 +8,16 @@ export default async function NotifTable(req, res) {
 	let all = null;
 
 	const changeStream = await Test.watch().on("change", async (data) => {
-		console.log("hahu");
+		// console.log("hahu");
 		all = await Test.find({});
 		console.log("all", all);
 
 		if (all) {
-			console.log("ALL IS:", all);
+			// console.log("ALL IS:", all);
 			await changeStream.close();
 			res.json(all);
 		} else {
-			console.log("NER", all);
+			// console.log("NER", all);
 		}
 	});
 }

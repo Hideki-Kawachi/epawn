@@ -9,9 +9,9 @@ const MONGO_URI = process.env.MONGO_URI;
 // 		"Please define the MONGODB_URI environment variable inside .env.local"
 // 	);
 // }
-
 // mongoose.set("strictQuery", false);
+
 const dbConnect = async () => mongoose.connect(MONGO_URI);
-console.log("HELLO FROM DB CONNECT", dbConnect);
+// console.log("HELLO FROM DB CONNECT", dbConnect);
 
 export default dbConnect;

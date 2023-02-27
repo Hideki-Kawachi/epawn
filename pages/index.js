@@ -38,7 +38,7 @@ export default function Home({ message }) {
 		})
 			.then((res) => res.json())
 			.then((data) => {
-				console.log("POST DATA IS:", data);
+				// console.log("POST DATA IS:", data);
 			});
 	}
 
@@ -66,7 +66,7 @@ export default function Home({ message }) {
 	}
 
 	useEffect(() => {
-		console.log("HERE IS THE RESULT:", showData);
+		// console.log("HERE IS THE RESULT:", showData);
 	}, [showData]);
 
 	return (
