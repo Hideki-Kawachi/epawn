@@ -1,13 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import {
 	useFilters,
 	useGlobalFilter,
 	usePagination,
 	useTable,
 } from "react-table";
-import GlobalFilter from "../../../components/globalFilter";
+import GlobalFilter from "../../globalFilter";
 
-function ReturnTable({ columns, data }) {
+function NegotiationTable({ columns, data }) {
 	const {
 		getTableProps,
 		getTableBodyProps,
@@ -34,14 +34,14 @@ function ReturnTable({ columns, data }) {
 	);
 
 	function clickUser(userID) {
-		console.log("user id from table is:", userID);
+		console.log("customer name", userID);
 	}
 
 	return (
 		<>
 			<GlobalFilter
 				setGlobalFilter={setGlobalFilter}
-				placeHolder={"User ID or Name"}
+				placeHolder={"Customer Name"}
 			></GlobalFilter>
 			<table {...getTableProps()} className="w-3/4 text-base">
 				<thead>
@@ -106,4 +106,4 @@ function ReturnTable({ columns, data }) {
 	);
 }
 
-export default ReturnTable;
+export default NegotiationTable;

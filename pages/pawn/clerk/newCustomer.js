@@ -101,6 +101,24 @@ function NewCustomer() {
 				askPrice
 			);
 			console.log("ITEM LIST: ", itemList);
+
+			let formData = {
+				firstName: firstName,
+				middleName: middleName,
+				lastName: lastName,
+				askPrice: askPrice,
+				itemList: itemList,
+			};
+
+			fetch("/api/createUser", {
+				method: "POST",
+				body: JSON.stringify(formData),
+			})
+				.then((res) => res.json())
+				.then((data) => {
+					console.log("RESPONSE IS:", data);
+					setSendForm(false);
+				});
 		}
 	}, [sendForm]);
 
@@ -142,6 +160,16 @@ function NewCustomer() {
 								onChange={(e) => setFirstName(e.target.value)}
 							></input>
 						</label>
+						<label htmlFor="middleName">
+							Middle Name:
+							<input
+								type="text"
+								id="middleName"
+								className="ml-4"
+								value={middleName}
+								onChange={(e) => setMiddleName(e.target.value)}
+							></input>
+						</label>
 						<label htmlFor="lastName">
 							Last Name:
 							<input
@@ -151,16 +179,6 @@ function NewCustomer() {
 								required
 								value={lastName}
 								onChange={(e) => setLastName(e.target.value)}
-							></input>
-						</label>
-						<label htmlFor="middleName">
-							Middle Name:
-							<input
-								type="text"
-								id="middleName"
-								className="ml-4"
-								value={middleName}
-								onChange={(e) => setMiddleName(e.target.value)}
 							></input>
 						</label>
 					</div>

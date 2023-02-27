@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 
 function NewItemCard({ id, deleteItem, setItem }) {
-	const [itemName, setItemName] = useState("");
-	const [itemType, setItemType] = useState("");
-	const [itemImage, setItemImage] = useState([]);
 	const itemTypeList = ["ring", "earring", "watch"];
+	const [itemName, setItemName] = useState("");
+	const [itemType, setItemType] = useState(itemTypeList[0]);
+	const [itemImage, setItemImage] = useState([]);
 
 	useEffect(() => {
 		setItem(id, itemName, itemType, itemImage);
@@ -37,8 +37,8 @@ function NewItemCard({ id, deleteItem, setItem }) {
 					<select
 						className="w-full"
 						id="itemType"
-						value={itemType}
 						onChange={(e) => setItemType(e.target.value)}
+						value={itemType}
 					>
 						{itemTypeList.map((itemType) => (
 							<option value={itemType} key={itemType}>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-function GlobalFilter({ setGlobalFilter }) {
+function GlobalFilter({ setGlobalFilter, placeHolder }) {
 	const [value, setValue] = useState("");
 
 	useEffect(() => {
@@ -16,7 +16,7 @@ function GlobalFilter({ setGlobalFilter }) {
 				onChange={(e) => {
 					setValue(e.target.value);
 				}}
-				placeholder={"User ID or Name"}
+				placeholder={placeHolder}
 			/>
 		</div>
 	);

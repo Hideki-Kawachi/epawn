@@ -5,11 +5,11 @@ function PawnNav({ role }) {
 	const roleShow = {
 		clerk: (
 			<div className="absolute flex flex-col gap-2 bg-blue-500 left-[100%] text-[white] p-3 font-nunito text-sm w-max">
-				<Link href={"/pawn/clerk/returningCustomer"}>
-					<a className="w-fit">Returning Customer</a>
-				</Link>
 				<Link href={"/pawn/clerk/newCustomer"}>
 					<a className="w-fit">New Customer</a>
+				</Link>
+				<Link href={"/pawn/clerk/returningCustomer"}>
+					<a className="w-fit">Returning Customer</a>
 				</Link>
 				<Link href={"/pawn/clerk/ongoingTransactions"}>
 					<a className="w-fit">Ongoing Transactions</a>
