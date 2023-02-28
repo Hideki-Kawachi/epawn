@@ -7,7 +7,7 @@ const UserSchema = new mongoose.Schema({
 	middleName: { type: String },
 	lastName: { type: String, require: true },
 	password: { type: String },
-	isDisabled: { type: Boolean },
+	isDisabled: { type: Boolean, default: false },
 });
 
 let User;
