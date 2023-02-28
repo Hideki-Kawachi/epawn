@@ -58,7 +58,7 @@ function NewCustomer() {
 			errorTemp = true;
 		} else {
 			itemList.forEach((item) => {
-				if (item.name.length == 0 || item.image.length == 0) {
+				if (item.name.length == 0 || !item.image) {
 					errorTemp = true;
 				}
 			});
@@ -90,29 +90,79 @@ function NewCustomer() {
 
 	useEffect(() => {
 		if (sendForm) {
-			console.log(
-				"POST FORM TO API",
-				firstName,
-				" ",
-				middleName,
-				" ",
-				lastName,
-				"---",
-				askPrice
-			);
-			console.log("ITEM LIST: ", itemList);
+			// console.log(
+			// 	"POST FORM TO API",
+			// 	firstName,
+			// 	" ",
+			// 	middleName,
+			// 	" ",
+			// 	lastName,
+			// 	"---",
+			// 	askPrice
+			// );
+			// console.log("ITEM LIST: ", itemList);
 
-			let formData = {
+			let updatedItemList = itemList;
+
+			updatedItemList.forEach((item) => {
+				let publicID = item.name + "-" + new Date().toUTCString();
+				let uploadPreset = "item_preset";
+				let folder = "epawn/itemImage";
+				let type = "authenticated";
+				let signURL = "true";
+
+				fetch("/api/signUploadForm", {
+					method: "POST",
+					body: JSON.stringify({
+						public_id: publicID,
+						upload_preset: uploadPreset,
+						folder: folder,
+						type: type,
+						sign_url: signURL,
+					}),
+				})
+					.then((res) => res.json())
+					.then((data) => {
+						//console.log("DATA IS:", data);
+
+						const formData = new FormData();
+
+						formData.append("file", item.image);
+						formData.append(
+							"public_id",
+							item.name + "-" + new Date().toUTCString()
+						);
+						formData.append("upload_preset", uploadPreset);
+						formData.append("folder", folder);
+						formData.append("sign_url", signURL);
+						formData.append("type", type);
+						formData.append("api_key", data.apiKey);
+						formData.append("timestamp", data.timestamp);
+						formData.append("signature", data.signature);
+
+						fetch("https://api.cloudinary.com/v1_1/cloudurlhc/image/upload", {
+							method: "POST",
+							body: formData,
+						})
+							.then((res) => res.json())
+							.then((data) => {
+								console.log("DATA IS:", data);
+								item.image = JSON.stringify(data.secure_url);
+							});
+					});
+			});
+
+			let transac = {
 				firstName: firstName,
 				middleName: middleName,
 				lastName: lastName,
 				askPrice: askPrice,
-				itemList: itemList,
+				itemList: updatedItemList,
 			};
 
 			fetch("/api/createUser", {
 				method: "POST",
-				body: JSON.stringify(formData),
+				body: JSON.stringify(transac),
 			})
 				.then((res) => res.json())
 				.then((data) => {
