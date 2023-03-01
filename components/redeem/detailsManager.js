@@ -3,12 +3,15 @@ import Modal from "react-modal";
 import AuthorizedRep from "../modals/authorizedRep";
 import CustomerDetails from "../modals/customerDetails";
 import ViewComputation from "../modals/viewComputations";
+import PawnHistory from "../modals/pawnHistory";
+
 function DetailsCard() {
   const [isOriginal, setOriginal] = useState("original");
   const [repModal, setRepModal] = useState(false); 
   const [customerModal, setCustomerModal] = useState(false);
   const [computationModal, setCompOpen] = useState(false);
- 
+  const [historyModal, setHistoryModal] = useState(false);
+
   function compOpen(){
     setCompOpen(true)
   }
@@ -20,7 +23,10 @@ function DetailsCard() {
     function customerOpen() {
       setCustomerModal(true);
     }
-
+    
+    function historyOpen() {
+      setHistoryModal(true);
+    }
   return (
     <>
       <div
@@ -31,7 +37,13 @@ function DetailsCard() {
           <AuthorizedRep trigger={repModal} setTrigger={setRepModal} />
         </Modal>
         <Modal isOpen={computationModal} ariaHideApp={false} className="modal">
-          <ViewComputation trigger={computationModal} setTrigger={setCompOpen}/>
+          <ViewComputation
+            trigger={computationModal}
+            setTrigger={setCompOpen}
+          />
+        </Modal>
+        <Modal isOpen={historyModal} ariaHideApp={false} className="modal">
+          <PawnHistory trigger={historyModal} setTrigger={setHistoryModal} />
         </Modal>
         <Modal isOpen={customerModal} ariaHideApp={false} className="modal">
           <CustomerDetails
@@ -123,7 +135,10 @@ function DetailsCard() {
           {/* Pawn Details */}
           <p className="font-bold pr-7">
             Pawn Details:
-            <span className="ml-3 hover:cursor-pointer inline-block">
+            <span
+              className="ml-3 hover:cursor-pointer inline-block"
+              onClick={historyOpen}
+            >
               <svg
                 width="30 "
                 height="30"

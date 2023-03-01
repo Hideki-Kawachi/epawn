@@ -15,6 +15,10 @@ html{
 .modal{
     opacity: 0px;
 }
+
+.modal:focus{
+    outline: 0;    
+}
 #main-content-area{
     display: flex;
     margin-left: 7.5rem;

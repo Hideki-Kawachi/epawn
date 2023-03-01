@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Header from "../../../components/header";
 import NavBar from "../../../components/navigation/navBar";
-import DetailsCard from "../../../components/redeem/detailsCard";
+import DetailsCardClerk from "../../../components/redeem/detailsClerk";
 import Modal from "react-modal";
 import Submit from "../../../components/modals/submitRedeem";
 import Cancel from "../../../components/modals/cancel";
@@ -16,9 +16,6 @@ function RedeemClerk() {
   // Modals
   const [submitModal, setSubmitOpen] = useState(false); //Submit
   const [cancelModal, setCancelOpen] = useState(false); //Cancel
-  const [customerModal, setCustomerOpen] = useState(false); //View Customer Details
-  const [historyModal, setHistoryOpen] = useState(false); //Pawn History
-  const [computationModal, setCompOpen] = useState(false); //View Computations
   const [PTNumber, setPTNumber] = useState("A-123456");
   const [checkedBoxes, setCheck] = useState();
   const redeem = [];
@@ -77,7 +74,7 @@ function RedeemClerk() {
           <a href="/redeem/manager">Temporary button to Manager Redeem</a>
         </p>
         <div className="flex">
-          <DetailsCard></DetailsCard>
+          <DetailsCardClerk></DetailsCardClerk>
         </div>
 
         {/* Second Half */}
