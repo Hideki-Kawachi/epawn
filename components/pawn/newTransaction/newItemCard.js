@@ -8,7 +8,7 @@ function NewItemCard({ id, deleteItem, setItem }) {
 
 	useEffect(() => {
 		setItem(id, itemName, itemType, itemImage);
-		console.log("image is:", itemImage);
+		//console.log("image is:", itemImage);
 	}, [itemName, itemType, itemImage]);
 
 	return (

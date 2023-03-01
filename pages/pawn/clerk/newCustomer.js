@@ -102,9 +102,9 @@ function NewCustomer() {
 			// );
 			// console.log("ITEM LIST: ", itemList);
 
-			let updatedItemList = itemList;
+			let updatedItemList = [];
 
-			updatedItemList.forEach((item) => {
+			itemList.forEach((item, index) => {
 				let publicID = item.name + "-" + new Date().toUTCString();
 				let uploadPreset = "item_preset";
 				let folder = "epawn/itemImage";
@@ -147,28 +147,38 @@ function NewCustomer() {
 							.then((res) => res.json())
 							.then((data) => {
 								console.log("DATA IS:", data);
-								item.image = JSON.stringify(data.secure_url);
+								updatedItemList.push({
+									id: item.id,
+									image: data.secure_url,
+									name: item.name,
+									type: item.type,
+								});
+
+								if (index == itemList.length - 1) {
+									//console.log("UPDATED ITEM:", updatedItemList);
+
+									let transac = {
+										firstName: firstName,
+										middleName: middleName,
+										lastName: lastName,
+										askPrice: askPrice,
+										itemList: updatedItemList,
+									};
+
+									fetch("/api/pawn/newCustomerPawn", {
+										method: "POST",
+										body: JSON.stringify(transac),
+									})
+										.then((res) => res.json())
+										.then((data) => {
+											//console.log("RESPONSE IS:", data);
+											setSendForm(false);
+											router.replace("/");
+										});
+								}
 							});
 					});
 			});
-
-			let transac = {
-				firstName: firstName,
-				middleName: middleName,
-				lastName: lastName,
-				askPrice: askPrice,
-				itemList: updatedItemList,
-			};
-
-			fetch("/api/createUser", {
-				method: "POST",
-				body: JSON.stringify(transac),
-			})
-				.then((res) => res.json())
-				.then((data) => {
-					console.log("RESPONSE IS:", data);
-					setSendForm(false);
-				});
 		}
 	}, [sendForm]);
 

@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import Test from "../../schemas/test";
+import Transaction from "../../schemas/transaction";
 import dbConnect from "../../utilities/dbConnect";
 
 export default async function NotifTable(req, res) {
@@ -7,9 +7,9 @@ export default async function NotifTable(req, res) {
 
 	let all = null;
 
-	const changeStream = await Test.watch().on("change", async (data) => {
+	const changeStream = await Transaction.watch().on("change", async (data) => {
 		// console.log("hahu");
-		all = await Test.find({});
+		all = await Transaction.find({});
 		console.log("all", all);
 
 		if (all) {
