@@ -1,12 +1,13 @@
 import React, {useState} from "react";
 import Modal from "react-modal";
 import AuthorizedRep from "../modals/authorizedRep";
-import CustomerDetails from "../modals/customerDetails";
-function DetailsCard() {
+import CustomerDetails from "../modals/customerDetails"; 
+import PawnHistory from "../modals/pawnHistory";
+function DetailsCardClerk() {
   const [isOriginal, setOriginal] = useState("original");
   const [repModal, setRepModal] = useState(false); 
   const [customerModal, setCustomerModal] = useState(false);
-
+  const [historyModal, setHistoryModal] = useState(false);
   function repOpen(){
     setRepModal(true);
   }
@@ -15,6 +16,11 @@ function DetailsCard() {
       setCustomerModal(true);
     }
 
+    function historyOpen() {
+      setHistoryModal(true);
+    }
+
+
   return (
     <>
       <div
@@ -22,11 +28,18 @@ function DetailsCard() {
         className="drop-shadow-lg flex text-base font-nunito pr-10"
       >
         <Modal isOpen={repModal} ariaHideApp={false} className="modal">
-              <AuthorizedRep trigger={repModal} setTrigger={setRepModal}/>
+          <AuthorizedRep trigger={repModal} setTrigger={setRepModal} />
+        </Modal>
+
+        <Modal isOpen={historyModal} ariaHideApp={false} className="modal">
+          <PawnHistory trigger={historyModal} setTrigger={setHistoryModal} />
         </Modal>
 
         <Modal isOpen={customerModal} ariaHideApp={false} className="modal">
-              <CustomerDetails trigger={customerModal} setTrigger={setCustomerModal}/>
+          <CustomerDetails
+            trigger={customerModal}
+            setTrigger={setCustomerModal}
+          />
         </Modal>
         {/* Left Side of the Card (Details) */}
         <div className="m-10 ">
@@ -40,7 +53,10 @@ function DetailsCard() {
           <p className="font-bold pr-7">
             Customer Details:
             {/* View Customer Details Button */}
-            <span className="ml-3 hover:cursor-pointer inline-block" onClick={customerOpen}> 
+            <span
+              className="ml-3 hover:cursor-pointer inline-block"
+              onClick={customerOpen}
+            >
               <svg
                 width="30 "
                 height="30"
@@ -109,7 +125,10 @@ function DetailsCard() {
           {/* Pawn Details */}
           <p className="font-bold pr-7">
             Pawn Details:
-            <span className="ml-3 hover:cursor-pointer inline-block">
+            <span
+              className="ml-3 hover:cursor-pointer inline-block px-2"
+              onClick={historyOpen}
+            >
               <svg
                 width="30 "
                 height="30"
@@ -191,4 +210,4 @@ function DetailsCard() {
   );
 }
 
-export default DetailsCard;
+export default DetailsCardClerk;

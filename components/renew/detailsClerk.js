@@ -2,12 +2,12 @@ import React, {useState} from "react";
 import Modal from "react-modal";
 import AuthorizedRep from "../modals/authorizedRep";
 import CustomerDetails from "../modals/customerDetails";
-
+import PawnHistory from "../modals/pawnHistory";
 function DetailsCardRenewClerk() {
   const [isOriginal, setOriginal] = useState("original");
   const [repModal, setRepModal] = useState(false); 
   const [customerModal, setCustomerModal] = useState(false);
-
+  const [historyModal, setHistoryModal] = useState(false);
   function repOpen(){
     setRepModal(true);
   }
@@ -15,6 +15,12 @@ function DetailsCardRenewClerk() {
     function customerOpen() {
       setCustomerModal(true);
     }
+
+    
+    function historyOpen() {
+      setHistoryModal(true);
+    }
+
 
   return (
     <>
@@ -25,7 +31,9 @@ function DetailsCardRenewClerk() {
         <Modal isOpen={repModal} ariaHideApp={false} className="modal">
           <AuthorizedRep trigger={repModal} setTrigger={setRepModal} />
         </Modal>
-
+        <Modal isOpen={historyModal} ariaHideApp={false} className="modal">
+          <PawnHistory trigger={historyModal} setTrigger={setHistoryModal} />
+        </Modal>
         <Modal isOpen={customerModal} ariaHideApp={false} className="modal">
           <CustomerDetails
             trigger={customerModal}
@@ -84,7 +92,10 @@ function DetailsCardRenewClerk() {
           {/* Pawn Details */}
           <p className="font-bold pr-7">
             Pawn Details:
-            <span className="ml-3 hover:cursor-pointer inline-block">
+            <span
+              className="ml-3 hover:cursor-pointer inline-block"
+              onClick={historyOpen}
+            >
               <svg
                 width="30 "
                 height="30"

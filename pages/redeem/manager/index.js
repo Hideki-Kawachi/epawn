@@ -13,7 +13,6 @@ function RedeemManager() {
   // Modals
   const [submitModal, setSubmitOpen] = useState(false); //Submit
   const [cancelModal, setCancelOpen] = useState(false); //Cancel
-  const [historyModal, setHistoryOpen] = useState(false); //Pawn History
   const [PTNumber, setPTNumber] = useState("A-123456");
   const [checkedBoxes, setCheck] = useState();
   const redeem = [];
