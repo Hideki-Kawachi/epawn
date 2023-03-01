@@ -59,9 +59,9 @@ function Users() {
 
 				{/* <UserCard firstName={"Sulletta"} lastName={"Mercury"} roleName={"Manager"}></UserCard> */}
 
-
-
-				<div className="m-10 grid grid-cols-3">
+				
+				
+				<div className="m-10 grid grid-cols-3 overflow-scroll h-60">
 						<UserCard
 							firstName={"Sulletta"}
 							lastName={"Mercury"}
@@ -78,14 +78,46 @@ function Users() {
 							role={"Branch Manager"}
 						></UserCard>
 						<UserCard
+							firstName={"Sulletta"}
+							lastName={"Mercury"}
+							role={"Branch Manager"}
+						></UserCard>
+						<UserCard
+							firstName={"Sulletta"}
+							lastName={"Mercury"}
+							role={"Branch Manager"}
+						></UserCard>
+						<UserCard
+							firstName={"Sulletta"}
+							lastName={"Mercury"}
+							role={"Branch Manager"}
+						></UserCard>
+						<UserCard
+							firstName={"Sulletta"}
+							lastName={"Mercury"}
+							role={"Branch Manager"}
+						></UserCard>
+						<UserCard
+							firstName={"Sulletta"}
+							lastName={"Mercury"}
+							role={"Branch Manager"}
+						></UserCard>
+							<UserCard
+							firstName={"Sulletta"}
+							lastName={"Mercury"}
+							role={"Branch Manager"}
+						></UserCard>
+							<UserCard
 							firstName={"Sulletta"}
 							lastName={"Mercury"}
 							role={"Branch Manager"}
 						></UserCard>
 				</div>
 
-				<div className="m-10 bg-[#F1F1F1]">
-					hello
+				<div className="m-10 bg-gray-100 w-48 h-48">
+					<div>
+					hello	
+					</div>
 				</div>
 			</div>
 		</>
