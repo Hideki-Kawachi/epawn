@@ -67,7 +67,6 @@ function NewCustomer() {
 		if (
 			firstName.length == 0 ||
 			lastName.length == 0 ||
-			middleName.length == 0 ||
 			askPrice == 0 ||
 			errorTemp
 		) {
@@ -90,24 +89,12 @@ function NewCustomer() {
 
 	useEffect(() => {
 		if (sendForm) {
-			// console.log(
-			// 	"POST FORM TO API",
-			// 	firstName,
-			// 	" ",
-			// 	middleName,
-			// 	" ",
-			// 	lastName,
-			// 	"---",
-			// 	askPrice
-			// );
-			// console.log("ITEM LIST: ", itemList);
-
 			let updatedItemList = [];
 
 			itemList.forEach((item, index) => {
 				let publicID = item.name + "-" + new Date().toUTCString();
-				let uploadPreset = "item_preset";
 				let folder = "epawn/itemImage";
+				let uploadPreset = "signed_preset";
 				let type = "authenticated";
 				let signURL = "true";
 
@@ -123,8 +110,6 @@ function NewCustomer() {
 				})
 					.then((res) => res.json())
 					.then((data) => {
-						//console.log("DATA IS:", data);
-
 						const formData = new FormData();
 
 						formData.append("file", item.image);
@@ -172,13 +157,13 @@ function NewCustomer() {
 										.then((res) => res.json())
 										.then((data) => {
 											//console.log("RESPONSE IS:", data);
-											setSendForm(false);
 											router.replace("/");
 										});
 								}
 							});
 					});
 			});
+			setSendForm(false);
 		}
 	}, [sendForm]);
 

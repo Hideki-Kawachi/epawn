@@ -1,5 +1,6 @@
 import dbConnect from "../../../utilities/dbConnect";
 import User from "../../../schemas/user";
+import Transaction from "../../../schemas/transaction";
 
 export default async function NewCustomerPawn(req, res) {
 	dbConnect();
@@ -40,6 +41,8 @@ export default async function NewCustomerPawn(req, res) {
 	});
 
 	console.log("NEW USER IS:", newUser);
+
+	//Transaction.create({customerID: latestID, branchID: body.branchID, })
 
 	res.json("good");
 }
