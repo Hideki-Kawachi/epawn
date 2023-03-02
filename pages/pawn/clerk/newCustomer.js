@@ -6,8 +6,30 @@ import NewItemList from "../../../components/pawn/newTransaction/newItemList";
 import Modal from "react-modal";
 import Cancel from "../../../components/modals/cancel";
 import AskPrice from "../../../components/modals/askPrice";
+import { withIronSessionSsr } from "iron-session/next";
+import { ironOptions } from "../../../utilities/config";
 
-function NewCustomer() {
+export const getServerSideProps = withIronSessionSsr(
+	async function getServerSideProps({ req }) {
+		if (!req.session.userData) {
+			return {
+				redirect: { destination: "/signIn", permanent: true },
+				props: {},
+			};
+		} else if (req.session.userData.role == "clerk") {
+			return {
+				props: { currentUser: req.session.userData },
+			};
+		} else {
+			return {
+				redirect: { destination: "/" },
+			};
+		}
+	},
+	ironOptions
+);
+
+function NewCustomer({ currentUser }) {
 	// MODALS
 	const [submitOpen, setSubmitOpen] = useState(false); //Submit
 	const [cancelOpen, setCancelOpen] = useState(false); //Cancel
@@ -169,8 +191,8 @@ function NewCustomer() {
 
 	return (
 		<>
-			<NavBar></NavBar>
-			<Header currentUser={"Kawachi, Hideki"}></Header>
+			<NavBar currentUser={currentUser}></NavBar>
+			<Header currentUser={currentUser}></Header>
 			<Modal isOpen={cancelOpen} ariaHideApp={false} className="modal">
 				<Cancel
 					trigger={cancelOpen}

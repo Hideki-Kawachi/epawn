@@ -13,8 +13,6 @@ export const getServerSideProps = withIronSessionSsr(
 				props: {},
 			};
 		} else {
-			await dbConnect();
-
 			return {
 				props: {},
 			};
@@ -48,7 +46,6 @@ function SignIn() {
 			.then((data) => {
 				if (data === "Logged in") {
 					console.log("SUCCESS");
-					console.log("SESSION IS", data);
 					router.replace("/");
 				} else {
 					console.log("ERROR IS:", data);

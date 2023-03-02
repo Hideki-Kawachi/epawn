@@ -14,19 +14,21 @@ async function login(req, res) {
 	const user = await User.findOne({ userID: userID });
 
 	let isDisabled = true;
+	let isCustomer = true;
 
 	if (user) {
 		isDisabled = user.get("disabled");
+		isCustomer = user.get("role") == "customer";
 	}
 
-	if (!user || isDisabled) {
+	if (!user || isDisabled || isCustomer) {
 		return res.json("Invalid userID");
 	} else {
 		const retrievedHash = user.get("password");
 		const isMatch = await bcrypt.compare(password, retrievedHash);
 
 		if (isMatch) {
-			req.session.user = {
+			req.session.userData = {
 				userID: user.userID,
 				firstName: user.firstName,
 				middleName: user.middleName,

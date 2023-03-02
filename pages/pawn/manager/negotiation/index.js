@@ -3,8 +3,30 @@ import Header from "../../../../components/header";
 import NavBar from "../../../../components/navigation/navBar";
 import NegotiationTable from "../../../../components/pawn/negotiation/negotiationTable";
 import Data from "../../../../components/tempData/negotiationTable.json";
+import { withIronSessionSsr } from "iron-session/next";
+import { ironOptions } from "../../../../utilities/config";
 
-function Negotiation() {
+export const getServerSideProps = withIronSessionSsr(
+	async function getServerSideProps({ req }) {
+		if (!req.session.userData) {
+			return {
+				redirect: { destination: "/signIn", permanent: true },
+				props: {},
+			};
+		} else if (req.session.userData.role == "manager") {
+			return {
+				props: { currentUser: req.session.userData },
+			};
+		} else {
+			return {
+				redirect: { destination: "/" },
+			};
+		}
+	},
+	ironOptions
+);
+
+function Negotiation({ currentUser }) {
 	const columns = React.useMemo(
 		() => [
 			{
@@ -21,8 +43,8 @@ function Negotiation() {
 
 	return (
 		<>
-			<NavBar></NavBar>
-			<Header currentUser={"Kawachi, Hideki"}></Header>
+			<NavBar currentUser={currentUser}></NavBar>
+			<Header currentUser={currentUser}></Header>
 			<div id="main-content-area">
 				<NegotiationTable columns={columns} data={Data}></NegotiationTable>
 			</div>

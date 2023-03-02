@@ -3,8 +3,30 @@ import Header from "../../../../components/header";
 import NavBar from "../../../../components/navigation/navBar";
 import AppraisalTable from "../../../../components/pawn/appraisal/appraisalTable";
 import Data from "../../../../components/tempData/appraisalTable.json";
+import { withIronSessionSsr } from "iron-session/next";
+import { ironOptions } from "../../../../utilities/config";
 
-function Appraisal() {
+export const getServerSideProps = withIronSessionSsr(
+	async function getServerSideProps({ req }) {
+		if (!req.session.userData) {
+			return {
+				redirect: { destination: "/signIn", permanent: true },
+				props: {},
+			};
+		} else if (req.session.userData.role == "manager") {
+			return {
+				props: { currentUser: req.session.userData },
+			};
+		} else {
+			return {
+				redirect: { destination: "/" },
+			};
+		}
+	},
+	ironOptions
+);
+
+function Appraisal({ currentUser }) {
 	const columns = React.useMemo(
 		() => [
 			{
@@ -20,8 +42,8 @@ function Appraisal() {
 
 	return (
 		<>
-			<NavBar></NavBar>
-			<Header currentUser={"Kawachi, Hideki"}></Header>
+			<NavBar currentUser={currentUser}></NavBar>
+			<Header currentUser={currentUser}></Header>
 			<div id="main-content-area">
 				<AppraisalTable columns={columns} data={Data}></AppraisalTable>
 			</div>

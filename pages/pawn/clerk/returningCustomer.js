@@ -4,8 +4,30 @@ import Header from "../../../components/header";
 import NavBar from "../../../components/navigation/navBar";
 import ReturnTable from "../../../components/pawn/ongoingTransaction/returnTable";
 import ReturningCustomerData from "../../../components/tempData/returningCustomer.json";
+import { withIronSessionSsr } from "iron-session/next";
+import { ironOptions } from "../../../utilities/config";
 
-function ReturningCustomer() {
+export const getServerSideProps = withIronSessionSsr(
+	async function getServerSideProps({ req }) {
+		if (!req.session.userData) {
+			return {
+				redirect: { destination: "/signIn", permanent: true },
+				props: {},
+			};
+		} else if (req.session.userData.role == "clerk") {
+			return {
+				props: { currentUser: req.session.userData },
+			};
+		} else {
+			return {
+				redirect: { destination: "/" },
+			};
+		}
+	},
+	ironOptions
+);
+
+function ReturningCustomer({ currentUser }) {
 	const columns = React.useMemo(
 		() => [
 			{
@@ -21,8 +43,8 @@ function ReturningCustomer() {
 
 	return (
 		<>
-			<NavBar></NavBar>
-			<Header currentUser={"Kawachi, Hideki"}></Header>
+			<NavBar currentUser={currentUser}></NavBar>
+			<Header currentUser={currentUser}></Header>
 			<div id="main-content-area">
 				<div className="font-semibold text-center font-dosis">
 					<h1 className="text-2xl underline">PAWN</h1>

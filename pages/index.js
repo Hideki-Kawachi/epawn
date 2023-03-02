@@ -9,23 +9,28 @@ import dbConnect from "../utilities/dbConnect";
 import mongoose from "mongoose";
 import Test from "../schemas/test";
 import NotifTable from "./api/notifTable";
+import { withIronSessionSsr } from "iron-session/next";
+import { ironOptions } from "../utilities/config";
 
-export async function getServerSideProps() {
-	// dbConnect();
-	let all = {};
-	// console.log("server side props");
-	// Test.watch().on("change", async (data) => {
-	// 	let all = await Test.find({});
-	// 	console.log("on change NotifTable", all);
-	// 	return { props: { message: all } };
-	// });
+export const getServerSideProps = withIronSessionSsr(
+	async function getServerSideProps({ req }) {
+		if (!req.session.userData) {
+			return {
+				redirect: { destination: "/signIn", permanent: true },
+				props: {},
+			};
+		} else {
+			return {
+				props: { currentUser: req.session.userData },
+			};
+		}
+	},
+	ironOptions
+);
 
-	return { props: { message: all } };
-}
-
-export default function Home({ message }) {
-	const [role, setRole] = useState("clerk");
+export default function Home({ currentUser }) {
 	const [showData, setShowData] = useState({});
+	console.log("CURRENT USER IS:", currentUser);
 
 	const roleShow = {
 		manager: <ManagerHome></ManagerHome>,
@@ -65,10 +70,6 @@ export default function Home({ message }) {
 		}
 	}
 
-	useEffect(() => {
-		// console.log("HERE IS THE RESULT:", showData);
-	}, [showData]);
-
 	return (
 		<div>
 			<Head>
@@ -79,9 +80,9 @@ export default function Home({ message }) {
 				/>
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
-			<Header currentUser={"Kawachi, Hideki"}></Header>
-			<NavBar></NavBar>
-			{roleShow[role]}
+			<NavBar currentUser={currentUser}></NavBar>
+			<Header currentUser={currentUser}></Header>
+			{roleShow[currentUser.role]}
 			<button onClick={() => buttonClick()}>HELLO WORLD</button>
 		</div>
 	);
