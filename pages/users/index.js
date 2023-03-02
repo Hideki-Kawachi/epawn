@@ -56,8 +56,6 @@ function Users({ currentUser }) {
 			<NavBar currentUser={currentUser}></NavBar>
 			<Header currentUser={currentUser}></Header>
 			<div id="main-content-area">
-				<p>Users</p>
-
 				<div className="flex items-center justify-center w-1/4 gap-2 my-5 text-base font-nunito">
 					<span className="text-base">Search: </span>
 					<input
@@ -86,7 +84,7 @@ function Users({ currentUser }) {
 
 				{/* <UserCard firstName={"Sulletta"} lastName={"Mercury"} roleName={"Manager"}></UserCard> */}
 
-				<div className="grid grid-cols-3 m-10 overflow-y-scroll bg-white h-60">
+				<div className="grid h-64 grid-cols-3 m-10 overflow-y-scroll bg-white">
 					<UserCard
 						firstName={"Sulletta"}
 						lastName={"Mercury"}
