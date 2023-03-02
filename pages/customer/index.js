@@ -1,6 +1,7 @@
 import React from "react";
 import { withIronSessionSsr } from "iron-session/next";
 import { ironOptions } from "../../utilities/config";
+import { useRouter } from "next/router";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {
@@ -24,12 +25,19 @@ export const getServerSideProps = withIronSessionSsr(
 );
 
 function Customer({ currentUser }) {
+	const router = useRouter();
+
 	function logout() {
-		fetch("/api/logout");
+		fetch("/api/logout")
+			.then((res) => res.json())
+			.then((data) => {
+				console.log("data is:", data);
+				router.push("/signIn");
+			});
 	}
 	return (
 		<div>
-			<button className="bg-red-300" onClick={() => logout}>
+			<button className="bg-red-300" onClick={() => logout()}>
 				LOGOUT
 			</button>
 		</div>

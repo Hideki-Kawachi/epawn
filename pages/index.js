@@ -88,7 +88,7 @@ export default function Home({ currentUser }) {
 			<NavBar currentUser={currentUser}></NavBar>
 			<Header currentUser={currentUser}></Header>
 			{roleShow[currentUser.role]}
-			<button onClick={() => buttonClick()}>HELLO WORLD</button>
+			{/* <button onClick={() => buttonClick()}>HELLO WORLD</button> */}
 		</div>
 	);
 }

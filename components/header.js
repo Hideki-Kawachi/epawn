@@ -20,7 +20,7 @@ function Header({ currentUser }) {
 				{currentUser.lastName}, {currentUser.firstName} |{" "}
 			</span>
 			<a
-				className="text-base font-semibold text-red-500 font-nunito hover:underline"
+				className="text-base font-semibold text-red-500 cursor-pointer font-nunito hover:underline"
 				onClick={() => logout()}
 			>
 				Logout
