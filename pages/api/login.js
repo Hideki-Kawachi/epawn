@@ -14,14 +14,12 @@ async function login(req, res) {
 	const user = await User.findOne({ userID: userID });
 
 	let isDisabled = true;
-	let isCustomer = true;
 
 	if (user) {
 		isDisabled = user.get("disabled");
-		isCustomer = user.get("role") == "customer";
 	}
 
-	if (!user || isDisabled || isCustomer) {
+	if (!user || isDisabled) {
 		return res.json("Invalid userID");
 	} else {
 		const retrievedHash = user.get("password");
@@ -35,9 +33,13 @@ async function login(req, res) {
 				lastName: user.lastName,
 				role: user.role,
 			};
-
 			await req.session.save();
-			res.json("Logged in");
+
+			if (user.role == "customer") {
+				res.json("customer");
+			} else {
+				res.json("employee");
+			}
 		} else {
 			res.json("Invalid Password");
 		}

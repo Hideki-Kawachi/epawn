@@ -7,13 +7,16 @@ import { useRouter } from "next/router";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {
-		if (req.session.userData) {
+		if (!req.session.userData) {
+			return { props: {} };
+		} else if (req.session.userData.role == "customer") {
 			return {
-				redirect: { destination: "/", permanent: true },
+				redirect: { destination: "/customer", permanent: true },
 				props: {},
 			};
 		} else {
 			return {
+				redirect: { destination: "/", permanent: true },
 				props: {},
 			};
 		}
@@ -44,8 +47,11 @@ function SignIn() {
 		})
 			.then((res) => res.json())
 			.then((data) => {
-				if (data === "Logged in") {
-					console.log("SUCCESS");
+				if (data == "customer") {
+					console.log("CUSTOMER");
+					router.replace("/customer");
+				} else if (data == "employee") {
+					console.log("EMPLOYEE");
 					router.replace("/");
 				} else {
 					console.log("ERROR IS:", data);

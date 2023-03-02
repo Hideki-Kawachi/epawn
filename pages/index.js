@@ -19,6 +19,11 @@ export const getServerSideProps = withIronSessionSsr(
 				redirect: { destination: "/signIn", permanent: true },
 				props: {},
 			};
+		} else if (req.session.userData.role == "customer") {
+			return {
+				redirect: { destination: "/customer", permanent: true },
+				props: {},
+			};
 		} else {
 			return {
 				props: { currentUser: req.session.userData },
