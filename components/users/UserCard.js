@@ -3,7 +3,7 @@ import React from 'react';
 function UserCard({lastName, firstName, role}){
 
     return (
-        <div className="bg-[#F1F1F1] shadow-md flex font-nunito rounded-lg h-fit m-5">
+        <div className="shadow-md flex font-nunito rounded-lg h-fit m-5 border-2 border-gray-500">
         
   
         <div className="m-5 w-96">
