@@ -3,7 +3,7 @@ import Transaction from "../../schemas/transaction";
 import dbConnect from "../../utilities/dbConnect";
 
 export default async function NotifTable(req, res) {
-	dbConnect();
+	await dbConnect();
 
 	let all = null;
 
@@ -20,4 +20,12 @@ export default async function NotifTable(req, res) {
 			// console.log("NER", all);
 		}
 	});
+
+	// if (req.session.userData.role == "clerk") {
+	// 	transactionData = await Transaction.find({
+	// 		branchID: branchData.branchID,
+	// 		clerkID: req.session.userData.userID,
+	// 		isDisabled: false,
+	// 		status: { $ne: "Done" },
+	// 	}).lean();
 }

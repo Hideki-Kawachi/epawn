@@ -10,9 +10,9 @@ const BranchSchema = new mongoose.Schema({
 
 let Branch;
 try {
-	Branch = mongoose.model("branch");
+	Branch = mongoose.model("branches");
 } catch (error) {
-	Branch = mongoose.model("branch", BranchSchema);
+	Branch = mongoose.model("branches", BranchSchema);
 }
 
 export default Branch;

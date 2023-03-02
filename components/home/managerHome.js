@@ -1,9 +1,11 @@
+import { data } from "autoprefixer";
 import React from "react";
+import NotificationTable from "./notificationTable";
 
 function ManagerHome() {
 	return (
 		<div id="main-content-area">
-			<p>Manager Home</p>
+			{/* <NotificationTable data={data}></NotificationTable> */}
 		</div>
 	);
 }

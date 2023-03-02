@@ -31,7 +31,7 @@ function NavBar({ currentUser }) {
 		<>
 			{currentUser.role == "admin" ? (
 				<nav className="fixed z-50 h-full bg-blue-500 w-fit">
-					<div className="relative aspect-square">
+					<div className="relative mx-2 aspect-[30/18] mt-5 mb-10">
 						<Image src={"/logo_transparent.png"} layout="fill"></Image>
 					</div>
 					<Link href={"/"}>
@@ -91,7 +91,7 @@ function NavBar({ currentUser }) {
 				</nav>
 			) : (
 				<nav className="fixed z-50 h-full bg-blue-500 w-fit">
-					<div className="relative aspect-square">
+					<div className="relative mx-2 aspect-[30/18] mt-5 mb-10">
 						<Image src={"/logo_transparent.png"} layout="fill"></Image>
 					</div>
 					<Link href={"/"}>

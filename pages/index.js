@@ -11,6 +11,9 @@ import Test from "../schemas/test";
 import NotifTable from "./api/notifTable";
 import { withIronSessionSsr } from "iron-session/next";
 import { ironOptions } from "../utilities/config";
+import Transaction from "../schemas/transaction";
+import EmployeeInfo from "../schemas/employeeInfo";
+import Branch from "../schemas/branch";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {
@@ -25,8 +28,33 @@ export const getServerSideProps = withIronSessionSsr(
 				props: {},
 			};
 		} else {
+			// // Get Branch ID of Employees
+			// let branchID = await EmployeeInfo.findOne(
+			// 	{ userID: req.session.userData.userID },
+			// 	{ branchID: 1 }
+			// );
+
+			// let branchData = await Branch.findOne(
+			// 	{
+			// 		branchID: branchID,
+			// 	},
+			// 	{ branchID: 1, branchName: 1, branchAddress: 1 }
+			// );
+
+			// let currentUser = {
+			// 	userID: req.session.userData.userID,
+			// 	role: req.session.userData.role,
+			// 	firstName: req.session.userData.firstName,
+			// 	lastName: req.session.userData.lastName,
+			// 	middleName: req.session.userData.middleName,
+			// 	branchID: branchData.branchID,
+			// 	branchName: branchData.branchName,
+			// 	branchAddress: branchData.branchAddress,
+			// };
 			return {
-				props: { currentUser: req.session.userData },
+				props: {
+					currentUser: req.session.userData,
+				},
 			};
 		}
 	},

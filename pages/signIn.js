@@ -62,9 +62,13 @@ function SignIn() {
 
 	return (
 		<div className="flex flex-row w-[100vw] h-[100vh]">
-			<div className="w-full h-full bg-gray-100">
-				<div className="relative aspect-square">
-					<Image src={"/logo_transparent.png"} layout="fill"></Image>
+			<div className="flex items-center justify-center w-full h-full bg-gray-100">
+				<div className="relative w-1/2 aspect-[30/18]">
+					<Image
+						src={"/logo_transparent.png"}
+						layout="fill"
+						priority={true}
+					></Image>
 				</div>
 			</div>
 			<div className="flex flex-col items-center w-full h-full bg-green-100">
