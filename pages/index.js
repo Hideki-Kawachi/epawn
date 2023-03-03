@@ -14,6 +14,7 @@ import { ironOptions } from "../utilities/config";
 import Transaction from "../schemas/transaction";
 import EmployeeInfo from "../schemas/employeeInfo";
 import Branch from "../schemas/branch";
+import LoadingSpinner from "../components/loadingSpinner";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {

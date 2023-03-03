@@ -30,7 +30,7 @@ function NavBar({ currentUser }) {
 	return (
 		<>
 			{currentUser.role == "admin" ? (
-				<nav className="fixed z-50 h-full bg-blue-500 w-fit">
+				<nav className="fixed z-40 h-full bg-blue-500 w-fit">
 					<div className="relative mx-2 aspect-[30/18] mt-5 mb-10">
 						<Image src={"/logo_transparent.png"} layout="fill"></Image>
 					</div>
@@ -90,7 +90,7 @@ function NavBar({ currentUser }) {
 					</Link>
 				</nav>
 			) : (
-				<nav className="fixed z-50 h-full bg-blue-500 w-fit">
+				<nav className="fixed z-40 h-full bg-blue-500 w-fit">
 					<div className="relative mx-2 aspect-[30/18] mt-5 mb-10">
 						<Image src={"/logo_transparent.png"} layout="fill"></Image>
 					</div>

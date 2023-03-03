@@ -217,6 +217,36 @@ button:not(.x-button){
     
 }
 
+#loading-background{
+   animation: fadeIn 0.8s ease-in-out both;
+}
+
+@keyframes fadeIn {
+    0% {opacity: 0%;}
+    100% {opacity: 70%;}
+   }
+
+
+#loading-spinner {
+    border: 1rem solid #FFF;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+    margin-left: -1.5rem;
+    margin-top: -3rem;
+    }
+
+    @keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+    }
+
 
 @keyframes buttonUp {
     100%{box-shadow: 3px 3px 5px 4px rgba(0, 0, 0, 0.5);
