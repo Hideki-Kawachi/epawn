@@ -24,10 +24,11 @@ function nextLetter(sequence) {
 export default async function generateUserID() {
 	//must have dbConnect before calling
 	let latestUser = await User.find({}).sort({ userID: -1 }).limit(1);
-	let latestID = latestUser[0].userID;
-	if (latestID.length == 0) {
-		latestID[0] = "AAA-000";
+	let latestID;
+	if (latestUser.length == 0) {
+		latestID = "AAA-000";
 	} else {
+		latestID = latestUser[0].userID;
 		let idSections = latestID.split("-");
 		let numSec = parseInt(idSections[1]);
 

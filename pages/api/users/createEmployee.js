@@ -5,7 +5,7 @@ import bcrypt from "bcrypt";
 import EmployeeInfo from "../../../schemas/employeeInfo";
 
 //request needs to have
-// role, password, firstname, middlename, lastname, branchID
+// role, password, firstname, middlename, lastname, branchID, isDisabled
 
 export default async function CreateEmployee(req, res) {
 	dbConnect();
@@ -30,6 +30,7 @@ export default async function CreateEmployee(req, res) {
 		firstName: body.firstName,
 		middleName: body.middleName,
 		lastName: body.lastName,
+		isDisabled: body.isDisabled,
 	});
 
 	let newEmployeeInfo = await EmployeeInfo.create({

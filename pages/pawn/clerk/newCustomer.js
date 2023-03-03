@@ -175,6 +175,7 @@ function NewCustomer({ currentUser }) {
 										lastName: lastName,
 										askPrice: askPrice,
 										itemList: updatedItemList,
+										clerkID: currentUser.userID,
 									};
 
 									fetch("/api/pawn/newCustomerPawn", {
