@@ -128,7 +128,7 @@ function RedeemManager({ currentUser }) {
 						<div className="bg-white p-5 mx-10 w-[720px] h-[450px] overflow-y-scroll border-2">
 							{itemList.map((items, index) => (
 								<ItemCard
-									key={index}
+									key={items.ItemID}
 									itemName={items.Name}
 									itemType={items.Type}
 									itemPrice={items.Price}
