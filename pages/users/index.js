@@ -110,13 +110,9 @@ function Users({ currentUser }) {
 				</div>
 
 				<div className="m-10 h-60 w-full bg-white relative">
-					
-
 
 					<CreateUser>
-						Hello
 					</CreateUser>
-					
 					
 					
 					<button className="absolute bottom-5 right-5 bg-[#14C6A5] ">

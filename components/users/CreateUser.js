@@ -4,7 +4,7 @@ function CreateUser(){
         <>
         <form className="user-create-main-container">
 
-            <h1 className="m-5"> Create New User</h1>
+            <h1 className="m-5 font-bold text-base"> Create New User</h1>
 
 				<div className="user-create-top-container m-5 grid grid-cols-3 gap-4">
 
