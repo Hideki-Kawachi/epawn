@@ -8,16 +8,21 @@ import Header from "../../../components/header";
 
 // }
 
-function Edit() {
+function Edit({currentUser}) {
 
     const router = useRouter()
     const userid = router.query.userid
+    const curr = router.query.currentUser
 
     // Add NavBar (currentUser) and Header (currentUser)
     return (
         <>
+            <NavBar currentUser={currentUser}></NavBar>
+			<Header currentUser={currentUser}></Header>
+
 
             <div> Details about {userid} </div>
+            <div> hello {curr} </div>
         </>
     )
 }
