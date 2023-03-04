@@ -7,6 +7,8 @@ import { useState } from "react";
 import { withIronSessionSsr } from "iron-session/next";
 import { ironOptions } from "../../utilities/config";
 
+import MockUsers from '../../components/users/User_mock_DATA.json'
+
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {
 		if (!req.session.userData) {
@@ -86,28 +88,21 @@ function Users({ currentUser }) {
 				{/* <UserCard firstName={"Sulletta"} lastName={"Mercury"} roleName={"Manager"}></UserCard> */}
 
 				<div className="m-10 grid grid-cols-3 overflow-y-scroll h-60 bg-white">
-						<UserCard
-							firstName={"Sulletta"}
-							lastName={"Mercury"}
-							roleName={"Branch Manager"}
-							userID={"1"}
-						></UserCard>
-						<UserCard
-							firstName={"Sulletta"}
-							lastName={"Mercury"}
-							roleName={"Branch Manager"}
-						></UserCard>
-						<UserCard
-							firstName={"Sulletta"}
-							lastName={"Mercury"}
-							roleName={"Branch Manager"}
-						></UserCard>
-						<UserCard
-							firstName={"Sulletta"}
-							lastName={"Mercury"}
-							roleName={"Branch Manager"}
-						></UserCard>
-				
+
+						{
+						MockUsers.map(mockUser => {
+							return(
+								<UserCard
+								firstName={mockUser.firstName}
+								lastName={mockUser.lastName}
+								roleName={mockUser.roleName}
+								userID={mockUser.userID}
+								disabled={mockUser.disabled}
+								>
+								</UserCard>
+							)
+						})		
+						}	
 				</div>
 
 				<div className="m-10 h-60 w-full bg-white relative">
