@@ -1,4 +1,4 @@
-function CreateUser(){
+function UserCreate(){
     
     return( 
         <>
@@ -47,4 +47,4 @@ function CreateUser(){
     
 }
 
-export default CreateUser;
+export default UserCreate;

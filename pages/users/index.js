@@ -2,7 +2,7 @@ import React from "react";
 import Header from "../../components/header";
 import NavBar from "../../components/navigation/navBar";
 import UserCard from "../../components/users/UserCard";
-import CreateUser from "../../components/users/CreateUser";
+import UserCreate from "../../components/users/UserCreate";
 import { useState } from "react";
 import { withIronSessionSsr } from "iron-session/next";
 import { ironOptions } from "../../utilities/config";
@@ -89,31 +89,32 @@ function Users({ currentUser }) {
 						<UserCard
 							firstName={"Sulletta"}
 							lastName={"Mercury"}
-							role={"Branch Manager"}
+							roleName={"Branch Manager"}
+							userID={"1"}
 						></UserCard>
 						<UserCard
 							firstName={"Sulletta"}
 							lastName={"Mercury"}
-							role={"Branch Manager"}
+							roleName={"Branch Manager"}
 						></UserCard>
 						<UserCard
 							firstName={"Sulletta"}
 							lastName={"Mercury"}
-							role={"Branch Manager"}
+							roleName={"Branch Manager"}
 						></UserCard>
 						<UserCard
 							firstName={"Sulletta"}
 							lastName={"Mercury"}
-							role={"Branch Manager"}
+							roleName={"Branch Manager"}
 						></UserCard>
 				
 				</div>
 
 				<div className="m-10 h-60 w-full bg-white relative">
 
-					<CreateUser>
-					</CreateUser>
-					
+					<UserCreate>
+
+					</UserCreate>
 					
 					<button className="absolute bottom-5 right-5 bg-[#14C6A5] ">
 						<p>Create User</p>
