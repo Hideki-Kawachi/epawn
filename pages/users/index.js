@@ -2,6 +2,7 @@ import React from "react";
 import Header from "../../components/header";
 import NavBar from "../../components/navigation/navBar";
 import UserCard from "../../components/users/UserCard";
+import CreateUser from "../../components/users/CreateUser";
 import { useState } from "react";
 import { withIronSessionSsr } from "iron-session/next";
 import { ironOptions } from "../../utilities/config";
@@ -84,47 +85,44 @@ function Users({ currentUser }) {
 
 				{/* <UserCard firstName={"Sulletta"} lastName={"Mercury"} roleName={"Manager"}></UserCard> */}
 
-				<div className="grid h-64 grid-cols-3 m-10 overflow-y-scroll bg-white">
-					<UserCard
-						firstName={"Sulletta"}
-						lastName={"Mercury"}
-						role={"Branch Manager"}
-					></UserCard>
-					<UserCard
-						firstName={"Sulletta"}
-						lastName={"Mercury"}
-						role={"Branch Manager"}
-					></UserCard>
-					<UserCard
-						firstName={"Sulletta"}
-						lastName={"Mercury"}
-						role={"Branch Manager"}
-					></UserCard>
-					<UserCard
-						firstName={"Sulletta"}
-						lastName={"Mercury"}
-						role={"Branch Manager"}
-					></UserCard>
-					<UserCard
-						firstName={"Sulletta"}
-						lastName={"Mercury"}
-						role={"Branch Manager"}
-					></UserCard>
-					<UserCard
-						firstName={"Sulletta"}
-						lastName={"Mercury"}
-						role={"Branch Manager"}
-					></UserCard>
-					<UserCard
-						firstName={"Sulletta"}
-						lastName={"Mercury"}
-						role={"Branch Manager"}
-					></UserCard>
-					<UserCard
-						firstName={"Sulletta"}
-						lastName={"Mercury"}
-						role={"Branch Manager"}
-					></UserCard>
+				<div className="m-10 grid grid-cols-3 overflow-y-scroll h-60 bg-white">
+						<UserCard
+							firstName={"Sulletta"}
+							lastName={"Mercury"}
+							role={"Branch Manager"}
+						></UserCard>
+						<UserCard
+							firstName={"Sulletta"}
+							lastName={"Mercury"}
+							role={"Branch Manager"}
+						></UserCard>
+						<UserCard
+							firstName={"Sulletta"}
+							lastName={"Mercury"}
+							role={"Branch Manager"}
+						></UserCard>
+						<UserCard
+							firstName={"Sulletta"}
+							lastName={"Mercury"}
+							role={"Branch Manager"}
+						></UserCard>
+				
+				</div>
+
+				<div className="m-10 h-60 w-full bg-white relative">
+
+					<CreateUser>
+						Hello
+					</CreateUser>
+					
+					
+					
+					<button className="absolute bottom-5 right-5 bg-[#14C6A5] ">
+						<p>Create User</p>
+					
+					</button>
+
+					
 				</div>
 			</div>
 		</>
