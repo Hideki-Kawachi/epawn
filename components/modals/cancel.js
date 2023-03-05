@@ -27,7 +27,7 @@ export const Cancel = ({ trigger, setTrigger, content }) => {
 							className="px-24 text-base bg-red-300"
 							onClick={() => router.push("/")}
 						>
-							Cancel
+							Delete
 						</button>
 					</div>
 				</div>
