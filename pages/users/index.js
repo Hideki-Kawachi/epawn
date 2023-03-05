@@ -7,7 +7,7 @@ import { useState } from "react";
 import { withIronSessionSsr } from "iron-session/next";
 import { ironOptions } from "../../utilities/config";
 
-import MockUsers from '../../components/users/User_mock_DATA.json'
+import MockUsers from "../../components/users/User_mock_DATA.json";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {
@@ -87,36 +87,27 @@ function Users({ currentUser }) {
 
 				{/* <UserCard firstName={"Sulletta"} lastName={"Mercury"} roleName={"Manager"}></UserCard> */}
 
-				<div className="m-10 grid grid-cols-3 overflow-y-scroll h-60 bg-white">
-
-						{
-						MockUsers.map(mockUser => {
-							return(
-								<UserCard
+				<div className="grid grid-cols-3 m-10 overflow-y-scroll bg-white h-60">
+					{MockUsers.map((mockUser) => {
+						return (
+							<UserCard
+								key={mockUser.userID}
 								firstName={mockUser.firstName}
 								lastName={mockUser.lastName}
 								roleName={mockUser.roleName}
 								userID={mockUser.userID}
 								disabled={mockUser.disabled}
-								>
-								</UserCard>
-							)
-						})		
-						}	
+							></UserCard>
+						);
+					})}
 				</div>
 
-				<div className="m-10 h-60 w-full bg-white relative">
+				<div className="relative w-full m-10 bg-white h-60">
+					<UserCreate></UserCreate>
 
-					<UserCreate>
-
-					</UserCreate>
-					
 					<button className="absolute bottom-5 right-5 bg-[#14C6A5] ">
 						<p>Create User</p>
-					
 					</button>
-
-					
 				</div>
 			</div>
 		</>

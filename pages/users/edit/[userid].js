@@ -1,25 +1,55 @@
-import { useRouter } from "next/router"
+import { useRouter } from "next/router";
 import React from "react";
-import Link from 'next/link';
+import Link from "next/link";
 import NavBar from "../../../components/navigation/navBar";
 import Header from "../../../components/header";
+import { withIronSessionSsr } from "iron-session/next";
+import { ironOptions } from "../../../utilities/config";
 
-// export const getStaticPaths = async() => {
+export const getServerSideProps = withIronSessionSsr(
+	async function getServerSideProps({ req }) {
+		if (!req.session.userData) {
+			return {
+				redirect: { destination: "/signIn", permanent: true },
+				props: {},
+			};
+		} else if (
+			req.session.userData.role == "admin" ||
+			req.session.userData.role == "manager"
+		) {
+			return {
+				props: { currentUser: req.session.userData },
+			};
+		} else if (req.session.userData.role == "customer") {
+			return {
+				redirect: { destination: "/customer", permanent: true },
+				props: {},
+			};
+		} else {
+			return {
+				redirect: { destination: "/", permanent: true },
+				props: {},
+			};
+		}
+	},
+	ironOptions
+);
 
-// }
+function Edit({ currentUser }) {
+	const router = useRouter();
+	const userid = router.query.userid;
 
-function Edit() {
+	console.log("userid is:", userid, "--curr is:", currentUser);
 
-    const router = useRouter()
-    const userid = router.query.userid
+	// Add NavBar (currentUser) and Header (currentUser)
+	return (
+		<>
+			<NavBar currentUser={currentUser}></NavBar>
+			<Header currentUser={currentUser}></Header>
 
-    // Add NavBar (currentUser) and Header (currentUser)
-    return (
-        <>
-
-            <div> Details about {userid} </div>
-        </>
-    )
+			<div> Details about {userid} </div>
+		</>
+	);
 }
 
 export default Edit;
