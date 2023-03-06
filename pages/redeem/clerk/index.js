@@ -102,16 +102,23 @@ function RedeemClerk({ currentUser }) {
   };
 
 function addToRedeem() {
-  setRedeem(checkedBoxes);
+  if (checkedBoxes.length > 0) {
+    if (redeemArray.length > 0) {
+      setRedeem(redeem.concat(checkedBoxes));
+    }
+    else 
+      setRedeem(checkedBoxes);
+  }
+  
   checkedBoxes.forEach((check, index) => {
     const redeemedIndex = itemList.findIndex((item) => item.ItemID === check.itemID);
     if (redeemedIndex >= 0){
       itemList.splice(redeemedIndex, 1)
     }
   });
-}
- 
   
+      setCheckedBoxes([]);
+}
 
     useEffect(() => {
       setRedeemArray(redeem);
