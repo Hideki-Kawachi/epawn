@@ -29,32 +29,28 @@ export const getServerSideProps = withIronSessionSsr(
 				props: {},
 			};
 		} else {
-			// // Get Branch ID of Employees
-			// let branchID = await EmployeeInfo.findOne(
-			// 	{ userID: req.session.userData.userID },
-			// 	{ branchID: 1 }
-			// );
+			await dbConnect();
 
-			// let branchData = await Branch.findOne(
-			// 	{
-			// 		branchID: branchID,
-			// 	},
-			// 	{ branchID: 1, branchName: 1, branchAddress: 1 }
-			// );
+			let transactionData;
+			if (req.session.userData.role == "clerk") {
+				transactionData = await Transaction.find({
+					branchID: req.session.userData.branchID,
+					clerkID: req.session.userData.userID,
+					status: { $ne: "Done" },
+				}).lean();
+			} else if (req.session.userData.role == "manager") {
+				transactionData = await Transaction.find({
+					branchID: req.session.userData.branchID,
+					managerID: req.session.userData.userID,
+					status: { $ne: "Done" },
+				}).lean();
+			}
 
-			// let currentUser = {
-			// 	userID: req.session.userData.userID,
-			// 	role: req.session.userData.role,
-			// 	firstName: req.session.userData.firstName,
-			// 	lastName: req.session.userData.lastName,
-			// 	middleName: req.session.userData.middleName,
-			// 	branchID: branchData.branchID,
-			// 	branchName: branchData.branchName,
-			// 	branchAddress: branchData.branchAddress,
-			// };
+			//console.log("TRANS DATA:", transactionData);
 			return {
 				props: {
 					currentUser: req.session.userData,
+					notifData: JSON.parse(JSON.stringify(transactionData)),
 				},
 			};
 		}
@@ -62,33 +58,28 @@ export const getServerSideProps = withIronSessionSsr(
 	ironOptions
 );
 
-export default function Home({ currentUser }) {
+export default function Home({ currentUser, notifData }) {
 	const [showData, setShowData] = useState({});
-	console.log("CURRENT USER IS:", currentUser);
+	//console.log("CURRENT USER IS:", currentUser);
+	//console.log("NOTIF DATA FROM SERVERSIDEPROPS IS:", notifData);
 
 	const roleShow = {
 		manager: <ManagerHome></ManagerHome>,
 		clerk: <ClerkHome></ClerkHome>,
 	};
 
-	function buttonClick() {
-		fetch("/api/buttonClick", {
-			method: "POST",
-		})
-			.then((res) => res.json())
-			.then((data) => {
-				// console.log("POST DATA IS:", data);
-			});
-	}
-
 	useEffect(() => {
 		waitNotif();
 	}, []);
 
 	async function waitNotif() {
-		console.log("wait notif");
 		let res = await fetch("/api/notifTable", {
 			method: "GET",
+			headers: {
+				userID: currentUser.userID,
+				branchID: currentUser.branchID,
+				role: currentUser.role,
+			},
 		});
 
 		if (res.status == 502) {
@@ -97,8 +88,9 @@ export default function Home({ currentUser }) {
 			console.log("2-RESPONSE:", res.statusText);
 			await new Promise((resolve) => setTimeout(resolve, 1000));
 		} else {
-			let message = await res.text();
-			setShowData(message);
+			let notifShow = await res.json();
+			console.log("NOTIF DATA BACK IS:", notifShow);
+			//setShowData(message);
 
 			await waitNotif();
 		}
