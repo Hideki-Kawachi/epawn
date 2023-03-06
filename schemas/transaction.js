@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 
 const TransactionSchema = new mongoose.Schema({
-	transactionID: { type: Number, require: true, unique: true },
 	customerID: { type: String, require: true },
 	branchID: { type: Number, require: true },
 	itemListID: { type: Number },

@@ -8,6 +8,7 @@ import Cancel from "../../../components/modals/cancel";
 import AskPrice from "../../../components/modals/askPrice";
 import { withIronSessionSsr } from "iron-session/next";
 import { ironOptions } from "../../../utilities/config";
+import LoadingSpinner from "../../../components/loadingSpinner";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {
@@ -50,6 +51,7 @@ function NewCustomer({ currentUser }) {
 	]);
 	const [error, setError] = useState(false);
 	const [sendForm, setSendForm] = useState(false);
+	const [loading, setLoading] = useState(false);
 
 	const router = useRouter();
 
@@ -118,12 +120,15 @@ function NewCustomer({ currentUser }) {
 		if (sendForm) {
 			let updatedItemList = [];
 
-			itemList.forEach((item, index) => {
-				let publicID = item.name + "-" + new Date().toUTCString();
+			setLoading(true);
+			itemList.forEach((item) => {
+				let publicID = item.name + "-" + new Date();
 				let folder = "epawn/itemImage";
 				let uploadPreset = "signed_preset";
 				let type = "authenticated";
 				let signURL = "true";
+
+				console.log("HELLO");
 
 				fetch("/api/signUploadForm", {
 					method: "POST",
@@ -132,7 +137,7 @@ function NewCustomer({ currentUser }) {
 						upload_preset: uploadPreset,
 						folder: folder,
 						type: type,
-						sign_url: signURL,
+						//sign_url: signURL,
 					}),
 				})
 					.then((res) => res.json())
@@ -140,10 +145,6 @@ function NewCustomer({ currentUser }) {
 						const formData = new FormData();
 
 						formData.append("file", item.image);
-						formData.append(
-							"public_id",
-							item.name + "-" + new Date().toUTCString()
-						);
 						formData.append("upload_preset", uploadPreset);
 						formData.append("folder", folder);
 						formData.append("sign_url", signURL);
@@ -166,8 +167,8 @@ function NewCustomer({ currentUser }) {
 									type: item.type,
 								});
 
-								if (index == itemList.length - 1) {
-									//console.log("UPDATED ITEM:", updatedItemList);
+								if (updatedItemList.length == itemList.length) {
+									console.log("UPDATED ITEM:", updatedItemList);
 
 									let transac = {
 										firstName: firstName,
@@ -176,6 +177,7 @@ function NewCustomer({ currentUser }) {
 										askPrice: askPrice,
 										itemList: updatedItemList,
 										clerkID: currentUser.userID,
+										branchID: currentUser.branchID,
 									};
 
 									fetch("/api/pawn/newCustomerPawn", {
@@ -184,8 +186,13 @@ function NewCustomer({ currentUser }) {
 									})
 										.then((res) => res.json())
 										.then((data) => {
-											//console.log("RESPONSE IS:", data);
-											router.replace("/");
+											console.log("END");
+											if (data == "success") {
+												router.replace("/");
+											} else {
+												console.log("error");
+												//router.reload();
+											}
 										});
 								}
 							});
@@ -197,6 +204,7 @@ function NewCustomer({ currentUser }) {
 
 	return (
 		<>
+			<LoadingSpinner isLoading={loading}></LoadingSpinner>
 			<NavBar currentUser={currentUser}></NavBar>
 			<Header currentUser={currentUser}></Header>
 			<Modal isOpen={cancelOpen} ariaHideApp={false} className="modal">

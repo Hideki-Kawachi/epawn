@@ -7,18 +7,18 @@ import ItemList from "../../../schemas/itemList";
 import generateItemID from "../../../utilities/generateItemID";
 import Item from "../../../schemas/item";
 import generateItemListID from "../../../utilities/generateItemListID";
+import PriceHistory from "../../../schemas/priceHistory";
 
 // request needs to have
-// firstName, lastName, middleName, clerkID
+// firstName, lastName, middleName, clerkID, askPrice
 export default async function NewCustomerPawn(req, res) {
 	dbConnect();
 
 	let body = JSON.parse(req.body);
 
 	let userID = await generateUserID();
-	console.log("LATEST ID IS:", userID);
 
-	let newUser = await User.create({
+	let user = await User.create({
 		userID: userID,
 		role: "customer",
 		firstName: body.firstName,
@@ -49,16 +49,27 @@ export default async function NewCustomerPawn(req, res) {
 		}
 	});
 
-	console.log("body is:", body);
+	//console.log("body is:", body);
 	let itemListID = await generateItemListID();
 	await ItemList.create({
 		itemListID: itemListID,
 		branchID: branchInfo.branchID,
 	});
 
-	body.itemList.map(async (item) => {
-		let itemID = await generateItemID();
-		await Item.create({
+	let latestItem = await Item.find({}).sort({ itemID: -1 }).limit(1);
+
+	let itemID = "AA-000000";
+	console.log("latest item is:", latestItem);
+
+	if (latestItem.length > 0) {
+		itemID = generateItemID(latestItem[0].itemID);
+	}
+
+	let itemCreate = [];
+
+	body.itemList.map((item) => {
+		console.log("LOOP");
+		itemCreate.push({
 			itemID: itemID,
 			itemListID: itemListID,
 			itemName: item.name,
@@ -73,9 +84,27 @@ export default async function NewCustomerPawn(req, res) {
 			forAuction: false,
 			isRedeemed: false,
 		});
+		itemID = generateItemID(itemID);
+		// Item.create({
+		// 	itemID: itemID,
+		// 	itemListID: itemListID,
+		// 	itemName: item.name,
+		// 	itemType: item.type,
+		// 	image: item.image,
+		// 	itemCategory: "",
+		// 	price: 0,
+		// 	weight: 0,
+		// 	brand: "",
+		// 	model: "",
+		// 	description: "",
+		// 	forAuction: false,
+		// 	isRedeemed: false,
+		// })
 	});
+	console.log("ITEM CREATE IS:", itemCreate);
+	let items = await Item.insertMany(itemCreate);
 
-	await Transaction.create({
+	let newTransaction = await Transaction.create({
 		customerID: userID,
 		branchID: branchInfo.branchID,
 		clerkID: body.clerkID,
@@ -86,5 +115,15 @@ export default async function NewCustomerPawn(req, res) {
 		creationDate: new Date(),
 	});
 
-	res.json("good");
+	let priceHistory = await PriceHistory.create({
+		transactionID: newTransaction._id,
+		askPrice: body.askPrice,
+		appraisalPrice: 0,
+	});
+
+	if (user && newTransaction && itemListID && priceHistory && items) {
+		res.json("success");
+	} else {
+		res.json("error");
+	}
 }

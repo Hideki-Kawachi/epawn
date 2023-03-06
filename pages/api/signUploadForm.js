@@ -10,7 +10,6 @@ export default async function SignUploadForm(req, res) {
 	const signature = cloudinary.utils.api_sign_request(
 		{
 			folder: info.folder,
-			public_id: info.public_id,
 			timestamp: timestamp,
 			type: info.type,
 			upload_preset: info.upload_preset,

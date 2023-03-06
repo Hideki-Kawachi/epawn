@@ -16,38 +16,31 @@ function nextLetter(sequence) {
 	return newSeq;
 }
 
-export default async function generateItemID() {
+export default function generateItemID(latestItem) {
 	//must have dbConnect before calling
-	let latestItem = await Item.find({}).sort({ itemID: -1 }).limit(1);
 
-	console.log("latest item is:", latestItem);
-	let latestID;
-	if (latestItem.length == 0) {
-		latestID = "AA-000000";
-	} else {
-		latestID = latestItem[0].itemID;
-		let idSections = latestID.split("-");
-		let numSec = parseInt(idSections[1]);
+	let latestID = latestItem;
+	let idSections = latestID.split("-");
+	let numSec = parseInt(idSections[1]);
 
-		if (numSec < 999999) {
-			numSec++;
-			if (numSec < 10000) {
-				latestID = idSections[0] + "-00000" + numSec.toString();
-			} else if (numSec < 1000) {
-				latestID = idSections[0] + "-0000" + numSec.toString();
-			} else if (numSec < 100) {
-				latestID = idSections[0] + "-000" + numSec.toString();
-			} else if (numSec < 10) {
-				latestID = idSections[0] + "-00" + numSec.toString();
-			} else if (numSec < 100) {
-				latestID = idSections[0] + "-0" + numSec.toString();
-			} else {
-				latestID = idSections[0] + "-" + numSec.toString();
-			}
+	if (numSec < 999999) {
+		numSec++;
+		if (numSec < 10000) {
+			latestID = idSections[0] + "-00000" + numSec.toString();
+		} else if (numSec < 1000) {
+			latestID = idSections[0] + "-0000" + numSec.toString();
+		} else if (numSec < 100) {
+			latestID = idSections[0] + "-000" + numSec.toString();
+		} else if (numSec < 10) {
+			latestID = idSections[0] + "-00" + numSec.toString();
+		} else if (numSec < 100) {
+			latestID = idSections[0] + "-0" + numSec.toString();
 		} else {
-			latestID = nextLetter(idSections[0]) + "-000000";
+			latestID = idSections[0] + "-" + numSec.toString();
 		}
+	} else {
+		latestID = nextLetter(idSections[0]) + "-000000";
 	}
-
+	console.log("RETURNING LATEST ID", latestID);
 	return latestID;
 }
