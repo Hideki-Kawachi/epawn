@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Transaction from "../../schemas/transaction";
+import User from "../../schemas/user";
 import dbConnect from "../../utilities/dbConnect";
 
 export default async function NotifTable(req, res) {
@@ -14,6 +15,7 @@ export default async function NotifTable(req, res) {
 		// 	userInfo.userid
 		// );
 		let transactionData;
+		let customerData = await User.find({ isDisabled: false }).lean();
 		if (userInfo.role == "clerk") {
 			transactionData = await Transaction.find({
 				branchID: userInfo.branchid,
@@ -28,7 +30,24 @@ export default async function NotifTable(req, res) {
 			}).lean();
 		}
 
+		let notifData = [];
+		transactionData.forEach((transaction) => {
+			let customerInfo = customerData.find(
+				(customer) => customer.userID == transaction.customerID
+			);
+			notifData.push({
+				_id: transaction._id,
+				customerName: customerInfo.firstName + " " + customerInfo.lastName,
+				date: transaction.creationDate
+					.toDateString()
+					.substring(4, transaction.creationDate.length),
+				time: transaction.creationDate.toLocaleTimeString("en-US"),
+				transactionType: transaction.transactionType,
+				status: transaction.status,
+			});
+		});
+
 		await changeStream.close();
-		res.json(transactionData);
+		res.json(notifData);
 	});
 }

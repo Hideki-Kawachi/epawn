@@ -15,6 +15,7 @@ import Transaction from "../schemas/transaction";
 import EmployeeInfo from "../schemas/employeeInfo";
 import Branch from "../schemas/branch";
 import LoadingSpinner from "../components/loadingSpinner";
+import User from "../schemas/user";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {
@@ -32,6 +33,8 @@ export const getServerSideProps = withIronSessionSsr(
 			await dbConnect();
 
 			let transactionData;
+			let customerData = await User.find({ isDisabled: false }).lean();
+
 			if (req.session.userData.role == "clerk") {
 				transactionData = await Transaction.find({
 					branchID: req.session.userData.branchID,
@@ -46,11 +49,27 @@ export const getServerSideProps = withIronSessionSsr(
 				}).lean();
 			}
 
-			//console.log("TRANS DATA:", transactionData);
+			let notifData = [];
+			transactionData.forEach((transaction) => {
+				let customerInfo = customerData.find(
+					(customer) => customer.userID == transaction.customerID
+				);
+				notifData.push({
+					_id: transaction._id,
+					customerName: customerInfo.firstName + " " + customerInfo.lastName,
+					date: transaction.creationDate
+						.toDateString()
+						.substring(4, transaction.creationDate.length),
+					time: transaction.creationDate.toLocaleTimeString("en-US"),
+					transactionType: transaction.transactionType,
+					status: transaction.status,
+				});
+			});
+
 			return {
 				props: {
 					currentUser: req.session.userData,
-					notifData: JSON.parse(JSON.stringify(transactionData)),
+					notifData: JSON.parse(JSON.stringify(notifData)),
 				},
 			};
 		}
@@ -61,11 +80,11 @@ export const getServerSideProps = withIronSessionSsr(
 export default function Home({ currentUser, notifData }) {
 	const [showData, setShowData] = useState({});
 	//console.log("CURRENT USER IS:", currentUser);
-	//console.log("NOTIF DATA FROM SERVERSIDEPROPS IS:", notifData);
+	console.log("NOTIF DATA FROM SERVERSIDEPROPS IS:", notifData);
 
 	const roleShow = {
-		manager: <ManagerHome></ManagerHome>,
-		clerk: <ClerkHome></ClerkHome>,
+		manager: <ManagerHome notifData={notifData}></ManagerHome>,
+		clerk: <ClerkHome notifData={notifData}></ClerkHome>,
 	};
 
 	useEffect(() => {

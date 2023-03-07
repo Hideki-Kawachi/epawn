@@ -12,7 +12,7 @@ function NotificationTable({ data }) {
 		() => [
 			{
 				Header: "Transaction",
-				accessor: "transaction",
+				accessor: "transactionType",
 				disableGlobalFilter: true,
 			},
 			{ Header: "Customer Name", accessor: "customerName" },
