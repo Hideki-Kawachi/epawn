@@ -81,9 +81,12 @@ function NotificationTable({ data }) {
 					defaultValue={""}
 				>
 					<option value={""}>All</option>
-					<option value={"Pawn"}>Pawn</option>
-					<option value={"Renew"}>Renew</option>
-					<option value={"Redeem"}>Redeem</option>
+					<option value={"for appraisal"}>For Appraisal</option>
+					<option value={"for negoation"}>For Negotiation</option>
+					<option value={"for approval"}>For Approval</option>
+					<option value={"appraised"}>Appraised</option>
+					<option value={"pending"}>Pending</option>
+					<option value={"approved"}>Approved</option>
 				</select>
 			</div>
 			<table {...getTableProps()} className="w-3/4 text-base">
