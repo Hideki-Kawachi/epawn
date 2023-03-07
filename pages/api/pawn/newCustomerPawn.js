@@ -85,21 +85,6 @@ export default async function NewCustomerPawn(req, res) {
 			isRedeemed: false,
 		});
 		itemID = generateItemID(itemID);
-		// Item.create({
-		// 	itemID: itemID,
-		// 	itemListID: itemListID,
-		// 	itemName: item.name,
-		// 	itemType: item.type,
-		// 	image: item.image,
-		// 	itemCategory: "",
-		// 	price: 0,
-		// 	weight: 0,
-		// 	brand: "",
-		// 	model: "",
-		// 	description: "",
-		// 	forAuction: false,
-		// 	isRedeemed: false,
-		// })
 	});
 	console.log("ITEM CREATE IS:", itemCreate);
 	let items = await Item.insertMany(itemCreate);
@@ -121,7 +106,7 @@ export default async function NewCustomerPawn(req, res) {
 		appraisalPrice: 0,
 	});
 
-	if (user && newTransaction && itemListID && priceHistory && items) {
+	if (user && newTransaction && itemCreate && priceHistory && items) {
 		res.json("success");
 	} else {
 		res.json("error");

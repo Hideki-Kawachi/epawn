@@ -1,15 +1,18 @@
 import mongoose from "mongoose";
 
-const TransactionSchema = new mongoose.Schema({
-	customerID: { type: String, require: true },
-	branchID: { type: Number, require: true },
-	itemListID: { type: Number },
-	transactionType: { type: String, require: true },
-	clerkID: { type: String, require: true },
-	managerID: { type: String, require: true },
-	creationDate: { type: Date, require: true, default: new Date() },
-	status: { type: String },
-});
+const TransactionSchema = new mongoose.Schema(
+	{
+		customerID: { type: String, require: true },
+		branchID: { type: Number, require: true },
+		itemListID: { type: Number },
+		transactionType: { type: String, require: true },
+		clerkID: { type: String, require: true },
+		managerID: { type: String, require: true },
+		creationDate: { type: Date, require: true, default: new Date() },
+		status: { type: String },
+	},
+	{ timestamps: true }
+);
 
 let Transaction;
 try {

@@ -30,6 +30,14 @@ export default async function NotifTable(req, res) {
 			}).lean();
 		}
 
+		transactionData.sort((a, b) => {
+			if (a.updatedAt > b.updatedAt) {
+				return 1;
+			} else {
+				return -1;
+			}
+		});
+
 		let notifData = [];
 		transactionData.forEach((transaction) => {
 			let customerInfo = customerData.find(
@@ -38,16 +46,16 @@ export default async function NotifTable(req, res) {
 			notifData.push({
 				_id: transaction._id,
 				customerName: customerInfo.firstName + " " + customerInfo.lastName,
-				date: transaction.creationDate
+				date: transaction.updatedAt
 					.toDateString()
 					.substring(4, transaction.creationDate.length),
-				time: transaction.creationDate.toLocaleTimeString("en-US"),
+				time: transaction.updatedAt.toLocaleTimeString("en-GB"),
 				transactionType: transaction.transactionType,
 				status: transaction.status,
 			});
 		});
 
 		await changeStream.close();
-		res.json(notifData);
+		res.json(notifData.reverse());
 	});
 }

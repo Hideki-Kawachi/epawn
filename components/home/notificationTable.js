@@ -66,7 +66,7 @@ function NotificationTable({ data }) {
 				<span className="ml-5">Transaction: </span>
 				<select
 					className="h-fit"
-					onChange={(e) => setFilter("transaction", e.target.value)}
+					onChange={(e) => setFilter("transactionType", e.target.value)}
 					defaultValue={""}
 				>
 					<option value={""}>All</option>

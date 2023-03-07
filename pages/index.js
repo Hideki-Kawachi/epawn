@@ -49,6 +49,14 @@ export const getServerSideProps = withIronSessionSsr(
 				}).lean();
 			}
 
+			transactionData.sort((a, b) => {
+				if (a.updatedAt > b.updatedAt) {
+					return 1;
+				} else {
+					return -1;
+				}
+			});
+
 			let notifData = [];
 			transactionData.forEach((transaction) => {
 				let customerInfo = customerData.find(
@@ -57,10 +65,10 @@ export const getServerSideProps = withIronSessionSsr(
 				notifData.push({
 					_id: transaction._id,
 					customerName: customerInfo.firstName + " " + customerInfo.lastName,
-					date: transaction.creationDate
+					date: transaction.updatedAt
 						.toDateString()
 						.substring(4, transaction.creationDate.length),
-					time: transaction.creationDate.toLocaleTimeString("en-US"),
+					time: transaction.updatedAt.toLocaleTimeString("en-GB"),
 					transactionType: transaction.transactionType,
 					status: transaction.status,
 				});
@@ -69,7 +77,7 @@ export const getServerSideProps = withIronSessionSsr(
 			return {
 				props: {
 					currentUser: req.session.userData,
-					notifData: JSON.parse(JSON.stringify(notifData)),
+					notifData: JSON.parse(JSON.stringify(notifData.reverse())),
 				},
 			};
 		}
@@ -78,13 +86,11 @@ export const getServerSideProps = withIronSessionSsr(
 );
 
 export default function Home({ currentUser, notifData }) {
-	const [showData, setShowData] = useState({});
-	//console.log("CURRENT USER IS:", currentUser);
-	console.log("NOTIF DATA FROM SERVERSIDEPROPS IS:", notifData);
+	const [showData, setShowData] = useState(notifData);
 
 	const roleShow = {
-		manager: <ManagerHome notifData={notifData}></ManagerHome>,
-		clerk: <ClerkHome notifData={notifData}></ClerkHome>,
+		manager: <ManagerHome notifData={showData}></ManagerHome>,
+		clerk: <ClerkHome notifData={showData}></ClerkHome>,
 	};
 
 	useEffect(() => {
@@ -109,7 +115,7 @@ export default function Home({ currentUser, notifData }) {
 		} else {
 			let notifShow = await res.json();
 			console.log("NOTIF DATA BACK IS:", notifShow);
-			//setShowData(message);
+			setShowData(notifShow);
 
 			await waitNotif();
 		}
