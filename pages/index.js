@@ -7,7 +7,6 @@ import ManagerHome from "../components/home/managerHome";
 import NavBar from "../components/navigation/navBar";
 import dbConnect from "../utilities/dbConnect";
 import mongoose from "mongoose";
-import Test from "../schemas/test";
 import NotifTable from "./api/notifTable";
 import { withIronSessionSsr } from "iron-session/next";
 import { ironOptions } from "../utilities/config";

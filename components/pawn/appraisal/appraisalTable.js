@@ -1,3 +1,4 @@
+import { Router, useRouter } from "next/router";
 import React from "react";
 import {
 	useFilters,
@@ -32,9 +33,13 @@ function AppraisalTable({ columns, data }) {
 		useGlobalFilter,
 		usePagination
 	);
+	const router = useRouter();
 
-	function clickUser(userID) {
-		console.log("customer name", userID);
+	function openRow(rowData) {
+		router.push({
+			pathname: "/pawn/manager/appraisal/[transactionID]",
+			query: { transactionID: rowData.transactionID },
+		});
 	}
 
 	return (
@@ -64,7 +69,7 @@ function AppraisalTable({ columns, data }) {
 						return (
 							<tr
 								{...row.getRowProps()}
-								onClick={() => clickUser(row.cells[0].value)}
+								onClick={() => openRow(data[row.id])}
 								className="cursor-pointer hover:bg-green-100"
 							>
 								{row.cells.map((cell) => {

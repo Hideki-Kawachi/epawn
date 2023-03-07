@@ -7,7 +7,7 @@ import {
 	useTable,
 } from "react-table";
 
-function NotificationTable({ data }) {
+function NotificationTable({ role, data }) {
 	const columns = React.useMemo(
 		() => [
 			{
@@ -51,6 +51,14 @@ function NotificationTable({ data }) {
 		useSortBy,
 		usePagination
 	);
+
+	function openRow(rowData) {
+		if (role == "manager") {
+			console.log("MANAGER", rowData);
+		} else {
+			console.log("CLERK", rowData);
+		}
+	}
 
 	return (
 		<>
@@ -133,7 +141,7 @@ function NotificationTable({ data }) {
 						return (
 							<tr
 								{...row.getRowProps()}
-								onClick={() => console.log("CLICK ROW")}
+								onClick={() => openRow(data[row.id])}
 								className="cursor-pointer hover:bg-green-100"
 							>
 								{row.cells.map((cell) => {

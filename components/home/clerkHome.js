@@ -6,7 +6,7 @@ function ClerkHome({ notifData }) {
 	return (
 		<div id="main-content-area">
 			<p>CLERK HOME</p>
-			<NotificationTable data={notifData}></NotificationTable>
+			<NotificationTable role={"clerk"} data={notifData}></NotificationTable>
 		</div>
 	);
 }
