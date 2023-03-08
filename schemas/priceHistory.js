@@ -1,10 +1,13 @@
 import mongoose from "mongoose";
 
-const PriceHistorySchema = new mongoose.Schema({
-	transactionID: { type: String, require: true },
-	askPrice: Number,
-	appraisalPrice: Number,
-});
+const PriceHistorySchema = new mongoose.Schema(
+	{
+		transactionID: { type: String, require: true },
+		askPrice: Number,
+		appraisalPrice: Number,
+	},
+	{ timestamps: true }
+);
 
 let PriceHistory;
 try {

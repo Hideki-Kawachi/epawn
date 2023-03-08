@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
+import ItemTypeData from "../../tempData/itemType.json";
 
 function NewItemCard({ id, deleteItem, setItem }) {
-	const itemTypeList = ["ring", "earring", "watch"];
+	const itemTypeList = ItemTypeData;
 	const [itemName, setItemName] = useState("");
 	const [itemType, setItemType] = useState(itemTypeList[0]);
 	const [itemImage, setItemImage] = useState([]);
@@ -42,8 +43,8 @@ function NewItemCard({ id, deleteItem, setItem }) {
 						value={itemType}
 					>
 						{itemTypeList.map((itemType) => (
-							<option value={itemType} key={itemType}>
-								{itemType}
+							<option value={itemType.itemType} key={itemType.itemType}>
+								{itemType.itemType}
 							</option>
 						))}
 					</select>

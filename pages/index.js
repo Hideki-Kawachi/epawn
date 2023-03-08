@@ -94,7 +94,8 @@ export default function Home({ currentUser, notifData }) {
 
 	useEffect(() => {
 		waitNotif();
-	}, []);
+		console.log("ASKDL:");
+	}, [showData]);
 
 	async function waitNotif() {
 		let res = await fetch("/api/notifTable", {
