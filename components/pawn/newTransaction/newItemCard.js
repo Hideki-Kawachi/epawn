@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import ItemTypeData from "../../tempData/itemType.json";
+import ItemTypeData from "../../../utilities/dropdownValues/itemType.json";
 
 function NewItemCard({ id, deleteItem, setItem }) {
 	const itemTypeList = ItemTypeData;

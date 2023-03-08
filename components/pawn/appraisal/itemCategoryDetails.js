@@ -1,6 +1,34 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-function ItemCategoryDetails({ itemCategory }) {
+function ItemCategoryDetails({ itemCategory, itemDetails, setItemDetails }) {
+	const [addItemDetails, setAddItemDetails] = useState({});
+	const [weight, setWeight] = useState(0);
+	const [quantity, setQuantity] = useState(0);
+	const [color, setColor] = useState("");
+	const [purity, setPurity] = useState("");
+	const [brand, setBrand] = useState("");
+	const [model, setModel] = useState("");
+	const [description, setDescription] = useState("");
+	const [clarity, setClarity] = useState("");
+	const [carat, setCarat] = useState(0);
+	const [shape, setShape] = useState("");
+
+	function getWeight(weightInput) {
+		let numTest = /^\d+(\.\d{1,2})?$/;
+		if (Number.isNaN(weightInput)) {
+			console.log("NAN");
+			setWeight(0);
+		} else if (weightInput > 0) {
+			setWeight(parseInt(weightInput));
+		} else if (weightInput == 0) {
+			setWeight(0);
+		}
+	}
+
+	useEffect(() => {
+		console.log("weight is:", typeof weight);
+	}, [weight]);
+
 	const showCategory = {
 		Gold: (
 			<>
@@ -14,7 +42,11 @@ function ItemCategoryDetails({ itemCategory }) {
 						<span>Description:</span>
 					</div>
 					<div className="flex flex-col w-full gap-3">
-						<input type="number"></input>
+						<input
+							typeof="Number"
+							onChange={(e) => getWeight(e.target.value)}
+							value={weight}
+						></input>
 						<select></select>
 						<select></select>
 						<input type="text"></input>

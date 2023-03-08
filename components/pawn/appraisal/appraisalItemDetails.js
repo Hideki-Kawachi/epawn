@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import ItemTypeData from "../../tempData/itemType.json";
-import ItemCategoryData from "../../tempData/itemCategory.json";
+import ItemTypeData from "../../../utilities/dropdownValues/itemType.json";
+import ItemCategoryData from "../../../utilities/dropdownValues/itemCategory.json";
 import ItemCategoryDetails from "./itemCategoryDetails";
 
 function AppraisalItemsDetails({ itemDetails, setItemDetails }) {
@@ -117,6 +117,8 @@ function AppraisalItemsDetails({ itemDetails, setItemDetails }) {
 					<hr className="border-2"></hr>
 					<ItemCategoryDetails
 						itemCategory={itemCategory}
+						itemDetails={itemDetails}
+						setItemDetails={setItemDetails}
 					></ItemCategoryDetails>
 				</div>
 			) : (
