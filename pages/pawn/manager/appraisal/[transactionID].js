@@ -75,12 +75,12 @@ function AppraisalTransactionID({
 	customerData,
 }) {
 	const [itemList, setItemList] = useState(itemData);
-	const [appraisalPrice, setAppraisalPrice] = useState("0.00");
+	const [appraisalPrice, setAppraisalPrice] = useState(0);
 	const [itemShow, setItemShow] = useState();
-	console.log("transaction Data:", transactionData);
-	console.log("price history:", priceHistory);
-	console.log("item data:", itemData);
-	console.log("customer data:", customerData);
+	// console.log("transaction Data:", transactionData);
+	// console.log("price history:", priceHistory);
+	// console.log("item data:", itemData);
+	// console.log("customer data:", customerData);
 
 	function deleteItem(id) {
 		let newList = itemList.filter((items) => {
@@ -102,7 +102,7 @@ function AppraisalTransactionID({
 			if (item.itemID == updatedItem.itemID) {
 				item.itemName = updatedItem.itemName;
 				item.itemType = updatedItem.itemType;
-				item.itemPrice = updatedItem.itemPrice;
+				item.price = updatedItem.price;
 			}
 			return item;
 		});
@@ -110,8 +110,22 @@ function AppraisalTransactionID({
 	}
 
 	useEffect(() => {
-		console.log("ITEM SHOW IS:", itemShow);
-	}, [itemShow]);
+		let sum = 0;
+		itemList.map((item) => {
+			sum += item.price;
+		});
+		setAppraisalPrice(sum);
+	}, [itemList]);
+
+	function cancelForm() {
+		console.log("CANCEL FORM");
+	}
+
+	function submitForm() {
+		console.log("SUBMIT FORM");
+		console.log("item list:", itemList);
+		console.log("price:", appraisalPrice);
+	}
 
 	return (
 		<>
@@ -140,7 +154,7 @@ function AppraisalTransactionID({
 									selectItem={selectItem}
 									itemName={item.itemName}
 									itemType={item.itemType}
-									itemPrice={item.itemPrice}
+									price={item.price}
 								></AppraisalItemListCard>
 							))}
 						</div>
@@ -161,6 +175,24 @@ function AppraisalTransactionID({
 								setItemDetails={setItemDetails}
 							></AppraisalItemsDetails>
 						</div>
+					</div>
+				</div>
+				<div className="mt-5 flex flex-row ml-[1180px]">
+					<div>
+						<button
+							className="px-10 mx-2 my-5 text-base text-white bg-red-300"
+							onClick={cancelForm}
+						>
+							Cancel
+						</button>
+					</div>
+					<div>
+						<button
+							className="px-10 mx-2 my-5 text-base text-white bg-green-300"
+							onClick={submitForm}
+						>
+							Submit
+						</button>
 					</div>
 				</div>
 			</div>

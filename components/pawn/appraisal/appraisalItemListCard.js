@@ -5,7 +5,7 @@ function AppraisalItemListCard({
 	deleteItem,
 	selectItem,
 	itemName,
-	itemPrice,
+	price,
 	itemType,
 }) {
 	return (
@@ -22,7 +22,7 @@ function AppraisalItemListCard({
 				<div className="flex flex-col w-full">
 					<span>{itemName}</span>
 					<span>{itemType}</span>
-					<span>{itemPrice ? itemPrice : "0"}</span>
+					<span>{price ? price : "0"}</span>
 				</div>
 				<button className="x-button" onClick={() => deleteItem(itemID)}>
 					<svg
