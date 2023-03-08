@@ -6,6 +6,8 @@ import Header from "../../../components/header";
 import { withIronSessionSsr } from "iron-session/next";
 import { ironOptions } from "../../../utilities/config";
 
+import MockUsers from "../../../components/users/User_MOCK_DATA.json";
+
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {
 		if (!req.session.userData) {
@@ -47,7 +49,23 @@ function Edit({ currentUser }) {
 			<NavBar currentUser={currentUser}></NavBar>
 			<Header currentUser={currentUser}></Header>
 
+			<div id="main-content-area">
+			<div> hello </div>
+
 			<div> Details about {userid} </div>
+
+			{MockUsers.map((mockUser) => {
+
+					//Modify this to String. mockUser.userID == userid.toString()
+					if (mockUser.userID == Number(userid)) {
+						return (
+							<div> {mockUser.lastName} </div>
+						);
+					}
+			})}
+
+			</div>
+
 		</>
 	);
 }

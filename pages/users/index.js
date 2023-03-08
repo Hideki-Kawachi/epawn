@@ -105,9 +105,6 @@ function Users({ currentUser }) {
 				<div className="relative w-full m-10 bg-white h-60">
 					<UserCreate></UserCreate>
 
-					<button className="absolute bottom-5 right-5 bg-[#14C6A5] ">
-						<p>Create User</p>
-					</button>
 				</div>
 			</div>
 		</>
