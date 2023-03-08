@@ -1,7 +1,7 @@
 import React from "react";
 import Close from "../closebutton";
 
-function PawnDetails({trigger, setTrigger}) {
+function PawnDetails({trigger, setTrigger, itemName, itemType, itemPrice, itemID}) {
 
     function closeModal() {
       setTrigger(!trigger);
@@ -28,11 +28,11 @@ function PawnDetails({trigger, setTrigger}) {
                 <p>Price: </p>
               </div>
               <div className="ml-5 text-left">
-                <p>Patek Philippe Worldtimer Guilloché</p>
-                <p>Watches </p>
-                <p>AA-123456</p>
+                <p>{itemName}</p>
+                <p>{itemType} </p>
+                <p>{itemID}</p>
                 <p>WatchPic.jpg </p>
-                <p>Php 10,000.00</p>
+                <p>Php {itemPrice}</p>
               </div>
             </div>
             <hr className="h-px my-5 bg-gray-500 border-0" />

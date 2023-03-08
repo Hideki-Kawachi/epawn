@@ -11,6 +11,9 @@ import ItemCard from "../../../components/itemcard";
 import { withIronSessionSsr } from "iron-session/next";
 import { ironOptions } from "../../../utilities/config";
 import Delete from "../../../components/modals/delWarning";
+import dbConnect from "../../../utilities/dbConnect";
+import PawnTicket from "../../../schemas/pawnTicket";
+
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {
@@ -20,8 +23,23 @@ export const getServerSideProps = withIronSessionSsr(
 				props: {},
 			};
 		} else if (req.session.userData.role == "clerk") {
+            await dbConnect();
+
+            const pawnInfo = await PawnTicket.findOne({},{
+              pawnTicketID: 1,
+              transactionID: 1,
+              customerID: 1,
+              loanDate: 1,
+              maturityDate: 1,
+              expiryDate: 1,
+              loanAmount: 1,
+              isInactive: 1
+            });
+
+            let pawnTicket = JSON.stringify(pawnInfo);
+
 			return {
-				props: { currentUser: req.session.userData },
+				props: { currentUser: req.session.userData, pawnTicket },
 			};
 		} else if (req.session.userData.role == "customer") {
 			return {
@@ -37,15 +55,18 @@ export const getServerSideProps = withIronSessionSsr(
 	ironOptions
 );
 
-function RedeemClerk({ currentUser }) {
+function RedeemClerk({ currentUser, pawnTicket}) {
 	// Modals
 	const [submitModal, setSubmitOpen] = useState(false); //Submit
 	const [cancelModal, setCancelOpen] = useState(false); //Cancel
-	const [PTNumber, setPTNumber] = useState("A-123456");
 	const [checkedBoxes, setCheckedBoxes] = useState([]);
   const [deleteModal, setDeleteModal] = useState(false)
   let data = JSON.stringify(ItemMockData);
-  const [itemList, setitemList] = useState(JSON.parse(data))
+
+  
+  const [itemList, setitemList] = useState(JSON.parse(data)) //Items Mock Data
+
+  //Array for Redeem
   const [redeem, setRedeem] = useState([]);
   const [redeemArray, setRedeemArray] = useState([]);
   const [deleteIndex, setDeleteIndex] = useState();
@@ -53,7 +74,21 @@ function RedeemClerk({ currentUser }) {
   const [deleteID, setDeleteId] = useState();
   const [deleteType, setDeleteType] = useState();
   const [deletePrice, setDeletePrice] = useState();
+  
+  //Pawn Ticket Details
+  const [PTNumber, setPTNumber] = useState(""); //test A-123456
+  const [name, setName] = useState("N/A");
+  const [contactno, setContactNo] = useState("N/A");
+  const [address, setAddress] = useState("N/A");
+  const [loanDate, setLoanDate] = useState("N/A");
+  const [matDate, setMatDate] = useState("N/A");  
+  const [expDate, setExpDate] = useState("N/A");
+  const [branch, setBranch] = useState("N/A");
 
+
+  const PT = JSON.parse(pawnTicket);
+ // const 
+//manage modals
 	function submitForm() {
 		setSubmitOpen(true);
 	}
@@ -62,6 +97,9 @@ function RedeemClerk({ currentUser }) {
 		setCancelOpen(true);
 	}
 
+  function searchPawnTicket(ptnumber){
+    setPTNumber(ptnumber)
+  }
   function removeModal(index, id, name, type, price){
     setDeleteIndex(index)
     setDeleteModal(true)
@@ -70,7 +108,7 @@ function RedeemClerk({ currentUser }) {
     setDeleteType(type)
     setDeletePrice(price)
   }
-
+//Manages Add to Redeem Cart
   function removeItem(){
     redeemArray.splice(deleteIndex, 1);
     itemList.splice(0, 0, {
@@ -124,7 +162,7 @@ function addToRedeem() {
       setRedeemArray(redeem);
     }, [redeem]);
 
-
+//manage cancel modal
 	function cancelContentShow() {
 		return (
 			<>
@@ -134,7 +172,40 @@ function addToRedeem() {
 			</>
 		);
 	}
-  
+  // BACKEND TO RETRIEVE PAWN TICKET
+  	useEffect(() => {
+      fetch("/api/" + PTNumber, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          // console.log(data)
+          if(data != null){
+            setName(data.customerID); //temporary
+            setContactNo("0917 327 5891"); //temporary
+            setAddress("196 P. Zamora St. Caloocan City"); //temporary
+            setLoanDate(data.loanDate);
+            setMatDate(data.maturityDate);
+            setExpDate(data.expiryDate);
+            setBranch("R Raymundo Branch"); //temporary
+          }
+          else {
+            setName("N/A"); //temporary
+            setContactNo("N/A"); //temporary
+            setAddress("N/A"); //temporary
+            setLoanDate("N/A");
+            setMatDate("N/A");
+            setExpDate("N/A");
+            setBranch("N/A"); //temporary
+          }
+        });
+
+    }, [PTNumber]);
+
 	return (
     <>
       <NavBar currentUser={currentUser}></NavBar>
@@ -168,7 +239,18 @@ function addToRedeem() {
           {/* <a href="/redeem/manager">Temporary button to Manager Redeem</a> */}
         </p>
         <div className="flex">
-          <DetailsCardClerk></DetailsCardClerk>
+          <DetailsCardClerk
+            redeem={redeemArray}
+            customerName={name}
+            contactNumber={contactno}
+            address={address}
+            loanDate={loanDate}
+            maturityDate={matDate}
+            expiryDate={expDate}
+            branch={branch}
+            search={searchPawnTicket}
+            data = {data}
+          />
         </div>
 
         {/* Second Half */}
@@ -187,6 +269,7 @@ function addToRedeem() {
                 <div className="flex flex-row" key={items.ItemID}>
                   <ItemCard
                     key={items.ItemID}
+                    itemID={items.ItemID}
                     itemName={items.Name}
                     itemType={items.Type}
                     itemPrice={items.Price}
@@ -255,6 +338,7 @@ function addToRedeem() {
                     <div className="flex flex-row" key={index}>
                       <ItemCard
                         key={items.itemID}
+                        itemID={items.itemID}
                         itemName={items.itemName}
                         itemType={items.itemType}
                         itemPrice={items.itemPrice}
@@ -263,7 +347,13 @@ function addToRedeem() {
                         <button
                           className="x-button"
                           onClick={() =>
-                            removeModal(index, items.itemID, items.itemName, items.itemType, items.itemPrice)
+                            removeModal(
+                              index,
+                              items.itemID,
+                              items.itemName,
+                              items.itemType,
+                              items.itemPrice
+                            )
                           }
                         >
                           <svg

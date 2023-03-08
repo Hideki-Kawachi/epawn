@@ -1,25 +1,101 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import Modal from "react-modal";
 import AuthorizedRep from "../modals/authorizedRep";
 import CustomerDetails from "../modals/customerDetails"; 
 import PawnHistory from "../modals/pawnHistory";
-function DetailsCardClerk() {
+import dayjs from "dayjs";
+
+function DetailsCardClerk({redeem, customerName, contactNumber, address, loanDate, maturityDate, expiryDate, branch, search}) {
   const [isOriginal, setOriginal] = useState("original");
   const [repModal, setRepModal] = useState(false); 
   const [customerModal, setCustomerModal] = useState(false);
   const [historyModal, setHistoryModal] = useState(false);
+  const [otherCharges, setOtherCharges] = useState(0);
+  const [loanAmount, setLoan] = useState(10000)
+  const [newloanAmount, setNewLoanAmount] = useState(1000)
+
+
   function repOpen(){
     setRepModal(true);
   }
 
-    function customerOpen() {
+  function customerOpen() {
       setCustomerModal(true);
-    }
+  }
 
-    function historyOpen() {
-      setHistoryModal(true);
-    }
+  function historyOpen() {
+    setHistoryModal(true);
+  }
+  
+  function searchPT(pawnticketID){
+    search(pawnticketID)
+  }
 
+    
+  function getInterest(loan){
+    //plan: multiply loan * 0.035 with month diff
+    if(loanDate == "N/A" || maturityDate == "N/A")
+      return "N/A"
+    else{
+      const date1 = dayjs(loanDate, "MM/DD/YYYY");
+      const date2 = dayjs(maturityDate, "MM/DD/YYYY");
+
+      const diffInMonths = date2.diff(date1, "month");
+
+      console.log(
+        diffInMonths +
+          " months and " +
+          convertFloat(loan * 0.035 * diffInMonths)
+      );
+      return convertFloat(loan * 0.035 * diffInMonths);
+    }
+  }
+
+  function getAdvInterest(newLoan){
+  if (loanDate == "N/A" || maturityDate == "N/A") 
+    return "N/A"
+  else
+    return convertFloat(newLoan * 0.035)
+  }
+
+  function getTotalInterest(int, advint){
+      if (loanDate == "N/A" || maturityDate == "N/A") 
+        return "N/A";
+      else 
+        return convertFloat(Number(int) + Number(advint));
+  }
+
+  function convertFloat(number) {
+    return Number(number).toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  }
+
+  function convertDate(date){
+    if(date == "N/A")
+      return "N/A"
+    else {
+      const dt = new Date(date);
+      console.log(dt);
+      return dayjs(dt).format("MM/DD/YYYY");
+    };
+  }
+
+  function getPartialPayment(loan, amount){
+    return convertFloat()
+  }
+  
+  function getTotalRedeem(redeemList){
+    var total = 0;
+
+    redeemList.forEach((item) => {
+       total += Number(item.itemPrice)
+       //console.log("total is " + total + " while itemPrice is " + item.itemPrice)
+    });
+
+    return convertFloat(total)
+  }
 
   return (
     <>
@@ -44,7 +120,10 @@ function DetailsCardClerk() {
         {/* Left Side of the Card (Details) */}
         <div className="m-10 ">
           <span className="font-bold pr-7">PT Number:</span>
-          <input className="border rounded-md stroke-gray-500 px-3" />
+          <input
+            className="border rounded-md stroke-gray-500 px-3"
+            onChange={(e) => searchPT(e.target.value)}
+          />
           <p className="text-sm text-gray-300 pl-[163px]">Format: X-XXXX </p>
 
           <hr className="h-px my-8 bg-gray-500 border-0" />
@@ -79,11 +158,11 @@ function DetailsCardClerk() {
               <p className="">Address:</p>
             </div>
             <div className="text-left ml-5">
-              <p className="">Joseph L. Dela Cruz</p>
-              <p className="">09175301700</p>
+              <p className="">{customerName}</p>
+              <p className="">{contactNumber}</p>
               <p className="max-w-md">
                 {/* Used to make long address break line */}
-                One Archers Residences, Taft Ave, Malate, Metro Manila
+                {address}
               </p>
             </div>
           </div>
@@ -152,10 +231,10 @@ function DetailsCardClerk() {
               <p className="">Branch:</p>
             </div>
             <div className="text-left ml-5">
-              <p className="">12/09/2022</p>
-              <p className="">01/09/2022</p>
-              <p className="">02/09/2022</p>
-              <p className="">Sta. Ana, Manila</p>
+              <p className="">{convertDate(loanDate)}</p>
+              <p className="">{convertDate(maturityDate)}</p>
+              <p className="">{convertDate(expiryDate)}</p>
+              <p className="">{branch}</p>
             </div>
           </div>
         </div>
@@ -170,7 +249,7 @@ function DetailsCardClerk() {
                 <p>Adv. Interest:</p>
                 <p>Total Interest:</p>
                 <p>Penalties (1%):</p>
-                <p>Other Charges:</p>
+                {/* <p>Other Charges:</p> */}
                 <p>Total Items for Redemption:</p>
                 <p>Partial Payments:</p>
                 <p>Amount Paid:</p>
@@ -181,26 +260,30 @@ function DetailsCardClerk() {
               </div>
               <div className="text-right ml-10 pr-10 min-w-fit">
                 <br />
-                <p> Php 3,203.50 </p>
-                <p> 3,203.50 </p>
+                <p> Php {getInterest(loanAmount)} </p>
+                <p> {getAdvInterest(newloanAmount)} </p>
               </div>
               <div className="text-right min-w-fit">
-                <p className="font-bold mr-3">Php 95,000.00</p>
+                <p className="font-bold mr-3">Php {convertFloat(loanAmount)}</p>
                 <br />
                 <br />
-                <p className="mr-3">6,528.50</p>
+                <p className="mr-3">
+                  {getTotalInterest(getInterest(loanAmount), getAdvInterest(newloanAmount))}
+                </p>
                 <p className="mr-3">0.00</p>
-                <p>
+                {/* <p>
                   <input
                     type="number"
                     className="text-right border rounded-md stroke-gray-500 px-3 w-40 mb-1"
                   />
-                </p>
-                <p className="mr-3">0.00</p>
+                </p> */}
+                <p className="mr-3">{getTotalRedeem(redeem)}</p>
                 <p className="mr-0.5">(3,471.50)</p>
                 <p className="mr-3">95,000.00</p>
                 <hr className="my-3" />
-                <p className="font-bold mr-3">Php 95,000.00</p>
+                <p className="font-bold mr-3">
+                  Php {convertFloat(newloanAmount)}
+                </p>
               </div>
             </div>
           </div>

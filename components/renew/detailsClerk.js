@@ -3,7 +3,7 @@ import Modal from "react-modal";
 import AuthorizedRep from "../modals/authorizedRep";
 import CustomerDetails from "../modals/customerDetails";
 import PawnHistory from "../modals/pawnHistory";
-function DetailsCardRenewClerk() {
+function DetailsCardRenewClerk({customerName, contactNumber}) {
   const [isOriginal, setOriginal] = useState("original");
   const [repModal, setRepModal] = useState(false); 
   const [customerModal, setCustomerModal] = useState(false);
@@ -78,8 +78,8 @@ function DetailsCardRenewClerk() {
               <p className="">Address:</p>
             </div>
             <div className="text-left ml-5">
-              <p className="">Joseph L. Dela Cruz</p>
-              <p className="">09175301700</p>
+              <p className="">{customerName}</p>
+              <p className="">{contactNumber}</p>
               <p className="max-w-md">
                 {/* Used to make long address break line */}
                 One Archers Residences, Taft Ave, Malate, Metro Manila

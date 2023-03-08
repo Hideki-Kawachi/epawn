@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import Modal from "react-modal";
 import PawnDetails
  from "./modals/pawnDetails";
-function ItemCard({itemName, itemType, itemPrice}) {
+function ItemCard({itemID, itemName, itemType, itemPrice}) {
   const [pawnModal, setPawnOpen] = useState(false); //View Pawn Item Detials
 
 
@@ -10,6 +10,12 @@ function ItemCard({itemName, itemType, itemPrice}) {
     setPawnOpen(true)
   }
   
+  function convertFloat(number){
+    return Number(number).toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  }
 
   return (
     <div className="bg-light shadow-md flex font-nunito rounded-lg h-fit m-5">
@@ -19,7 +25,8 @@ function ItemCard({itemName, itemType, itemPrice}) {
           setTrigger={setPawnOpen}
           itemName={itemName}
           itemType={itemType}
-          itemPrice={itemPrice}
+          itemPrice={convertFloat(itemPrice)}
+          itemID={itemID}
         />
       </Modal>
 
@@ -29,12 +36,16 @@ function ItemCard({itemName, itemType, itemPrice}) {
           {itemName}
         </p>
         <p>
+          <b>ID: </b>
+          {itemID}
+        </p>
+        <p>
           <b>Type: </b>
           {itemType}
         </p>
         <p>
           <b>Price: </b>
-          {itemPrice}
+          Php {convertFloat(itemPrice)}
         </p>
       </div>
       <div className="mt-5 mr-5">
