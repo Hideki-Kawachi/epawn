@@ -40,7 +40,10 @@ export const getServerSideProps = withIronSessionSsr(
 					clerkID: req.session.userData.userID,
 					status: { $ne: "Done" },
 				}).lean();
-			} else if (req.session.userData.role == "manager") {
+			} else if (
+				req.session.userData.role == "manager" ||
+				req.session.userData.role == "admin"
+			) {
 				transactionData = await Transaction.find({
 					branchID: req.session.userData.branchID,
 					managerID: req.session.userData.userID,
