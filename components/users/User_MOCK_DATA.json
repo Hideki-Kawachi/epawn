@@ -1,11 +1,5 @@
-[{"userID":1,"lastName":"Bicheno","firstName":"Antonetta","roleName":"Supervisor","disabled":true},
-{"userID":2,"lastName":"Nunns","firstName":"Caryl","roleName":"Estimator","disabled":false},
-{"userID":3,"lastName":"Rozycki","firstName":"Wini","roleName":"Construction Expeditor","disabled":false},
-{"userID":4,"lastName":"Wathall","firstName":"Savina","roleName":"Construction Foreman","disabled":false},
-{"userID":5,"lastName":"Bickerton","firstName":"Karolina","roleName":"Construction Manager","disabled":true},
-{"userID":6,"lastName":"Phelip","firstName":"Clare","roleName":"Engineer","disabled":true},
-{"userID":7,"lastName":"McGettrick","firstName":"Rutledge","roleName":"Construction Expeditor","disabled":true},
-{"userID":8,"lastName":"Baterip","firstName":"Hugh","roleName":"Construction Foreman","disabled":false},
-{"userID":9,"lastName":"Garrould","firstName":"Lana","roleName":"Electrician","disabled":false},
-{"userID":10,"lastName":"Upham","firstName":"Germayne","roleName":"Subcontractor","disabled":false},
-{"userID":1000,"lastName":"Punt","firstName":"Vidovic","roleName":"Supervisor","disabled":true}]
+[{"userID":"OM-WU","firstName":"Cissy","lastName":"Ledur","password":"p8TqlLq8","roleName":"Construction Manager","isDisabled":false},
+{"userID":"MX-MEX","firstName":"Bennett","lastName":"Benaine","password":"XfNGbEEpJl1","roleName":"Project Manager","isDisabled":true},
+{"userID":"BR-BA","firstName":"Job","lastName":"Ingerfield","password":"OzEwLswai","roleName":"Construction Manager","isDisabled":false},
+{"userID":"AU-QLD","firstName":"Willette","lastName":"Brabben","password":"O9rswnA25ws","roleName":"Construction Worker","isDisabled":true},
+{"userID":"KE-300","firstName":"Dorene","lastName":"Favel","password":"LsVhyQXtSjWY","roleName":"Project Manager","isDisabled":false}]

@@ -7,13 +7,13 @@ function UserCard({
 	lastName,
 	firstName,
 	roleName,
-	disabled,
+	isDisabled,
 	setEditing,
 	setViewing, }) 
 	{
 
 	function displayStatus(){
-		if (disabled) {
+		if (isDisabled) {
 			return (
 				<svg width="30%" height="80%"
 				viewBox="0 0 24 24"

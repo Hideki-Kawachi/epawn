@@ -58,6 +58,8 @@ function Users({ currentUser }) {
 		<>
 			<NavBar currentUser={currentUser}></NavBar>
 			<Header currentUser={currentUser}></Header>
+
+			
 			<div id="main-content-area">
 				<div className="flex items-center justify-center w-1/4 gap-2 my-5 text-base font-nunito">
 					<span className="text-base">Search: </span>
@@ -96,7 +98,7 @@ function Users({ currentUser }) {
 								lastName={mockUser.lastName}
 								roleName={mockUser.roleName}
 								userID={mockUser.userID}
-								disabled={mockUser.disabled}
+								isDisabled={mockUser.isDisabled}
 							></UserCard>
 						);
 					})}

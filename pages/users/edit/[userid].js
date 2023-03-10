@@ -5,6 +5,7 @@ import NavBar from "../../../components/navigation/navBar";
 import Header from "../../../components/header";
 import { withIronSessionSsr } from "iron-session/next";
 import { ironOptions } from "../../../utilities/config";
+import UserEdit from "../../../components/users/UserEdit";
 
 import MockUsers from "../../../components/users/User_MOCK_DATA.json";
 
@@ -57,9 +58,17 @@ function Edit({ currentUser }) {
 			{MockUsers.map((mockUser) => {
 
 					//Modify this to String. mockUser.userID == userid.toString()
-					if (mockUser.userID == Number(userid)) {
+					if (mockUser.userID == userid) {
 						return (
-							<div> {mockUser.lastName} </div>
+							<UserEdit
+								key={mockUser.userID}
+								fName={mockUser.firstName}
+								lName={mockUser.lastName}
+								rName={mockUser.roleName}
+								uID={mockUser.userID}
+								pass={mockUser.userID}
+								disabledTrue={mockUser.isDisabled}
+							/>
 						);
 					}
 			})}
