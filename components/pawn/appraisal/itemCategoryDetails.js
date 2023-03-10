@@ -1,4 +1,10 @@
 import React, { useEffect, useState } from "react";
+import GoldColorValues from "../,,/../../../utilities/dropdownValues/goldColor.json";
+import GoldPurityValues from "../,,/../../../utilities/dropdownValues/goldPurity.json";
+import PlatinumPurityValues from "../,,/../../../utilities/dropdownValues/platinumPurity.json";
+import DiamondClarityValues from "../,,/../../../utilities/dropdownValues/diamondClarity.json";
+import DiamondColorValues from "../,,/../../../utilities/dropdownValues/diamondColor.json";
+import DiamondShapeValues from "../,,/../../../utilities/dropdownValues/diamondShape.json";
 
 function ItemCategoryDetails({ itemCategory, itemDetails, setItemDetails }) {
 	const [addItemDetails, setAddItemDetails] = useState({});
@@ -47,8 +53,20 @@ function ItemCategoryDetails({ itemCategory, itemDetails, setItemDetails }) {
 							onChange={(e) => getWeight(e.target.value)}
 							value={weight}
 						></input>
-						<select></select>
-						<select></select>
+						<select>
+							{GoldColorValues.map((value) => (
+								<option key={value.goldColor} value={value.goldColor}>
+									{value.goldColor}
+								</option>
+							))}
+						</select>
+						<select>
+							{GoldPurityValues.map((value) => (
+								<option key={value.goldPurity} value={value.goldPurity}>
+									{value.goldPurity}
+								</option>
+							))}
+						</select>
 						<input type="text"></input>
 						<input type="text"></input>
 						<input type="text"></input>
@@ -68,7 +86,13 @@ function ItemCategoryDetails({ itemCategory, itemDetails, setItemDetails }) {
 					</div>
 					<div className="flex flex-col w-full gap-3">
 						<input type="number"></input>
-						<select></select>
+						<select>
+							{PlatinumPurityValues.map((value) => (
+								<option key={value.platinumPurity} value={value.platinumPurity}>
+									{value.platinumPurity}
+								</option>
+							))}
+						</select>
 						<input type="text"></input>
 						<input type="text"></input>
 						<input type="text"></input>
@@ -90,10 +114,28 @@ function ItemCategoryDetails({ itemCategory, itemDetails, setItemDetails }) {
 					</div>
 					<div className="flex flex-col w-full gap-3">
 						<input type="number"></input>
-						<select></select>
-						<select></select>
-						<select></select>
-						<select></select>
+						<select>
+							{DiamondClarityValues.map((value) => (
+								<option key={value.diamondClarity} value={value.diamondClarity}>
+									{value.diamondClarity}
+								</option>
+							))}
+						</select>
+						<select>
+							{DiamondColorValues.map((value) => (
+								<option key={value.diamondColor} value={value.diamondColor}>
+									{value.diamondColor}
+								</option>
+							))}
+						</select>
+						<input type="number"></input>
+						<select>
+							{DiamondShapeValues.map((value) => (
+								<option key={value.diamondShape} value={value.diamondShape}>
+									{value.diamondShape}
+								</option>
+							))}
+						</select>
 						<input type="number"></input>
 						<input type="text"></input>
 					</div>
