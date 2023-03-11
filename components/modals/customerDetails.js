@@ -1,6 +1,6 @@
 import Close from "../closebutton";
 import Image from "next/image";
-function CustomerDetails({ trigger, setTrigger }) {
+function CustomerDetails({ trigger, setTrigger, customerInfo, name }) {
   function closeModal() {
     setTrigger(!trigger);
   }

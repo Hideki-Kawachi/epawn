@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect} from "react";
 import Header from "../../../components/header";
 import NavBar from "../../../components/navigation/navBar";
 import DetailsCardClerk from "../../../components/redeem/detailsClerk";
@@ -10,7 +10,6 @@ import ItemMockData from "./ITEMS_MOCK_DATA";
 import ItemCard from "../../../components/itemcard";
 import { withIronSessionSsr } from "iron-session/next";
 import { ironOptions } from "../../../utilities/config";
-import Delete from "../../../components/modals/delWarning";
 import dbConnect from "../../../utilities/dbConnect";
 
 
@@ -48,7 +47,7 @@ function RedeemClerk({ currentUser}) {
   let data = JSON.stringify(ItemMockData); //Items Mock Data
   
   //Item List Array
-  const [itemList, setitemList] = useState([])
+  const [itemList, setitemList] = useState(["N/A"])
   //Pawn Ticket Details
   const [PTNumber, setPTNumber] = useState(""); //test A-123456
   const [name, setName] = useState("N/A");
@@ -58,7 +57,8 @@ function RedeemClerk({ currentUser}) {
   const [matDate, setMatDate] = useState("N/A");  
   const [expDate, setExpDate] = useState("N/A");
   const [branch, setBranch] = useState("N/A");
-
+  const [customerID, setCustomerID] = useState("N/A")
+  const [customerDetails, setCusDetails] = useState(["N/A"])
 
   //Item List Backend States
   const [itemListID, setItemListID] = useState("")
@@ -102,7 +102,7 @@ function RedeemClerk({ currentUser}) {
         .then((data) => {
           // console.log(data)
           if(data != null){
-            setName(data.customerID); //temporary
+            setCustomerID(data.customerID); //temporary
             setTransactionID(data.transactionID)
             setContactNo("0917 327 5891"); //temporary
             setAddress("196 P. Zamora St. Caloocan City"); //temporary
@@ -172,6 +172,48 @@ function RedeemClerk({ currentUser}) {
         });
     }}, [itemListID]);
 
+      // BACKEND TO RETRIEVE CUSTOMER NAME USING USER ID
+  	useEffect(() => {
+      if(customerID != "N/A"){
+      fetch("/api/users/" + customerID, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((user) => {
+          // console.log(data)
+          if(user != null){
+            // console.log(JSON.stringify(info))
+            setName(user.firstName + " " + user.middleName + " " + user.lastName)
+          }
+        });
+    }}, [customerID]);
+
+    
+  // BACKEND TO RETRIEVE CUSTOMER DETAILS WITH USERID
+  	useEffect(() => {
+      if(customerID != "N/A"){
+      fetch("/api/users/customers/" + customerID, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((customer) => {
+          // console.log(data)
+          if(customer!= null){
+            // console.log(JSON.stringify(info))
+         //   let cDetails = JSON.stringify(customer)
+            setCusDetails(customer)
+          }
+        });
+    }}, [customerID]);
+
 	return (
     <>
       <NavBar currentUser={currentUser}></NavBar>
@@ -198,8 +240,6 @@ function RedeemClerk({ currentUser}) {
           <DetailsCardClerk
             redeem={[]}
             customerName={name}
-            contactNumber={contactno}
-            address={address}
             loanDate={loanDate}
             maturityDate={matDate}
             expiryDate={expDate}
@@ -207,6 +247,7 @@ function RedeemClerk({ currentUser}) {
             search={searchPawnTicket}
             data = {data}
             mode = {"search"}
+            customer = {customerDetails}
           />
         </div>
 

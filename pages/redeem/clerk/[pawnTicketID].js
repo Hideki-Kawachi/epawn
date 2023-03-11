@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect} from "react";
 import Header from "../../../components/header";
 import NavBar from "../../../components/navigation/navBar";
 import DetailsCardClerk from "../../../components/redeem/detailsClerk";
@@ -204,8 +204,8 @@ function addToRedeem() {
             setBranch("N/A"); //temporary
           }
         });
-
     }, [PTNumber]);
+
      // BACKEND TO RETRIEVE ItemListID using TransactionID
      useEffect(() => {
       if(transactionID != "N/A"){
@@ -238,12 +238,10 @@ function addToRedeem() {
     })
       .then((res) => res.json())
       .then((info) => {
-        // console.log(data)
         if(info!= null){
           // console.log(JSON.stringify(info))
           const list = JSON.parse(JSON.stringify(info))
-          setitemList(list); //temporary
-          console.log(list)
+          setitemList(list);
           setDataRetrieved(true)
         }
       });
