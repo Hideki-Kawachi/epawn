@@ -25,8 +25,21 @@ export const getServerSideProps = withIronSessionSsr(
 		} else if (req.session.userData.role == "clerk") {
             await dbConnect();
 
+            const pawnInfo = await PawnTicket.findOne({},{
+              pawnTicketID: 1,
+              transactionID: 1,
+              customerID: 1,
+              loanDate: 1,
+              maturityDate: 1,
+              expiryDate: 1,
+              loanAmount: 1,
+              isInactive: 1
+            });
+
+            let pawnTicket = JSON.stringify(pawnInfo);
+
 			return {
-				props: { currentUser: req.session.userData},
+				props: { currentUser: req.session.userData, pawnTicket },
 			};
 		} else if (req.session.userData.role == "customer") {
 			return {
@@ -42,13 +55,16 @@ export const getServerSideProps = withIronSessionSsr(
 	ironOptions
 );
 
-function RedeemClerk({ currentUser}) {
+function RedeemClerkSelect({ currentUser, pawnTicket}) {
 	// Modals
 	const [submitModal, setSubmitOpen] = useState(false); //Submit
 	const [cancelModal, setCancelOpen] = useState(false); //Cancel
 	const [checkedBoxes, setCheckedBoxes] = useState([]);
   const [deleteModal, setDeleteModal] = useState(false)
-  let data = JSON.stringify(ItemMockData); //Items Mock Data
+  let data = JSON.stringify(ItemMockData);
+
+  
+  const [itemList, setitemList] = useState(JSON.parse(data)) //Items Mock Data
 
   //Array for Redeem
   const [redeem, setRedeem] = useState([]);
@@ -59,8 +75,6 @@ function RedeemClerk({ currentUser}) {
   const [deleteType, setDeleteType] = useState();
   const [deletePrice, setDeletePrice] = useState();
   
-  //Item List Array
-  const [itemList, setitemList] = useState([])
   //Pawn Ticket Details
   const [PTNumber, setPTNumber] = useState(""); //test A-123456
   const [name, setName] = useState("N/A");
@@ -72,11 +86,7 @@ function RedeemClerk({ currentUser}) {
   const [branch, setBranch] = useState("N/A");
 
 
-  //Item List Backend States
-  const [itemListID, setItemListID] = useState("")
-  const [transactionID, setTransactionID] = useState("")
-
-
+  const PT = JSON.parse(pawnTicket);
  // const 
 //manage modals
 	function submitForm() {
@@ -164,7 +174,6 @@ function addToRedeem() {
 	}
   // BACKEND TO RETRIEVE PAWN TICKET
   	useEffect(() => {
-      if(PTNumber != ""){
       fetch("/api/" + PTNumber, {
         method: "GET",
         headers: {
@@ -177,7 +186,6 @@ function addToRedeem() {
           // console.log(data)
           if(data != null){
             setName(data.customerID); //temporary
-            setTransactionID(data.transactionID)
             setContactNo("0917 327 5891"); //temporary
             setAddress("196 P. Zamora St. Caloocan City"); //temporary
             setLoanDate(data.loanDate);
@@ -186,63 +194,17 @@ function addToRedeem() {
             setBranch("R Raymundo Branch"); //temporary
           }
           else {
-            setName("N/A");
-            setContactNo("N/A"); 
-            setTransactionID("N/A")
-            setAddress("N/A"); 
+            setName("N/A"); //temporary
+            setContactNo("N/A"); //temporary
+            setAddress("N/A"); //temporary
             setLoanDate("N/A");
             setMatDate("N/A");
             setExpDate("N/A");
-            setBranch("N/A"); 
+            setBranch("N/A"); //temporary
           }
         });
-    }}, [PTNumber]);
 
-     // BACKEND TO RETRIEVE ItemListID using TransactionID
-  	useEffect(() => {
-      if(transactionID != "N/A"){
-      fetch("/api/redeem/" + transactionID, {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      })
-        .then((res) => res.json())
-        .then((transaction) => {
-          // console.log(data)
-          if(transaction != null){
-            setItemListID(transaction.itemListID); //temporary
-          }
-          else {
-            setItemListID("N/A");
-          }
-        });
-    }}, [transactionID]);
-
-  // BACKEND TO RETRIEVE ItemListID using TransactionID
-  	useEffect(() => {
-      if(itemListID != "N/A"){
-      fetch("/api/redeem/itemList/" + itemListID, {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      })
-        .then((res) => res.json())
-        .then((info) => {
-          // console.log(data)
-          if(info!= null){
-            // console.log(JSON.stringify(info))
-          let list = JSON.stringify(info)
-         setitemList(JSON.parse(list)); //temporary
-          }
-          else {
-         // setitemList(JSON.parse(data));
-          }
-        });
-    }}, [itemListID]);
+    }, [PTNumber]);
 
 	return (
     <>
@@ -251,7 +213,7 @@ function addToRedeem() {
       {/* First Half */}
 
       <Modal isOpen={submitModal} ariaHideApp={false} className="modal">
-        <Submit trigger={submitModal} setTrigger={setSubmitOpen} mode="search" PTnumber={PTNumber} itemList={itemList} />
+        <Submit trigger={submitModal} setTrigger={setSubmitOpen} />
       </Modal>
       <Modal isOpen={deleteModal} ariaHideApp={false} className="modal">
         <Delete
@@ -273,6 +235,9 @@ function addToRedeem() {
         <p className="mb-5 text-xl font-semibold text-green-500 underline font-dosis">
           Redeem
         </p>
+        <p className="mb-5 text-xl font-bold text-green-500 underline font-dosis">
+          {/* <a href="/redeem/manager">Temporary button to Manager Redeem</a> */}
+        </p>
         <div className="flex">
           <DetailsCardClerk
             redeem={redeemArray}
@@ -285,7 +250,6 @@ function addToRedeem() {
             branch={branch}
             search={searchPawnTicket}
             data = {data}
-            mode = {"search"}
           />
         </div>
 
@@ -295,46 +259,128 @@ function addToRedeem() {
           {/* Remaining Items  */}
 
           <div className="mt-20">
-            <p className="ml-10 text-sm font-bold font-nunito">
-              Pawned Items:{" "}
+            <p className="ml-10 text-base font-bold font-nunito">
+              Remaining Items:{" "}
             </p>
             {/* plan: CheckItem is ItemCard w/ Check*/}
             <div className="p-5 mx-10 w-[720px] h-96  overflow-y-scroll bg-white border-2">
               {/* plan: CheckItem & ItemCard section will be generated using .map */}
-              {itemList.length > 0 ? (
-                <>
               {itemList.map((items) => (
-                <div className="flex flex-row" key={items.itemID}>
+                <div className="flex flex-row" key={items.ItemID}>
                   <ItemCard
-                    key={items.itemID}
-                    itemID={items.itemID}
-                    itemName={items.itemName}
-                    itemType={items.itemType}
-                    itemPrice={items.price}
+                    key={items.ItemID}
+                    itemID={items.ItemID}
+                    itemName={items.Name}
+                    itemType={items.Type}
+                    itemPrice={items.Price}
                   ></ItemCard>
+                  <div className="mt-10">
+                    <input
+                      type="checkbox"
+                      id={items.ItemID}
+                      name="selected"
+                      value={items.ItemID}
+                      onChange={(e) =>
+                        handleCheckboxChange(
+                          e,
+                          items.ItemID,
+                          items.Name,
+                          items.Type,
+                          items.Price
+                        )
+                      }
+                    />
+                  </div>
                 </div>
               ))}
-              </>
-              ):(                
-              <div className=" mt-32">
-              <p className="text-xl font-bold text-center text-gray-300 font-nunito">
-                {" "}
-                No items displayed.
-              </p>
-              <p className="text-sm text-center text-gray-300 font-nunito">
-                {" "}
-                Search for a Pawn Ticket to display its details and items.
-              </p>
-            </div>)}
+            </div>
+            <div className="mx-10 bg-gray-200 rounded-b-xl">
+              <div className="py-3">
+                <section className="ml-80">
+                  <span className="ml-20 mr-10 font-bold font-nunito">
+                    Selected ({checkedBoxes.length}){" "}
+                  </span>
+                  <button
+                    className="text-white bg-green-300"
+                    onClick={addToRedeem}
+                  >
+                    Add to Redeem
+                  </button>
+                </section>
+              </div>
             </div>
           </div>
 
-       
+          {/*Items for Redemption */}
+          <div className="mt-20 ">
+            <p className="ml-10 text-base font-bold font-nunito">
+              Items for Redemption:{" "}
+            </p>
+            <div
+              className="bg-white p-5 mx-10 w-[720px] h-[450px] overflow-y-scroll border-2"
+              key="0"
+            >
+              {redeemArray.length == 0 ? (
+                <div className=" mt-44">
+                  <p className="text-xl font-bold text-center text-gray-300 font-nunito">
+                    {" "}
+                    No items selected.
+                  </p>
+                  <p className="text-sm text-center text-gray-300 font-nunito">
+                    {" "}
+                    Select the items and click <i>Add to Redeem</i> to add the
+                    items for redemption.
+                  </p>
+                </div>
+              ) : (
+                <>
+                  {redeemArray.map((items, index) => (
+                    <div className="flex flex-row" key={index}>
+                      <ItemCard
+                        key={items.itemID}
+                        itemID={items.itemID}
+                        itemName={items.itemName}
+                        itemType={items.itemType}
+                        itemPrice={items.itemPrice}
+                      ></ItemCard>
+                      <div className="mt-10">
+                        <button
+                          className="x-button"
+                          onClick={() =>
+                            removeModal(
+                              index,
+                              items.itemID,
+                              items.itemName,
+                              items.itemType,
+                              items.itemPrice
+                            )
+                          }
+                        >
+                          <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 14 14"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M9.16711 6.29289C8.77658 6.68342 8.77658 7.31658 9.16711 7.70711L13.7071 12.2471C13.8946 12.4346 14 12.689 14 12.9542V13C14 13.5523 13.5523 14 13 14H12.9542C12.689 14 12.4346 13.8946 12.2471 13.7071L7.70711 9.16711C7.31658 8.77658 6.68342 8.77658 6.29289 9.16711L1.75289 13.7071C1.56536 13.8946 1.311 14 1.04579 14H1C0.447716 14 0 13.5523 0 13V12.9542C0 12.689 0.105357 12.4346 0.292893 12.2471L4.83289 7.70711C5.22342 7.31658 5.22342 6.68342 4.83289 6.29289L0.292893 1.75289C0.105357 1.56536 0 1.311 0 1.04579V1C0 0.447716 0.447716 0 1 0H1.04579C1.311 0 1.56536 0.105357 1.75289 0.292893L6.29289 4.83289C6.68342 5.22342 7.31658 5.22342 7.70711 4.83289L12.2471 0.292893C12.4346 0.105357 12.689 0 12.9542 0H13C13.5523 0 14 0.447716 14 1V1.04579C14 1.311 13.8946 1.56536 13.7071 1.75289L9.16711 6.29289Z"
+                              fill="red"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )}
+            </div>
+          </div>
         </div>
-        <div className="mt-5 flex flex-row ml-[1180px] md:ml-[800px]">
+        <div className="mt-5 flex flex-row ml-[1180px]">
           <div>
             <button
-              className="px-10 mx-2 my-5 text-sm text-white bg-red-300"
+              className="px-10 mx-2 my-5 text-base text-white bg-red-300"
               onClick={cancelForm}
             >
               Cancel
@@ -342,10 +388,10 @@ function addToRedeem() {
           </div>
           <div>
             <button
-              className="px-10 mx-2 my-5 text-sm text-white bg-green-300"
+              className="px-10 mx-2 my-5 text-base text-white bg-green-300"
               onClick={submitForm}
             >
-              Select
+              Submit
             </button>
           </div>
         </div>
@@ -354,4 +400,4 @@ function addToRedeem() {
   );
 }
 
-export default RedeemClerk;
+export default RedeemClerkSelect;

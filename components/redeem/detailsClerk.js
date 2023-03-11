@@ -5,14 +5,14 @@ import CustomerDetails from "../modals/customerDetails";
 import PawnHistory from "../modals/pawnHistory";
 import dayjs from "dayjs";
 
-function DetailsCardClerk({redeem, customerName, contactNumber, address, loanDate, maturityDate, expiryDate, branch, search}) {
+function DetailsCardClerk({redeem, customerName, contactNumber, address, loanDate, maturityDate, expiryDate, branch, search, mode}) {
   const [isOriginal, setOriginal] = useState("original");
   const [repModal, setRepModal] = useState(false); 
   const [customerModal, setCustomerModal] = useState(false);
   const [historyModal, setHistoryModal] = useState(false);
   const [otherCharges, setOtherCharges] = useState(0);
-  const [loanAmount, setLoan] = useState(10000)
-  const [newloanAmount, setNewLoanAmount] = useState(1000)
+  const [loanAmount, setLoan] = useState(0)
+  const [newloanAmount, setNewLoanAmount] = useState(0)
 
 
   function repOpen(){
@@ -42,11 +42,11 @@ function DetailsCardClerk({redeem, customerName, contactNumber, address, loanDat
 
       const diffInMonths = date2.diff(date1, "month");
 
-      console.log(
-        diffInMonths +
-          " months and " +
-          convertFloat(loan * 0.035 * diffInMonths)
-      );
+      // console.log(
+      //   diffInMonths +
+      //     " months and " +
+      //     convertFloat(loan * 0.035 * diffInMonths)
+      // );
       return convertFloat(loan * 0.035 * diffInMonths);
     }
   }
@@ -77,7 +77,7 @@ function DetailsCardClerk({redeem, customerName, contactNumber, address, loanDat
       return "N/A"
     else {
       const dt = new Date(date);
-      console.log(dt);
+      //console.log(dt);
       return dayjs(dt).format("MM/DD/YYYY");
     };
   }
@@ -101,7 +101,7 @@ function DetailsCardClerk({redeem, customerName, contactNumber, address, loanDat
     <>
       <div
         id="detailscard"
-        className="drop-shadow-lg flex text-base font-nunito pr-10"
+        className="drop-shadow-lg flex text-sm font-nunito pr-10"
       >
         <Modal isOpen={repModal} ariaHideApp={false} className="modal">
           <AuthorizedRep trigger={repModal} setTrigger={setRepModal} />
@@ -166,7 +166,7 @@ function DetailsCardClerk({redeem, customerName, contactNumber, address, loanDat
               </p>
             </div>
           </div>
-
+          {mode == "select" ? (
           <div className="flex">
             <div className="text-right ml-10 min-w-fit">
               <p className="font-bold">Redeemed by: </p>
@@ -198,6 +198,9 @@ function DetailsCardClerk({redeem, customerName, contactNumber, address, loanDat
               )}
             </div>
           </div>
+          ) : (
+            <></>
+          )}
 
           <hr className="h-px my-8 bg-gray-500 border-0" />
 
