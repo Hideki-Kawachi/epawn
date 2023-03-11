@@ -9,6 +9,7 @@ function UserCreate(){
 
 	const [userID, setUserID] = useState("");
 	const [firstName, setFirstName] = useState("");
+	const [middleName, setMiddleName] = useState("");
 	const [lastName, setLastName] = useState("");
 	const [password, setPassword] = useState("");
 	const [roleName, setRoleName] = useState("Null Role");
@@ -19,29 +20,58 @@ function UserCreate(){
 
 	function submitForm(){
 
-		let userData = {
-			userID: userID,
-			firstName: firstName,
-			lastName: lastName,
-			password: password,
-			roleName: roleName,
-			isDisabled: isDisabled
+		if (
+			userID.length != 7 ||
+			firstName.length == 0 ||
+			lastName.length == 0 ||
+			password.length == 0 ||
+			roleName.length == 0
+		) {
+			setError(true);
+
+			console.log("nope")
+
+		}
+		 else {
+			let userData = {
+				firstName: firstName,
+				middleName: middleName,
+				lastName: lastName,
+				password: password,
+				role: roleName,
+				isDisabled: isDisabled,
+				branchID: 1
+			}
+
+			console.log(userData)
+
+			// MockUsers.push(userData)
+
+			// console.log(MockUsers)
+
+			fetch("/api/createEmployee", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(userData),
+			})
+				.then((res) => res.json())
+				.then((data) => {
+					if (data == "good") {
+						console.log("SUCCESS");
+						setError(false);
+						window.location.reload();
+					} else {
+						setError(true);
+						setEmployeeIDError(data);
+						console.log("failed")
+					}
+				});
 		}
 
-		// console.log(lastName)
-		console.log(userData)
-
-		MockUsers.push( {"userID": userData.userID ,"firstName": userData.firstName, "password": userData.password,
-		"lastName":userData.lastName,"roleName":userData.roleName,"isDisabled":true})
-
-		// {MockUsers.map((mockUser => {
-		// 	console.log(mockUser.id)
-
-		console.log(MockUsers)
-
-		Router.reload()
-
-		// }))}
+		// MockUsers.push( {"userID": userData.userID ,"firstName": userData.firstName, "password": userData.password,
+		// "lastName":userData.lastName,"roleName":userData.roleName,"isDisabled":true}
 	}
 
 	// [{"userID":1,"lastName":"Bicheno","firstName":"Antonetta","roleName":"Supervisor","disabled":true},
@@ -55,7 +85,7 @@ function UserCreate(){
 				<div className="user-create-top-container m-5 grid grid-cols-3 gap-4">
 
                     <div className="flex w-1/4 flex-col">
-						<span className="font-bold pr-7">Username: </span>
+						<span className="font-bold pr-7">UserID:</span>
           				<input 
 						  	className="border rounded-md stroke-gray-500 px-3"
 							type="text"
@@ -65,16 +95,8 @@ function UserCreate(){
 					</div>
 
                     <div className="flex w-1/4 flex-col">
-						<span className="font-bold pr-7">First Name: </span>
-          				<input className="border rounded-md stroke-gray-500 px-3" 
-								type="text"
-								id="firstName"
-								onChange={(e) => setFirstName(e.target.value)}
-						/>
-					</div>
-
-                    <div className="flex w-1/4 flex-col">
 						<span className="font-bold pr-7">Role   : </span>
+						{/* Change to Select */}
           				<input className="border rounded-md stroke-gray-500 px-3"
 							type="text"
 							id="roleName"
@@ -89,6 +111,24 @@ function UserCreate(){
 								id="password"
 								onChange={(e) => setPassword(e.target.value)}
 						 />
+					</div>
+
+					<div className="flex w-1/4 flex-col">
+						<span className="font-bold pr-7">First Name: </span>
+          				<input className="border rounded-md stroke-gray-500 px-3" 
+								type="text"
+								id="firstName"
+								onChange={(e) => setFirstName(e.target.value)}
+						/>
+					</div>
+
+					<div className="flex w-1/4 flex-col">
+						<span className="font-bold pr-7">Middle Name: </span>
+          				<input className="border rounded-md stroke-gray-500 px-3" 
+								type="text"
+								id="middleName"
+								onChange={(e) => setMiddleName(e.target.value)}
+						/>
 					</div>
 
                     <div className="flex w-1/4 flex-col">

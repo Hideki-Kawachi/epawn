@@ -64,7 +64,7 @@ function UserEdit(
 				<div className="user-create-top-container m-5 grid grid-cols-3 gap-4">
 
                     <div className="flex w-1/4 flex-col">
-						<span className="font-bold pr-7">Username: </span>
+						<span className="font-bold pr-7">UserID: </span>
           				<input 
 						  	className="border rounded-md stroke-gray-500 px-3"
 							type="text"
