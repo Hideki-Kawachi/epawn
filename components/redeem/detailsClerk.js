@@ -5,7 +5,7 @@ import CustomerDetails from "../modals/customerDetails";
 import PawnHistory from "../modals/pawnHistory";
 import dayjs from "dayjs";
 
-function DetailsCardClerk({redeem, customerName, contactNumber, address, loanDate, maturityDate, expiryDate, branch, search, mode}) {
+function DetailsCardClerk({redeem, customerName, contactNumber, address, loanDate, maturityDate, expiryDate, branch, search, mode, PTNumber}) {
   const [isOriginal, setOriginal] = useState("original");
   const [repModal, setRepModal] = useState(false); 
   const [customerModal, setCustomerModal] = useState(false);
@@ -120,12 +120,17 @@ function DetailsCardClerk({redeem, customerName, contactNumber, address, loanDat
         {/* Left Side of the Card (Details) */}
         <div className="m-10 ">
           <span className="font-bold pr-7">PT Number:</span>
+          {mode == "select" ? (
+          <span>{PTNumber}</span>
+          ) :(
+          <span>  
           <input
             className="border rounded-md stroke-gray-500 px-3"
             onChange={(e) => searchPT(e.target.value)}
           />
           <p className="text-sm text-gray-300 pl-[163px]">Format: X-XXXX </p>
-
+          </span>
+          )}
           <hr className="h-px my-8 bg-gray-500 border-0" />
 
           {/* Customer Details */}

@@ -13,7 +13,7 @@ import { ironOptions } from "../../../utilities/config";
 import Delete from "../../../components/modals/delWarning";
 import dbConnect from "../../../utilities/dbConnect";
 import PawnTicket from "../../../schemas/pawnTicket";
-
+import { useRouter } from "next/router";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {
@@ -24,22 +24,8 @@ export const getServerSideProps = withIronSessionSsr(
 			};
 		} else if (req.session.userData.role == "clerk") {
             await dbConnect();
-
-            const pawnInfo = await PawnTicket.findOne({},{
-              pawnTicketID: 1,
-              transactionID: 1,
-              customerID: 1,
-              loanDate: 1,
-              maturityDate: 1,
-              expiryDate: 1,
-              loanAmount: 1,
-              isInactive: 1
-            });
-
-            let pawnTicket = JSON.stringify(pawnInfo);
-
 			return {
-				props: { currentUser: req.session.userData, pawnTicket },
+				props: { currentUser: req.session.userData,},
 			};
 		} else if (req.session.userData.role == "customer") {
 			return {
@@ -55,16 +41,21 @@ export const getServerSideProps = withIronSessionSsr(
 	ironOptions
 );
 
-function RedeemClerkSelect({ currentUser, pawnTicket}) {
+function RedeemClerkSelect({ currentUser}) {
+
+  //Retrieve PT Number
+  const router = useRouter();
+
+
 	// Modals
 	const [submitModal, setSubmitOpen] = useState(false); //Submit
 	const [cancelModal, setCancelOpen] = useState(false); //Cancel
 	const [checkedBoxes, setCheckedBoxes] = useState([]);
   const [deleteModal, setDeleteModal] = useState(false)
   let data = JSON.stringify(ItemMockData);
-
   
-  const [itemList, setitemList] = useState(JSON.parse(data)) //Items Mock Data
+  
+  const [itemList, setitemList] = useState([]) //Items Mock Data
 
   //Array for Redeem
   const [redeem, setRedeem] = useState([]);
@@ -76,7 +67,7 @@ function RedeemClerkSelect({ currentUser, pawnTicket}) {
   const [deletePrice, setDeletePrice] = useState();
   
   //Pawn Ticket Details
-  const [PTNumber, setPTNumber] = useState(""); //test A-123456
+  const [PTNumber, setPTNumber] = useState(router.query.pawnTicketID); //test A-123456
   const [name, setName] = useState("N/A");
   const [contactno, setContactNo] = useState("N/A");
   const [address, setAddress] = useState("N/A");
@@ -85,8 +76,11 @@ function RedeemClerkSelect({ currentUser, pawnTicket}) {
   const [expDate, setExpDate] = useState("N/A");
   const [branch, setBranch] = useState("N/A");
 
-
-  const PT = JSON.parse(pawnTicket);
+    //Item List Backend States
+  const [itemListID, setItemListID] = useState("")
+  const [transactionID, setTransactionID] = useState("")
+  const [dataRetrieved, setDataRetrieved] = useState(false)
+  const [button, setButton] = useState(true)
  // const 
 //manage modals
 	function submitForm() {
@@ -97,9 +91,6 @@ function RedeemClerkSelect({ currentUser, pawnTicket}) {
 		setCancelOpen(true);
 	}
 
-  function searchPawnTicket(ptnumber){
-    setPTNumber(ptnumber)
-  }
   function removeModal(index, id, name, type, price){
     setDeleteIndex(index)
     setDeleteModal(true)
@@ -112,10 +103,10 @@ function RedeemClerkSelect({ currentUser, pawnTicket}) {
   function removeItem(){
     redeemArray.splice(deleteIndex, 1);
     itemList.splice(0, 0, {
-      ID: deleteID,
-      Name: deleteName,
-      Type: deleteType,
-      Price: deletePrice,
+      itemID: deleteID,
+      itemName: deleteName,
+      itemType: deleteType,
+      price: deletePrice,
     });
   }
   const handleCheckboxChange = (event, id, name, type, price) => {
@@ -127,7 +118,7 @@ function RedeemClerkSelect({ currentUser, pawnTicket}) {
         itemID: id,
         itemName: name,
         itemType: type,
-        itemPrice: price,
+        price: price,
       });
     } else {
       const itemIndex = newCheckedBoxes.findIndex((item) => item.itemID === id);
@@ -144,30 +135,39 @@ function addToRedeem() {
     if (redeemArray.length > 0) {
       setRedeem(redeem.concat(checkedBoxes));
     }
-    else 
+    else
       setRedeem(checkedBoxes);
+
   }
   
   checkedBoxes.forEach((check, index) => {
-    const redeemedIndex = itemList.findIndex((item) => item.ItemID === check.itemID);
+    const redeemedIndex = itemList.findIndex((item) => item.itemID === check.itemID);
     if (redeemedIndex >= 0){
       itemList.splice(redeemedIndex, 1)
     }
   });
-  
+      setDataRetrieved(true);
       setCheckedBoxes([]);
+    
 }
 
     useEffect(() => {
       setRedeemArray(redeem);
     }, [redeem]);
 
+    useEffect(() => {      
+      if(redeemArray.length > 0)
+        setButton(false)
+      else  
+        setButton(true)
+      }, [redeemArray]
+    );
 //manage cancel modal
 	function cancelContentShow() {
 		return (
 			<>
 				Are you sure you want to cancel <b> Redemption</b> of <br />
-				<b>{PTNumber}</b>? <br /> <br />
+				<b>{PTNumber}</b>? <br />
 				All unsubmitted data will be lost.
 			</>
 		);
@@ -183,10 +183,11 @@ function addToRedeem() {
       })
         .then((res) => res.json())
         .then((data) => {
-          // console.log(data)
+         // console.log(data)
           if(data != null){
             setName(data.customerID); //temporary
             setContactNo("0917 327 5891"); //temporary
+            setTransactionID(data.transactionID)
             setAddress("196 P. Zamora St. Caloocan City"); //temporary
             setLoanDate(data.loanDate);
             setMatDate(data.maturityDate);
@@ -205,6 +206,48 @@ function addToRedeem() {
         });
 
     }, [PTNumber]);
+     // BACKEND TO RETRIEVE ItemListID using TransactionID
+     useEffect(() => {
+      if(transactionID != "N/A"){
+      fetch("/api/redeem/" + transactionID, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((transaction) => {
+      //    console.log(data)
+          if(transaction != null){
+            setItemListID(transaction.itemListID); //temporary
+          //  console.log("Item List is " + itemListID);
+          }
+        });
+    }}, [transactionID]);
+
+  // BACKEND TO RETRIEVE ItemListID using TransactionID
+  useEffect(() => {
+    if(itemListID != "N/A"){
+    fetch("/api/redeem/itemList/" + itemListID, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((info) => {
+        // console.log(data)
+        if(info!= null){
+          // console.log(JSON.stringify(info))
+          const list = JSON.parse(JSON.stringify(info))
+          setitemList(list); //temporary
+          console.log(list)
+          setDataRetrieved(true)
+        }
+      });
+  }}, [itemListID]);
 
 	return (
     <>
@@ -213,7 +256,7 @@ function addToRedeem() {
       {/* First Half */}
 
       <Modal isOpen={submitModal} ariaHideApp={false} className="modal">
-        <Submit trigger={submitModal} setTrigger={setSubmitOpen} />
+        <Submit trigger={submitModal} setTrigger={setSubmitOpen} itemList={redeemArray} />
       </Modal>
       <Modal isOpen={deleteModal} ariaHideApp={false} className="modal">
         <Delete
@@ -248,8 +291,9 @@ function addToRedeem() {
             maturityDate={matDate}
             expiryDate={expDate}
             branch={branch}
-            search={searchPawnTicket}
             data = {data}
+            PTNumber = {PTNumber}
+            mode = "select"
           />
         </div>
 
@@ -265,34 +309,47 @@ function addToRedeem() {
             {/* plan: CheckItem is ItemCard w/ Check*/}
             <div className="p-5 mx-10 w-[720px] h-96  overflow-y-scroll bg-white border-2">
               {/* plan: CheckItem & ItemCard section will be generated using .map */}
+              {dataRetrieved && itemList.length > 0 ? (
+                <>
               {itemList.map((items) => (
-                <div className="flex flex-row" key={items.ItemID}>
+                <div className="flex flex-row" key={items.itemID}>
                   <ItemCard
-                    key={items.ItemID}
-                    itemID={items.ItemID}
-                    itemName={items.Name}
-                    itemType={items.Type}
-                    itemPrice={items.Price}
+                    key={items.itemID}
+                    itemID={items.itemID}
+                    itemName={items.itemName}
+                    itemType={items.itemType}
+                    itemPrice={items.price}
                   ></ItemCard>
                   <div className="mt-10">
                     <input
                       type="checkbox"
-                      id={items.ItemID}
+                      id={items.itemID}
                       name="selected"
-                      value={items.ItemID}
+                      value={items.itemID}
                       onChange={(e) =>
                         handleCheckboxChange(
                           e,
-                          items.ItemID,
-                          items.Name,
-                          items.Type,
-                          items.Price
+                          items.itemID,
+                          items.itemName,
+                          items.itemType,
+                          items.price
                         )
                       }
                     />
                   </div>
                 </div>
               ))}
+              </>
+              ): (
+                <div className=" mt-32">
+                <p className="text-xl font-bold text-center text-gray-300 font-nunito">
+                  No items displayed.
+                </p>
+                <p className="text-sm text-center text-gray-300 font-nunito">
+                  All items will be redeemed.
+                </p>
+              </div>
+              )}
             </div>
             <div className="mx-10 bg-gray-200 rounded-b-xl">
               <div className="py-3">
@@ -300,10 +357,8 @@ function addToRedeem() {
                   <span className="ml-20 mr-10 font-bold font-nunito">
                     Selected ({checkedBoxes.length}){" "}
                   </span>
-                  <button
-                    className="text-white bg-green-300"
-                    onClick={addToRedeem}
-                  >
+                  <button className="text-white bg-green-300"
+                    onClick={addToRedeem}>
                     Add to Redeem
                   </button>
                 </section>
@@ -341,7 +396,7 @@ function addToRedeem() {
                         itemID={items.itemID}
                         itemName={items.itemName}
                         itemType={items.itemType}
-                        itemPrice={items.itemPrice}
+                        itemPrice={items.price}
                       ></ItemCard>
                       <div className="mt-10">
                         <button
@@ -352,7 +407,7 @@ function addToRedeem() {
                               items.itemID,
                               items.itemName,
                               items.itemType,
-                              items.itemPrice
+                              items.price
                             )
                           }
                         >
@@ -389,8 +444,7 @@ function addToRedeem() {
           <div>
             <button
               className="px-10 mx-2 my-5 text-base text-white bg-green-300"
-              onClick={submitForm}
-            >
+              onClick={submitForm} disabled={button}>
               Submit
             </button>
           </div>

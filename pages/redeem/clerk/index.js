@@ -12,7 +12,6 @@ import { withIronSessionSsr } from "iron-session/next";
 import { ironOptions } from "../../../utilities/config";
 import Delete from "../../../components/modals/delWarning";
 import dbConnect from "../../../utilities/dbConnect";
-import PawnTicket from "../../../schemas/pawnTicket";
 
 
 export const getServerSideProps = withIronSessionSsr(
@@ -46,18 +45,7 @@ function RedeemClerk({ currentUser}) {
 	// Modals
 	const [submitModal, setSubmitOpen] = useState(false); //Submit
 	const [cancelModal, setCancelOpen] = useState(false); //Cancel
-	const [checkedBoxes, setCheckedBoxes] = useState([]);
-  const [deleteModal, setDeleteModal] = useState(false)
   let data = JSON.stringify(ItemMockData); //Items Mock Data
-
-  //Array for Redeem
-  const [redeem, setRedeem] = useState([]);
-  const [redeemArray, setRedeemArray] = useState([]);
-  const [deleteIndex, setDeleteIndex] = useState();
-  const [deleteName, setDeleteName]= useState();
-  const [deleteID, setDeleteId] = useState();
-  const [deleteType, setDeleteType] = useState();
-  const [deletePrice, setDeletePrice] = useState();
   
   //Item List Array
   const [itemList, setitemList] = useState([])
@@ -76,8 +64,7 @@ function RedeemClerk({ currentUser}) {
   const [itemListID, setItemListID] = useState("")
   const [transactionID, setTransactionID] = useState("")
 
-
- // const 
+  const [button, setButton] = useState(true) //disabled if PT number is invalid
 //manage modals
 	function submitForm() {
 		setSubmitOpen(true);
@@ -90,74 +77,13 @@ function RedeemClerk({ currentUser}) {
   function searchPawnTicket(ptnumber){
     setPTNumber(ptnumber)
   }
-  function removeModal(index, id, name, type, price){
-    setDeleteIndex(index)
-    setDeleteModal(true)
-    setDeleteName(name)
-    setDeleteId(id) 
-    setDeleteType(type)
-    setDeletePrice(price)
-  }
-//Manages Add to Redeem Cart
-  function removeItem(){
-    redeemArray.splice(deleteIndex, 1);
-    itemList.splice(0, 0, {
-      ID: deleteID,
-      Name: deleteName,
-      Type: deleteType,
-      Price: deletePrice,
-    });
-  }
-  const handleCheckboxChange = (event, id, name, type, price) => {
-    const checked = event.target.checked;
-    const newCheckedBoxes = [...checkedBoxes];
-
-    if (checked) {
-      newCheckedBoxes.push({
-        itemID: id,
-        itemName: name,
-        itemType: type,
-        itemPrice: price,
-      });
-    } else {
-      const itemIndex = newCheckedBoxes.findIndex((item) => item.itemID === id);
-      if (itemIndex >= 0) {
-        newCheckedBoxes.splice(itemIndex, 1);
-      }
-    }
-
-    setCheckedBoxes(newCheckedBoxes);
-  };
-
-function addToRedeem() {
-  if (checkedBoxes.length > 0) {
-    if (redeemArray.length > 0) {
-      setRedeem(redeem.concat(checkedBoxes));
-    }
-    else 
-      setRedeem(checkedBoxes);
-  }
-  
-  checkedBoxes.forEach((check, index) => {
-    const redeemedIndex = itemList.findIndex((item) => item.ItemID === check.itemID);
-    if (redeemedIndex >= 0){
-      itemList.splice(redeemedIndex, 1)
-    }
-  });
-  
-      setCheckedBoxes([]);
-}
-
-    useEffect(() => {
-      setRedeemArray(redeem);
-    }, [redeem]);
 
 //manage cancel modal
 	function cancelContentShow() {
 		return (
 			<>
-				Are you sure you want to cancel <b> Redemption</b> of <br />
-				<b>{PTNumber}</b>? <br /> <br />
+				Are you sure you want to cancel the <b> redemption </b> transaction?
+        <br/>
 				All unsubmitted data will be lost.
 			</>
 		);
@@ -184,6 +110,7 @@ function addToRedeem() {
             setMatDate(data.maturityDate);
             setExpDate(data.expiryDate);
             setBranch("R Raymundo Branch"); //temporary
+            setButton(false)
           }
           else {
             setName("N/A");
@@ -194,6 +121,7 @@ function addToRedeem() {
             setMatDate("N/A");
             setExpDate("N/A");
             setBranch("N/A"); 
+            setButton(true)
           }
         });
     }}, [PTNumber]);
@@ -253,14 +181,7 @@ function addToRedeem() {
       <Modal isOpen={submitModal} ariaHideApp={false} className="modal">
         <Submit trigger={submitModal} setTrigger={setSubmitOpen} mode="search" PTnumber={PTNumber} itemList={itemList} />
       </Modal>
-      <Modal isOpen={deleteModal} ariaHideApp={false} className="modal">
-        <Delete
-          trigger={deleteModal}
-          setTrigger={setDeleteModal}
-          content={deleteName + " (" + deleteID + ") "}
-          trigger2={removeItem}
-        />
-      </Modal>
+
       <Modal isOpen={cancelModal} ariaHideApp={false} className="modal">
         <Cancel
           trigger={cancelModal}
@@ -275,7 +196,7 @@ function addToRedeem() {
         </p>
         <div className="flex">
           <DetailsCardClerk
-            redeem={redeemArray}
+            redeem={[]}
             customerName={name}
             contactNumber={contactno}
             address={address}
@@ -342,8 +263,8 @@ function addToRedeem() {
           </div>
           <div>
             <button
-              className="px-10 mx-2 my-5 text-sm text-white bg-green-300"
-              onClick={submitForm}
+              className="px-10 mx-2 my-5 text-sm text-white bg-green-300 disabled:bg-gray-500 disabled:text-gray-500 "
+              onClick={submitForm} disabled={button}
             >
               Select
             </button>

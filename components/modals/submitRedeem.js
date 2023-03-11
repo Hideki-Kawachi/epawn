@@ -1,8 +1,9 @@
 import React from "react";
 import Close from "../closebutton";
 import ItemCard from "../itemcard";
-export const Submit = ({trigger, setTrigger, mode, PTnumber, itemList}) => {
-
+import { useRouter } from "next/router";
+export const Submit = ({trigger, setTrigger, mode, PTnumber, itemList, price}) => {
+    const router = useRouter();
     function closeModal(){
         setTrigger(!trigger);
     }
@@ -28,20 +29,20 @@ export const Submit = ({trigger, setTrigger, mode, PTnumber, itemList}) => {
           )}
             <div className="p-5 mx-10 w-[720px] h-96  overflow-y-scroll bg-white border-2">
               {itemList.map((items) => (
-                <div className="flex flex-row" key={items.ItemID}>
+                <div className="flex flex-row" key={items.itemID}>
                   <ItemCard
-                    key={items.ItemID}
-                    itemID={items.ItemID}
-                    itemName={items.Name}
-                    itemType={items.Type}
-                    itemPrice={items.Price}
+                    key={items.itemID}
+                    itemID={items.itemID}
+                    itemName={items.itemName}
+                    itemType={items.itemType}
+                    itemPrice={items.price}
                   ></ItemCard>
                 </div>
               ))}
             </div>
           {mode == "select" ? (
           <p className="text-center text-base">
-            For a total of <b>Php 69,420.00</b>
+            For a total of <b>Php {price}</b>
           </p>
           ) :( <> </>)}
           <button
@@ -50,9 +51,15 @@ export const Submit = ({trigger, setTrigger, mode, PTnumber, itemList}) => {
           >
             Cancel
           </button>
-          <button className="bg-green-300 text-base px-24 mt-5 mx-5">
+          {mode == "search" ? (
+          <button className="bg-green-300 text-base px-24 mt-5 mx-5" onClick={(() => router.push("/redeem/clerk/" + PTnumber))}>
+            Select
+          </button>
+          ):(
+            <button className="bg-green-300 text-base px-24 mt-5 mx-5">
             Submit
           </button>
+          )}
         </div>
       </div>
     </>
