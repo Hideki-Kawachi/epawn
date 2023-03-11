@@ -7,8 +7,7 @@ import DiamondColorValues from "../,,/../../../utilities/dropdownValues/diamondC
 import DiamondShapeValues from "../,,/../../../utilities/dropdownValues/diamondShape.json";
 
 function ItemCategoryDetails({ itemCategory, itemDetails, setItemDetails }) {
-	const [addItemDetails, setAddItemDetails] = useState({});
-	const [weight, setWeight] = useState("");
+	const [weight, setWeight] = useState("0");
 	const [quantity, setQuantity] = useState(0);
 	const [color, setColor] = useState("");
 	const [purity, setPurity] = useState("");
@@ -16,30 +15,48 @@ function ItemCategoryDetails({ itemCategory, itemDetails, setItemDetails }) {
 	const [model, setModel] = useState("");
 	const [description, setDescription] = useState("");
 	const [clarity, setClarity] = useState("");
-	const [carat, setCarat] = useState("");
+	const [carat, setCarat] = useState("0");
 	const [shape, setShape] = useState("");
 
-	// useEffect(() => {
-	// 	if (isNaN(weight)) {
-	// 		setWeight(0);
-	// 	}
-	// }, [weight]);
-
 	useEffect(() => {
-		setWeight("");
-		setQuantity(0);
-		setColor("");
-		setPurity("");
-		setBrand("");
-		setModel("");
-		setDescription("");
-		setClarity("");
-		setCarat("");
-		setShape("");
-	}, [itemCategory]);
+		setWeight(itemDetails.weight ? itemDetails.weight.toString() : "0");
+		setQuantity(itemDetails.quantity ? itemDetails.quantity : 0);
+		if (itemCategory == "Gold") {
+			setColor(itemDetails.color ? itemDetails.color : "Rose");
+			setPurity(itemDetails.purity ? itemDetails.purity : "24K");
+		} else if (itemCategory == "Platinum") {
+			setPurity(itemDetails.purity ? itemDetails.purity : "999");
+		} else if (itemCategory == "Diamond") {
+			setColor(itemDetails.color ? itemDetails.color : "Colorless");
+			setClarity(itemDetails.clarity ? itemDetails.clarity : "Flawless");
+			setCarat(itemDetails.carat ? itemDetails.carat : "0");
+			setShape(itemDetails.shape ? itemDetails.shape : "Round");
+		}
+		setBrand(itemDetails.brand ? itemDetails.brand : "");
+		setModel(itemDetails.model ? itemDetails.model : "");
+		setDescription(itemDetails.description ? itemDetails.description : "");
+	}, [itemCategory, itemDetails]);
+
+	// useEffect(() => {
+	// 	console.log("hello");
+	// 	if (itemCategory == "Gold") {
+	// 		setWeight(itemDetails.weight.toString());
+	// 		setColor(itemDetails.color);
+	// 		setPurity(itemDetails.purity);
+	// 		setBrand(itemDetails.brand);
+	// 		setModel(itemDetails.model);
+	// 		setDescription(itemDetails.description);
+	// 	}
+	// }, [itemDetails]);
 
 	useEffect(() => {
 		let NewItemDetails;
+		let newWeight;
+		if (isNaN(parseFloat(weight))) {
+			newWeight = "0";
+		} else {
+			newWeight = weight;
+		}
 
 		if (itemCategory == "Gold") {
 			delete itemDetails.quantity;
@@ -48,7 +65,7 @@ function ItemCategoryDetails({ itemCategory, itemDetails, setItemDetails }) {
 			delete itemDetails.clarity;
 			NewItemDetails = Object.assign(itemDetails, {
 				itemCategory: itemCategory,
-				weight: parseFloat(weight),
+				weight: parseFloat(newWeight),
 				color: color,
 				purity: purity,
 				brand: brand,
@@ -63,7 +80,7 @@ function ItemCategoryDetails({ itemCategory, itemDetails, setItemDetails }) {
 			delete itemDetails.clarity;
 			NewItemDetails = Object.assign(itemDetails, {
 				itemCategory: itemCategory,
-				weight: parseFloat(weight),
+				weight: parseFloat(newWeight),
 				purity: purity,
 				brand: brand,
 				model: model,
@@ -73,12 +90,19 @@ function ItemCategoryDetails({ itemCategory, itemDetails, setItemDetails }) {
 			delete itemDetails.purity;
 			delete itemDetails.model;
 			delete itemDetails.brand;
+			let newCarat;
+			if (isNaN(parseFloat(carat))) {
+				newCarat = "0";
+			} else {
+				newCarat = carat;
+			}
+
 			NewItemDetails = Object.assign(itemDetails, {
 				itemCategory: itemCategory,
-				weight: parseFloat(weight),
+				weight: parseFloat(newWeight),
 				clarity: clarity,
 				color: color,
-				carat: carat,
+				carat: parseFloat(newCarat),
 				shape: shape,
 				quantity: quantity,
 				description: description,
@@ -92,16 +116,15 @@ function ItemCategoryDetails({ itemCategory, itemDetails, setItemDetails }) {
 			delete itemDetails.clarity;
 			NewItemDetails = Object.assign(itemDetails, {
 				itemCategory: itemCategory,
-				weight: parseFloat(weight),
+				weight: parseFloat(newWeight),
 				brand: brand,
 				model: model,
 				description: description,
 			});
 		}
-		console.log("new item details:", NewItemDetails);
+		// console.log("new item details:", NewItemDetails);
 		setItemDetails(NewItemDetails);
 	}, [
-		itemCategory,
 		weight,
 		quantity,
 		color,
@@ -115,7 +138,9 @@ function ItemCategoryDetails({ itemCategory, itemDetails, setItemDetails }) {
 	]);
 
 	function weightInsert(value) {
-		if (!value || value.match(/^\d{1,}(\.\d{0,2})?$/)) {
+		if (isNaN(parseFloat(weight)) && isNaN(value)) {
+			setWeight("0");
+		} else if (!value || value.match(/^\d{1,}(\.\d{0,2})?$/)) {
 			setWeight(value);
 		}
 	}
@@ -123,6 +148,8 @@ function ItemCategoryDetails({ itemCategory, itemDetails, setItemDetails }) {
 	function caratInsert(value) {
 		if (!value || value.match(/^\d{1,}(\.\d{0,2})?$/)) {
 			setCarat(value);
+		} else if (carat == "") {
+			setWeight("0");
 		}
 	}
 

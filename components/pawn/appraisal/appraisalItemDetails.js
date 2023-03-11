@@ -40,27 +40,37 @@ function AppraisalItemsDetails({ itemDetails, setItemDetails }) {
 
 	useEffect(() => {
 		if (itemDetails) {
+			if (itemDetails.itemCategory.length == 0) {
+				setItemCategory("Gold");
+			} else {
+				setItemCategory(itemDetails.itemCategory);
+			}
+
 			setItemName(itemDetails.itemName);
 			setItemType(itemDetails.itemType);
 			setPrice(itemDetails.price);
 			setPriceShow(itemDetails.price);
 		}
-		console.log("item Details are:", itemDetails);
+		// console.log("item Details are:", itemDetails);
 	}, [itemDetails]);
 
 	useEffect(() => {
 		if (itemDetails) {
-			let updatedItem = {
-				itemID: itemDetails.itemID,
+			let updatedItem = Object.assign(itemDetails, {
 				itemName: itemName,
 				itemType: itemType,
 				price: price,
-			};
-			console.log("SET", itemDetails);
+				itemCategory: itemCategory,
+			});
+			// console.log("SET", itemDetails);
 			// console.log("WRONG", itemName, itemType, price);
 			setItemDetails(updatedItem);
 		}
-	}, [itemName, price, itemType]);
+	}, [itemName, price, itemType, itemCategory]);
+
+	// useEffect(()=>{
+	// 	setItemDetails({})
+	// },[itemCategory])
 
 	return (
 		<>

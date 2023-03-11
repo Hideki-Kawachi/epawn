@@ -92,6 +92,7 @@ function AppraisalTransactionID({
 	function selectItem(id) {
 		setItemShow(
 			itemList.find((item) => {
+				//console.log("selected item is:", item);
 				return item.itemID == id;
 			})
 		);
@@ -100,12 +101,11 @@ function AppraisalTransactionID({
 	function setItemDetails(updatedItem) {
 		let newList = itemList.map((item) => {
 			if (item.itemID == updatedItem.itemID) {
-				item.itemName = updatedItem.itemName;
-				item.itemType = updatedItem.itemType;
-				item.price = updatedItem.price;
+				item = Object.assign(item, updatedItem);
 			}
 			return item;
 		});
+		//console.log("item list updated is:", itemList);
 		setItemList(newList);
 	}
 
@@ -122,9 +122,21 @@ function AppraisalTransactionID({
 	}
 
 	function submitForm() {
+		delete itemList.itemListID;
 		console.log("SUBMIT FORM");
 		console.log("item list:", itemList);
 		console.log("price:", appraisalPrice);
+		fetch("/api/pawn/itemAppraisal", {
+			method: "POST",
+			body: JSON.stringify({
+				itemList: itemList,
+				appraisalPrice: appraisalPrice,
+			}),
+		})
+			.then((res) => res.json())
+			.then((data) => {
+				console.log("DATA IS:", data);
+			});
 	}
 
 	return (
