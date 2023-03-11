@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 // import BasicButton from "../BasicButton";
 // import ToggleSwitch from "../ToggleSwitch";
+import Router from "next/router";
 
 import MockUsers from "../../components/users/User_MOCK_DATA.json";
 
@@ -30,10 +31,15 @@ function UserCreate(){
 		// console.log(lastName)
 		console.log(userData)
 
-		// MockUsers.push( {"userID": 69 ,"lastName": firstName,"firstName":lastName,"roleName":roleName,"disabled":true})
+		MockUsers.push( {"userID": userData.userID ,"firstName": userData.firstName, "password": userData.password,
+		"lastName":userData.lastName,"roleName":userData.roleName,"isDisabled":true})
 
 		// {MockUsers.map((mockUser => {
 		// 	console.log(mockUser.id)
+
+		console.log(MockUsers)
+
+		Router.reload()
 
 		// }))}
 	}
