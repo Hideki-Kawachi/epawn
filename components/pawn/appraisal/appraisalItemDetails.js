@@ -45,6 +45,7 @@ function AppraisalItemsDetails({ itemDetails, setItemDetails }) {
 			setPrice(itemDetails.price);
 			setPriceShow(itemDetails.price);
 		}
+		console.log("item Details are:", itemDetails);
 	}, [itemDetails]);
 
 	useEffect(() => {
@@ -56,7 +57,7 @@ function AppraisalItemsDetails({ itemDetails, setItemDetails }) {
 				price: price,
 			};
 			console.log("SET", itemDetails);
-			console.log("WRONG", itemName, itemType, price);
+			// console.log("WRONG", itemName, itemType, price);
 			setItemDetails(updatedItem);
 		}
 	}, [itemName, price, itemType]);

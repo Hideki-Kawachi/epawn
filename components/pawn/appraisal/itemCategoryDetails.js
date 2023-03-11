@@ -8,7 +8,7 @@ import DiamondShapeValues from "../,,/../../../utilities/dropdownValues/diamondS
 
 function ItemCategoryDetails({ itemCategory, itemDetails, setItemDetails }) {
 	const [addItemDetails, setAddItemDetails] = useState({});
-	const [weight, setWeight] = useState(0);
+	const [weight, setWeight] = useState("");
 	const [quantity, setQuantity] = useState(0);
 	const [color, setColor] = useState("");
 	const [purity, setPurity] = useState("");
@@ -16,24 +16,115 @@ function ItemCategoryDetails({ itemCategory, itemDetails, setItemDetails }) {
 	const [model, setModel] = useState("");
 	const [description, setDescription] = useState("");
 	const [clarity, setClarity] = useState("");
-	const [carat, setCarat] = useState(0);
+	const [carat, setCarat] = useState("");
 	const [shape, setShape] = useState("");
 
-	function getWeight(weightInput) {
-		let numTest = /^\d+(\.\d{1,2})?$/;
-		if (Number.isNaN(weightInput)) {
-			console.log("NAN");
-			setWeight(0);
-		} else if (weightInput > 0) {
-			setWeight(parseInt(weightInput));
-		} else if (weightInput == 0) {
-			setWeight(0);
+	// useEffect(() => {
+	// 	if (isNaN(weight)) {
+	// 		setWeight(0);
+	// 	}
+	// }, [weight]);
+
+	useEffect(() => {
+		setWeight("");
+		setQuantity(0);
+		setColor("");
+		setPurity("");
+		setBrand("");
+		setModel("");
+		setDescription("");
+		setClarity("");
+		setCarat("");
+		setShape("");
+	}, [itemCategory]);
+
+	useEffect(() => {
+		let NewItemDetails;
+
+		if (itemCategory == "Gold") {
+			delete itemDetails.quantity;
+			delete itemDetails.shape;
+			delete itemDetails.carat;
+			delete itemDetails.clarity;
+			NewItemDetails = Object.assign(itemDetails, {
+				itemCategory: itemCategory,
+				weight: parseFloat(weight),
+				color: color,
+				purity: purity,
+				brand: brand,
+				model: model,
+				description: description,
+			});
+		} else if (itemCategory == "Platinum") {
+			delete itemDetails.color;
+			delete itemDetails.quantity;
+			delete itemDetails.shape;
+			delete itemDetails.carat;
+			delete itemDetails.clarity;
+			NewItemDetails = Object.assign(itemDetails, {
+				itemCategory: itemCategory,
+				weight: parseFloat(weight),
+				purity: purity,
+				brand: brand,
+				model: model,
+				description: description,
+			});
+		} else if (itemCategory == "Diamond") {
+			delete itemDetails.purity;
+			delete itemDetails.model;
+			delete itemDetails.brand;
+			NewItemDetails = Object.assign(itemDetails, {
+				itemCategory: itemCategory,
+				weight: parseFloat(weight),
+				clarity: clarity,
+				color: color,
+				carat: carat,
+				shape: shape,
+				quantity: quantity,
+				description: description,
+			});
+		} else {
+			delete itemDetails.purity;
+			delete itemDetails.quantity;
+			delete itemDetails.shape;
+			delete itemDetails.carat;
+			delete itemDetails.color;
+			delete itemDetails.clarity;
+			NewItemDetails = Object.assign(itemDetails, {
+				itemCategory: itemCategory,
+				weight: parseFloat(weight),
+				brand: brand,
+				model: model,
+				description: description,
+			});
+		}
+		console.log("new item details:", NewItemDetails);
+		setItemDetails(NewItemDetails);
+	}, [
+		itemCategory,
+		weight,
+		quantity,
+		color,
+		purity,
+		brand,
+		model,
+		description,
+		clarity,
+		carat,
+		shape,
+	]);
+
+	function weightInsert(value) {
+		if (!value || value.match(/^\d{1,}(\.\d{0,2})?$/)) {
+			setWeight(value);
 		}
 	}
 
-	useEffect(() => {
-		console.log("weight is:", typeof weight);
-	}, [weight]);
+	function caratInsert(value) {
+		if (!value || value.match(/^\d{1,}(\.\d{0,2})?$/)) {
+			setCarat(value);
+		}
+	}
 
 	const showCategory = {
 		Gold: (
@@ -49,27 +140,39 @@ function ItemCategoryDetails({ itemCategory, itemDetails, setItemDetails }) {
 					</div>
 					<div className="flex flex-col w-full gap-3">
 						<input
-							typeof="Number"
-							onChange={(e) => getWeight(e.target.value)}
-							value={weight}
+							type="Number"
+							onChange={(e) => weightInsert(e.target.value)}
+							value={parseFloat(weight)}
 						></input>
-						<select>
+						<select value={color} onChange={(e) => setColor(e.target.value)}>
 							{GoldColorValues.map((value) => (
 								<option key={value.goldColor} value={value.goldColor}>
 									{value.goldColor}
 								</option>
 							))}
 						</select>
-						<select>
+						<select value={purity} onChange={(e) => setPurity(e.target.value)}>
 							{GoldPurityValues.map((value) => (
 								<option key={value.goldPurity} value={value.goldPurity}>
 									{value.goldPurity}
 								</option>
 							))}
 						</select>
-						<input type="text"></input>
-						<input type="text"></input>
-						<input type="text"></input>
+						<input
+							type="text"
+							value={brand}
+							onChange={(e) => setBrand(e.target.value)}
+						></input>
+						<input
+							type="text"
+							value={model}
+							onChange={(e) => setModel(e.target.value)}
+						></input>
+						<input
+							type="text"
+							value={description}
+							onChange={(e) => setDescription(e.target.value)}
+						></input>
 					</div>
 				</div>
 			</>
@@ -85,7 +188,11 @@ function ItemCategoryDetails({ itemCategory, itemDetails, setItemDetails }) {
 						<span>Description:</span>
 					</div>
 					<div className="flex flex-col w-full gap-3">
-						<input type="number"></input>
+						<input
+							type="number"
+							onChange={(e) => weightInsert(e.target.value)}
+							value={parseFloat(weight)}
+						></input>
 						<select>
 							{PlatinumPurityValues.map((value) => (
 								<option key={value.platinumPurity} value={value.platinumPurity}>
@@ -93,9 +200,21 @@ function ItemCategoryDetails({ itemCategory, itemDetails, setItemDetails }) {
 								</option>
 							))}
 						</select>
-						<input type="text"></input>
-						<input type="text"></input>
-						<input type="text"></input>
+						<input
+							type="text"
+							value={brand}
+							onChange={(e) => setBrand(e.target.value)}
+						></input>
+						<input
+							type="text"
+							value={model}
+							onChange={(e) => setModel(e.target.value)}
+						></input>
+						<input
+							type="text"
+							value={description}
+							onChange={(e) => setDescription(e.target.value)}
+						></input>
 					</div>
 				</div>
 			</>
@@ -113,31 +232,50 @@ function ItemCategoryDetails({ itemCategory, itemDetails, setItemDetails }) {
 						<span>Description:</span>
 					</div>
 					<div className="flex flex-col w-full gap-3">
-						<input type="number"></input>
-						<select>
+						<input
+							type="number"
+							onChange={(e) => weightInsert(e.target.value)}
+							value={parseFloat(weight)}
+						></input>
+						<select
+							onChange={(e) => setClarity(e.target.value)}
+							value={clarity}
+						>
 							{DiamondClarityValues.map((value) => (
 								<option key={value.diamondClarity} value={value.diamondClarity}>
 									{value.diamondClarity}
 								</option>
 							))}
 						</select>
-						<select>
+						<select onChange={(e) => setColor(e.target.value)} value={color}>
 							{DiamondColorValues.map((value) => (
 								<option key={value.diamondColor} value={value.diamondColor}>
 									{value.diamondColor}
 								</option>
 							))}
 						</select>
-						<input type="number"></input>
-						<select>
+						<input
+							type="number"
+							onChange={(e) => caratInsert(e.target.value)}
+							value={parseFloat(carat)}
+						></input>
+						<select onChange={(e) => setShape(e.target.value)} value={shape}>
 							{DiamondShapeValues.map((value) => (
 								<option key={value.diamondShape} value={value.diamondShape}>
 									{value.diamondShape}
 								</option>
 							))}
 						</select>
-						<input type="number"></input>
-						<input type="text"></input>
+						<input
+							type="number"
+							onChange={(e) => setQuantity(parseInt(e.target.value))}
+							value={isNaN(quantity) ? 0 : quantity}
+						></input>
+						<input
+							type="text"
+							value={description}
+							onChange={(e) => setDescription(e.target.value)}
+						></input>
 					</div>
 				</div>
 			</>
@@ -152,10 +290,26 @@ function ItemCategoryDetails({ itemCategory, itemDetails, setItemDetails }) {
 						<span>Description:*</span>
 					</div>
 					<div className="flex flex-col w-full gap-3">
-						<input type="number"></input>
-						<input type="text"></input>
-						<input type="text"></input>
-						<input type="text"></input>
+						<input
+							type="number"
+							onChange={(e) => weightInsert(e.target.value)}
+							value={parseFloat(weight)}
+						></input>
+						<input
+							type="text"
+							value={brand}
+							onChange={(e) => setBrand(e.target.value)}
+						></input>
+						<input
+							type="text"
+							value={model}
+							onChange={(e) => setModel(e.target.value)}
+						></input>
+						<input
+							type="text"
+							value={description}
+							onChange={(e) => setDescription(e.target.value)}
+						></input>
 					</div>
 				</div>
 			</>
