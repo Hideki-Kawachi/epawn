@@ -22,12 +22,28 @@ function ItemCategoryDetails({ itemCategory, itemDetails, setItemDetails }) {
 		setWeight(itemDetails.weight ? itemDetails.weight.toString() : "0");
 		setQuantity(itemDetails.quantity ? itemDetails.quantity : 0);
 		if (itemCategory == "Gold") {
-			setColor(itemDetails.color ? itemDetails.color : "Rose");
-			setPurity(itemDetails.purity ? itemDetails.purity : "24K");
+			setColor(
+				GoldColorValues.includes({ goldColor: itemDetails.color })
+					? itemDetails.color
+					: "Rose"
+			);
+			setPurity(
+				GoldPurityValues.includes({ goldPurity: itemDetails.purity })
+					? itemDetails.purity
+					: "24K"
+			);
 		} else if (itemCategory == "Platinum") {
-			setPurity(itemDetails.purity ? itemDetails.purity : "999");
+			setPurity(
+				PlatinumPurityValues.includes({ platinumPurity: itemDetails.purity })
+					? itemDetails.purity
+					: "999"
+			);
 		} else if (itemCategory == "Diamond") {
-			setColor(itemDetails.color ? itemDetails.color : "Colorless");
+			setColor(
+				DiamondColorValues.includes({ diamondColor: itemDetails.color })
+					? itemDetails.color
+					: "Colorless"
+			);
 			setClarity(itemDetails.clarity ? itemDetails.clarity : "Flawless");
 			setCarat(itemDetails.carat ? itemDetails.carat : "0");
 			setShape(itemDetails.shape ? itemDetails.shape : "Round");
@@ -71,6 +87,10 @@ function ItemCategoryDetails({ itemCategory, itemDetails, setItemDetails }) {
 				brand: brand,
 				model: model,
 				description: description,
+				quantity: 0,
+				shape: "",
+				carat: 0,
+				clarity: "",
 			});
 		} else if (itemCategory == "Platinum") {
 			delete itemDetails.color;
@@ -85,6 +105,11 @@ function ItemCategoryDetails({ itemCategory, itemDetails, setItemDetails }) {
 				brand: brand,
 				model: model,
 				description: description,
+				color: "",
+				quantity: 0,
+				shape: "",
+				carat: 0,
+				clarity: "",
 			});
 		} else if (itemCategory == "Diamond") {
 			delete itemDetails.purity;
@@ -106,6 +131,9 @@ function ItemCategoryDetails({ itemCategory, itemDetails, setItemDetails }) {
 				shape: shape,
 				quantity: quantity,
 				description: description,
+				purity: "",
+				model: "",
+				brand: "",
 			});
 		} else {
 			delete itemDetails.purity;
@@ -120,6 +148,12 @@ function ItemCategoryDetails({ itemCategory, itemDetails, setItemDetails }) {
 				brand: brand,
 				model: model,
 				description: description,
+				purity: "",
+				quantity: 0,
+				shape: "",
+				carat: 0,
+				color: "",
+				clarity: "",
 			});
 		}
 		// console.log("new item details:", NewItemDetails);

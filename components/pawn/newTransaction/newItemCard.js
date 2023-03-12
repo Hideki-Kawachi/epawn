@@ -4,7 +4,7 @@ import ItemTypeData from "../../../utilities/dropdownValues/itemType.json";
 function NewItemCard({ id, deleteItem, setItem }) {
 	const itemTypeList = ItemTypeData;
 	const [itemName, setItemName] = useState("");
-	const [itemType, setItemType] = useState(itemTypeList[0]);
+	const [itemType, setItemType] = useState(itemTypeList[0].itemType);
 	const [itemImage, setItemImage] = useState([]);
 
 	useEffect(() => {

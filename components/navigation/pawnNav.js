@@ -11,7 +11,7 @@ function PawnNav({ role }) {
 				<Link href={"/pawn/clerk/returningCustomer"}>
 					<a className="w-fit">Returning Customer</a>
 				</Link>
-				<Link href={"/pawn/clerk/ongoingTransactions"}>
+				<Link href={"/pawn/clerk/ongoingTransaction/"}>
 					<a className="w-fit">Ongoing Transactions</a>
 				</Link>
 			</div>

@@ -9,7 +9,7 @@ function AppraisalItemsDetails({ itemDetails, setItemDetails }) {
 	const itemCategoryList = ItemCategoryData;
 	const [itemName, setItemName] = useState("");
 	const [itemType, setItemType] = useState("");
-	const [itemCategory, setItemCategory] = useState("Gold");
+	const [itemCategory, setItemCategory] = useState("");
 	const [price, setPrice] = useState(0);
 	const [priceShow, setPriceShow] = useState("0");
 

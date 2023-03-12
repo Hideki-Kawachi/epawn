@@ -26,12 +26,13 @@ export const getServerSideProps = withIronSessionSsr(
 			let customerData = await User.find({ isDisabled: false }).lean();
 			let priceHistory = await PriceHistory.find({}).lean();
 			let tableData = [];
+			console.log("for appraisal:", priceHistory);
 			forAppraisal.forEach((transaction) => {
 				let customerInfo = customerData.find(
 					(customer) => customer.userID == transaction.customerID
 				);
 				let priceInfo = priceHistory.find(
-					(priceHistory) => priceHistory.transactionID == transaction._id
+					(history) => history.transactionID == transaction._id.toString()
 				);
 				tableData.push({
 					transactionID: priceInfo.transactionID,
@@ -42,6 +43,7 @@ export const getServerSideProps = withIronSessionSsr(
 						.substring(4, transaction.creationDate.length),
 					time: transaction.updatedAt.toLocaleTimeString("en-GB"),
 				});
+				console.log("tableData:", tableData);
 			});
 			return {
 				props: { currentUser: req.session.userData, tableData: tableData },
