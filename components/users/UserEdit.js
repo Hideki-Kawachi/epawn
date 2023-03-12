@@ -5,14 +5,14 @@ import React, { useState } from "react";
 import MockUsers from "../../components/users/User_MOCK_DATA.json";
 
 // function UserEdit(props) or UserEdit(userID, firstName, lastName, password, roleName)
-function UserEdit({
+function UserEdit(
 	key, //key == UID
 	fName,
 	lName,
 	rName,
 	pass,
 	disabledTrue
-}){
+){
 
 	const [userID, setUserID] = useState("");
 	const [firstName, setFirstName] = useState("");
@@ -30,6 +30,8 @@ function UserEdit({
 		setRoleName(rName)
 		setPassword(pass)
 		setIsDisabled(disabledTrue)
+
+		console.log("nani" + key)
 	}
 
 
@@ -42,7 +44,7 @@ function UserEdit({
 		// console.log(lastName)
 		console.log(userData.lastName)
 
-		// MockUsers.push( {"userID": 69 ,"lastName": firstName,"firstName":lastName,"roleName":roleName,"disabled":true})
+		MockUsers.push( {"userID": 69 ,"lastName": firstName,"firstName":lastName,"roleName":roleName,"disabled":true})
 
 		// {MockUsers.map((mockUser => {
 		// 	console.log(mockUser.id)
@@ -62,7 +64,7 @@ function UserEdit({
 				<div className="user-create-top-container m-5 grid grid-cols-3 gap-4">
 
                     <div className="flex w-1/4 flex-col">
-						<span className="font-bold pr-7">Username: </span>
+						<span className="font-bold pr-7">UserID: </span>
           				<input 
 						  	className="border rounded-md stroke-gray-500 px-3"
 							type="text"

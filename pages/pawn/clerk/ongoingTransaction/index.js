@@ -1,9 +1,9 @@
 import React from "react";
-import Header from "../../../components/header";
-import NavBar from "../../../components/navigation/navBar";
+import Header from "../../../../components/header";
+import NavBar from "../../../../components/navigation/navBar";
 
 import { withIronSessionSsr } from "iron-session/next";
-import { ironOptions } from "../../../utilities/config";
+import { ironOptions } from "../../../../utilities/config";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {

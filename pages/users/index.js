@@ -7,7 +7,7 @@ import { useState } from "react";
 import { withIronSessionSsr } from "iron-session/next";
 import { ironOptions } from "../../utilities/config";
 
-import MockUsers from "../../components/users/User_mock_DATA.json";
+import MockUsers from "../../components/users/User_MOCK_DATA.json";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {
@@ -20,8 +20,12 @@ export const getServerSideProps = withIronSessionSsr(
 			req.session.userData.role == "admin" ||
 			req.session.userData.role == "manager"
 		) {
+
+			// const res = await fetch("../components/users/User_MOCK_DATA.json")
+  			// const MockUsers = await res.json()
+
 			return {
-				props: { currentUser: req.session.userData },
+				props: { currentUser: req.session.userData},
 			};
 		} else if (req.session.userData.role == "customer") {
 			return {
@@ -38,7 +42,10 @@ export const getServerSideProps = withIronSessionSsr(
 	ironOptions
 );
 
-function Users({ currentUser }) {
+function Users({ currentUser}) {
+
+	// const [userList, setUserList] = useState(MockUsers);
+	
 	// const users = JSON.parse(userData);
 	// const roles = JSON.parse(roleData);
 

@@ -68,7 +68,7 @@ export default async function NewCustomerPawn(req, res) {
 	let itemCreate = [];
 
 	body.itemList.map((item) => {
-		console.log("LOOP");
+		// console.log("LOOP");
 		itemCreate.push({
 			itemID: itemID,
 			itemListID: itemListID,
@@ -80,6 +80,12 @@ export default async function NewCustomerPawn(req, res) {
 			weight: 0,
 			brand: "",
 			model: "",
+			color: "",
+			clarity: "",
+			purity: "",
+			carat: 0,
+			shape: "",
+			quantity: 0,
 			description: "",
 			forAuction: false,
 			isRedeemed: false,

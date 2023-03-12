@@ -5,7 +5,7 @@ import AppraisalTable from "../../../../components/pawn/appraisal/appraisalTable
 import Data from "../../../../components/tempData/appraisalTable.json";
 import { withIronSessionSsr } from "iron-session/next";
 import { ironOptions } from "../../../../utilities/config";
-import { Router } from "next/router";
+import { Router, useRouter } from "next/router";
 import Transaction from "../../../../schemas/transaction";
 import Item from "../../../../schemas/item";
 import PriceHistory from "../../../../schemas/priceHistory";
@@ -13,6 +13,7 @@ import dbConnect from "../../../../utilities/dbConnect";
 import User from "../../../../schemas/user";
 import AppraisalItemListCard from "../../../../components/pawn/appraisal/appraisalItemListCard";
 import AppraisalItemsDetails from "../../../../components/pawn/appraisal/appraisalItemDetails";
+import mongoose from "mongoose";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req, query }) {
@@ -26,9 +27,10 @@ export const getServerSideProps = withIronSessionSsr(
 			query.transactionID.length == 24
 		) {
 			await dbConnect();
-			let transactionInfo = await Transaction.findById(
-				query.transactionID
-			).lean();
+			let transactionInfo = await Transaction.findOne({
+				_id: new mongoose.Types.ObjectId(query.transactionID),
+				status: "for appraisal",
+			}).lean();
 			if (transactionInfo) {
 				let priceHistoryList = await PriceHistory.find({
 					transactionID: query.transactionID,
@@ -77,7 +79,8 @@ function AppraisalTransactionID({
 	const [itemList, setItemList] = useState(itemData);
 	const [appraisalPrice, setAppraisalPrice] = useState(0);
 	const [itemShow, setItemShow] = useState();
-	// console.log("transaction Data:", transactionData);
+
+	const router = useRouter();
 	// console.log("price history:", priceHistory);
 	// console.log("item data:", itemData);
 	// console.log("customer data:", customerData);
@@ -92,6 +95,7 @@ function AppraisalTransactionID({
 	function selectItem(id) {
 		setItemShow(
 			itemList.find((item) => {
+				//console.log("selected item is:", item);
 				return item.itemID == id;
 			})
 		);
@@ -100,12 +104,11 @@ function AppraisalTransactionID({
 	function setItemDetails(updatedItem) {
 		let newList = itemList.map((item) => {
 			if (item.itemID == updatedItem.itemID) {
-				item.itemName = updatedItem.itemName;
-				item.itemType = updatedItem.itemType;
-				item.price = updatedItem.price;
+				item = Object.assign(item, updatedItem);
 			}
 			return item;
 		});
+		//console.log("item list updated is:", itemList);
 		setItemList(newList);
 	}
 
@@ -123,8 +126,25 @@ function AppraisalTransactionID({
 
 	function submitForm() {
 		console.log("SUBMIT FORM");
-		console.log("item list:", itemList);
-		console.log("price:", appraisalPrice);
+		// console.log("item list:", itemList);
+		// console.log("price:", appraisalPrice);
+		fetch("/api/pawn/itemAppraisal", {
+			method: "POST",
+			body: JSON.stringify({
+				itemList: itemList,
+				appraisalPrice: appraisalPrice,
+				transactionID: transactionData._id,
+			}),
+		})
+			.then((res) => res.json())
+			.then((data) => {
+				console.log("DATA IS:", data);
+				if (data == "success") {
+					router.replace("/");
+				} else {
+					router.reload();
+				}
+			});
 	}
 
 	return (
@@ -162,7 +182,7 @@ function AppraisalTransactionID({
 					<div className="flex flex-col items-center w-full text-base">
 						<span className="flex justify-end w-full pr-[35%] font-normal">
 							<span className="mr-2 font-bold">Asking Price: </span>
-							Php 1,000.00
+							Php {priceHistory[priceHistory.length - 1].askPrice}
 						</span>
 						<span className="flex justify-end w-full font-normal pr-[35%]">
 							<span className="mr-2 font-bold">Appraisal Price: </span>

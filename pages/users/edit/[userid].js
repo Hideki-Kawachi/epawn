@@ -66,7 +66,7 @@ function Edit({ currentUser }) {
 								lName={mockUser.lastName}
 								rName={mockUser.roleName}
 								uID={mockUser.userID}
-								pass={mockUser.userID}
+								pass={mockUser.password}
 								disabledTrue={mockUser.isDisabled}
 							/>
 						);
