@@ -149,14 +149,12 @@ function PawnDetails({ trigger, setTrigger, itemDetails }) {
 							<p>Name: </p>
 							<p>Type: </p>
 							<p>Item ID: </p>
-							<p>Image: </p>
 							<p>Price: </p>
 						</div>
 						<div className="ml-5 text-left">
 							<p>{itemDetails.itemName}</p>
 							<p>{itemDetails.itemType} </p>
 							<p>{itemDetails.itemID}</p>
-							<p>WatchPic.jpg </p>
 							<p>Php {itemDetails.price}</p>
 						</div>
 						<div className="relative object-contain w-1/3 left-1/4 aspect-square ">
