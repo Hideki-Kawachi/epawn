@@ -25,7 +25,7 @@ function ItemCard({ itemDetails }) {
 				/>
 			</Modal>
 
-			<div className="m-5 w-96">
+			<div className="m-5 text-sm w-96">
 				<p>
 					<b>Name: </b>
 					{itemDetails.itemName}

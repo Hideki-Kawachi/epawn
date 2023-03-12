@@ -35,7 +35,9 @@ export const getServerSideProps = withIronSessionSsr(
 			if (transactionInfo) {
 				let priceHistoryList = await PriceHistory.find({
 					transactionID: query.transactionID,
-				}).lean();
+				})
+					.sort({ updatedAt: 1 })
+					.lean();
 				let itemList = await Item.find({
 					itemListID: transactionInfo.itemListID,
 				}).lean();

@@ -41,6 +41,6 @@ export default function generateItemID(latestItem) {
 	} else {
 		latestID = nextLetter(idSections[0]) + "-000000";
 	}
-	console.log("RETURNING LATEST ID", latestID);
+	//console.log("RETURNING LATEST ID", latestID);
 	return latestID;
 }

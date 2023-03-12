@@ -22,7 +22,7 @@ function NewItemList({ itemList, setItemList }) {
 	}
 
 	return (
-		<div className="w-full bg-white h-[50vh] border-gray-500 border-solid border-2 p-4 overflow-y-scroll gap-3 flex flex-col">
+		<div className="w-full bg-white h-[50vh] border-gray-500 border-solid border-2 overflow-y-scroll gap-3 flex flex-col">
 			{itemList.map((items) => (
 				<NewItemCard
 					key={items.id}

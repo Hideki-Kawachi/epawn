@@ -13,22 +13,22 @@ function NewItemCard({ id, deleteItem, setItem }) {
 	}, [itemName, itemType, itemImage]);
 
 	return (
-		<div className="flex gap-5">
-			<div className="flex w-full gap-3 p-2 text-sm border-2 border-gray-500 border-solid rounded-md shadow-md bg-light">
+		<div className="flex gap-5 m-5">
+			<div className="flex w-full gap-3 p-5 text-sm border-solid rounded-md shadow-md bg-light">
 				{/* Left side div */}
-				<div className="flex flex-col items-end gap-4">
-					<label htmlFor="itemName" className="flex gap-4">
+				<div className="flex flex-col items-end gap-3">
+					<label htmlFor="itemName" className="flex gap-4 font-bold">
 						Name:{" "}
 					</label>
-					<label htmlFor="itemType" className="flex gap-4">
+					<label htmlFor="itemType" className="flex gap-4 font-bold">
 						Type:
 					</label>
-					<label htmlFor="itemImage" className="flex gap-4">
+					<label htmlFor="itemImage" className="flex gap-4 font-bold">
 						Image:
 					</label>
 				</div>
 				{/* Right side div */}
-				<div className="flex flex-col flex-grow gap-3">
+				<div className="flex flex-col flex-grow gap-2">
 					<input
 						className="w-full"
 						type="text"
