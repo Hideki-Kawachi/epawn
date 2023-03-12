@@ -14,6 +14,7 @@ import User from "../../../../schemas/user";
 import AppraisalItemListCard from "../../../../components/pawn/appraisal/appraisalItemListCard";
 import AppraisalItemsDetails from "../../../../components/pawn/appraisal/appraisalItemDetails";
 import mongoose from "mongoose";
+import LoadingSpinner from "../../../../components/loadingSpinner";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req, query }) {
@@ -79,6 +80,7 @@ function AppraisalTransactionID({
 	const [itemList, setItemList] = useState(itemData);
 	const [appraisalPrice, setAppraisalPrice] = useState(0);
 	const [itemShow, setItemShow] = useState();
+	const [loading, setLoading] = useState(false);
 
 	const router = useRouter();
 	// console.log("price history:", priceHistory);
@@ -128,6 +130,7 @@ function AppraisalTransactionID({
 		console.log("SUBMIT FORM");
 		// console.log("item list:", itemList);
 		// console.log("price:", appraisalPrice);
+		setLoading(true);
 		fetch("/api/pawn/itemAppraisal", {
 			method: "POST",
 			body: JSON.stringify({
@@ -149,6 +152,7 @@ function AppraisalTransactionID({
 
 	return (
 		<>
+			<LoadingSpinner isLoading={loading}></LoadingSpinner>
 			<NavBar currentUser={currentUser}></NavBar>
 			<Header currentUser={currentUser}></Header>
 			<div id="main-content-area">

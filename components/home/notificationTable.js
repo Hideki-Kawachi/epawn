@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import React from "react";
 import {
 	useFilters,
@@ -52,10 +53,24 @@ function NotificationTable({ role, data }) {
 		usePagination
 	);
 
+	const router = useRouter();
+
 	function openRow(rowData) {
 		if (role == "manager") {
+			if (rowData.status == "for appraisal") {
+				router.push({
+					pathname: "pawn/manager/appraisal/[transactionID]",
+					query: { transactionID: rowData._id },
+				});
+			}
 			console.log("MANAGER", rowData);
 		} else {
+			if (rowData.status == "appraised") {
+				router.push({
+					pathname: "pawn/clerk/ongoingTransaction/[transactionID]",
+					query: { transactionID: rowData._id },
+				});
+			}
 			console.log("CLERK", rowData);
 		}
 	}

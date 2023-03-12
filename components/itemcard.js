@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Modal from "react-modal";
 import PawnDetails from "./modals/pawnDetails";
-function ItemCard({ itemID, itemName, itemType, itemPrice }) {
+function ItemCard({ itemDetails }) {
 	const [pawnModal, setPawnOpen] = useState(false); //View Pawn Item Detials
 
 	function viewDetails() {
@@ -21,29 +21,26 @@ function ItemCard({ itemID, itemName, itemType, itemPrice }) {
 				<PawnDetails
 					trigger={pawnModal}
 					setTrigger={setPawnOpen}
-					itemName={itemName}
-					itemType={itemType}
-					itemPrice={convertFloat(itemPrice)}
-					itemID={itemID}
+					itemDetails={itemDetails}
 				/>
 			</Modal>
 
 			<div className="m-5 w-96">
 				<p>
 					<b>Name: </b>
-					{itemName}
+					{itemDetails.itemName}
 				</p>
 				<p>
 					<b>ID: </b>
-					{itemID}
+					{itemDetails.itemID}
 				</p>
 				<p>
 					<b>Type: </b>
-					{itemType}
+					{itemDetails.itemType}
 				</p>
 				<p>
 					<b>Price: </b>
-					Php {convertFloat(itemPrice)}
+					Php {convertFloat(itemDetails.price)}
 				</p>
 			</div>
 			<div className="relative right-5 top-5">
