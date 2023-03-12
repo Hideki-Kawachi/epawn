@@ -10,11 +10,14 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
   const [repModal, setRepModal] = useState(false); 
   const [customerModal, setCustomerModal] = useState(false);
   const [historyModal, setHistoryModal] = useState(false);
+  const [interest, setInterest] = useState(0);
+  const [advInterest, setAdvInterest] = useState(0);
   const [otherCharges, setOtherCharges] = useState(0);
-  const [loanAmount, setLoan] = useState(0)
+  const [loanAmount, setLoan] = useState()
   const [newloanAmount, setNewLoanAmount] = useState(0)
-
-
+  const [partial, setPartial] = useState(0)
+  const [amountPaid, setAmount] = useState(0)
+  const [PT, setPT] = useState()
   function repOpen(){
     setRepModal(true);
   }
@@ -31,7 +34,9 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
     search(pawnticketID)
   }
 
-    
+  function payAmount(number){
+    setAmount(number);
+  }
   function getInterest(loan){
     //plan: multiply loan * 0.035 with month diff
     if (pawnTicket.loanDate == null || pawnTicket.maturityDate == null)
@@ -39,35 +44,38 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
     else {
       const date1 = dayjs(pawnTicket.loanDate, "MM/DD/YYYY");
       const date2 = dayjs(pawnTicket.maturityDate, "MM/DD/YYYY");
-
       const diffInMonths = date2.diff(date1, "month");
-
-      // console.log(
-      //   diffInMonths +
-      //     " months and " +
-      //     convertFloat(loan * 0.035 * diffInMonths)
-      // );
-      return convertFloat(loan * 0.035 * diffInMonths);
+      return loan * 0.035 * diffInMonths;
     }
   }
 
   function getAdvInterest(newLoan){
   if (pawnTicket.loanDate == null || pawnTicket.maturityDate == null)
     return "N/A";
-  else return convertFloat(newLoan * 0.035);
+  else return newLoan * 0.035;
   }
 
   function getTotalInterest(int, advint){
-      if (pawnTicket.loanDate == null || pawnTicket.maturityDate == null)
-        return "N/A";
-      else return convertFloat(Number(int) + Number(advint));
+    //console.log("test " + (int + advint));
+    if(int == NaN || advint == NaN)
+      return 0;
+    else
+      return convertFloat(int + advint);
+  }
+
+  function getNewLoanAmount(loan, partial){
+    return Number(loan) - Number(partial)
   }
 
   function convertFloat(number) {
-    return Number(number).toLocaleString("en-US", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    });
+    if (mode)
+      return "0.00";
+    else {
+      return Number(number).toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    };
   }
 
   function convertDate(date){
@@ -87,8 +95,7 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
     var total = 0;
 
     redeemList.forEach((item) => {
-       total += Number(item.itemPrice)
-       //console.log("total is " + total + " while itemPrice is " + item.itemPrice)
+       total += Number(item.price)
     });
 
     return convertFloat(total)
@@ -101,6 +108,13 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
       return fname + " " + mname + " " + lname;
   }
 
+  useEffect(() =>{
+    if (pawnTicket != null){
+      setPT(pawnTicket)
+      setLoan(Number(pawnTicket.loanAmount))
+    }
+  }, [pawnTicket, loanAmount]
+  )
   return (
     <>
       <div
@@ -172,7 +186,12 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
             </div>
             <div className="text-left ml-5">
               <p className="">
-                {getFullName(user, user.firstName, user.middleName, user.lastName)}
+                {getFullName(
+                  user,
+                  user.firstName,
+                  user.middleName,
+                  user.lastName
+                )}
               </p>
               <p className="">{customer.contactNumber}</p>
               <p className="max-w-md">
@@ -181,7 +200,7 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
               </p>
             </div>
           </div>
-          {mode == "select" ? (
+          {mode == false ? (
             <div className="flex">
               <div className="text-right ml-10 min-w-fit">
                 <p className="font-bold">Redeemed by: </p>
@@ -278,8 +297,13 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
               </div>
               <div className="text-right ml-10 pr-10 min-w-fit">
                 <br />
-                <p> Php {getInterest(loanAmount)} </p>
-                <p> {getAdvInterest(newloanAmount)} </p>
+                <p> Php {convertFloat(getInterest(loanAmount))} </p>
+                <p>
+                  {" "}
+                  {convertFloat(
+                    getAdvInterest(getNewLoanAmount(loanAmount, partial))
+                  )}{" "}
+                </p>
               </div>
               <div className="text-right min-w-fit">
                 <p className="font-bold mr-3">Php {convertFloat(loanAmount)}</p>
@@ -288,7 +312,7 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
                 <p className="mr-3">
                   {getTotalInterest(
                     getInterest(loanAmount),
-                    getAdvInterest(newloanAmount)
+                    getAdvInterest(getNewLoanAmount(loanAmount, partial))
                   )}
                 </p>
                 <p className="mr-3">0.00</p>
@@ -299,11 +323,18 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
                   />
                 </p> */}
                 <p className="mr-3">{getTotalRedeem(redeem)}</p>
-                <p className="mr-0.5">(3,471.50)</p>
-                <p className="mr-3">95,000.00</p>
+                <p className="mr-1.5">(0.00)</p>
+                <p>
+                  <input
+                    type="number"
+                    className="text-right border rounded-md stroke-gray-500 px-3 w-40 mb-1"
+                    onChange={(e) => payAmount(e.target.value)}
+                    disabled={mode}
+                  />
+                </p>
                 <hr className="my-3" />
                 <p className="font-bold mr-3">
-                  Php {convertFloat(newloanAmount)}
+                  Php {convertFloat(getNewLoanAmount(loanAmount, partial))}
                 </p>
               </div>
             </div>

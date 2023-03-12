@@ -320,7 +320,7 @@ function RedeemClerk({ currentUser}) {
         </p>
         <div className="flex">
           <DetailsCardClerk
-            redeem={[]}
+            redeem={redeemArray}
             branch={branch}
             pawnTicket={ptInfo}
             user={userInfo}
