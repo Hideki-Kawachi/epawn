@@ -1,6 +1,6 @@
 import Close from "../closebutton";
 import Image from "next/image";
-function CustomerDetails({ trigger, setTrigger }) {
+function CustomerDetails({ trigger, setTrigger, customerInfo, name, lname, fname, mname }) {
   function closeModal() {
     setTrigger(!trigger);
   }
@@ -29,13 +29,13 @@ function CustomerDetails({ trigger, setTrigger }) {
             {/* User Details flexbox */}
             <div className="mt-3">
               <p className="font-nunito font-bold text-base text-left">
-                Joseph L. Dela Cruz
+                {name}
               </p>
               <span className="font-nunito font-bold text-base text-left">
                 User ID:
               </span>
               <span className="ml-3 font-nunito text-base text-left">
-                123-456
+                {customerInfo.userID}
               </span>
               <p className=" mt-5 mb-[-20px] font-nunito font-bold bg-white w-fit p-2">
                 {" "}
@@ -63,9 +63,9 @@ function CustomerDetails({ trigger, setTrigger }) {
               </div>
 
               <div className="mx-5 text-left">
-                <p>Joseph</p>
-                <p>Dela Cruz</p>
-                <p>Luz</p>
+                <p>{fname}</p>
+                <p>{mname}</p>
+                <p>{lname}</p>
               </div>
               {/* Name*/}
               <div className="font-nunito font-bold text-right">
@@ -74,8 +74,8 @@ function CustomerDetails({ trigger, setTrigger }) {
               </div>
 
               <div className="mx-5 text-left">
-                <p>Male</p>
-                <p>Single</p>
+                <p>{customerInfo.sex}</p>
+                <p>{customerInfo.status}</p>
               </div>
               {/* BMI */}
               <div className="font-nunito font-bold text-right">
@@ -84,8 +84,8 @@ function CustomerDetails({ trigger, setTrigger }) {
               </div>
 
               <div className="mx-5 text-left">
-                <p>165 cm</p>
-                <p>74 kg</p>
+                <p>{customerInfo.height} cm</p>
+                <p>{customerInfo.weight} kg</p>
               </div>
             </div>
 
@@ -101,10 +101,10 @@ function CustomerDetails({ trigger, setTrigger }) {
               </div>
 
               <div className="mx-5 text-left">
-                <p>12/17/2000</p>
-                <p>Taft Ave. Malate, Metro Manila</p>
-                <p>One Archers Residences, Taft Ave, Malate, Metro Manila</p>
-                <p>One Archers Residences, Taft Ave, Malate, Metro Manila</p>
+                <p>{customerInfo.birthDate}</p>
+                <p>{customerInfo.birthPlace}</p>
+                <p>{customerInfo.presentAddress}</p>
+                <p>{customerInfo.permanentAddress}</p>
               </div>
             </div>
 
@@ -120,10 +120,10 @@ function CustomerDetails({ trigger, setTrigger }) {
               </div>
 
               <div className="mx-5 text-left">
-                <p>0917 530 1700</p>
-                <p>josephdcruz@gmail.com</p>
-                <p>Fair</p>
-                <p>----------------</p>
+                <p>{customerInfo.contactNumber}</p>
+                <p>{customerInfo.email}</p>
+                <p>{customerInfo.complexion}</p>
+                <p>{customerInfo.identifyingMark}</p>
               </div>
               {/* Work */}
               <div className="font-nunito font-bold text-right">
@@ -133,9 +133,9 @@ function CustomerDetails({ trigger, setTrigger }) {
               </div>
 
               <div className="mx-5 text-left">
-                <p>----------------</p>
-                <p>----------------</p>
-                <p>----------------</p>
+                <p>{customerInfo.employerName}</p>
+                <p>{customerInfo.jobPosition}</p>
+                <p>{customerInfo.workNature}</p>
               </div>
             </div>
           </div>

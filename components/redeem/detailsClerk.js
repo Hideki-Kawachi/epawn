@@ -5,14 +5,14 @@ import CustomerDetails from "../modals/customerDetails";
 import PawnHistory from "../modals/pawnHistory";
 import dayjs from "dayjs";
 
-function DetailsCardClerk({redeem, customerName, contactNumber, address, loanDate, maturityDate, expiryDate, branch, search}) {
+function DetailsCardClerk({redeem, customerName, loanDate, maturityDate, expiryDate, branch, search, mode, PTNumber, customer, fName, lName, mName}) {
   const [isOriginal, setOriginal] = useState("original");
   const [repModal, setRepModal] = useState(false); 
   const [customerModal, setCustomerModal] = useState(false);
   const [historyModal, setHistoryModal] = useState(false);
   const [otherCharges, setOtherCharges] = useState(0);
-  const [loanAmount, setLoan] = useState(10000)
-  const [newloanAmount, setNewLoanAmount] = useState(1000)
+  const [loanAmount, setLoan] = useState(0)
+  const [newloanAmount, setNewLoanAmount] = useState(0)
 
 
   function repOpen(){
@@ -42,11 +42,11 @@ function DetailsCardClerk({redeem, customerName, contactNumber, address, loanDat
 
       const diffInMonths = date2.diff(date1, "month");
 
-      console.log(
-        diffInMonths +
-          " months and " +
-          convertFloat(loan * 0.035 * diffInMonths)
-      );
+      // console.log(
+      //   diffInMonths +
+      //     " months and " +
+      //     convertFloat(loan * 0.035 * diffInMonths)
+      // );
       return convertFloat(loan * 0.035 * diffInMonths);
     }
   }
@@ -77,7 +77,7 @@ function DetailsCardClerk({redeem, customerName, contactNumber, address, loanDat
       return "N/A"
     else {
       const dt = new Date(date);
-      console.log(dt);
+      //console.log(dt);
       return dayjs(dt).format("MM/DD/YYYY");
     };
   }
@@ -101,7 +101,7 @@ function DetailsCardClerk({redeem, customerName, contactNumber, address, loanDat
     <>
       <div
         id="detailscard"
-        className="drop-shadow-lg flex text-base font-nunito pr-10"
+        className="drop-shadow-lg flex text-sm font-nunito pr-10"
       >
         <Modal isOpen={repModal} ariaHideApp={false} className="modal">
           <AuthorizedRep trigger={repModal} setTrigger={setRepModal} />
@@ -115,17 +115,27 @@ function DetailsCardClerk({redeem, customerName, contactNumber, address, loanDat
           <CustomerDetails
             trigger={customerModal}
             setTrigger={setCustomerModal}
+            customerInfo={customer}
+            name={customerName}
+            lname={lName}
+            fname={fName}
+            mname={mName}
           />
         </Modal>
         {/* Left Side of the Card (Details) */}
         <div className="m-10 ">
           <span className="font-bold pr-7">PT Number:</span>
+          {mode == "select" ? (
+          <span>{PTNumber}</span>
+          ) :(
+          <span>  
           <input
             className="border rounded-md stroke-gray-500 px-3"
             onChange={(e) => searchPT(e.target.value)}
           />
           <p className="text-sm text-gray-300 pl-[163px]">Format: X-XXXX </p>
-
+          </span>
+          )}
           <hr className="h-px my-8 bg-gray-500 border-0" />
 
           {/* Customer Details */}
@@ -159,14 +169,14 @@ function DetailsCardClerk({redeem, customerName, contactNumber, address, loanDat
             </div>
             <div className="text-left ml-5">
               <p className="">{customerName}</p>
-              <p className="">{contactNumber}</p>
+              <p className="">{customer.contactNumber}</p>
               <p className="max-w-md">
                 {/* Used to make long address break line */}
-                {address}
+                {customer.presentAddress}
               </p>
             </div>
           </div>
-
+          {mode == "select" ? (
           <div className="flex">
             <div className="text-right ml-10 min-w-fit">
               <p className="font-bold">Redeemed by: </p>
@@ -198,6 +208,9 @@ function DetailsCardClerk({redeem, customerName, contactNumber, address, loanDat
               )}
             </div>
           </div>
+          ) : (
+            <></>
+          )}
 
           <hr className="h-px my-8 bg-gray-500 border-0" />
 

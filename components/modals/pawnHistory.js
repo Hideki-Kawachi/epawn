@@ -50,9 +50,6 @@ function PawnHistory({trigger, setTrigger}) {
           pageOptions,
           pageCount,
           prepareRow,
-          setPageSize,
-          state,
-          setGlobalFilter,
         } = useTable(
           {
             columns,
