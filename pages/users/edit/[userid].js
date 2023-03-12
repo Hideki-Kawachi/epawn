@@ -42,7 +42,7 @@ function Edit({ currentUser }) {
 	const router = useRouter();
 	const userid = router.query.userid;
 
-	console.log("userid is:", userid, "--curr is:", currentUser);
+	// console.log("userid is:", userid, "--curr is:", currentUser);
 
 	// Add NavBar (currentUser) and Header (currentUser)
 	return (
@@ -50,28 +50,31 @@ function Edit({ currentUser }) {
 			<NavBar currentUser={currentUser}></NavBar>
 			<Header currentUser={currentUser}></Header>
 
-			<div id="main-content-area">
-			<div> hello </div>
+			<div id="main-content-area">		
 
-			<div> Details about {userid} </div>
+					<div className="relative w-full m-10 bg-white h-60">
 
-			{MockUsers.map((mockUser) => {
+					<div> Details about {userid} </div>
 
-					//Modify this to String. mockUser.userID == userid.toString()
-					if (mockUser.userID == userid) {
-						return (
-							<UserEdit
-								key={mockUser.userID}
-								fName={mockUser.firstName}
-								lName={mockUser.lastName}
-								rName={mockUser.roleName}
-								uID={mockUser.userID}
-								pass={mockUser.password}
-								disabledTrue={mockUser.isDisabled}
-							/>
-						);
-					}
-			})}
+					{MockUsers.map((mockUser) => {
+
+
+							//Modify this to String. mockUser.userID == userid.toString()
+							if (mockUser.userID == userid) {
+
+								// console.log(mockUser.firstName)
+
+								return (
+
+									<UserEdit
+										key = {mockUser.userID}
+										data = {mockUser}
+									/>
+								);
+							}
+					})}
+
+					</div>
 
 			</div>
 
