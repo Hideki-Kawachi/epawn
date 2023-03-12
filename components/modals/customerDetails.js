@@ -1,6 +1,6 @@
 import Close from "../closebutton";
 import Image from "next/image";
-function CustomerDetails({ trigger, setTrigger, customerInfo, name, lname, fname, mname }) {
+function CustomerDetails({ trigger, setTrigger, customerInfo, userInfo}) {
   function closeModal() {
     setTrigger(!trigger);
   }
@@ -29,7 +29,7 @@ function CustomerDetails({ trigger, setTrigger, customerInfo, name, lname, fname
             {/* User Details flexbox */}
             <div className="mt-3">
               <p className="font-nunito font-bold text-base text-left">
-                {name}
+                {userInfo.firstName + " " + userInfo.middleName + " " + userInfo.lastName}
               </p>
               <span className="font-nunito font-bold text-base text-left">
                 User ID:
@@ -63,9 +63,9 @@ function CustomerDetails({ trigger, setTrigger, customerInfo, name, lname, fname
               </div>
 
               <div className="mx-5 text-left">
-                <p>{fname}</p>
-                <p>{mname}</p>
-                <p>{lname}</p>
+                <p>{userInfo.firstName}</p>
+                <p>{userInfo.middleName}</p>
+                <p>{userInfo.lastName}</p>
               </div>
               {/* Name*/}
               <div className="font-nunito font-bold text-right">

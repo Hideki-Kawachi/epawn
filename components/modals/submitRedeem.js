@@ -2,10 +2,16 @@ import React from "react";
 import Close from "../closebutton";
 import ItemCard from "../itemcard";
 import { useRouter } from "next/router";
-export const Submit = ({trigger, setTrigger, mode, PTnumber, itemList, price}) => {
+export const Submit = ({trigger, setTrigger, mode, PTnumber, itemList, price, changeMode}) => {
     const router = useRouter();
     function closeModal(){
         setTrigger(!trigger);
+    }
+
+
+    function modeChange(){
+      changeMode(!mode);
+      setTrigger(!trigger);
     }
 
   return (
@@ -15,7 +21,7 @@ export const Submit = ({trigger, setTrigger, mode, PTnumber, itemList, price}) =
           <div className="ml-[615px] mb-5" onClick={closeModal}>
             <Close />
           </div>
-        {mode == "search" ? (
+        {mode == true ? (
           <p className="font-nunito text-base text-center mb-5">
             Select  <b>Pawn Ticket {PTnumber}</b> <br/> with the following items? 
           </p>
@@ -32,15 +38,12 @@ export const Submit = ({trigger, setTrigger, mode, PTnumber, itemList, price}) =
                 <div className="flex flex-row" key={items.itemID}>
                   <ItemCard
                     key={items.itemID}
-                    itemID={items.itemID}
-                    itemName={items.itemName}
-                    itemType={items.itemType}
-                    itemPrice={items.price}
+                    itemDetails={items}
                   ></ItemCard>
                 </div>
               ))}
             </div>
-          {mode == "select" ? (
+          {mode == false ? (
           <p className="text-center text-base">
             For a total of <b>Php {price}</b>
           </p>
@@ -51,8 +54,8 @@ export const Submit = ({trigger, setTrigger, mode, PTnumber, itemList, price}) =
           >
             Cancel
           </button>
-          {mode == "search" ? (
-          <button className="bg-green-300 text-base px-24 mt-5 mx-5" onClick={(() => router.push("/redeem/clerk/" + PTnumber))}>
+          {mode == true ? (
+          <button className="bg-green-300 text-base px-24 mt-5 mx-5" onClick={modeChange}>
             Select
           </button>
           ):(

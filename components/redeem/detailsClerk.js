@@ -5,7 +5,7 @@ import CustomerDetails from "../modals/customerDetails";
 import PawnHistory from "../modals/pawnHistory";
 import dayjs from "dayjs";
 
-function DetailsCardClerk({redeem, customerName, loanDate, maturityDate, expiryDate, branch, search, mode, PTNumber, customer, fName, lName, mName}) {
+function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, customer, branch}) {
   const [isOriginal, setOriginal] = useState("original");
   const [repModal, setRepModal] = useState(false); 
   const [customerModal, setCustomerModal] = useState(false);
@@ -34,11 +34,11 @@ function DetailsCardClerk({redeem, customerName, loanDate, maturityDate, expiryD
     
   function getInterest(loan){
     //plan: multiply loan * 0.035 with month diff
-    if(loanDate == "N/A" || maturityDate == "N/A")
-      return "N/A"
-    else{
-      const date1 = dayjs(loanDate, "MM/DD/YYYY");
-      const date2 = dayjs(maturityDate, "MM/DD/YYYY");
+    if (pawnTicket.loanDate == null || pawnTicket.maturityDate == null)
+      return "N/A";
+    else {
+      const date1 = dayjs(pawnTicket.loanDate, "MM/DD/YYYY");
+      const date2 = dayjs(pawnTicket.maturityDate, "MM/DD/YYYY");
 
       const diffInMonths = date2.diff(date1, "month");
 
@@ -52,17 +52,15 @@ function DetailsCardClerk({redeem, customerName, loanDate, maturityDate, expiryD
   }
 
   function getAdvInterest(newLoan){
-  if (loanDate == "N/A" || maturityDate == "N/A") 
-    return "N/A"
-  else
-    return convertFloat(newLoan * 0.035)
+  if (pawnTicket.loanDate == null || pawnTicket.maturityDate == null)
+    return "N/A";
+  else return convertFloat(newLoan * 0.035);
   }
 
   function getTotalInterest(int, advint){
-      if (loanDate == "N/A" || maturityDate == "N/A") 
+      if (pawnTicket.loanDate == null || pawnTicket.maturityDate == null)
         return "N/A";
-      else 
-        return convertFloat(Number(int) + Number(advint));
+      else return convertFloat(Number(int) + Number(advint));
   }
 
   function convertFloat(number) {
@@ -73,8 +71,7 @@ function DetailsCardClerk({redeem, customerName, loanDate, maturityDate, expiryD
   }
 
   function convertDate(date){
-    if(date == "N/A")
-      return "N/A"
+    if (date == null) return "N/A";
     else {
       const dt = new Date(date);
       //console.log(dt);
@@ -97,6 +94,13 @@ function DetailsCardClerk({redeem, customerName, loanDate, maturityDate, expiryD
     return convertFloat(total)
   }
 
+  function getFullName(user, fname, mname, lname){
+    if(fname == undefined && lname == undefined)
+      return " ";
+    else  
+      return fname + " " + mname + " " + lname;
+  }
+
   return (
     <>
       <div
@@ -116,25 +120,24 @@ function DetailsCardClerk({redeem, customerName, loanDate, maturityDate, expiryD
             trigger={customerModal}
             setTrigger={setCustomerModal}
             customerInfo={customer}
-            name={customerName}
-            lname={lName}
-            fname={fName}
-            mname={mName}
+            userInfo={user}
           />
         </Modal>
         {/* Left Side of the Card (Details) */}
         <div className="m-10 ">
           <span className="font-bold pr-7">PT Number:</span>
-          {mode == "select" ? (
-          <span>{PTNumber}</span>
-          ) :(
-          <span>  
-          <input
-            className="border rounded-md stroke-gray-500 px-3"
-            onChange={(e) => searchPT(e.target.value)}
-          />
-          <p className="text-sm text-gray-300 pl-[163px]">Format: X-XXXX </p>
-          </span>
+          {mode == false ? (
+            <span>{PTNumber}</span>
+          ) : (
+            <span>
+              <input
+                className="border rounded-md stroke-gray-500 px-3"
+                onChange={(e) => searchPT(e.target.value)}
+              />
+              <p className="text-sm text-gray-300 pl-[163px]">
+                Format: X-XXXX{" "}
+              </p>
+            </span>
           )}
           <hr className="h-px my-8 bg-gray-500 border-0" />
 
@@ -168,7 +171,9 @@ function DetailsCardClerk({redeem, customerName, loanDate, maturityDate, expiryD
               <p className="">Address:</p>
             </div>
             <div className="text-left ml-5">
-              <p className="">{customerName}</p>
+              <p className="">
+                {getFullName(user, user.firstName, user.middleName, user.lastName)}
+              </p>
               <p className="">{customer.contactNumber}</p>
               <p className="max-w-md">
                 {/* Used to make long address break line */}
@@ -177,37 +182,37 @@ function DetailsCardClerk({redeem, customerName, loanDate, maturityDate, expiryD
             </div>
           </div>
           {mode == "select" ? (
-          <div className="flex">
-            <div className="text-right ml-10 min-w-fit">
-              <p className="font-bold">Redeemed by: </p>
-            </div>
-            <div className="text-right ml-5 min-w-fit">
-              <select
-                className="px-5"
-                onChange={(e) => setOriginal(e.target.value)}
-              >
-                <option key="00" value="original">
-                  {" "}
-                  Original Customer{" "}
-                </option>
-                <option key="01" value="authorized">
-                  {" "}
-                  Authorized Rep.{" "}
-                </option>
-              </select>
-              {isOriginal == "authorized" ? (
-                <button
-                  className="bg-green-300 ml-2 text-sm text-white px-5"
-                  onClick={repOpen}
+            <div className="flex">
+              <div className="text-right ml-10 min-w-fit">
+                <p className="font-bold">Redeemed by: </p>
+              </div>
+              <div className="text-right ml-5 min-w-fit">
+                <select
+                  className="px-5"
+                  onChange={(e) => setOriginal(e.target.value)}
                 >
-                  {" "}
-                  Add Details{" "}
-                </button>
-              ) : (
-                <></>
-              )}
+                  <option key="00" value="original">
+                    {" "}
+                    Original Customer{" "}
+                  </option>
+                  <option key="01" value="authorized">
+                    {" "}
+                    Authorized Rep.{" "}
+                  </option>
+                </select>
+                {isOriginal == "authorized" ? (
+                  <button
+                    className="bg-green-300 ml-2 text-sm text-white px-5"
+                    onClick={repOpen}
+                  >
+                    {" "}
+                    Add Details{" "}
+                  </button>
+                ) : (
+                  <></>
+                )}
+              </div>
             </div>
-          </div>
           ) : (
             <></>
           )}
@@ -244,9 +249,9 @@ function DetailsCardClerk({redeem, customerName, loanDate, maturityDate, expiryD
               <p className="">Branch:</p>
             </div>
             <div className="text-left ml-5">
-              <p className="">{convertDate(loanDate)}</p>
-              <p className="">{convertDate(maturityDate)}</p>
-              <p className="">{convertDate(expiryDate)}</p>
+              <p className="">{convertDate(pawnTicket.loanDate)}</p>
+              <p className="">{convertDate(pawnTicket.maturityDate)}</p>
+              <p className="">{convertDate(pawnTicket.expiryDate)}</p>
               <p className="">{branch}</p>
             </div>
           </div>
@@ -281,7 +286,10 @@ function DetailsCardClerk({redeem, customerName, loanDate, maturityDate, expiryD
                 <br />
                 <br />
                 <p className="mr-3">
-                  {getTotalInterest(getInterest(loanAmount), getAdvInterest(newloanAmount))}
+                  {getTotalInterest(
+                    getInterest(loanAmount),
+                    getAdvInterest(newloanAmount)
+                  )}
                 </p>
                 <p className="mr-3">0.00</p>
                 {/* <p>
