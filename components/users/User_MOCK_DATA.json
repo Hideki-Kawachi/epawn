@@ -1,5 +1,5 @@
-[{"userID":"OM-WU","firstName":"Cissy","middleName": "Middle","lastName":"Ledur","password":"p8TqlLq8","roleName":"Construction Manager","isDisabled":false},
-{"userID":"MX-MEX","firstName":"Bennett", "middleName": "Middle","lastName":"Benaine","password":"XfNGbEEpJl1","roleName":"Project Manager","isDisabled":true},
-{"userID":"BR-BA","firstName":"Job","middleName": "Middle", "lastName":"Ingerfield","password":"OzEwLswai","roleName":"Construction Manager","isDisabled":false},
-{"userID":"AU-QLD","firstName":"Willette","middleName": "Middle", "lastName":"Brabben","password":"O9rswnA25ws","roleName":"Construction Worker","isDisabled":true},
-{"userID":"KE-300","firstName":"Dorene","middleName": "Middle", "lastName":"Favel","password":"LsVhyQXtSjWY","roleName":"Project Manager","isDisabled":false}]
+[{"userID":"OM-WU","firstName":"Cissy","middleName": "Middle","lastName":"Ledur","password":"p8TqlLq8","roleName":"Construction Manager","isDisabled":false, "branchID":"1"},
+{"userID":"MX-MEX","firstName":"Bennett", "middleName": "Middle","lastName":"Benaine","password":"XfNGbEEpJl1","roleName":"Project Manager","isDisabled":true, "branchID":"1"},
+{"userID":"BR-BA","firstName":"Job","middleName": "Middle", "lastName":"Ingerfield","password":"OzEwLswai","roleName":"Construction Manager","isDisabled":false, "branchID":"1"},
+{"userID":"AU-QLD","firstName":"Willette","middleName": "Middle", "lastName":"Brabben","password":"O9rswnA25ws","roleName":"Construction Worker","isDisabled":true, "branchID":"1"},
+{"userID":"KE-300","firstName":"Dorene","middleName": "Middle", "lastName":"Favel","password":"LsVhyQXtSjWY","roleName":"Project Manager","isDisabled":false, "branchID":"1"}]

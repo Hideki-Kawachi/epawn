@@ -11,23 +11,44 @@ function UserEdit({ data }){
 	const [userID, setUserID] = useState(data.userID);
 	const [firstName, setFirstName] = useState(data.firstName);
 	const [lastName, setLastName] = useState(data.lastName);
+	const [middleName, setMiddleName] = useState(data.middleName);
 	const [password, setPassword] = useState(data.password);
 	const [roleName, setRoleName] = useState(data.roleName);
 	const [isDisabled, setIsDisabled] = useState(data.isDisabled);
+	const [branchID, setBranchID] = useState(data.branchID)
+
 	const [error, setError] = useState(false);
 	const [employeeIDError, setEmployeeIDError] = useState("");
 
 
 	function submitForm(){
 
-		let userData = {
-			lastName: lastName
+		if (
+			firstName.length == 0 ||
+			lastName.length == 0 || 
+			password.length == 0 ||
+			roleName.length == 0
+		) {
+			setError(true);
+
+			console.log("Length is 0")
+		}  else {
+			
+			let userData = {
+				firstName: firstName,
+				middleName: middleName,
+				lastName: lastName,
+				password: password,
+				role: roleName,
+				isDisabled: isDisabled,
+				branchID: branchID
+			}
+
+			console.log(userData)
 		}
 
-		console.log("hello")
 
-
-	}
+	} 
     
     return( 
         <>
@@ -79,6 +100,16 @@ function UserEdit({ data }){
 						 />
 					</div>
 
+					<div className="flex w-1/4 flex-col select-none">
+						<span className="font-bold pr-7">Middle Name: </span>
+          				<input className="border rounded-md stroke-gray-500 px-3"
+								type="text"
+								id="middleName"
+								value={middleName}
+								onChange={(e) => setMiddleName(e.target.value)}
+						/>
+					</div>
+
 
                     <div className="flex w-1/4 flex-col select-none">
 						<span className="font-bold pr-7">Last Name: </span>
@@ -97,6 +128,17 @@ function UserEdit({ data }){
 									setDisabled={setIsDisabled}
 								></ToggleSwitch>
 					</div>
+
+					<div className="flex w-1/4 flex-col select-none">
+						<span className="font-bold pr-7">BranchID  : </span>
+          				<input className="border rounded-md stroke-gray-500 px-3"
+							type="text"
+							id="branchID"
+							value={branchID}
+							onChange={(e) => setBranchID(e.target.value)}
+						/>
+					</div>
+
 
 
 					<button className="absolute bottom-5 right-5 bg-[#14C6A5] select-none "

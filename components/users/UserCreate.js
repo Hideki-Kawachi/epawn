@@ -13,6 +13,7 @@ function UserCreate(){
 	const [password, setPassword] = useState("");
 	const [roleName, setRoleName] = useState("Null Role");
 	const [isDisabled, setIsDisabled] = useState(false);
+	const [branchID, setBranchID] = useState("");
 
 	const [error, setError] = useState(false);
 	const [employeeIDError, setEmployeeIDError] = useState("");
@@ -40,7 +41,7 @@ function UserCreate(){
 				password: password,
 				role: roleName,
 				isDisabled: isDisabled,
-				branchID: 1
+				branchID: branchID
 			}
 
 			console.log(userData)
@@ -62,6 +63,7 @@ function UserCreate(){
 						console.log("SUCCESS");
 						setError(false);
 						window.location.reload();
+
 					} else {
 						setError(true);
 						setEmployeeIDError(data);
@@ -127,6 +129,15 @@ function UserCreate(){
 								type="password"
 								id="password"
 								onChange={(e) => setPassword(e.target.value)}
+						 />
+					</div>
+
+					   <div className="flex w-1/4 flex-col">
+						<span className="font-bold pr-7">Branch ID: </span>
+          				<input className="border rounded-md stroke-gray-500 px-3"
+								type="text"
+								id="branchID"
+								onChange={(e) => setBranchID(e.target.value)}
 						 />
 					</div>
 

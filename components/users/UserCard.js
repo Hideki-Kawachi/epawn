@@ -15,7 +15,7 @@ function UserCard({
 	function displayStatus(){
 		if (isDisabled) {
 			return (
-				<svg width="30%" height="80%"
+				<svg width="16" height="16"
 				viewBox="0 0 24 24"
 				fill="none"
 				xmlns="http://www.w3.org/2000/svg"
@@ -29,7 +29,7 @@ function UserCard({
 		}
 		else {
 			return (
-				<svg width="30%" height="80%"
+				<svg width="16" height="16"
 						viewBox="0 0 30 23"
 						fill="none"
 						xmlns="http://www.w3.org/2000/svg"
@@ -53,10 +53,10 @@ function UserCard({
 						{lastName}, {firstName}
 					</b>
 				</p>
-				<p className="font-semibold">{roleName}</p>
+				<p className="font-semibold"> {roleName} </p>
 			</div>
-			<div className="ml-15">
-				{displayStatus()}
+			<div className="mt-7 mr-5">
+				{displayStatus()} 
 			</div>
 			<div className="mt-5 mr-5">
 				<Link href={"/users/edit/" + userID}>

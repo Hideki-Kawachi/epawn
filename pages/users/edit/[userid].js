@@ -52,9 +52,8 @@ function Edit({ currentUser }) {
 
 			<div id="main-content-area">		
 
-					<div className="relative w-full m-10 bg-white h-60">
+					<div className="relative w-full m-10 bg-white h-70">
 
-					<div> Details about {userid} </div>
 
 					{MockUsers.map((mockUser) => {
 
