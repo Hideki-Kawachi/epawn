@@ -7,7 +7,6 @@ import MockUsers from "../../components/users/User_MOCK_DATA.json";
 
 function UserCreate(){
 
-	const [userID, setUserID] = useState("");
 	const [firstName, setFirstName] = useState("");
 	const [middleName, setMiddleName] = useState("");
 	const [lastName, setLastName] = useState("");
@@ -21,18 +20,19 @@ function UserCreate(){
 	function submitForm(){
 
 		if (
-			userID.length != 7 ||
 			firstName.length == 0 ||
-			lastName.length == 0 ||
+			lastName.length == 0 || 
+			middleName.length == 0 ||
 			password.length == 0 ||
 			roleName.length == 0
 		) {
 			setError(true);
 
-			console.log("nope")
+			console.log("Length is 0")
 
 		}
 		 else {
+			
 			let userData = {
 				firstName: firstName,
 				middleName: middleName,
@@ -49,7 +49,7 @@ function UserCreate(){
 
 			// console.log(MockUsers)
 
-			fetch("/api/createEmployee", {
+			fetch("/api/users/createEmployee", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -84,35 +84,6 @@ function UserCreate(){
 
 				<div className="user-create-top-container m-5 grid grid-cols-3 gap-4">
 
-                    <div className="flex w-1/4 flex-col">
-						<span className="font-bold pr-7">UserID:</span>
-          				<input 
-						  	className="border rounded-md stroke-gray-500 px-3"
-							type="text"
-							id="userID"
-							onChange={(e) => setUserID(e.target.value)}
-						/>
-					</div>
-
-                    <div className="flex w-1/4 flex-col">
-						<span className="font-bold pr-7">Role   : </span>
-						{/* Change to Select */}
-          				<input className="border rounded-md stroke-gray-500 px-3"
-							type="text"
-							id="roleName"
-							onChange={(e) => setRoleName(e.target.value)}
-						/>
-					</div>
-
-                    <div className="flex w-1/4 flex-col">
-						<span className="font-bold pr-7">Password: </span>
-          				<input className="border rounded-md stroke-gray-500 px-3"
-								type="password"
-								id="password"
-								onChange={(e) => setPassword(e.target.value)}
-						 />
-					</div>
-
 					<div className="flex w-1/4 flex-col">
 						<span className="font-bold pr-7">First Name: </span>
           				<input className="border rounded-md stroke-gray-500 px-3" 
@@ -138,6 +109,25 @@ function UserCreate(){
 								id="lastName"
 								onChange={(e) => setLastName(e.target.value)}
 						/>
+					</div>
+
+					<div className="flex w-1/4 flex-col">
+						<span className="font-bold pr-7">Role   : </span>
+						{/* Change to Select */}
+          				<input className="border rounded-md stroke-gray-500 px-3"
+							type="text"
+							id="roleName"
+							onChange={(e) => setRoleName(e.target.value)}
+						/>
+					</div>
+
+                    <div className="flex w-1/4 flex-col">
+						<span className="font-bold pr-7">Password: </span>
+          				<input className="border rounded-md stroke-gray-500 px-3"
+								type="password"
+								id="password"
+								onChange={(e) => setPassword(e.target.value)}
+						 />
 					</div>
 
 

@@ -8,13 +8,15 @@ import EmployeeInfo from "../../../schemas/employeeInfo";
 // role, password, firstname, middlename, lastname, branchID, isDisabled
 
 export default async function CreateEmployee(req, res) {
+
 	dbConnect();
 
-	let body = JSON.parse(req.body);
+	let body = req.body;
 
 	let userID = await generateUserID();
 
 	let password;
+
 	bcrypt.hash(body.password, 12, (err, hash) => {
 		if (err) {
 			res.json("password failed to hash");
@@ -26,10 +28,10 @@ export default async function CreateEmployee(req, res) {
 	let newUser = await User.create({
 		userID: userID,
 		role: body.role,
-		password: password,
 		firstName: body.firstName,
 		middleName: body.middleName,
 		lastName: body.lastName,
+		password: password,
 		isDisabled: body.isDisabled,
 	});
 
