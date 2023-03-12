@@ -51,6 +51,9 @@ function RedeemClerk({ currentUser}) {
   //Pawn Ticket Details
   const [PTNumber, setPTNumber] = useState(""); //test A-123456
   const [name, setName] = useState("N/A");
+  const [fname, setfName] = useState("N/A");
+  const [lname, setlName] = useState("N/A");
+  const [mname, setmName] = useState("N/A")
   const [contactno, setContactNo] = useState("N/A");
   const [address, setAddress] = useState("N/A");
   const [loanDate, setLoanDate] = useState("N/A");
@@ -188,6 +191,9 @@ function RedeemClerk({ currentUser}) {
           if(user != null){
             // console.log(JSON.stringify(info))
             setName(user.firstName + " " + user.middleName + " " + user.lastName)
+            setfName(user.firstName)
+            setmName(user.middleName)
+            setlName(user.lastName)
           }
         });
     }}, [customerID]);
@@ -206,13 +212,14 @@ function RedeemClerk({ currentUser}) {
         .then((res) => res.json())
         .then((customer) => {
           // console.log(data)
-          if(customer!= null){
+          if(customer != null){
             // console.log(JSON.stringify(info))
          //   let cDetails = JSON.stringify(customer)
-            setCusDetails(customer)
+            setCusDetails(JSON.parse(JSON.stringify(customer)))
+         //   console.log(customerDetails);
           }
         });
-    }}, [customerID]);
+    }}, [customerID, name]);
 
 	return (
     <>
@@ -240,12 +247,14 @@ function RedeemClerk({ currentUser}) {
           <DetailsCardClerk
             redeem={[]}
             customerName={name}
+            fName = {fname}
+            lName = {lname}
+            mName = {mname}
             loanDate={loanDate}
             maturityDate={matDate}
             expiryDate={expDate}
             branch={branch}
             search={searchPawnTicket}
-            data = {data}
             mode = {"search"}
             customer = {customerDetails}
           />

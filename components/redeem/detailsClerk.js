@@ -5,7 +5,7 @@ import CustomerDetails from "../modals/customerDetails";
 import PawnHistory from "../modals/pawnHistory";
 import dayjs from "dayjs";
 
-function DetailsCardClerk({redeem, customerName, loanDate, maturityDate, expiryDate, branch, search, mode, PTNumber, customer}) {
+function DetailsCardClerk({redeem, customerName, loanDate, maturityDate, expiryDate, branch, search, mode, PTNumber, customer, fName, lName, mName}) {
   const [isOriginal, setOriginal] = useState("original");
   const [repModal, setRepModal] = useState(false); 
   const [customerModal, setCustomerModal] = useState(false);
@@ -117,6 +117,9 @@ function DetailsCardClerk({redeem, customerName, loanDate, maturityDate, expiryD
             setTrigger={setCustomerModal}
             customerInfo={customer}
             name={customerName}
+            lname={lName}
+            fname={fName}
+            mname={mName}
           />
         </Modal>
         {/* Left Side of the Card (Details) */}
@@ -169,7 +172,7 @@ function DetailsCardClerk({redeem, customerName, loanDate, maturityDate, expiryD
               <p className="">{customer.contactNumber}</p>
               <p className="max-w-md">
                 {/* Used to make long address break line */}
-                {address}
+                {customer.presentAddress}
               </p>
             </div>
           </div>

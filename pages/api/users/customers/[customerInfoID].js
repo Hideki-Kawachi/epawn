@@ -4,7 +4,7 @@ import CustomerInfo from "../../../../schemas/customerInfo";
 export default async function UserID(req, res) { 
     dbConnect();    
 
-    let customerInfo = await CustomerInfo.findOne({userID: req.query.userID});
+    let customerInfo = await CustomerInfo.findOne({userID: req.query.customerInfoID});
     if (customerInfo == null){
         console.log("Cannot find Customer");
     }
