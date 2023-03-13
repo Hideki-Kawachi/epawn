@@ -83,6 +83,7 @@ function AppraisalTransactionID({
 	const [appraisalPrice, setAppraisalPrice] = useState(0);
 	const [itemShow, setItemShow] = useState();
 	const [loading, setLoading] = useState(false);
+	const [deleteList, setDeleteList] = useState([]);
 
 	const router = useRouter();
 	// console.log("price history:", priceHistory);
@@ -93,6 +94,8 @@ function AppraisalTransactionID({
 		let newList = itemList.filter((items) => {
 			return items.itemID != id;
 		});
+		let deletedItem = itemList.find((items) => items.itemID == id);
+		setDeleteList((deleteList) => [...deleteList, deletedItem]);
 		setItemList(newList);
 	}
 
@@ -133,6 +136,12 @@ function AppraisalTransactionID({
 		// console.log("item list:", itemList);
 		// console.log("price:", appraisalPrice);
 		setLoading(true);
+		if (deleteList.length > 0) {
+			fetch("/api/pawn/removeItem", {
+				method: "POST",
+				body: JSON.stringify(deleteList),
+			});
+		}
 		fetch("/api/pawn/itemAppraisal", {
 			method: "POST",
 			body: JSON.stringify({

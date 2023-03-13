@@ -17,6 +17,7 @@ import AppraisalItemsDetails from "../../../../components/pawn/appraisal/apprais
 import mongoose from "mongoose";
 import LoadingSpinner from "../../../../components/loadingSpinner";
 import Modal from "react-modal";
+import RejectionManager from "../../../../components/modals/rejectionManager";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req, query }) {
@@ -86,6 +87,7 @@ function NegotiationTransactionID({
 	const [itemList, setItemList] = useState(itemData);
 	const [appraisalPrice, setAppraisalPrice] = useState(0);
 	const [itemShow, setItemShow] = useState();
+	const [deleteList, setDeleteList] = useState([]);
 	const [priceHistoryShow, setPriceHistoryShow] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const priceHistoryData = priceHistory.map((history) => {
@@ -95,9 +97,10 @@ function NegotiationTransactionID({
 			time: new Date(history.updatedAt).toLocaleTimeString("en-GB"),
 		};
 	});
+	const [rejectShow, setRejectShow] = useState(false);
 
 	const router = useRouter();
-	// console.log("price history:", priceHistory);
+	//console.log("price history:", priceHistory);
 	// console.log("item data:", itemData);
 	// console.log("customer data:", customerData);
 
@@ -105,8 +108,14 @@ function NegotiationTransactionID({
 		let newList = itemList.filter((items) => {
 			return items.itemID != id;
 		});
+		let deletedItem = itemList.find((items) => items.itemID == id);
+		setDeleteList((deleteList) => [...deleteList, deletedItem]);
 		setItemList(newList);
 	}
+
+	useEffect(() => {
+		console.log("DELETE LIST:", deleteList);
+	}, [deleteList]);
 
 	function selectItem(id) {
 		console.log("ITEM LIST FROM SELECT IS:", itemList);
@@ -140,26 +149,43 @@ function NegotiationTransactionID({
 
 	function submitForm() {
 		console.log("SUBMIT FORM");
-		// console.log("item list:", itemList);
-		// console.log("price:", appraisalPrice);
-		// setLoading(true);
+
+		setLoading(true);
 		fetch("/api/pawn/updateItem", {
 			method: "POST",
 			body: JSON.stringify(itemList),
+		});
+
+		if (deleteList.length > 0) {
+			fetch("/api/pawn/removeItem", {
+				method: "POST",
+				body: JSON.stringify(deleteList),
+			});
+		}
+
+		fetch("/api/pawn/newAppraisalPrice", {
+			method: "POST",
+			body: JSON.stringify({
+				priceHistoryID: priceHistory[0]._id,
+				appraisalPrice: appraisalPrice,
+			}),
+		});
+
+		fetch("/api/pawn/updateTransactionStatus", {
+			method: "POST",
+			body: JSON.stringify({
+				status: "appraised",
+				transactionID: transactionData._id,
+			}),
 		})
 			.then((res) => res.json())
 			.then((data) => {
-				console.log("DATA IS:", data);
-				// if (data == "success") {
-				// 	router.replace("/");
-				// } else {
-				// 	router.reload();
-				// }
+				if (data == "success") {
+					router.replace("/");
+				} else {
+					router.reload();
+				}
 			});
-	}
-
-	function rejectForm() {
-		console.log("REJECT FORM");
 	}
 
 	return (
@@ -173,6 +199,13 @@ function NegotiationTransactionID({
 						data={priceHistoryData}
 						trigger={priceHistoryShow}
 						setTrigger={setPriceHistoryShow}
+					/>
+				</Modal>
+				<Modal isOpen={rejectShow} ariaHideApp={false} className="modal">
+					<RejectionManager
+						trigger={rejectShow}
+						setTrigger={setRejectShow}
+						transactionID={transactionData._id}
 					/>
 				</Modal>
 				<div className="font-semibold text-center font-dosis">
@@ -239,7 +272,7 @@ function NegotiationTransactionID({
 					<div>
 						<button
 							className="px-10 mx-2 my-5 text-base text-white bg-red-300"
-							onClick={rejectForm}
+							onClick={() => setRejectShow(true)}
 						>
 							Reject
 						</button>

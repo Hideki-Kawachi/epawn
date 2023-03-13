@@ -10,6 +10,7 @@ const TransactionSchema = new mongoose.Schema(
 		managerID: { type: String, require: true },
 		creationDate: { type: Date, require: true, default: new Date() },
 		status: { type: String },
+		rejectionMessage: { type: String },
 	},
 	{ timestamps: true }
 );

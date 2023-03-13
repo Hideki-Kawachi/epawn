@@ -82,7 +82,7 @@ function OngoingTransactionTransactionID({
 		priceHistory[priceHistory.length - 1].askPrice
 	);
 	const [itemList, setItemList] = useState(itemData);
-	const [deleteItems, setDeleteItems] = useState([{}]);
+	const [deleteItems, setDeleteItems] = useState([]);
 	const [addItemOpen, setAddItemOpen] = useState(false);
 	const [itemIDs, setItemIDs] = useState(-1);
 	const [newItemList, setNewItemList] = useState([{}]);
@@ -98,10 +98,8 @@ function OngoingTransactionTransactionID({
 		let newList = itemList.filter((items) => {
 			return items.itemID != id;
 		});
-		let delList = itemList.filter((items) => {
-			return items.itemID == id;
-		});
-		setDeleteItems(delList);
+		let deletedItem = itemList.find((items) => items.itemID == id);
+		setDeleteItems((deleteItems) => [...deleteItems, deletedItem]);
 		setItemList(newList);
 	}
 
@@ -217,7 +215,7 @@ function OngoingTransactionTransactionID({
 		}
 
 		// IF ITEM HAS BEEN REMOVED
-		if (itemData.length != itemList.length) {
+		if (deleteItems.length > 0) {
 			fetch("/api/pawn/removeItem", {
 				method: "POST",
 				body: JSON.stringify(deleteItems),
