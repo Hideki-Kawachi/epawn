@@ -40,6 +40,7 @@ function AppraisalItemsDetails({ itemDetails, setItemDetails }) {
 
 	useEffect(() => {
 		if (itemDetails) {
+			console.log("item category is:", itemDetails);
 			if (itemDetails.itemCategory.length == 0) {
 				setItemCategory("Gold");
 			} else {

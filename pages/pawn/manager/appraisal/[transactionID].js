@@ -188,7 +188,7 @@ function AppraisalTransactionID({
 					<div className="flex flex-col items-center w-full text-base">
 						<span className="flex justify-end w-full pr-[35%] font-normal">
 							<span className="mr-2 font-bold">Asking Price: </span>
-							Php {priceHistory[priceHistory.length - 1].askPrice}
+							Php {priceHistory[0].askPrice}
 						</span>
 						<span className="flex justify-end w-full font-normal pr-[35%]">
 							<span className="mr-2 font-bold">Appraisal Price: </span>

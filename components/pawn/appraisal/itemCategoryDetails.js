@@ -53,18 +53,6 @@ function ItemCategoryDetails({ itemCategory, itemDetails, setItemDetails }) {
 		setDescription(itemDetails.description ? itemDetails.description : "");
 	}, [itemCategory, itemDetails]);
 
-	// useEffect(() => {
-	// 	console.log("hello");
-	// 	if (itemCategory == "Gold") {
-	// 		setWeight(itemDetails.weight.toString());
-	// 		setColor(itemDetails.color);
-	// 		setPurity(itemDetails.purity);
-	// 		setBrand(itemDetails.brand);
-	// 		setModel(itemDetails.model);
-	// 		setDescription(itemDetails.description);
-	// 	}
-	// }, [itemDetails]);
-
 	useEffect(() => {
 		let NewItemDetails;
 		let newWeight;
@@ -157,7 +145,6 @@ function ItemCategoryDetails({ itemCategory, itemDetails, setItemDetails }) {
 			});
 		}
 		// console.log("new item details:", NewItemDetails);
-		setItemDetails(NewItemDetails);
 	}, [
 		weight,
 		quantity,

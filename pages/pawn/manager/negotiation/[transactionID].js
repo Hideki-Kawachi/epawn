@@ -46,6 +46,7 @@ export const getServerSideProps = withIronSessionSsr(
 				let customerInfo = await User.findOne({
 					userID: transactionInfo.customerID,
 				});
+				// console.log("SERVER SIDE PROPS:", itemList);
 				return {
 					props: {
 						currentUser: req.session.userData,
@@ -81,6 +82,7 @@ function NegotiationTransactionID({
 	itemData,
 	customerData,
 }) {
+	console.log("Start item data is:", itemData);
 	const [itemList, setItemList] = useState(itemData);
 	const [appraisalPrice, setAppraisalPrice] = useState(0);
 	const [itemShow, setItemShow] = useState();
@@ -95,7 +97,7 @@ function NegotiationTransactionID({
 	});
 
 	const router = useRouter();
-	console.log("price history:", priceHistory);
+	// console.log("price history:", priceHistory);
 	// console.log("item data:", itemData);
 	// console.log("customer data:", customerData);
 
@@ -107,12 +109,13 @@ function NegotiationTransactionID({
 	}
 
 	function selectItem(id) {
+		console.log("ITEM LIST FROM SELECT IS:", itemList);
 		setItemShow(
 			itemList.find((item) => {
-				//console.log("selected item is:", item);
 				return item.itemID == id;
 			})
 		);
+		// console.log("Select Item is:", itemList);
 	}
 
 	function setItemDetails(updatedItem) {
@@ -122,13 +125,13 @@ function NegotiationTransactionID({
 			}
 			return item;
 		});
-		//console.log("item list updated is:", itemList);
+		// console.log("Set Item is:", itemList);
 		setItemList(newList);
 	}
 
 	useEffect(() => {
 		let sum = 0;
-		itemList.map((item) => {
+		itemList.forEach((item) => {
 			sum += item.price;
 		});
 		setAppraisalPrice(sum);
@@ -142,23 +145,19 @@ function NegotiationTransactionID({
 		console.log("SUBMIT FORM");
 		// console.log("item list:", itemList);
 		// console.log("price:", appraisalPrice);
-		setLoading(true);
-		fetch("/api/pawn/itemAppraisal", {
+		// setLoading(true);
+		fetch("/api/pawn/updateItem", {
 			method: "POST",
-			body: JSON.stringify({
-				itemList: itemList,
-				appraisalPrice: appraisalPrice,
-				transactionID: transactionData._id,
-			}),
+			body: JSON.stringify(itemList),
 		})
 			.then((res) => res.json())
 			.then((data) => {
 				console.log("DATA IS:", data);
-				if (data == "success") {
-					router.replace("/");
-				} else {
-					router.reload();
-				}
+				// if (data == "success") {
+				// 	router.replace("/");
+				// } else {
+				// 	router.reload();
+				// }
 			});
 	}
 
@@ -209,7 +208,7 @@ function NegotiationTransactionID({
 					<div className="flex flex-col items-center w-full text-base">
 						<span className="flex justify-end w-full pr-[35%] font-normal">
 							<span className="mr-2 font-bold">Asking Price: </span>
-							Php {priceHistory[priceHistory.length - 1].askPrice}
+							Php {priceHistory[0].askPrice}
 						</span>
 						<button
 							className="absolute ml-[30vw] text-sm bg-blue-300"
