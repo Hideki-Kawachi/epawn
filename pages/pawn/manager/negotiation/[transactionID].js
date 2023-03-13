@@ -82,7 +82,7 @@ function NegotiationTransactionID({
 	itemData,
 	customerData,
 }) {
-	console.log("Start item data is:", itemData);
+	// console.log("Start item data is:", itemData);
 	const [itemList, setItemList] = useState(itemData);
 	const [appraisalPrice, setAppraisalPrice] = useState(0);
 	const [itemShow, setItemShow] = useState();
@@ -110,11 +110,7 @@ function NegotiationTransactionID({
 
 	function selectItem(id) {
 		console.log("ITEM LIST FROM SELECT IS:", itemList);
-		setItemShow(
-			itemList.find((item) => {
-				return item.itemID == id;
-			})
-		);
+		setItemShow(itemList.find((item) => item.itemID == id));
 		// console.log("Select Item is:", itemList);
 	}
 
@@ -130,6 +126,7 @@ function NegotiationTransactionID({
 	}
 
 	useEffect(() => {
+		// console.log("USE EFFECT:", itemList);
 		let sum = 0;
 		itemList.forEach((item) => {
 			sum += item.price;

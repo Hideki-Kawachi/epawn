@@ -7,51 +7,147 @@ import DiamondColorValues from "../,,/../../../utilities/dropdownValues/diamondC
 import DiamondShapeValues from "../,,/../../../utilities/dropdownValues/diamondShape.json";
 
 function ItemCategoryDetails({ itemCategory, itemDetails, setItemDetails }) {
-	const [weight, setWeight] = useState("0");
-	const [quantity, setQuantity] = useState(0);
-	const [color, setColor] = useState("");
-	const [purity, setPurity] = useState("");
-	const [brand, setBrand] = useState("");
-	const [model, setModel] = useState("");
-	const [description, setDescription] = useState("");
-	const [clarity, setClarity] = useState("");
-	const [carat, setCarat] = useState("0");
-	const [shape, setShape] = useState("");
+	const [weight, setWeight] = useState(
+		itemDetails.weight > 0 ? itemDetails.weight.toString() : "0"
+	);
+	const [quantity, setQuantity] = useState(
+		itemDetails.quantity ? itemDetails.quantity : 0
+	);
+	const [color, setColor] = useState(colorSetting());
+	const [purity, setPurity] = useState(puritySetting());
+	const [brand, setBrand] = useState(
+		itemDetails.brand ? itemDetails.brand : ""
+	);
+	const [model, setModel] = useState(
+		itemDetails.model ? itemDetails.model : ""
+	);
+	const [description, setDescription] = useState(
+		itemDetails.description ? itemDetails.description : ""
+	);
+	const [clarity, setClarity] = useState(claritySetting());
+	const [carat, setCarat] = useState(caratSetting());
+	const [shape, setShape] = useState(shapeSetting());
+
+	function shapeSetting() {
+		if (itemDetails.itemCategory.length > 0) {
+			if (itemDetails.itemCategory == "Diamond") {
+				return itemDetails.shape ? itemDetails.shape : "Round";
+			} else {
+				return "";
+			}
+		} else {
+			if (itemCategory == "Diamond") {
+				return itemDetails.shape ? itemDetails.shape : "Round";
+			} else {
+				return "";
+			}
+		}
+	}
+
+	function caratSetting() {
+		if (itemDetails.itemCategory.length > 0) {
+			if (itemDetails.itemCategory == "Diamond") {
+				return itemDetails.carat ? itemDetails.carat : "0";
+			} else {
+				return "0";
+			}
+		} else {
+			if (itemCategory == "Diamond") {
+				return itemDetails.carat ? itemDetails.carat : "0";
+			} else {
+				return "0";
+			}
+		}
+	}
+
+	function claritySetting() {
+		if (itemDetails.itemCategory.length > 0) {
+			if (itemDetails.itemCategory == "Diamond") {
+				return itemDetails.clarity ? itemDetails.clarity : "Flawless";
+			} else {
+				return "";
+			}
+		} else {
+			if (itemCategory == "Diamond") {
+				return itemDetails.clarity ? itemDetails.clarity : "Flawless";
+			} else {
+				return "";
+			}
+		}
+	}
+
+	function colorSetting() {
+		if (itemDetails.itemCategory.length > 0) {
+			if (itemDetails.itemCategory == "Gold") {
+				return GoldColorValues.includes({ goldColor: itemDetails.color })
+					? itemDetails.color
+					: "Rose";
+			} else if (itemDetails.itemCategory == "Diamond") {
+				return DiamondColorValues.includes({ diamondColor: itemDetails.color })
+					? itemDetails.color
+					: "Colorless";
+			} else {
+				return "";
+			}
+		} else {
+			if (itemCategory == "Gold") {
+				return GoldColorValues.includes({ goldColor: itemDetails.color })
+					? itemDetails.color
+					: "Rose";
+			} else if (itemCategory == "Diamond") {
+				return DiamondColorValues.includes({ diamondColor: itemDetails.color })
+					? itemDetails.color
+					: "Colorless";
+			} else {
+				return "";
+			}
+		}
+	}
+
+	function puritySetting() {
+		if (itemDetails.itemCategory.length > 0) {
+			if (itemDetails.itemCategory == "Platinum") {
+				return PlatinumPurityValues.includes({
+					platinumPurity: itemDetails.purity,
+				})
+					? itemDetails.purity
+					: "999";
+			} else if (itemDetails.itemCategory == "Gold") {
+				return GoldPurityValues.includes({ goldPurity: itemDetails.purity })
+					? itemDetails.purity
+					: "24K";
+			} else {
+				return "";
+			}
+		} else {
+			if (itemCategory == "Platinum") {
+				return PlatinumPurityValues.includes({
+					platinumPurity: itemDetails.purity,
+				})
+					? itemDetails.purity
+					: "999";
+			} else if (itemCategory == "Gold") {
+				return GoldPurityValues.includes({ goldPurity: itemDetails.purity })
+					? itemDetails.purity
+					: "24K";
+			} else {
+				return "";
+			}
+		}
+	}
 
 	useEffect(() => {
-		setWeight(itemDetails.weight ? itemDetails.weight.toString() : "0");
+		setWeight(itemDetails.weight > 0 ? itemDetails.weight.toString() : "0");
 		setQuantity(itemDetails.quantity ? itemDetails.quantity : 0);
-		if (itemCategory == "Gold") {
-			setColor(
-				GoldColorValues.includes({ goldColor: itemDetails.color })
-					? itemDetails.color
-					: "Rose"
-			);
-			setPurity(
-				GoldPurityValues.includes({ goldPurity: itemDetails.purity })
-					? itemDetails.purity
-					: "24K"
-			);
-		} else if (itemCategory == "Platinum") {
-			setPurity(
-				PlatinumPurityValues.includes({ platinumPurity: itemDetails.purity })
-					? itemDetails.purity
-					: "999"
-			);
-		} else if (itemCategory == "Diamond") {
-			setColor(
-				DiamondColorValues.includes({ diamondColor: itemDetails.color })
-					? itemDetails.color
-					: "Colorless"
-			);
-			setClarity(itemDetails.clarity ? itemDetails.clarity : "Flawless");
-			setCarat(itemDetails.carat ? itemDetails.carat : "0");
-			setShape(itemDetails.shape ? itemDetails.shape : "Round");
-		}
+		setColor(colorSetting());
+		setPurity(puritySetting());
 		setBrand(itemDetails.brand ? itemDetails.brand : "");
 		setModel(itemDetails.model ? itemDetails.model : "");
 		setDescription(itemDetails.description ? itemDetails.description : "");
-	}, [itemCategory, itemDetails]);
+		setClarity(claritySetting());
+		setCarat(caratSetting());
+		setShape(shapeSetting());
+	}, [itemDetails]);
 
 	useEffect(() => {
 		let NewItemDetails;
@@ -61,89 +157,175 @@ function ItemCategoryDetails({ itemCategory, itemDetails, setItemDetails }) {
 		} else {
 			newWeight = weight;
 		}
+		if (itemDetails.itemCategory.length > 0) {
+			if (itemCategory == "Gold") {
+				delete itemDetails.quantity;
+				delete itemDetails.shape;
+				delete itemDetails.carat;
+				delete itemDetails.clarity;
+				NewItemDetails = Object.assign(itemDetails, {
+					itemCategory: itemDetails.itemCategory,
+					weight: newWeight,
+					color: color,
+					purity: purity,
+					brand: brand,
+					model: model,
+					description: description,
+					quantity: 0,
+					shape: "",
+					carat: 0,
+					clarity: "",
+				});
+			} else if (itemCategory == "Platinum") {
+				delete itemDetails.color;
+				delete itemDetails.quantity;
+				delete itemDetails.shape;
+				delete itemDetails.carat;
+				delete itemDetails.clarity;
+				NewItemDetails = Object.assign(itemDetails, {
+					itemCategory: itemDetails.itemCategory,
+					weight: newWeight,
+					purity: purity,
+					brand: brand,
+					model: model,
+					description: description,
+					color: "",
+					quantity: 0,
+					shape: "",
+					carat: 0,
+					clarity: "",
+				});
+			} else if (itemCategory == "Diamond") {
+				delete itemDetails.purity;
+				delete itemDetails.model;
+				delete itemDetails.brand;
+				let newCarat;
+				if (isNaN(parseFloat(carat))) {
+					newCarat = "0";
+				} else {
+					newCarat = carat;
+				}
 
-		if (itemCategory == "Gold") {
-			delete itemDetails.quantity;
-			delete itemDetails.shape;
-			delete itemDetails.carat;
-			delete itemDetails.clarity;
-			NewItemDetails = Object.assign(itemDetails, {
-				itemCategory: itemCategory,
-				weight: parseFloat(newWeight),
-				color: color,
-				purity: purity,
-				brand: brand,
-				model: model,
-				description: description,
-				quantity: 0,
-				shape: "",
-				carat: 0,
-				clarity: "",
-			});
-		} else if (itemCategory == "Platinum") {
-			delete itemDetails.color;
-			delete itemDetails.quantity;
-			delete itemDetails.shape;
-			delete itemDetails.carat;
-			delete itemDetails.clarity;
-			NewItemDetails = Object.assign(itemDetails, {
-				itemCategory: itemCategory,
-				weight: parseFloat(newWeight),
-				purity: purity,
-				brand: brand,
-				model: model,
-				description: description,
-				color: "",
-				quantity: 0,
-				shape: "",
-				carat: 0,
-				clarity: "",
-			});
-		} else if (itemCategory == "Diamond") {
-			delete itemDetails.purity;
-			delete itemDetails.model;
-			delete itemDetails.brand;
-			let newCarat;
-			if (isNaN(parseFloat(carat))) {
-				newCarat = "0";
+				NewItemDetails = Object.assign(itemDetails, {
+					itemCategory: itemDetails.itemCategory,
+					weight: newWeight,
+					clarity: clarity,
+					color: color,
+					carat: parseFloat(newCarat),
+					shape: shape,
+					quantity: quantity,
+					description: description,
+					purity: "",
+					model: "",
+					brand: "",
+				});
 			} else {
-				newCarat = carat;
+				delete itemDetails.purity;
+				delete itemDetails.quantity;
+				delete itemDetails.shape;
+				delete itemDetails.carat;
+				delete itemDetails.color;
+				delete itemDetails.clarity;
+				NewItemDetails = Object.assign(itemDetails, {
+					itemCategory: itemDetails.itemCategory,
+					weight: newWeight,
+					brand: brand,
+					model: model,
+					description: description,
+					purity: "",
+					quantity: 0,
+					shape: "",
+					carat: 0,
+					color: "",
+					clarity: "",
+				});
 			}
-
-			NewItemDetails = Object.assign(itemDetails, {
-				itemCategory: itemCategory,
-				weight: parseFloat(newWeight),
-				clarity: clarity,
-				color: color,
-				carat: parseFloat(newCarat),
-				shape: shape,
-				quantity: quantity,
-				description: description,
-				purity: "",
-				model: "",
-				brand: "",
-			});
 		} else {
-			delete itemDetails.purity;
-			delete itemDetails.quantity;
-			delete itemDetails.shape;
-			delete itemDetails.carat;
-			delete itemDetails.color;
-			delete itemDetails.clarity;
-			NewItemDetails = Object.assign(itemDetails, {
-				itemCategory: itemCategory,
-				weight: parseFloat(newWeight),
-				brand: brand,
-				model: model,
-				description: description,
-				purity: "",
-				quantity: 0,
-				shape: "",
-				carat: 0,
-				color: "",
-				clarity: "",
-			});
+			if (itemCategory == "Gold") {
+				delete itemDetails.quantity;
+				delete itemDetails.shape;
+				delete itemDetails.carat;
+				delete itemDetails.clarity;
+				NewItemDetails = Object.assign(itemDetails, {
+					itemCategory: itemCategory,
+					weight: newWeight,
+					color: color,
+					purity: purity,
+					brand: brand,
+					model: model,
+					description: description,
+					quantity: 0,
+					shape: "",
+					carat: 0,
+					clarity: "",
+				});
+			} else if (itemCategory == "Platinum") {
+				delete itemDetails.color;
+				delete itemDetails.quantity;
+				delete itemDetails.shape;
+				delete itemDetails.carat;
+				delete itemDetails.clarity;
+				NewItemDetails = Object.assign(itemDetails, {
+					itemCategory: itemCategory,
+					weight: newWeight,
+					purity: purity,
+					brand: brand,
+					model: model,
+					description: description,
+					color: "",
+					quantity: 0,
+					shape: "",
+					carat: 0,
+					clarity: "",
+				});
+			} else if (itemCategory == "Diamond") {
+				delete itemDetails.purity;
+				delete itemDetails.model;
+				delete itemDetails.brand;
+				let newCarat;
+				if (isNaN(parseFloat(carat))) {
+					newCarat = "0";
+				} else {
+					newCarat = carat;
+				}
+
+				NewItemDetails = Object.assign(itemDetails, {
+					itemCategory: itemCategory,
+					weight: newWeight,
+					clarity: clarity,
+					color: color,
+					carat: parseFloat(newCarat),
+					shape: shape,
+					quantity: quantity,
+					description: description,
+					purity: "",
+					model: "",
+					brand: "",
+				});
+			} else {
+				delete itemDetails.purity;
+				delete itemDetails.quantity;
+				delete itemDetails.shape;
+				delete itemDetails.carat;
+				delete itemDetails.color;
+				delete itemDetails.clarity;
+				NewItemDetails = Object.assign(itemDetails, {
+					itemCategory: itemCategory,
+					weight: newWeight,
+					brand: brand,
+					model: model,
+					description: description,
+					purity: "",
+					quantity: 0,
+					shape: "",
+					carat: 0,
+					color: "",
+					clarity: "",
+				});
+			}
 		}
+
+		setItemDetails(NewItemDetails);
 		// console.log("new item details:", NewItemDetails);
 	}, [
 		weight,
