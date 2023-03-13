@@ -1,6 +1,5 @@
 import React, { useMemo } from "react";
 import Close from "../closebutton";
-import pawnhistoryMock from "../tempData/pawnhistory_MOCK.json";
 import {
 	useTable,
 	useSortBy,
@@ -8,28 +7,20 @@ import {
 	usePagination,
 } from "react-table";
 
-function PawnHistory({ trigger, setTrigger }) {
-	const data = React.useMemo(() => pawnhistoryMock, []);
+function PriceHistoryModal({ trigger, setTrigger, data }) {
 	const columns = React.useMemo(
 		() => [
-			{ Header: "PT Number", accessor: "PT Number" },
 			{
-				Header: "Transaction",
-				accessor: "Transaction Type",
-				disableGlobalFilter: true,
-			},
-			{ Header: "Branch", accessor: "Branch", disableGlobalFilter: true },
-			{ Header: "Date", accessor: "Date", disableGlobalFilter: true },
-			{
-				Header: "Amount Paid",
-				accessor: "Amount Paid",
+				Header: "Ask Price",
+				accessor: "askPrice",
 				disableGlobalFilter: true,
 			},
 			{
-				Header: "Loan Amount",
-				accessor: "Loan Amount",
+				Header: "Appraisal Price",
+				accessor: "appraisalPrice",
 				disableGlobalFilter: true,
 			},
+			{ Header: "Time", accessor: "time", disableGlobalFilter: true },
 		],
 		[]
 	);
@@ -64,12 +55,12 @@ function PawnHistory({ trigger, setTrigger }) {
 		<>
 			<div id="modal-content-area">
 				<div className="px-10 pt-5 pb-10 bg-gray-100 border-2 rounded-xl min-w-fit">
-					<div className="ml-[950px] mt-5 mb-5" onClick={closeModal}>
+					<div className="ml-[950px] mt-5 mb-5" onClick={() => closeModal()}>
 						<Close />
 					</div>
 					<div>
 						<p className="mb-5 text-lg font-bold text-center font-dosis">
-							Pawn History of A-XXXX
+							Price History
 						</p>
 					</div>
 					<div>
@@ -112,15 +103,43 @@ function PawnHistory({ trigger, setTrigger }) {
 									return (
 										<tr id="btable" key={0} {...row.getRowProps()}>
 											{row.cells.map((cell) => {
-												return (
-													<td
-														className="bg-white border border-white"
-														key={0}
-														{...cell.getCellProps()}
-													>
-														{cell.render("Cell")}
-													</td>
-												);
+												if (
+													cell.column.Header == "Appraisal Price" &&
+													row.index == 0
+												) {
+													return (
+														<td
+															className="bg-white border border-white"
+															key={0}
+															{...cell.getCellProps()}
+														>
+															Php -----
+														</td>
+													);
+												} else if (
+													cell.column.Header == "Ask Price" ||
+													cell.column.Header == "Appraisal Price"
+												) {
+													return (
+														<td
+															className="bg-white border border-white"
+															key={0}
+															{...cell.getCellProps()}
+														>
+															Php {cell.render("Cell")}
+														</td>
+													);
+												} else {
+													return (
+														<td
+															className="bg-white border border-white"
+															key={0}
+															{...cell.getCellProps()}
+														>
+															{cell.render("Cell")}
+														</td>
+													);
+												}
 											})}
 										</tr>
 									);
@@ -134,4 +153,4 @@ function PawnHistory({ trigger, setTrigger }) {
 	);
 }
 
-export default PawnHistory;
+export default PriceHistoryModal;
