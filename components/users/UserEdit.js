@@ -103,6 +103,7 @@ function UserEdit(foundID){
 					// if (data != "No Fields Edited") {
 					// 	setTimeout(() => window.location.reload(), 800);
 					// }
+					window.location.reload()
 				});
 
 		}
