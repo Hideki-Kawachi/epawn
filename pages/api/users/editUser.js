@@ -1,5 +1,6 @@
 import dbConnect from "../../../utilities/dbConnect";
 import User from "../../../schemas/user";
+import bcrypt from "bcrypt";
 
 export default async function EditUser(req, res){
 
@@ -7,13 +8,35 @@ export default async function EditUser(req, res){
 
 	const userInfo = req.body;
 
+    let origPass = await User.findOne(
+        { userID: userInfo.userID },
+        {
+            password: 1
+        }
+    )
+
+    let currPassword; 
+
+
+    if (origPass.password != userInfo.password.toString()){
+
+        console.log("not same (new password input) ")
+        currPassword = await bcrypt.hash(userInfo.password, 10)
+
+    } else {
+		console.log("same hash")
+		currPassword = userInfo.password
+	}
+
+
+
 	let result = await User.updateOne(
 		{ userID: userInfo.userID },
 		{
 			firstName: userInfo.firstName,
             middleName: userInfo.middleName,
 			lastName: userInfo.lastName,
-			password: userInfo.password,
+			password: currPassword,
 			role: userInfo.role,
 			isDisabled: userInfo.isDisabled,
 		}
