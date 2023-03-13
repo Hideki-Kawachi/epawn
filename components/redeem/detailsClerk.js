@@ -5,7 +5,7 @@ import CustomerDetails from "../modals/customerDetails";
 import PawnHistory from "../modals/pawnHistory";
 import dayjs from "dayjs";
 
-function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, customer, branch}) {
+function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, customer, branch, authData, setAuth, check, getLoan}) {
   const [isOriginal, setOriginal] = useState("original");
   const [repModal, setRepModal] = useState(false); 
   const [customerModal, setCustomerModal] = useState(false);
@@ -20,6 +20,7 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
   const [PT, setPT] = useState()
   function repOpen(){
     setRepModal(true);
+    console.log("Auth Data is" + JSON.stringify(authData))
   }
 
   function customerOpen() {
@@ -36,6 +37,10 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
 
   function payAmount(number){
     setAmount(number);
+  }
+
+  function amountLoan(amount){
+    getLoan(amount)
   }
   function getInterest(loan){
     //plan: multiply loan * 0.035 with month diff
@@ -98,7 +103,7 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
        total += Number(item.price)
     });
 
-    return convertFloat(total)
+    return total;
   }
 
   function getFullName(user, fname, mname, lname){
@@ -112,6 +117,8 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
     if (pawnTicket != null){
       setPT(pawnTicket)
       setLoan(Number(pawnTicket.loanAmount))
+      amountLoan(loanAmount)
+
     }
   }, [pawnTicket, loanAmount]
   )
@@ -122,7 +129,13 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
         className="drop-shadow-lg flex text-sm font-nunito pr-10"
       >
         <Modal isOpen={repModal} ariaHideApp={false} className="modal">
-          <AuthorizedRep trigger={repModal} setTrigger={setRepModal} />
+          <AuthorizedRep
+            trigger={repModal}
+            setTrigger={setRepModal}
+            authData={authData}
+            setAuth={setAuth}
+            check={check}
+          />
         </Modal>
 
         <Modal isOpen={historyModal} ariaHideApp={false} className="modal">
@@ -235,7 +248,14 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
           ) : (
             <></>
           )}
-
+          {isOriginal == "authorized" && check == false ? (
+          
+            <p className="ml-40 text-sm text-red-400 px-5">
+                Missing Authorized Rep. Details
+            </p>
+          ) : (
+            <></>
+          )}
           <hr className="h-px my-8 bg-gray-500 border-0" />
 
           {/* Pawn Details */}
@@ -322,7 +342,7 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
                     className="text-right border rounded-md stroke-gray-500 px-3 w-40 mb-1"
                   />
                 </p> */}
-                <p className="mr-3">{getTotalRedeem(redeem)}</p>
+                <p className="mr-3">{convertFloat(getTotalRedeem(redeem))}</p>
                 <p className="mr-1.5">(0.00)</p>
                 <p>
                   <input

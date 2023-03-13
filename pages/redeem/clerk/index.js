@@ -58,6 +58,7 @@ function RedeemClerk({ currentUser}) {
   const [branch, setBranch] = useState("N/A");
   const [customerID, setCustomerID] = useState("N/A");
   const [customerDetails, setCusDetails] = useState(["N/A"]);
+  const [amountPaid, setAmountPaid] = useState();
 
   //Array for Redeem
   const [redeem, setRedeem] = useState([]);
@@ -70,8 +71,15 @@ function RedeemClerk({ currentUser}) {
   //Item List Backend States
   const [itemListID, setItemListID] = useState("");
   const [transactionID, setTransactionID] = useState("");
-
+  
   const [button, setButton] = useState(true); //disabled if PT number is invalid
+
+  //Authorized Rep States
+  const [redeeemdBy, setRedeemedBy] = useState("");
+  const [authRep, setAuthRep] = useState([
+    { fName: "", mName: "", lName: "", scanned: "", validID: ""}])
+  const [authStatus, setAuthStatus] = useState(false); //true - valid inputs, false - invalid inputs
+
   //manage modals
   function submitForm() {
     setSubmitOpen(true);
@@ -90,6 +98,27 @@ function RedeemClerk({ currentUser}) {
     setDeleteIndex(index);
     setDeleteModal(true);
   }
+  
+  function putAmountPaid(amount){
+    setAmountPaid(amount)
+
+  }
+  function getTotalRedeem(redeemList){
+    var total = 0;
+
+    redeemList.forEach((item) => {
+       total += Number(item.price)
+    });
+
+    return total;
+  }
+
+
+  function submitAuthorizedRep(data){
+    setAuthRep(JSON.parse(JSON.stringify(data)))
+    setAuthStatus(true)
+  }
+  
   //Manages Add to Redeem Cart
   function removeItem() {
     redeemArray.splice(deleteIndex, 1);
@@ -109,7 +138,6 @@ function RedeemClerk({ currentUser}) {
         newCheckedBoxes.splice(itemIndex, 1);
       }
     }
-
     setCheckedBoxes(newCheckedBoxes);
   };
 
@@ -120,7 +148,7 @@ function RedeemClerk({ currentUser}) {
       } else setRedeem(checkedBoxes);
     }
 
-    checkedBoxes.forEach((check, index) => {
+    checkedBoxes.forEach((check) => {
       const redeemedIndex = itemList.findIndex(
         (item) => item.itemID === check.itemID
       );
@@ -135,10 +163,7 @@ function RedeemClerk({ currentUser}) {
     setRedeemArray(redeem);
   }, [redeem]);
 
-  // useEffect(() => {
-
-  // }, [redeemArray]);
-
+  
   function changeMode() {
     setMode(!mode);
     console.log("Mode changed to " + mode);
@@ -264,10 +289,7 @@ function RedeemClerk({ currentUser}) {
         .then((customer) => {
           // console.log(data)
           if (customer != null) {
-            // console.log(JSON.stringify(info))
-            //   let cDetails = JSON.stringify(customer)
             setCusDetails(JSON.parse(JSON.stringify(customer)));
-            //   console.log(customerDetails);
           }
         });
     }
@@ -328,6 +350,10 @@ function RedeemClerk({ currentUser}) {
             search={searchPawnTicket}
             mode={mode}
             customer={customerDetails}
+            authData={authRep}
+            setAuth={submitAuthorizedRep}
+            check={authStatus}
+            getLoan={putAmountPaid}
           />
         </div>
 
@@ -508,7 +534,7 @@ function RedeemClerk({ currentUser}) {
               </button>
             ) : (
               <>
-                {redeemArray.length == 0 ? (
+                {redeemArray.length == 0 || amountPaid < getTotalRedeem(redeemArray) ? (
                   <button
                     className="px-10 mx-2 my-5 text-sm text-white bg-green-300 disabled:bg-gray-500 disabled:text-gray-500 "
                     onClick={submitForm}

@@ -2,18 +2,35 @@ import React from "react";
 import Close from "../closebutton";
 import ItemCard from "../itemcard";
 import { useRouter } from "next/router";
-export const Submit = ({trigger, setTrigger, mode, PTnumber, itemList, price, changeMode}) => {
+export const Submit = ({trigger, setTrigger, mode, PTnumber, itemList, changeMode}) => {
     const router = useRouter();
     function closeModal(){
         setTrigger(!trigger);
     }
-
 
     function modeChange(){
       changeMode(!mode);
       setTrigger(!trigger);
     }
 
+  function convertFloat(number) {
+    if (mode) return "0.00";
+    else {
+      return Number(number).toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    }
+  }
+
+  function getTotalRedeem(itemList){
+    var total = 0;
+
+    itemList.forEach((item) => {
+       total += Number(item.price)
+    });
+    return convertFloat(total)
+  }
   return (
     <>
       <div id="modal-content-area">
@@ -31,8 +48,8 @@ export const Submit = ({trigger, setTrigger, mode, PTnumber, itemList, price, ch
             <br />
             <b>Pawn Ticket {PTnumber}</b> of items:{" "}
           </p>
-
           )}
+          
             <div className="p-5 mx-10 w-[720px] h-96  overflow-y-scroll bg-white border-2">
               {itemList.map((items) => (
                 <div className="flex flex-row" key={items.itemID}>
@@ -45,7 +62,7 @@ export const Submit = ({trigger, setTrigger, mode, PTnumber, itemList, price, ch
             </div>
           {mode == false ? (
           <p className="text-center text-base">
-            For a total of <b>Php {price}</b>
+            For a total of <b>Php {getTotalRedeem(itemList)}</b>
           </p>
           ) :( <> </>)}
           <button

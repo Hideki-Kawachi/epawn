@@ -1,9 +1,69 @@
 import Close from "../closebutton";
+import { useState, useEffect } from "react";
 
-function AuthorizedRep({trigger, setTrigger}){
+function AuthorizedRep({trigger, setTrigger, authData, setAuth, check}){
+
+  const [fname, setfName] = useState("");
+  const [mname, setmName] = useState("");
+  const [lname, setlName] = useState("");
+  const [scanned, setScanned] = useState([]);
+  const [validID, setValidID] = useState([]);
+  const [filled, setFilled] = useState(true);
     function closeModal() {
       setTrigger(!trigger);
+     // console.log("Auth scanned is now: " + scanned);
     }
+
+    function authorizeFile(data){
+      setAuth(data)
+    }
+
+    useEffect(() => {
+     
+      if(authData) {
+          setfName(authData[0].fName)
+          setmName(authData[0].mName);
+          setlName(authData[0].lName);
+        //  console.log("Auth scanned is now: " + scanned);
+        //   console.log("Auth Data is now: " + JSON.stringify(authData));
+      }
+
+      else {
+          setfName("");
+          setmName("");
+          setlName("");
+          setScanned([]);
+          setValidID([]);
+      }
+    }, [authData])
+  
+    useEffect(() => {    
+
+        if (fname != "" && lname != "" && scanned.length != 0 && validID.length != 0)
+          setFilled(true);
+        else 
+          setFilled(false);
+    }, [fname, lname, scanned, validID])
+
+  function saveButton(){
+    if
+    (filled){
+      const newAuth = [{
+        fName : fname,
+        mName : mname,
+        lName : lname, 
+        scanned : scanned,
+        validID : validID
+      }];
+
+      authorizeFile(newAuth);
+      setTrigger(!trigger);
+      setFilled(true);
+    }
+      else 
+      setFilled(false)
+  }
+
   return (
     <>
       <div id="modal-content-area">
@@ -20,11 +80,9 @@ function AuthorizedRep({trigger, setTrigger}){
               <p className="mb-3">
                 First Name: <span className="text-red-500">*</span>
               </p>
+              <p className="mb-3 mr-3.5">Middle Name:</p>
               <p className="mb-3">
                 Last Name: <span className="text-red-500">*</span>
-              </p>
-              <p className="mb-3">
-                Middle Name: <span className="text-red-500">*</span>
               </p>
               <p className="mb-3">
                 Valid ID: <span className="text-red-500">*</span>{" "}
@@ -34,20 +92,38 @@ function AuthorizedRep({trigger, setTrigger}){
               </p>
             </div>
             <div className="ml-5 text-left mt-5">
-              <input type="text" className="block mb-2"></input>
-              <input type="text" className="block mb-2"></input>
-              <input type="text" className="block mb-2"></input>
               <input
-                type="file"
-                accept="image/png, image/jpeg"
+                type="text"
                 className="block mb-2"
+                value={fname}
+                onChange={(e) => setfName(e.target.value)}
               ></input>
-              
+              <input
+                type="text"
+                className="block mb-2"
+                value={mname}
+                onChange={(e) => setmName(e.target.value)}
+              ></input>
+              <input
+                type="text"
+                className="block mb-2"
+                value={lname}
+                onChange={(e) => setlName(e.target.value)}
+              ></input>
               <input
                 type="file"
                 accept="image/png, image/jpeg"
                 className="block mb-2"
-              ></input> <span type="button" className="inline bg-gray-500 h-5 w-5 text-center font-bold text-white rounded-full ">i</span>
+                //value={scanned}
+                onChange={(e) => setScanned(e.target.files[0])}
+              ></input>
+              <input
+                type="file"
+                accept="image/png, image/jpeg"
+                className="block mb-2"
+                //value={validID}
+                onChange={(e) => setValidID(e.target.files[0])}
+              ></input>{" "}
               <p className="text-gray-300">
                 {" "}
                 only accepts .png and .jpeg files
@@ -64,6 +140,13 @@ function AuthorizedRep({trigger, setTrigger}){
                 All fields marked with <span className="text-red-500">* </span>
                 are required.{" "}
               </p>
+              {filled == false ? (
+                <p className="font-nunito text-sm ">
+                  Some <b>required fields</b> are still empty.
+                </p>
+              ) : (
+                <></>
+              )}
             </div>
             <div className=" ml-20 ">
               <button
@@ -72,7 +155,11 @@ function AuthorizedRep({trigger, setTrigger}){
               >
                 Cancel
               </button>
-              <button className="bg-green-300 text-base px-10 mt-10 mx-2">
+              <button
+                className="bg-green-300 text-base px-10 mt-10 mx-2"
+                onClick={saveButton}
+                disabled={!filled}
+              >
                 Save
               </button>
             </div>

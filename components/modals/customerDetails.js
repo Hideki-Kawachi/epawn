@@ -17,15 +17,6 @@ function CustomerDetails({ trigger, setTrigger, customerInfo, userInfo}) {
           {/* Header Row Start */}
           <div className="header flex border-2 border-b-0 flex-row bg-green-50 p-5 rounded-t-lg ">
             {/* User Profile Pic flexbox */}
-
-            <div className="profile mr-5">
-              <Image
-                width={100}
-                height={100}
-                src="/profile_icon.svg"
-                alt="profile"
-              />
-            </div>
             {/* User Details flexbox */}
             <div className="mt-3">
               <p className="font-nunito font-bold text-base text-left">
