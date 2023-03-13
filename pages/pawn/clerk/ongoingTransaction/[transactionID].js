@@ -1,7 +1,6 @@
 import { withIronSessionSsr } from "iron-session/next";
 import mongoose from "mongoose";
 import React, { useEffect, useState } from "react";
-import Close from "../../../../components/closebutton";
 import Header from "../../../../components/header";
 import ItemCard from "../../../../components/itemcard";
 import LoadingSpinner from "../../../../components/loadingSpinner";
@@ -12,8 +11,6 @@ import Transaction from "../../../../schemas/transaction";
 import User from "../../../../schemas/user";
 import { ironOptions } from "../../../../utilities/config";
 import dbConnect from "../../../../utilities/dbConnect";
-import Modal from "react-modal";
-import AddItemPawn from "../../../../components/modals/addItemPawn";
 import NewItemCard from "../../../../components/pawn/newTransaction/newItemCard";
 import { useRouter } from "next/router";
 

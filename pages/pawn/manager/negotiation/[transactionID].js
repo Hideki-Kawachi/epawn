@@ -9,12 +9,14 @@ import { Router, useRouter } from "next/router";
 import Transaction from "../../../../schemas/transaction";
 import Item from "../../../../schemas/item";
 import PriceHistory from "../../../../schemas/priceHistory";
+import PriceHistoryModal from "../../../../components/modals/priceHistoryModal";
 import dbConnect from "../../../../utilities/dbConnect";
 import User from "../../../../schemas/user";
 import AppraisalItemListCard from "../../../../components/pawn/appraisal/appraisalItemListCard";
 import AppraisalItemsDetails from "../../../../components/pawn/appraisal/appraisalItemDetails";
 import mongoose from "mongoose";
 import LoadingSpinner from "../../../../components/loadingSpinner";
+import Modal from "react-modal";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req, query }) {
@@ -30,7 +32,7 @@ export const getServerSideProps = withIronSessionSsr(
 			await dbConnect();
 			let transactionInfo = await Transaction.findOne({
 				_id: new mongoose.Types.ObjectId(query.transactionID),
-				status: "for appraisal",
+				status: "for negotiation",
 			}).lean();
 			if (transactionInfo) {
 				let priceHistoryList = await PriceHistory.find({
@@ -72,7 +74,7 @@ export const getServerSideProps = withIronSessionSsr(
 	ironOptions
 );
 
-function AppraisalTransactionID({
+function NegotiationTransactionID({
 	currentUser,
 	transactionData,
 	priceHistory,
@@ -82,10 +84,18 @@ function AppraisalTransactionID({
 	const [itemList, setItemList] = useState(itemData);
 	const [appraisalPrice, setAppraisalPrice] = useState(0);
 	const [itemShow, setItemShow] = useState();
+	const [priceHistoryShow, setPriceHistoryShow] = useState(false);
 	const [loading, setLoading] = useState(false);
+	const priceHistoryData = priceHistory.map((history) => {
+		return {
+			askPrice: history.askPrice,
+			appraisalPrice: history.appraisalPrice,
+			time: new Date(history.updatedAt).toLocaleTimeString("en-GB"),
+		};
+	});
 
 	const router = useRouter();
-	// console.log("price history:", priceHistory);
+	console.log("price history:", priceHistory);
 	// console.log("item data:", itemData);
 	// console.log("customer data:", customerData);
 
@@ -152,12 +162,23 @@ function AppraisalTransactionID({
 			});
 	}
 
+	function rejectForm() {
+		console.log("REJECT FORM");
+	}
+
 	return (
 		<>
 			<LoadingSpinner isLoading={loading}></LoadingSpinner>
 			<NavBar currentUser={currentUser}></NavBar>
 			<Header currentUser={currentUser}></Header>
 			<div id="main-content-area">
+				<Modal isOpen={priceHistoryShow} ariaHideApp={false} className="modal">
+					<PriceHistoryModal
+						data={priceHistoryData}
+						trigger={priceHistoryShow}
+						setTrigger={setPriceHistoryShow}
+					/>
+				</Modal>
 				<div className="font-semibold text-center font-dosis">
 					<h1 className="text-2xl underline">PAWN</h1>
 					<span className="text-lg">Appraisal Details</span>
@@ -190,10 +211,17 @@ function AppraisalTransactionID({
 							<span className="mr-2 font-bold">Asking Price: </span>
 							Php {priceHistory[priceHistory.length - 1].askPrice}
 						</span>
+						<button
+							className="absolute ml-[30vw] text-sm bg-blue-300"
+							onClick={() => setPriceHistoryShow(true)}
+						>
+							View Price History
+						</button>
 						<span className="flex justify-end w-full font-normal pr-[35%]">
 							<span className="mr-2 font-bold">Appraisal Price: </span>
 							Php {appraisalPrice}
 						</span>
+
 						<h2 className="mt-10 font-bold text-center">Item Details</h2>
 						<div className="h-[50vh] overflow-y-scroll w-full bg-gray-100 border-2 p-4 flex flex-col gap-4">
 							<AppraisalItemsDetails
@@ -206,10 +234,18 @@ function AppraisalTransactionID({
 				<div className="mt-5 flex flex-row ml-[1180px]">
 					<div>
 						<button
-							className="px-10 mx-2 my-5 text-base text-white bg-red-300"
+							className="px-10 mx-2 my-5 text-base text-white bg-gray-300"
 							onClick={cancelForm}
 						>
 							Cancel
+						</button>
+					</div>
+					<div>
+						<button
+							className="px-10 mx-2 my-5 text-base text-white bg-red-300"
+							onClick={rejectForm}
+						>
+							Reject
 						</button>
 					</div>
 					<div>
@@ -226,4 +262,4 @@ function AppraisalTransactionID({
 	);
 }
 
-export default AppraisalTransactionID;
+export default NegotiationTransactionID;

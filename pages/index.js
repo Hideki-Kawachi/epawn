@@ -48,16 +48,10 @@ export const getServerSideProps = withIronSessionSsr(
 					branchID: req.session.userData.branchID,
 					managerID: req.session.userData.userID,
 					status: { $ne: "Done" },
-				}).lean();
+				})
+					.sort({ updatedAt: -1 })
+					.lean();
 			}
-
-			transactionData.sort((a, b) => {
-				if (a.updatedAt > b.updatedAt) {
-					return 1;
-				} else {
-					return -1;
-				}
-			});
 
 			let notifData = [];
 			transactionData.forEach((transaction) => {

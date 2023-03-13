@@ -62,9 +62,14 @@ function NotificationTable({ role, data }) {
 					pathname: "pawn/manager/appraisal/[transactionID]",
 					query: { transactionID: rowData._id },
 				});
+			} else if (rowData.status == "for negotiation") {
+				router.push({
+					pathname: "pawn/manager/negotiation/[transactionID]",
+					query: { transactionID: rowData._id },
+				});
 			}
 			console.log("MANAGER", rowData);
-		} else {
+		} else if (role == "clerk") {
 			if (rowData.status == "appraised") {
 				router.push({
 					pathname: "pawn/clerk/ongoingTransaction/[transactionID]",
