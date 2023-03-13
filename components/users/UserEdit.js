@@ -1,24 +1,65 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // import BasicButton from "../BasicButton";
 
 import MockUsers from "../../components/users/User_MOCK_DATA.json";
 import ToggleSwitch from "../ToggleSwitch.js";
 
 // function UserEdit(props) or UserEdit(userID, firstName, lastName, password, roleName)
-function UserEdit({ data }){
+function UserEdit(foundID){
 
 	
-	const [userID, setUserID] = useState(data.userID);
-	const [firstName, setFirstName] = useState(data.firstName);
-	const [lastName, setLastName] = useState(data.lastName);
-	const [middleName, setMiddleName] = useState(data.middleName);
-	const [password, setPassword] = useState(data.password);
-	const [roleName, setRoleName] = useState(data.roleName);
-	const [isDisabled, setIsDisabled] = useState(data.isDisabled);
-	const [branchID, setBranchID] = useState(data.branchID)
+	const [userID, setUserID] = useState("");
+	const [firstName, setFirstName] = useState("");
+	const [lastName, setLastName] = useState("");
+	const [middleName, setMiddleName] = useState("");
+	const [password, setPassword] = useState("");
+	const [roleName, setRoleName] = useState("");
+	const [isDisabled, setIsDisabled] = useState("");
+	const [branchID, setBranchID] = useState("")
 
 	const [error, setError] = useState(false);
 	const [employeeIDError, setEmployeeIDError] = useState("");
+
+	useEffect(() => {
+		// console.log("here is the key" + foundID.foundID)
+
+		fetch("/api/users/" + foundID.foundID, {
+			method: "GET",
+			headers: {
+				Accept: "application/json",
+				"Content-Type": "application/json",
+			},
+		})
+			.then((res) => res.json())
+			.then((data) => {
+				// console.log("RECEIVED DATA:", data);
+				setUserID(data.userID)
+				setFirstName(data.firstName);
+				setMiddleName(data.middleName);
+				setLastName(data.lastName);
+				setPassword(data.password);
+				setRoleName(data.role);
+				setBranchID(data.branchID);
+				setIsDisabled(data.isDisabled);
+			});
+
+
+			// For Branch Fetch
+			// fetch("/api/users/" + foundID.foundID, {
+			// 	method: "GET",
+			// 	headers: {
+			// 		Accept: "application/json",
+			// 		"Content-Type": "application/json",
+			// 	},
+			// })
+			// 	.then((res) => res.json())
+			// 	.then((data) => {
+			// 		// console.log("RECEIVED DATA:", data);
+			// 		setBranchID(data.branchID)
+			// 	});
+
+
+	}, [foundID.foundID])
 
 
 	function submitForm(){
@@ -35,6 +76,7 @@ function UserEdit({ data }){
 		}  else {
 			
 			let userData = {
+				userID: userID,
 				firstName: firstName,
 				middleName: middleName,
 				lastName: lastName,
@@ -45,6 +87,24 @@ function UserEdit({ data }){
 			}
 
 			console.log(userData)
+
+			fetch("/api/users/editUser", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(userData),
+			})
+			.then((res) => res.json())
+			.then((data) => {
+
+					console.log(data + "hello")
+					// setNotifResult(data);
+					// if (data != "No Fields Edited") {
+					// 	setTimeout(() => window.location.reload(), 800);
+					// }
+				});
+
 		}
 
 

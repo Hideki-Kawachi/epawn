@@ -8,9 +8,10 @@ import { ironOptions } from "../../../utilities/config";
 import UserEdit from "../../../components/users/UserEdit";
 
 import MockUsers from "../../../components/users/User_MOCK_DATA.json";
+import User from "../../../schemas/user";
 
 export const getServerSideProps = withIronSessionSsr(
-	async function getServerSideProps({ req }) {
+	async function getServerSideProps({req}) {
 		if (!req.session.userData) {
 			return {
 				redirect: { destination: "/signIn", permanent: true },
@@ -20,8 +21,9 @@ export const getServerSideProps = withIronSessionSsr(
 			req.session.userData.role == "admin" ||
 			req.session.userData.role == "manager"
 		) {
+
 			return {
-				props: { currentUser: req.session.userData },
+				props: { currentUser: req.session.userData},
 			};
 		} else if (req.session.userData.role == "customer") {
 			return {
@@ -38,13 +40,13 @@ export const getServerSideProps = withIronSessionSsr(
 	ironOptions
 );
 
-function Edit({ currentUser }) {
+
+function Edit({ currentUser, foundUser }) {
 	const router = useRouter();
 	const userid = router.query.userid;
 
 	// console.log("userid is:", userid, "--curr is:", currentUser);
 
-	// Add NavBar (currentUser) and Header (currentUser)
 	return (
 		<>
 			<NavBar currentUser={currentUser}></NavBar>
@@ -54,9 +56,18 @@ function Edit({ currentUser }) {
 
 					<div className="relative w-full m-10 bg-white h-70">
 
+						<UserEdit 
+							key = {userid}
+							foundID = {userid}
+						/>
 
+						{/* <UserEdit 
+							key = {userData.userID}
+							data = {userData}
+						/>
+
+{/* 				
 					{MockUsers.map((mockUser) => {
-
 
 							//Modify this to String. mockUser.userID == userid.toString()
 							if (mockUser.userID == userid) {
@@ -71,7 +82,7 @@ function Edit({ currentUser }) {
 									/>
 								);
 							}
-					})}
+					})} */}
 
 					</div>
 

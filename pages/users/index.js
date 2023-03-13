@@ -46,7 +46,7 @@ export const getServerSideProps = withIronSessionSsr(
 
 			let userData = JSON.stringify(tempUserData);
 
-			console.log(userData);
+			// console.log(userData);
 
 			return {
 				props: { currentUser: req.session.userData, userData},

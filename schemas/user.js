@@ -8,6 +8,7 @@ const UserSchema = new mongoose.Schema({
 	lastName: { type: String, require: true },
 	password: { type: String, default: "" },
 	isDisabled: { type: Boolean, default: false },
+	// branchID: { type: String, default:""}
 });
 
 let User;

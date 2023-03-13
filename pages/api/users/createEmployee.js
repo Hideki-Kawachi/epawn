@@ -17,13 +17,17 @@ export default async function CreateEmployee(req, res) {
 
 	let password;
 
-	bcrypt.hash(body.password, 12, (err, hash) => {
-		if (err) {
-			res.json("password failed to hash");
-		} else {
-			password = hash;
-		}
-	});
+	// bcrypt.hash(body.password, 12, (err, hash) => {
+	// 	if (err) {
+	// 		res.json("password failed to hash");
+	// 	} else {
+	// 		password = hash;
+	// 	}
+	// });
+
+	password = await bcrypt.hash(body.password, 12)
+
+	console.log(password + " and " + body.password)
 
 	let newUser = await User.create({
 		userID: userID,
