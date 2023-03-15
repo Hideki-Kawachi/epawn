@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import React from "react";
 import {
 	useFilters,
@@ -33,8 +34,13 @@ function NegotiationTable({ columns, data }) {
 		usePagination
 	);
 
-	function clickUser(userID) {
-		console.log("customer name", userID);
+	const router = useRouter();
+
+	function openRow(rowData) {
+		router.push({
+			pathname: "/pawn/manager/negotiation/[transactionID]",
+			query: { transactionID: rowData.transactionID },
+		});
 	}
 
 	return (
@@ -64,7 +70,7 @@ function NegotiationTable({ columns, data }) {
 						return (
 							<tr
 								{...row.getRowProps()}
-								onClick={() => clickUser(row.cells[0].value)}
+								onClick={() => openRow(data[row.id])}
 								className="cursor-pointer hover:bg-green-100"
 							>
 								{row.cells.map((cell) => {

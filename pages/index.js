@@ -39,7 +39,9 @@ export const getServerSideProps = withIronSessionSsr(
 					branchID: req.session.userData.branchID,
 					clerkID: req.session.userData.userID,
 					status: { $ne: "Done" },
-				}).lean();
+				})
+					.sort({ updatedAt: -1 })
+					.lean();
 			} else if (
 				req.session.userData.role == "manager" ||
 				req.session.userData.role == "admin"
@@ -73,7 +75,7 @@ export const getServerSideProps = withIronSessionSsr(
 			return {
 				props: {
 					currentUser: req.session.userData,
-					notifData: JSON.parse(JSON.stringify(notifData.reverse())),
+					notifData: JSON.parse(JSON.stringify(notifData)),
 				},
 			};
 		}
@@ -107,11 +109,11 @@ export default function Home({ currentUser, notifData }) {
 		if (res.status == 502) {
 			await waitNotif();
 		} else if (res.status != 200) {
-			console.log("2-RESPONSE:", res.statusText);
+			// console.log("2-RESPONSE:", res.statusText);
 			await new Promise((resolve) => setTimeout(resolve, 1000));
 		} else {
 			let notifShow = await res.json();
-			console.log("NOTIF DATA BACK IS:", notifShow);
+			// console.log("NOTIF DATA BACK IS:", notifShow);
 			setShowData(notifShow);
 
 			await waitNotif();

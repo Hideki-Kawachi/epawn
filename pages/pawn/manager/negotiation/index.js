@@ -2,9 +2,12 @@ import React from "react";
 import Header from "../../../../components/header";
 import NavBar from "../../../../components/navigation/navBar";
 import NegotiationTable from "../../../../components/pawn/negotiation/negotiationTable";
-import Data from "../../../../components/tempData/negotiationTable.json";
 import { withIronSessionSsr } from "iron-session/next";
 import { ironOptions } from "../../../../utilities/config";
+import dbConnect from "../../../../utilities/dbConnect";
+import Transaction from "../../../../schemas/transaction";
+import User from "../../../../schemas/user";
+import PriceHistory from "../../../../schemas/priceHistory";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {
@@ -14,8 +17,35 @@ export const getServerSideProps = withIronSessionSsr(
 				props: {},
 			};
 		} else if (req.session.userData.role == "manager") {
+			await dbConnect();
+			let forAppraisal = await Transaction.find({
+				branchID: req.session.userData.branchID,
+				status: "for negotiation",
+			}).lean();
+			let customerData = await User.find({ isDisabled: false }).lean();
+			let priceHistory = await PriceHistory.find({}).lean();
+			let tableData = [];
+			forAppraisal.forEach((transaction) => {
+				let customerInfo = customerData.find(
+					(customer) => customer.userID == transaction.customerID
+				);
+				let priceInfo = priceHistory.find(
+					(history) => history.transactionID == transaction._id.toString()
+				);
+				tableData.push({
+					transactionID: priceInfo.transactionID,
+					customerName: customerInfo.firstName + " " + customerInfo.lastName,
+					askPrice: priceInfo.askPrice,
+					appraisalPrice: priceInfo.appraisalPrice,
+					date: transaction.updatedAt
+						.toDateString()
+						.substring(4, transaction.creationDate.length),
+					time: transaction.updatedAt.toLocaleTimeString("en-GB"),
+				});
+				console.log("tableData:", tableData);
+			});
 			return {
-				props: { currentUser: req.session.userData },
+				props: { currentUser: req.session.userData, tableData: tableData },
 			};
 		} else if (req.session.userData.role == "customer") {
 			return {
@@ -31,7 +61,7 @@ export const getServerSideProps = withIronSessionSsr(
 	ironOptions
 );
 
-function Negotiation({ currentUser }) {
+function Negotiation({ currentUser, tableData }) {
 	const columns = React.useMemo(
 		() => [
 			{
@@ -51,7 +81,7 @@ function Negotiation({ currentUser }) {
 			<NavBar currentUser={currentUser}></NavBar>
 			<Header currentUser={currentUser}></Header>
 			<div id="main-content-area">
-				<NegotiationTable columns={columns} data={Data}></NegotiationTable>
+				<NegotiationTable columns={columns} data={tableData}></NegotiationTable>
 			</div>
 		</>
 	);

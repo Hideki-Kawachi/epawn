@@ -13,6 +13,8 @@ import { ironOptions } from "../../../../utilities/config";
 import dbConnect from "../../../../utilities/dbConnect";
 import NewItemCard from "../../../../components/pawn/newTransaction/newItemCard";
 import { useRouter } from "next/router";
+import InputCustomerDetails from "../../../../components/modals/inputCustomerDetails";
+import Modal from "react-modal";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req, query }) {
@@ -86,6 +88,8 @@ function OngoingTransactionTransactionID({
 	const [addItemOpen, setAddItemOpen] = useState(false);
 	const [itemIDs, setItemIDs] = useState(-1);
 	const [newItemList, setNewItemList] = useState([{}]);
+	const [customerInfo, setCustomerInfo] = useState({});
+	const [customerInfoShow, setCustomerInfoShow] = useState(false);
 
 	const router = useRouter();
 
@@ -262,13 +266,14 @@ function OngoingTransactionTransactionID({
 			<NavBar currentUser={currentUser}></NavBar>
 			<Header currentUser={currentUser}></Header>
 			<div id="main-content-area">
-				{/* <Modal isOpen={addItemOpen} ariaHideApp={false} className="modal">
-					<AddItemPawn
-						trigger={addItemOpen}
-						setTrigger={setAddItemOpen}
-						addItem={addItem}
+				<Modal isOpen={customerInfoShow} ariaHideApp={false} className="modal">
+					<InputCustomerDetails
+						trigger={customerInfoShow}
+						setTrigger={setCustomerInfoShow}
+						customerInfo={customerInfo}
+						userInfo={customerData}
 					/>
-				</Modal> */}
+				</Modal>
 				<div className="font-semibold text-center font-dosis">
 					<h1 className="text-2xl underline">PAWN</h1>
 				</div>
@@ -380,7 +385,7 @@ function OngoingTransactionTransactionID({
 					<button
 						className="px-10 mx-2 my-5 bg-green-300"
 						type="button"
-						onClick={() => submitForm()}
+						onClick={() => setCustomerInfoShow(true)}
 					>
 						Proceed
 					</button>

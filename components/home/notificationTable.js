@@ -67,6 +67,8 @@ function NotificationTable({ role, data }) {
 					pathname: "pawn/manager/negotiation/[transactionID]",
 					query: { transactionID: rowData._id },
 				});
+			} else if (rowData.status == "for approval") {
+				console.log("CLICKED FOR APPROVAL");
 			}
 			console.log("MANAGER", rowData);
 		} else if (role == "clerk") {
@@ -75,6 +77,10 @@ function NotificationTable({ role, data }) {
 					pathname: "pawn/clerk/ongoingTransaction/[transactionID]",
 					query: { transactionID: rowData._id },
 				});
+			} else if (rowData.status == "rejected") {
+				console.log("CLICKED REJECTED");
+			} else if (rowData.state == "approved") {
+				console.log("CLICKED APPROVED");
 			}
 			console.log("CLERK", rowData);
 		}
