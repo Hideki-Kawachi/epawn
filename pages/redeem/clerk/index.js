@@ -12,6 +12,7 @@ import { withIronSessionSsr } from "iron-session/next";
 import { ironOptions } from "../../../utilities/config";
 import dbConnect from "../../../utilities/dbConnect";
 import Delete from "../../../components/modals/delWarning";
+import { useRouter } from "next/router";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {
@@ -50,6 +51,7 @@ function RedeemClerk({ currentUser}) {
   let data = JSON.stringify(ItemMockData); //Items Mock Data
   //Item List Array
   const [itemList, setitemList] = useState(["N/A"]);
+  const router = useRouter();
 
   //Pawn Ticket Details
   const [PTNumber, setPTNumber] = useState(""); //test A-123456
@@ -71,17 +73,18 @@ function RedeemClerk({ currentUser}) {
   //Item List Backend States
   const [itemListID, setItemListID] = useState("");
   const [transactionID, setTransactionID] = useState("");
-  
+  const [sendForm, setSendForm] = useState(false);
   const [button, setButton] = useState(true); //disabled if PT number is invalid
 
   //Authorized Rep States
   const [redeeemdBy, setRedeemedBy] = useState("");
   const [authRep, setAuthRep] = useState([
     { fName: "", mName: "", lName: "", scanned: "", validID: ""}])
-  const [authStatus, setAuthStatus] = useState(false); //true - valid inputs, false - invalid inputs
-
+  const [authStatus, setAuthStatus] = useState(false); //true - valid inputs, false - invalid inputs or redeemed by original customer
+  const [urlValidID, setUrlValidID] = useState("")
+  const [urlAuthorization, setUrlAuthorziation] = useState("")
   //manage modals
-  function submitForm() {
+  function submitOpen() {
     setSubmitOpen(true);
   }
 
@@ -294,6 +297,8 @@ function RedeemClerk({ currentUser}) {
         });
     }
   }, [customerID]);
+
+  // useEffect to change items to be displayed in Select or Submit Modal
   useEffect(() => {
     if (mode){
       setSubmit(itemList)
@@ -302,6 +307,149 @@ function RedeemClerk({ currentUser}) {
       setSubmit(redeemArray);
 
   }, [mode, itemList, redeemArray])
+
+  //useEffect to submit the Redemption Transaction
+
+  async function submitForm(){
+    if (sendForm){
+      if(authStatus)
+      {
+        //Adding new entries to User and RepresentativeInfo Schemas
+        //User -> role, fName, lName, mName, password, isDisabled=false
+        //RepresentativeInfo -> proof authorization, validID
+        let publicID = "validID" + "-" + userID + "-" + new Date();
+        let folder = "epawn/customerImage";
+        let uploadPreset = "signed_preset";
+        let type = "authenticated";
+        let signURL = "true";
+        
+        fetch("/api/signUploadForm", {
+          method: "POST",
+          body: JSON.stringify({
+            public_id: publicID,
+            upload_preset: uploadPreset,
+            folder: folder,
+            type: type, 
+          }),
+        })
+        .then((res) => res.json())
+        .then((data) => {
+              const formData1 = new FormData();
+
+              formData1.append("file", authRep[0].validID);
+              formData1.append("upload_preset", uploadPreset);
+              formData1.append("folder", folder);
+              formData1.append("sign_url", signURL);
+              formData1.append("type", type);
+              formData1.append("api_key", data.apiKey);
+              formData1.append("timestamp", data.timestamp);
+              formData1.append("signature", data.signature);
+
+        	fetch("https://api.cloudinary.com/v1_1/cloudurlhc/image/upload", {
+            method: "POST",
+            body: formData1,
+          })
+          .then((res) => res.json())
+          .then((data) => {
+            console.log("DATA IS " + data);
+            setUrlValidID(data.secure.url);
+          })
+        })
+
+        let publicID2 = "AuthRep" + "-" + userID + "-" + new Date();
+                fetch("/api/signUploadForm", {
+                  method: "POST",
+                  body: JSON.stringify({
+                    public_id: publicID2,
+                    upload_preset: uploadPreset,
+                    folder: folder,
+                    type: type,
+                  }),
+                })
+                  .then((res) => res.json())
+                  .then((data) => {
+                    const formData2 = new FormData();
+
+                    formData2.append("file", authRep[0].authorization);
+                    formData2.append("upload_preset", uploadPreset);
+                    formData2.append("folder", folder);
+                    formData2.append("sign_url", signURL);
+                    formData2.append("type", type);
+                    formData2.append("api_key", data.apiKey);
+                    formData2.append("timestamp", data.timestamp);
+                    formData2.append("signature", data.signature);
+
+                    fetch(
+                      "https://api.cloudinary.com/v1_1/cloudurlhc/image/upload",
+                      {
+                        method: "POST",
+                        body: formData2,
+                      }
+                    )
+                      .then((res) => res.json())
+                      .then((data) => {
+                        console.log("AUTH DATA IS " + data);
+                        setUrlAuthorziation(data.secure.url);
+                      });
+                  });
+                  // let transac = {
+                  //   redeemArray : redeemArray,
+                  // }
+      }
+      //Adding new entry to Transaction
+      
+  }
+}
+
+ useEffect(() => {
+  if (sendForm){
+    if (urlValidID && urlAuthorization) {
+      if (authStatus) {
+        let newrep = {
+          firstName: authRep[0].firstName,
+          middleName: authRep[0].middleName,
+          lastName: authRep[0].lastName,
+          authorization: urlAuthorization,
+          validID: urlValidID,
+        };
+        fetch("/api/redeem/newRepresentative", {
+          method: "POST",
+          body: JSON.stringify(newrep),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            console.log("END");
+            if (data == "success") {
+              console.log("new rep created!");
+            } else {
+              console.log("error");
+            }
+          });
+      }
+    }
+        let transac = {
+          itemListID: itemListID,
+          redeemArray: redeemArray,
+          clerkID: currentUser.userID,
+          branchID: currentUser.branchID,
+        };
+       // console.log("transac is" + JSON.stringify(transac))
+        fetch("/api/redeem/newClerkRedeem", {
+          method: "POST",
+          body: JSON.stringify(transac),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            console.log("END");
+            if (data == "redeem posted successfully") {
+              router.replace("/");
+            } else {
+              console.log("error");
+            }
+          });
+  }
+  }, [sendForm, urlValidID, urlAuthorization]);
+
   return (
     <>
       <NavBar currentUser={currentUser}></NavBar>
@@ -316,6 +464,9 @@ function RedeemClerk({ currentUser}) {
           changeMode={changeMode}
           PTnumber={PTNumber}
           itemList={forSubmit}
+          setSendForm={setSendForm}
+          sendForm={sendForm}
+          submitForm={submitForm}
         />
       </Modal>
 
@@ -527,17 +678,19 @@ function RedeemClerk({ currentUser}) {
             {mode == true ? (
               <button
                 className="px-10 mx-2 my-5 text-sm text-white bg-green-300 disabled:bg-gray-500 disabled:text-gray-500 "
-                onClick={submitForm}
+                onClick={submitOpen}
                 disabled={button}
               >
                 Select
               </button>
             ) : (
               <>
-                {redeemArray.length == 0 || amountPaid < getTotalRedeem(redeemArray) ? (
+                {redeemArray.length == 0 ||
+                (amountPaid < getTotalRedeem(redeemArray) &&
+                  amountPaid == null) ? (
                   <button
                     className="px-10 mx-2 my-5 text-sm text-white bg-green-300 disabled:bg-gray-500 disabled:text-gray-500 "
-                    onClick={submitForm}
+                    onClick={submitOpen}
                     disabled
                   >
                     Submit
@@ -545,7 +698,7 @@ function RedeemClerk({ currentUser}) {
                 ) : (
                   <button
                     className="px-10 mx-2 my-5 text-sm text-white bg-green-300 disabled:bg-gray-500 disabled:text-gray-500 "
-                    onClick={submitForm}
+                    onClick={submitOpen}
                   >
                     Submit
                   </button>

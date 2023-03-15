@@ -16,7 +16,6 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
   const [loanAmount, setLoan] = useState()
   const [newloanAmount, setNewLoanAmount] = useState(0)
   const [partial, setPartial] = useState(0)
-  const [amountPaid, setAmount] = useState(0)
   const [PT, setPT] = useState()
   function repOpen(){
     setRepModal(true);
@@ -35,8 +34,8 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
     search(pawnticketID)
   }
 
-  function payAmount(number){
-    setAmount(number);
+  function getTotalAmount(redeemTotal, partial){
+    setAmount(redeemTotal - partial);
   }
 
   function amountLoan(amount){
@@ -249,9 +248,8 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
             <></>
           )}
           {isOriginal == "authorized" && check == false ? (
-          
             <p className="ml-40 text-sm text-red-400 px-5">
-                Missing Authorized Rep. Details
+              Missing Authorized Rep. Details
             </p>
           ) : (
             <></>
@@ -309,7 +307,7 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
                 {/* <p>Other Charges:</p> */}
                 <p>Total Items for Redemption:</p>
                 <p>Partial Payments:</p>
-                <p>Amount Paid:</p>
+                <p className="font-bold">Total Amount to be Paid:</p>
                 <br />
                 <p>
                   <i>New</i> Loan Amount:
@@ -335,7 +333,7 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
                     getAdvInterest(getNewLoanAmount(loanAmount, partial))
                   )}
                 </p>
-                <p className="mr-3">0.00</p>
+                <p className="mr-3">{convertFloat(partial)}</p>
                 {/* <p>
                   <input
                     type="number"
@@ -344,14 +342,16 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
                 </p> */}
                 <p className="mr-3">{convertFloat(getTotalRedeem(redeem))}</p>
                 <p className="mr-1.5">(0.00)</p>
-                <p>
-                  <input
+                <p className="mr-3 font-bold">
+                  {convertFloat(getTotalRedeem(redeem), partial)}
+                </p>
+                {/* <input
                     type="number"
                     className="text-right border rounded-md stroke-gray-500 px-3 w-40 mb-1"
                     onChange={(e) => payAmount(e.target.value)}
                     disabled={mode}
-                  />
-                </p>
+                  /> */}
+
                 <hr className="my-3" />
                 <p className="font-bold mr-3">
                   Php {convertFloat(getNewLoanAmount(loanAmount, partial))}

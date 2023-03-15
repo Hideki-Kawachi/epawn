@@ -2,7 +2,7 @@ import React from "react";
 import Close from "../closebutton";
 import ItemCard from "../itemcard";
 import { useRouter } from "next/router";
-export const Submit = ({trigger, setTrigger, mode, PTnumber, itemList, changeMode}) => {
+export const Submit = ({trigger, setTrigger, mode, PTnumber, itemList, changeMode, setSendForm, sendForm, submitForm}) => {
     const router = useRouter();
     function closeModal(){
         setTrigger(!trigger);
@@ -13,6 +13,11 @@ export const Submit = ({trigger, setTrigger, mode, PTnumber, itemList, changeMod
       setTrigger(!trigger);
     }
 
+    function goForm(){
+        setSendForm(!sendForm);
+        submitForm();
+        console.log("Send form is now " + sendForm)
+    }
   function convertFloat(number) {
     if (mode) return "0.00";
     else {
@@ -76,7 +81,7 @@ export const Submit = ({trigger, setTrigger, mode, PTnumber, itemList, changeMod
             Select
           </button>
           ):(
-            <button className="bg-green-300 text-base px-24 mt-5 mx-5">
+            <button className="bg-green-300 text-base px-24 mt-5 mx-5" onClick={goForm}>
             Submit
           </button>
           )}
