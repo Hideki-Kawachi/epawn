@@ -11,6 +11,7 @@ const TransactionSchema = new mongoose.Schema(
 		creationDate: { type: Date, require: true, default: new Date() },
 		status: { type: String },
 		rejectionMessage: { type: String },
+		amountPaid: { type: Number },
 	},
 	{ timestamps: true }
 );
