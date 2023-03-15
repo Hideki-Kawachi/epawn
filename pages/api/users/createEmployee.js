@@ -8,7 +8,6 @@ import EmployeeInfo from "../../../schemas/employeeInfo";
 // role, password, firstname, middlename, lastname, branchID, isDisabled
 
 export default async function CreateEmployee(req, res) {
-
 	dbConnect();
 
 	let body = req.body;
@@ -25,9 +24,9 @@ export default async function CreateEmployee(req, res) {
 	// 	}
 	// });
 
-	password = await bcrypt.hash(body.password, 12)
+	password = await bcrypt.hash(body.password, 12);
 
-	console.log(password + " and " + body.password)
+	console.log(password + " and " + body.password);
 
 	let newUser = await User.create({
 		userID: userID,
@@ -46,8 +45,6 @@ export default async function CreateEmployee(req, res) {
 	});
 
 	console.log("NEW USER IS:", newUser, newEmployeeInfo);
-
-	//Transaction.create({customerID: latestID, branchID: body.branchID, })
 
 	res.json("good");
 }
