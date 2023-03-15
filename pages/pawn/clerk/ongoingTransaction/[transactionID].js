@@ -272,6 +272,7 @@ function OngoingTransactionTransactionID({
 						setTrigger={setCustomerInfoShow}
 						customerInfo={customerInfo}
 						userInfo={customerData}
+						transactionID={transactionData._id}
 					/>
 				</Modal>
 				<div className="font-semibold text-center font-dosis">

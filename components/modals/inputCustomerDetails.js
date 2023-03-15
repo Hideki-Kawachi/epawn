@@ -1,7 +1,14 @@
 import Close from "../closebutton";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-function InputCustomerDetails({ trigger, setTrigger, customerInfo, userInfo }) {
+import { Router, useRouter } from "next/router";
+function InputCustomerDetails({
+	trigger,
+	setTrigger,
+	customerInfo,
+	userInfo,
+	transactionID,
+}) {
 	const [firstName, setFirstName] = useState(
 		userInfo.firstName ? userInfo.firstName : ""
 	);
@@ -62,6 +69,8 @@ function InputCustomerDetails({ trigger, setTrigger, customerInfo, userInfo }) {
 	);
 	const [uriValidID, setUriValidID] = useState("");
 	const [uriCustomerInfoSheet, setUriCustomerInfoSheet] = useState("");
+
+	const router = useRouter();
 
 	function closeModal() {
 		setTrigger(!trigger);
@@ -165,7 +174,18 @@ function InputCustomerDetails({ trigger, setTrigger, customerInfo, userInfo }) {
 				customerInfoSheet: uriCustomerInfoSheet,
 				validID: uriValidID,
 			};
-			// POST HERE TO DB
+			fetch("/api/pawn/newCustomerInfo", {
+				method: "POST",
+				body: JSON.stringify(customerData),
+			})
+				.then((res) => res.json())
+				.then((data) => {
+					console.log("DATA FROM SUBMIT IS:", data);
+					router.replace({
+						pathname: "pawn/clerk/pawnTicket/[transactionID]",
+						query: { transactionID: transactionID },
+					});
+				});
 			console.log("CUSTOMER DATA FROM USE EFFECT IS:", customerData);
 		}
 	}, [uriValidID, uriCustomerInfoSheet]);
@@ -344,7 +364,7 @@ function InputCustomerDetails({ trigger, setTrigger, customerInfo, userInfo }) {
 						{/* Other Details */}
 						<div className="flex flex-row">
 							<div className="flex flex-col gap-3.5 font-bold text-right font-nunito">
-								<p>Contact Number:</p>
+								<p>Contact Number:*</p>
 								<p>Email Address:</p>
 								<p>Complexion:</p>
 								<p>Identifying Mark:</p>
