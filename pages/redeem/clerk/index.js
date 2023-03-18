@@ -60,7 +60,7 @@ function RedeemClerk({ currentUser}) {
   const [branch, setBranch] = useState("N/A");
   const [customerID, setCustomerID] = useState("N/A");
   const [customerDetails, setCusDetails] = useState(["N/A"]);
-  const [amountPaid, setAmountPaid] = useState();
+  const [amountToPay, setAmountToPay] = useState();
 
   //Array for Redeem
   const [redeem, setRedeem] = useState([]);
@@ -77,7 +77,7 @@ function RedeemClerk({ currentUser}) {
   const [button, setButton] = useState(true); //disabled if PT number is invalid
 
   //Authorized Rep States
-  const [redeeemdBy, setRedeemedBy] = useState("");
+  const [redeemedBy, setRedeemedBy] = useState("");
   const [authRep, setAuthRep] = useState([
     { fName: "", mName: "", lName: "", scanned: "", validID: ""}])
   const [authStatus, setAuthStatus] = useState(false); //true - valid inputs, false - invalid inputs or redeemed by original customer
@@ -102,8 +102,8 @@ function RedeemClerk({ currentUser}) {
     setDeleteModal(true);
   }
   
-  function putAmountPaid(amount){
-    setAmountPaid(amount)
+  function putamountToPay(amount){
+    setAmountToPay(amount)
 
   }
   function getTotalRedeem(redeemList){
@@ -195,7 +195,7 @@ function RedeemClerk({ currentUser}) {
         .then((data) => {
           // console.log(data)
           if (data != null) {
-            setCustomerID(data.customerID); //temporary
+            setCustomerID(data.customerID);
             setTransactionID(data.transactionID);
             setPTinfo(JSON.parse(JSON.stringify(data)));
             setButton(false);
@@ -419,36 +419,44 @@ function RedeemClerk({ currentUser}) {
           .then((res) => res.json())
           .then((data) => {
             console.log("END");
-            if (data == "success") {
+            if (data != "RepInfo not added" && data != null) {
               console.log("new rep created!");
+              setRedeemedBy(JSON.stringify(data))
             } else {
               console.log("error");
             }
           });
       }
     }
-        let transac = {
-          itemListID: itemListID,
-          redeemArray: redeemArray,
-          clerkID: currentUser.userID,
-          branchID: currentUser.branchID,
-        };
-       // console.log("transac is" + JSON.stringify(transac))
-        fetch("/api/redeem/newClerkRedeem", {
-          method: "POST",
-          body: JSON.stringify(transac),
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            console.log("END");
-            if (data == "redeem posted successfully") {
-              router.replace("/");
-            } else {
-              console.log("error");
-            }
-          });
+    else{
+      setRedeemedBy(customerID);
+    }
+    if(redeemedBy){
+      let transac = {
+        customerID: redeemedBy,
+        itemListID: itemListID,
+        redeemArray: redeemArray,
+        clerkID: currentUser.userID,
+        branchID: currentUser.branchID,
+        totalAmount: amountToPay,
+      };
+      // console.log("transac is" + JSON.stringify(transac))
+      fetch("/api/redeem/newClerkRedeem", {
+        method: "POST",
+        body: JSON.stringify(transac),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log("END");
+          if (data == "redeem posted successfully") {
+            router.replace("/");
+          } else {
+            console.log("error");
+          }
+        });
+    }
   }
-  }, [sendForm, urlValidID, urlAuthorization]);
+  }, [sendForm, urlValidID, urlAuthorization, customerID, redeemedBy]);
 
   return (
     <>
@@ -504,7 +512,7 @@ function RedeemClerk({ currentUser}) {
             authData={authRep}
             setAuth={submitAuthorizedRep}
             check={authStatus}
-            getLoan={putAmountPaid}
+            getAmount={setAmountToPay}
           />
         </div>
 
@@ -662,6 +670,7 @@ function RedeemClerk({ currentUser}) {
                 )}
               </div>
             </div>
+            {/* amount to pay: {amountToPay} */}
           </div>
         )}
 
@@ -685,9 +694,7 @@ function RedeemClerk({ currentUser}) {
               </button>
             ) : (
               <>
-                {redeemArray.length == 0 ||
-                (amountPaid < getTotalRedeem(redeemArray) &&
-                  amountPaid == null) ? (
+                {redeemArray.length == 0 ? (
                   <button
                     className="px-10 mx-2 my-5 text-sm text-white bg-green-300 disabled:bg-gray-500 disabled:text-gray-500 "
                     onClick={submitOpen}

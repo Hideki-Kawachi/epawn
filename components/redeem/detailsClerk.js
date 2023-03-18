@@ -5,14 +5,12 @@ import CustomerDetails from "../modals/customerDetails";
 import PawnHistory from "../modals/pawnHistory";
 import dayjs from "dayjs";
 
-function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, customer, branch, authData, setAuth, check, getLoan}) {
+function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, customer, branch, authData, setAuth, check, getAmount}) {
   const [isOriginal, setOriginal] = useState("original");
   const [repModal, setRepModal] = useState(false); 
   const [customerModal, setCustomerModal] = useState(false);
   const [historyModal, setHistoryModal] = useState(false);
-  const [interest, setInterest] = useState(0);
-  const [advInterest, setAdvInterest] = useState(0);
-  const [otherCharges, setOtherCharges] = useState(0);
+  const [totalAmount, setTotalAmount] = useState(0)
   const [loanAmount, setLoan] = useState()
   const [newloanAmount, setNewLoanAmount] = useState(0)
   const [partial, setPartial] = useState(0)
@@ -35,12 +33,14 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
   }
 
   function getTotalAmount(redeemTotal, partial){
-    setAmount(redeemTotal - partial);
+    getAmount(redeemTotal - partial);
+    return redeemTotal - partial;
   }
 
   function amountLoan(amount){
-    getLoan(amount)
+    getAmount(amount)
   }
+
   function getInterest(loan){
     //plan: multiply loan * 0.035 with month diff
     if (pawnTicket.loanDate == null || pawnTicket.maturityDate == null)
@@ -121,6 +121,14 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
     }
   }, [pawnTicket, loanAmount]
   )
+
+  useEffect(() => {
+    if(totalAmount != null){
+      getAmount(totalAmount);
+    }
+  },[totalAmount])
+
+
   return (
     <>
       <div
@@ -343,7 +351,7 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
                 <p className="mr-3">{convertFloat(getTotalRedeem(redeem))}</p>
                 <p className="mr-1.5">(0.00)</p>
                 <p className="mr-3 font-bold">
-                  {convertFloat(getTotalRedeem(redeem), partial)}
+                  {convertFloat(getTotalAmount(getTotalRedeem(redeem), partial))}
                 </p>
                 {/* <input
                     type="number"

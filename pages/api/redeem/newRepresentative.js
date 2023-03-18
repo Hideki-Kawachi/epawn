@@ -28,8 +28,8 @@ export default async function newRepresentative(req, res) {
 
   console.log("RepInfo is:" + representativeInfo)
 
-  if (representativeInfo)
-      res.json("RepInfo is successfully added");
+  if (user && representativeInfo)
+      res.json(userID);
   else
       res.json("RepInfo not added");
 
