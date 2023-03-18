@@ -68,9 +68,12 @@ function NotificationTable({ role, data }) {
 					query: { transactionID: rowData._id },
 				});
 			} else if (rowData.status == "for approval") {
-				console.log("CLICKED FOR APPROVAL");
+				router.push({
+					pathname: "pawn/manager/approval/[transactionID]",
+					query: { transactionID: rowData._id },
+				});
 			}
-			console.log("MANAGER", rowData);
+			// console.log("MANAGER", rowData);
 		} else if (role == "clerk") {
 			if (rowData.status == "appraised") {
 				router.push({
@@ -82,7 +85,7 @@ function NotificationTable({ role, data }) {
 			} else if (rowData.state == "approved") {
 				console.log("CLICKED APPROVED");
 			}
-			console.log("CLERK", rowData);
+			// console.log("CLERK", rowData);
 		}
 	}
 

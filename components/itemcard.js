@@ -44,7 +44,10 @@ function ItemCard({ itemDetails }) {
 				</p>
 			</div>
 			<div className="relative right-5 top-5">
-				<button className="text-white bg-green-300" onClick={viewDetails}>
+				<button
+					className="text-sm text-white bg-green-300"
+					onClick={viewDetails}
+				>
 					View Details
 				</button>
 			</div>

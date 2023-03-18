@@ -1,24 +1,21 @@
-import { withIronSessionSsr } from "iron-session/next";
-import mongoose from "mongoose";
 import React, { useEffect, useState } from "react";
 import Header from "../../../../components/header";
-import ItemCard from "../../../../components/itemcard";
-import LoadingSpinner from "../../../../components/loadingSpinner";
-import CustomerDetails from "../../../../components/modals/customerDetails";
 import NavBar from "../../../../components/navigation/navBar";
-import Item from "../../../../schemas/item";
-import PriceHistory from "../../../../schemas/priceHistory";
-import Transaction from "../../../../schemas/transaction";
-import User from "../../../../schemas/user";
+import { withIronSessionSsr } from "iron-session/next";
 import { ironOptions } from "../../../../utilities/config";
 import dbConnect from "../../../../utilities/dbConnect";
+import Transaction from "../../../../schemas/transaction";
+import Item from "../../../../schemas/item";
+import User from "../../../../schemas/user";
+import mongoose from "mongoose";
+import PawnTicket from "../../../../schemas/pawnTicket";
 import Modal from "react-modal";
+import CustomerDetails from "../../../../components/modals/customerDetails";
+import CustomerInfo from "../../../../schemas/customerInfo";
 import dayjs from "dayjs";
 import Branch from "../../../../schemas/branch";
-import CustomerInfo from "../../../../schemas/customerInfo";
 import PawnTicketCard from "../../../../components/pawn/pawnTicketCard";
-import AddPawnTicket from "../../../../components/modals/addPawnTicket";
-import { useRouter } from "next/router";
+import LoadingSpinner from "../../../../components/loadingSpinner";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req, query }) {
@@ -28,41 +25,57 @@ export const getServerSideProps = withIronSessionSsr(
 				props: {},
 			};
 		} else if (
-			req.session.userData.role == "clerk" &&
+			req.session.userData.role == "manager" &&
 			query.transactionID.length == 24
 		) {
 			await dbConnect();
 			let transactionInfo = await Transaction.findOne({
 				_id: new mongoose.Types.ObjectId(query.transactionID),
-				status: "appraised",
+				status: "for approval",
 			}).lean();
 			if (transactionInfo) {
-				let priceHistoryList = await PriceHistory.find({
+				let pawnTicketList = await PawnTicket.find({
 					transactionID: query.transactionID,
-				})
-					.sort({ updatedAt: 1 })
-					.lean();
-				let itemList = await Item.find({
-					itemListID: transactionInfo.itemListID,
 				}).lean();
+
+				let loanAmount = 0;
+				let itemListIDs = [];
+				pawnTicketList.forEach((pt) => {
+					itemListIDs.push(pt.itemListID);
+					loanAmount += pt.loanAmount;
+				});
+
+				let itemList = [];
+
+				for (let itemListID of itemListIDs) {
+					let tempList = await Item.find({
+						itemListID: itemListID,
+					}).lean();
+					itemList = itemList.concat(tempList);
+				}
+
 				let userInfo = await User.findOne({
 					userID: transactionInfo.customerID,
 				});
+
 				let customerInfo = await CustomerInfo.findOne({
 					userID: transactionInfo.customerID,
 				});
+
 				let branchInfo = await Branch.findOne({
 					branchID: transactionInfo.branchID,
 				});
+
 				return {
 					props: {
 						currentUser: req.session.userData,
 						transactionData: JSON.parse(JSON.stringify(transactionInfo)),
-						priceHistory: JSON.parse(JSON.stringify(priceHistoryList)),
 						itemData: JSON.parse(JSON.stringify(itemList)),
 						customerData: JSON.parse(JSON.stringify(customerInfo)),
+						pawnTicketData: JSON.parse(JSON.stringify(pawnTicketList)),
 						userData: JSON.parse(JSON.stringify(userInfo)),
 						branchData: JSON.parse(JSON.stringify(branchInfo)),
+						loanAmount: loanAmount,
 					},
 				};
 			} else {
@@ -84,31 +97,26 @@ export const getServerSideProps = withIronSessionSsr(
 	ironOptions
 );
 
-function PawnTicketTransactionID({
+function ApprovalTransactionID({
 	currentUser,
 	transactionData,
-	priceHistory,
 	itemData,
 	customerData,
+	pawnTicketData,
 	userData,
 	branchData,
+	loanAmount,
 }) {
-	const [loading, setLoading] = useState(false);
-	const [customerModal, setCustomerModal] = useState(false);
-	const [loanDate, setLoanDate] = useState(new Date());
-	const [maturityDate, setMaturityDate] = useState(new Date());
-	const [expiryDate, setExpiryDate] = useState(new Date());
-	const [loanAmount, setLoanAmount] = useState(
-		priceHistory[0].appraisalPrice.toFixed(2)
-	);
-	const [advInterest, setAdvInterest] = useState("");
-	const [netProceeds, setNetProceeds] = useState("");
-	const [pawnTicketList, setPawnTicketList] = useState([]);
-	const [pawnTicketModal, setPawnTicketModal] = useState(false);
-	const [selectedItems, setSelectedItems] = useState([]);
-	const [itemList, setItemList] = useState(itemData);
+	// console.log("pawnticket details:", pawnTicketData);
+	// console.log("customer details:", customerData);
+	// console.log("item details:", itemData);
+	// console.log("transaction details:", transactionData);
 
-	const router = useRouter();
+	const [customerModal, setCustomerModal] = useState(false);
+	const [pawnTicketList, setPawnTicketList] = useState([]);
+	const [loading, setLoading] = useState(false);
+	const advInterest = parseFloat(loanAmount) * 0.035;
+	const netProceeds = parseFloat(loanAmount) - advInterest;
 
 	function convertDate(date) {
 		if (date == null) return "N/A";
@@ -119,104 +127,38 @@ function PawnTicketTransactionID({
 	}
 
 	useEffect(() => {
-		let date = new Date(loanDate);
-		setMaturityDate(new Date(date.setDate(date.getDate() + 30)));
-		setExpiryDate(new Date(date.setDate(date.getDate() + 30)));
-	}, [loanDate]);
-
-	useEffect(() => {
-		let tempAdvInterest = loanAmount * 0.035;
-		setAdvInterest(tempAdvInterest.toFixed(2));
-		setNetProceeds((loanAmount - tempAdvInterest).toFixed(2));
-	}, [loanAmount]);
-
-	function addToCheckbox(itemID) {
-		if (selectedItems) {
-			let doesExist = false;
-			selectedItems.forEach((item) => {
-				if (item.itemID == itemID) {
-					doesExist = true;
+		let tempPawnTicketList = [];
+		pawnTicketData.forEach((pt) => {
+			let tempItemList = [];
+			itemData.forEach((item) => {
+				if (pt.itemListID == item.itemListID) {
+					tempItemList.push(item);
 				}
 			});
-
-			if (!doesExist) {
-				let itemSelected = itemList.find((item) => {
-					return item.itemID == itemID;
-				});
-				setSelectedItems((selectedItems) => [...selectedItems, itemSelected]);
-			} else {
-				let newItemList = [];
-				itemList.forEach((item) => {
-					if (item.itemID != itemID) {
-						newItemList.push(item);
-					}
-				});
-				setSelectedItems(newItemList);
-			}
-		}
-	}
-
-	function openPawnTicketModal() {
-		if (selectedItems.length > 0) {
-			setPawnTicketModal(true);
-		}
-	}
-
-	function deletePawnTicket(pawnTicketID) {
-		let newPawnTicketList = [];
-		let newItemList = [];
-		pawnTicketList.forEach((pt) => {
-			if (pt.pawnTicketID != pawnTicketID) {
-				newPawnTicketList.push(pt);
-			} else {
-				newItemList = pt.itemList;
-			}
+			tempPawnTicketList.push({ ptID: pt._id, itemList: tempItemList });
 		});
-		setItemList((itemList) => [...itemList, ...newItemList]);
-		setPawnTicketList(newPawnTicketList);
-	}
-
-	useEffect(() => {
-		console.log("ITEMS are:", itemList);
-	}, [itemList]);
-
-	useEffect(() => {
-		console.log("ASJDKLAJSDKL:", itemList);
-		if (pawnTicketList.length > 0) {
-			let newItemList = itemList;
-			itemList.forEach((item, index) => {
-				pawnTicketList.forEach((pt) => {
-					pt.itemList.forEach((ptItem) => {
-						console.log("PT ITEM:", ptItem.itemID, "-", item.itemID);
-						if (ptItem.itemID == item.itemID) {
-							console.log("PUSH");
-							newItemList.splice(index, 1);
-						}
-					});
-				});
-			});
-			setSelectedItems([]);
-			setItemList(newItemList);
-		}
-	}, [pawnTicketList]);
+		console.log("PT:", tempPawnTicketList);
+		setPawnTicketList(tempPawnTicketList);
+	}, []);
 
 	function submitForm() {
-		if (itemList.length == 0) {
-			console.log("pawnticket List:", pawnTicketList);
-			setLoading(true);
-			fetch("/api/pawn/forApproval", {
-				method: "POST",
-				body: JSON.stringify({
-					pawnTicketList: pawnTicketList,
-					transactionData: transactionData,
-				}),
-			})
-				.then((res) => res.json())
-				.then((data) => {
-					console.log("DATA IS:", data);
-					router.replace("/");
-				});
-		}
+		setLoading(true);
+		fetch("/api/pawn/approvePawn", {
+			method: "POST",
+			body: JSON.stringify({
+				pawnTicketList: pawnTicketList,
+				transactionID: transactionData._id,
+				branchID: branchData.branchID,
+			}),
+		})
+			.then((res) => res.json())
+			.then((data) => {
+				console.log("data is:", data);
+			});
+	}
+
+	function cancelForm() {
+		console.log("cancel");
 	}
 
 	return (
@@ -230,15 +172,6 @@ function PawnTicketTransactionID({
 					setTrigger={setCustomerModal}
 					customerInfo={customerData}
 					userInfo={userData}
-				/>
-			</Modal>
-			<Modal isOpen={pawnTicketModal} ariaHideApp={false} className="modal">
-				<AddPawnTicket
-					trigger={pawnTicketModal}
-					setTrigger={setPawnTicketModal}
-					selectedItems={selectedItems}
-					pawnTicketList={pawnTicketList}
-					setPawnTicketList={setPawnTicketList}
 				/>
 			</Modal>
 			<div id="main-content-area">
@@ -304,9 +237,13 @@ function PawnTicketTransactionID({
 									<p className="">Branch:</p>
 								</div>
 								<div className="ml-5 text-left">
-									<p className="">{convertDate(loanDate)}</p>
-									<p className="">{convertDate(maturityDate)}</p>
-									<p className="">{convertDate(expiryDate)}</p>
+									<p className="">{convertDate(pawnTicketData[0].loanDate)}</p>
+									<p className="">
+										{convertDate(pawnTicketData[0].maturityDate)}
+									</p>
+									<p className="">
+										{convertDate(pawnTicketData[0].expiryDate)}
+									</p>
 									<p className="">{branchData.branchName}</p>
 								</div>
 							</div>
@@ -322,10 +259,12 @@ function PawnTicketTransactionID({
 									<p className="">Total Net Proceeds:</p>
 								</div>
 								<div className="ml-5 text-end">
-									<p className="w-full">Php {loanAmount}</p>
-									<p className="w-full">Php {advInterest}</p>
+									<p className="w-full">Php {loanAmount.toFixed(2)}</p>
+									<p className="w-full">Php {advInterest.toFixed(2)}</p>
 									<hr></hr>
-									<p className="w-full font-bold">Php {netProceeds}</p>
+									<p className="w-full font-bold">
+										Php {netProceeds.toFixed(2)}
+									</p>
 								</div>
 							</div>
 						</div>
@@ -333,77 +272,36 @@ function PawnTicketTransactionID({
 				</div>
 				<div className="flex flex-row gap-10 mt-5">
 					<div>
-						<h1 className="mb-2 text-base">Item List:</h1>
-						<div className="p-5 w-[720px] h-96  overflow-y-scroll bg-white border-2">
-							{/* plan: CheckItem & ItemCard section will be generated using .map */}
-							{itemList.length > 0 ? (
-								<>
-									{itemList.map((item) => (
-										<div className="flex flex-row" key={item.itemID}>
-											<ItemCard key={item.itemID} itemDetails={item}></ItemCard>
-											<div className="mt-10">
-												<input
-													type="checkbox"
-													id={item.itemID}
-													name="selected"
-													value={item.itemID}
-													onChange={(e) => addToCheckbox(e.target.value)}
-												/>
-											</div>
-										</div>
-									))}
-								</>
-							) : (
-								<div className="mt-32 ">
-									<p className="text-sm text-center text-gray-300 font-nunito">
-										All items distributed.
-									</p>
-								</div>
-							)}
-						</div>
-						<div className="flex justify-end w-full p-4 bg-gray-200">
-							<button
-								className="bg-green-300 "
-								onClick={() => openPawnTicketModal()}
-							>
-								Add to PawnTicket
-							</button>
-						</div>
-					</div>
-					<div>
 						<h1 className="mb-2 text-base">PawnTickets:</h1>
 						<div className="p-5 w-[720px] h-96  overflow-y-scroll bg-white border-2 gap-4 flex flex-col">
 							{/* plan: CheckItem & ItemCard section will be generated using .map */}
-							{pawnTicketList?.length > 0 ? (
-								<>
-									{pawnTicketList.map((pt) => (
-										<PawnTicketCard
-											key={pt.pawnTicketID}
-											itemList={pt.itemList}
-											pawnTicketID={pt.pawnTicketID}
-											deletePawnTicket={deletePawnTicket}
-										></PawnTicketCard>
-									))}
-								</>
+							{pawnTicketList.length > 0 ? (
+								pawnTicketList.map((pt, index) => (
+									<PawnTicketCard
+										key={pt.ptID}
+										itemList={pt.itemList}
+										pawnTicketID={index + 1}
+										deletePawnTicket
+									></PawnTicketCard>
+								))
 							) : (
-								<div className="mt-32 ">
-									<p className="text-sm text-center text-gray-300 font-nunito">
-										No PawnTickets created.
-									</p>
-								</div>
+								<></>
 							)}
 						</div>
 					</div>
 				</div>
 				<div className="flex justify-end w-full gap-5 text-base mr-28">
-					<button className="px-10 mx-2 my-5 bg-red-300" type="button">
+					<button
+						className="px-10 mx-2 my-5 bg-red-300"
+						type="button"
+						onClick={() => cancelForm()}
+					>
 						Cancel
 					</button>
 					<button
 						className="px-10 mx-2 my-5 bg-green-300"
 						type="button"
 						onClick={() => submitForm()}
-						disabled={itemList.length > 0}
 					>
 						Submit
 					</button>
@@ -413,4 +311,4 @@ function PawnTicketTransactionID({
 	);
 }
 
-export default PawnTicketTransactionID;
+export default ApprovalTransactionID;

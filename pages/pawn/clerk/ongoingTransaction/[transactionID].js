@@ -273,6 +273,7 @@ function OngoingTransactionTransactionID({
 						customerInfo={customerInfo}
 						userInfo={customerData}
 						transactionID={transactionData._id}
+						setLoading={setLoading}
 					/>
 				</Modal>
 				<div className="font-semibold text-center font-dosis">

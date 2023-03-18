@@ -39,10 +39,20 @@ function CustomerDetails({ trigger, setTrigger, customerInfo, userInfo }) {
 							</p>
 						</div>
 						<div className="ml-32 mt-[69px] font-dosis text-sm">
-							<a className="block font-semibold text-right text-green-500 hover:underline hover:text-green-400 hover:cursor-pointer">
+							<a
+								className="block font-semibold text-right text-green-500 hover:underline hover:text-green-400 hover:cursor-pointer"
+								target="_blank"
+								href={customerInfo.validID}
+								rel="noopener noreferrer"
+							>
 								View Valid ID
 							</a>
-							<a className="block font-semibold text-right text-green-500 hover:underline hover:text-green-400 hover:cursor-pointer">
+							<a
+								className="block font-semibold text-right text-green-500 hover:underline hover:text-green-400 hover:cursor-pointer"
+								target="_blank"
+								href={customerInfo.customerInfoSheet}
+								rel="noopener noreferrer"
+							>
 								View Customer Info Sheet
 							</a>
 						</div>

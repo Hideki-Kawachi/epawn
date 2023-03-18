@@ -40,6 +40,7 @@ export default async function AddItem(req, res) {
 			description: "",
 			forAuction: false,
 			isRedeemed: false,
+			redeemID: "",
 		});
 		itemID = generateItemID(itemID);
 	});

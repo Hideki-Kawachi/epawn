@@ -8,6 +8,7 @@ function InputCustomerDetails({
 	customerInfo,
 	userInfo,
 	transactionID,
+	setLoading,
 }) {
 	const [firstName, setFirstName] = useState(
 		userInfo.firstName ? userInfo.firstName : ""
@@ -83,7 +84,7 @@ function InputCustomerDetails({
 		let folder = "epawn/customerImage";
 		let signURL = "true";
 
-		console.log("HELLO");
+		setLoading(true);
 
 		fetch("/api/signUploadForm", {
 			method: "POST",
@@ -182,7 +183,7 @@ function InputCustomerDetails({
 				.then((data) => {
 					console.log("DATA FROM SUBMIT IS:", data);
 					router.replace({
-						pathname: "pawn/clerk/pawnTicket/[transactionID]",
+						pathname: "/pawn/clerk/pawnTicket/[transactionID]",
 						query: { transactionID: transactionID },
 					});
 				});

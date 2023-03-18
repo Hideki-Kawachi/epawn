@@ -105,6 +105,7 @@ export default async function NewCustomerPawn(req, res) {
 		status: "for appraisal",
 		creationDate: new Date(),
 		rejectionMessage: "",
+		amountPaid: 0,
 	});
 
 	let priceHistory = await PriceHistory.create({
