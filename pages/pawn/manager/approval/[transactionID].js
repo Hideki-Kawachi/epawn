@@ -154,6 +154,7 @@ function ApprovalTransactionID({
 			.then((res) => res.json())
 			.then((data) => {
 				printPawnTicket(data);
+				setLoading(false);
 				console.log("PRINTING");
 			});
 	}

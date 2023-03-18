@@ -46,18 +46,34 @@ export default async function ApprovePawn(req, res) {
 	// 	{ currentPawnTicketID: newPawnTicketID }
 	// );
 
-	res.json({
-		pawnTicketID: "A-123456",
-		customerName: "Imelda C De Guzman",
-		address: "143 Pasig city",
-		appraisalValue: "14,201.00",
-		loanDate: "February 7, 2023",
-		maturityDate: "March 7, 2023",
-		expiryDate: "April 7, 2023",
-		itemDescription: "Gold ring 0.75grams, Rolex Daytona 41.22 grams",
-		loanAmount: "14,402.00",
-		interest: "402.00",
-		netProceeds: "13,240.00",
-		clerkID: "AAA-001",
-	});
+	res.json([
+		{
+			pawnTicketID: "A-123456",
+			customerName: "Imelda C De Guzman",
+			address: "143 Pasig city",
+			appraisalValue: "14,201.00",
+			loanDate: "February 7, 2023",
+			maturityDate: "March 7, 2023",
+			expiryDate: "April 7, 2023",
+			itemDescription: "Gold ring 0.75grams, Rolex Daytona 41.22 grams",
+			loanAmount: "14,402.00",
+			interest: "402.00",
+			netProceeds: "13,240.00",
+			clerkID: "AAA-001",
+		},
+		{
+			pawnTicketID: "A-123457",
+			customerName: "Imelda D De Guzman",
+			address: "143 Pasig city",
+			appraisalValue: "144,201.00",
+			loanDate: "February 7, 2023",
+			maturityDate: "March 7, 2023",
+			expiryDate: "April 7, 2023",
+			itemDescription: "Gold ring 0.75grams, Rolex Daytona 41.22 grams",
+			loanAmount: "15,402.00",
+			interest: "1024.00",
+			netProceeds: "13,240.00",
+			clerkID: "AAA-001",
+		},
+	]);
 }
