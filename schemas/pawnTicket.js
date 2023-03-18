@@ -4,6 +4,7 @@ const PawnTicketSchema = new mongoose.Schema({
 	pawnTicketID: { type: String },
 	transactionID: { type: String, require: true },
 	customerID: { type: String, require: true },
+	itemListID: { type: Number, require: true },
 	loanDate: { type: Date, require: true },
 	maturityDate: { type: Date, require: true },
 	expiryDate: { type: Date, require: true },
