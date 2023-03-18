@@ -16,6 +16,7 @@ import dayjs from "dayjs";
 import Branch from "../../../../schemas/branch";
 import PawnTicketCard from "../../../../components/pawn/pawnTicketCard";
 import LoadingSpinner from "../../../../components/loadingSpinner";
+import printPawnTicket from "../../../../utilities/printPawnTicket";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req, query }) {
@@ -137,7 +138,6 @@ function ApprovalTransactionID({
 			});
 			tempPawnTicketList.push({ ptID: pt._id, itemList: tempItemList });
 		});
-		console.log("PT:", tempPawnTicketList);
 		setPawnTicketList(tempPawnTicketList);
 	}, []);
 
@@ -153,7 +153,8 @@ function ApprovalTransactionID({
 		})
 			.then((res) => res.json())
 			.then((data) => {
-				console.log("data is:", data);
+				printPawnTicket(data);
+				console.log("PRINTING");
 			});
 	}
 
