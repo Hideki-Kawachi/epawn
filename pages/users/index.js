@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Header from "../../components/header";
 import NavBar from "../../components/navigation/navBar";
 import UserCard from "../../components/users/UserCard";
@@ -10,6 +10,7 @@ import dbConnect from "../../utilities/dbConnect";
 
 import MockUsers from "../../components/users/User_MOCK_DATA.json";
 import User from "../../schemas/user";
+import EmployeeInfo from "../../schemas/employeeInfo";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {
@@ -29,20 +30,59 @@ export const getServerSideProps = withIronSessionSsr(
 				{},
 				{ userID: 1, firstName: 1, lastName: 1, role: 1, isDisabled: 1}
 			)
-
+			
 			var tempUserData = [];
 
-			userList.forEach( (user) => {
-				tempUserData.push({
-					userID: user.userID,
-					firstName: user.firstName,
-					lastName: user.lastName,
-					roleID: user.role,
-					isDisabled: user.isDisabled,
-				})
-			});
-			// const res = await fetch("../components/users/User_MOCK_DATA.json")
-  			// const MockUsers = await res.json()
+			// For Manager
+
+			if (req.session.userData.role == "manager") {
+				let manUID = req.session.userData.userID
+
+				const manager = await EmployeeInfo.findOne(
+					{manUID},
+					{ branchID: 1}
+				)
+
+				let foundBranchID = manager.branchID
+
+				const branchUserIDList = await EmployeeInfo.find(
+					{ foundBranchID},
+					{ userID: 1}
+				)
+
+				let tempUIDList = [];
+
+
+				branchUserIDList.forEach((branchUserID) => {
+					tempUIDList.push(branchUserID.userID)
+				});
+
+				console.log(tempUIDList)
+
+				userList.forEach( (user) => {
+					if (tempUIDList.includes(user.userID))
+						tempUserData.push({
+							userID: user.userID,
+							firstName: user.firstName,
+							lastName: user.lastName,
+							roleID: user.role,
+							isDisabled: user.isDisabled,
+						})
+				});
+			}
+
+			if (req.session.userData.role == "admin") {
+				userList.forEach( (user) => {
+					tempUserData.push({
+						userID: user.userID,
+						firstName: user.firstName,
+						lastName: user.lastName,
+						roleID: user.role,
+						isDisabled: user.isDisabled,
+					})
+				
+				});
+			}
 
 			let userData = JSON.stringify(tempUserData);
 
@@ -67,23 +107,31 @@ export const getServerSideProps = withIronSessionSsr(
 );
 
 function Users({ currentUser, userData}) {
-
-	// const [userList, setUserList] = useState(MockUsers);
 	
 	const users = JSON.parse(userData);
-	// const roles = JSON.parse(roleData);
 
-	// const users = JSON.parse()
+	const [search, setSearch] = useState("");
+	const [filter, setFilter] = useState("All");
 
-	// const
-
-	// const [search, setSearch] = useState("");
-	// const [filter, setFilter] = useState("All");
-	// const [rightShow, setRightShow] = useState("button");
-	// const [isEditing, setIsEditing] = useState("");
-	// const [isViewing, setIsViewing] = useState("");
 	const [userShow, setUserShow] = useState(users);
 	// const [notifResult, setNotifResult] = useState("");
+
+	useEffect(() => {
+		getSearch(search);
+	}, [filter]);
+
+	function getSearch(value) {
+		let tempList = [];
+		users.forEach((user) => {
+			if ( 	(user.firstName.toLowerCase().includes(value) 
+					|| user.lastName.toLowerCase().includes(value))
+					&& (user.roleID == filter || filter == "All") ) {
+					tempList.push(user);
+
+				}
+		});
+		setUserShow(tempList);
+	}
 
 	return (
 		<>
@@ -95,26 +143,36 @@ function Users({ currentUser, userData}) {
 				<div className="flex items-center justify-center w-1/4 gap-2 my-5 text-base font-nunito">
 					<span className="text-base">Search: </span>
 					<input
+						type="search"
+						id="user"
+						placeholder={"Name (Press Enter)"}
 						className="flex-grow"
 						onChange={(e) => {
-							// setGlobalFilter(e.target.value);
-							e.target.value;
+							setSearch(e.target.value);
+							if (e.target.value.length == 0) {
+								getSearch("");
+							}
 						}}
-						placeholder={"Name"}
+						onKeyDown={(e) => {
+							if (e.key === "Enter") {
+								getSearch(search);
+							}
+						}}
 					/>
 					<span className="ml-5">Role: </span>
 					<select
 						className="h-fit"
-						onChange={(e) => e.target.value}
-						//onChange={(e) => setFilter("role", e.target.value)} - used for tables
+						onChange={(e) => setFilter(e.target.value)}
+						id="role-filter"
+						value={filter}
 					>
-						<option value={""} selected>
+						<option value={"All"} selected>
 							All
 						</option>
-						<option value={"Clerk"}>Clerk</option>
-						<option value={"Manager"}>Manager</option>
-						<option value={"Admin"}>Admin</option>
-						<option value={"Customer"}>Customer</option>
+						<option value={"clerk"}>Clerk</option>
+						<option value={"manager"}>Manager</option>
+						<option value={"admin"}>Admin</option>
+						<option value={"customer"}>Customer</option>
 					</select>
 				</div>
 
@@ -127,7 +185,7 @@ function Users({ currentUser, userData}) {
 								key={mockUser.userID}
 								firstName={mockUser.firstName}
 								lastName={mockUser.lastName}
-								roleName={mockUser.roleID}
+								roleName={mockUser.roleID.charAt(0).toUpperCase() + mockUser.roleID.slice(1)}
 								userID={mockUser.userID}
 								isDisabled={mockUser.isDisabled}
 							></UserCard>

@@ -61,29 +61,6 @@ function Edit({ currentUser, foundUser }) {
 							foundID = {userid}
 						/>
 
-						{/* <UserEdit 
-							key = {userData.userID}
-							data = {userData}
-						/>
-
-{/* 				
-					{MockUsers.map((mockUser) => {
-
-							//Modify this to String. mockUser.userID == userid.toString()
-							if (mockUser.userID == userid) {
-
-								// console.log(mockUser.firstName)
-
-								return (
-
-									<UserEdit
-										key = {mockUser.userID}
-										data = {mockUser}
-									/>
-								);
-							}
-					})} */}
-
 					</div>
 
 			</div>
