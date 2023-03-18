@@ -41,5 +41,10 @@ export default async function ApprovePawn(req, res) {
 		}
 	}
 
+	await Branch.findOneAndUpdate(
+		{ branchID: branchID },
+		{ currentPawnTicketID: newPawnTicketID }
+	);
+
 	res.json("success");
 }
