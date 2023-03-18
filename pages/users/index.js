@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Header from "../../components/header";
 import NavBar from "../../components/navigation/navBar";
 import UserCard from "../../components/users/UserCard";
@@ -67,23 +67,30 @@ export const getServerSideProps = withIronSessionSsr(
 );
 
 function Users({ currentUser, userData}) {
-
-	// const [userList, setUserList] = useState(MockUsers);
 	
 	const users = JSON.parse(userData);
-	// const roles = JSON.parse(roleData);
 
-	// const users = JSON.parse()
+	const [search, setSearch] = useState("");
+	const [filter, setFilter] = useState("All");
 
-	// const
-
-	// const [search, setSearch] = useState("");
-	// const [filter, setFilter] = useState("All");
-	// const [rightShow, setRightShow] = useState("button");
-	// const [isEditing, setIsEditing] = useState("");
-	// const [isViewing, setIsViewing] = useState("");
 	const [userShow, setUserShow] = useState(users);
 	// const [notifResult, setNotifResult] = useState("");
+
+	useEffect(() => {
+		getSearch(search);
+	}, [filter]);
+
+	function getSearch(value) {
+		let tempList = [];
+		users.forEach((user) => {
+			if ( 	(user.firstName.toLowerCase().includes(value) 
+					|| user.lastName.toLowerCase().includes(value))
+					&& (user.roleName == filter || filter == "All") ) {
+					tempList.push(user);
+				}
+		});
+		setUserShow(tempList);
+	}
 
 	return (
 		<>
@@ -95,12 +102,21 @@ function Users({ currentUser, userData}) {
 				<div className="flex items-center justify-center w-1/4 gap-2 my-5 text-base font-nunito">
 					<span className="text-base">Search: </span>
 					<input
+						type="search"
+						id="user"
+						placeholder={"Name (Press Enter)"}
 						className="flex-grow"
 						onChange={(e) => {
-							// setGlobalFilter(e.target.value);
-							e.target.value;
+							setSearch(e.target.value);
+							if (e.target.value.length == 0) {
+								getSearch("");
+							}
 						}}
-						placeholder={"Name"}
+						onKeyDown={(e) => {
+							if (e.key === "Enter") {
+								getSearch(search);
+							}
+						}}
 					/>
 					<span className="ml-5">Role: </span>
 					<select
