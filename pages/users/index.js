@@ -85,8 +85,9 @@ function Users({ currentUser, userData}) {
 		users.forEach((user) => {
 			if ( 	(user.firstName.toLowerCase().includes(value) 
 					|| user.lastName.toLowerCase().includes(value))
-					&& (user.roleName == filter || filter == "All") ) {
+					&& (user.roleID == filter || filter == "All") ) {
 					tempList.push(user);
+
 				}
 		});
 		setUserShow(tempList);
@@ -121,16 +122,17 @@ function Users({ currentUser, userData}) {
 					<span className="ml-5">Role: </span>
 					<select
 						className="h-fit"
-						onChange={(e) => e.target.value}
-						//onChange={(e) => setFilter("role", e.target.value)} - used for tables
+						onChange={(e) => setFilter(e.target.value)}
+						id="role-filter"
+						value={filter}
 					>
-						<option value={""} selected>
+						<option value={"All"} selected>
 							All
 						</option>
-						<option value={"Clerk"}>Clerk</option>
-						<option value={"Manager"}>Manager</option>
-						<option value={"Admin"}>Admin</option>
-						<option value={"Customer"}>Customer</option>
+						<option value={"clerk"}>Clerk</option>
+						<option value={"manager"}>Manager</option>
+						<option value={"admin"}>Admin</option>
+						<option value={"customer"}>Customer</option>
 					</select>
 				</div>
 
