@@ -145,7 +145,7 @@ function Users({ currentUser, userData}) {
 								key={mockUser.userID}
 								firstName={mockUser.firstName}
 								lastName={mockUser.lastName}
-								roleName={mockUser.roleID}
+								roleName={mockUser.roleID.charAt(0).toUpperCase() + mockUser.roleID.slice(1)}
 								userID={mockUser.userID}
 								isDisabled={mockUser.isDisabled}
 							></UserCard>
