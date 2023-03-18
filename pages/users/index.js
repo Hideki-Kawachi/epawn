@@ -10,6 +10,7 @@ import dbConnect from "../../utilities/dbConnect";
 
 import MockUsers from "../../components/users/User_MOCK_DATA.json";
 import User from "../../schemas/user";
+import EmployeeInfo from "../../schemas/employeeInfo";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {
@@ -29,20 +30,59 @@ export const getServerSideProps = withIronSessionSsr(
 				{},
 				{ userID: 1, firstName: 1, lastName: 1, role: 1, isDisabled: 1}
 			)
-
+			
 			var tempUserData = [];
 
-			userList.forEach( (user) => {
-				tempUserData.push({
-					userID: user.userID,
-					firstName: user.firstName,
-					lastName: user.lastName,
-					roleID: user.role,
-					isDisabled: user.isDisabled,
-				})
-			});
-			// const res = await fetch("../components/users/User_MOCK_DATA.json")
-  			// const MockUsers = await res.json()
+			// For Manager
+
+			if (req.session.userData.role == "manager") {
+				let manUID = req.session.userData.userID
+
+				const manager = await EmployeeInfo.findOne(
+					{manUID},
+					{ branchID: 1}
+				)
+
+				let foundBranchID = manager.branchID
+
+				const branchUserIDList = await EmployeeInfo.find(
+					{ foundBranchID},
+					{ userID: 1}
+				)
+
+				let tempUIDList = [];
+
+
+				branchUserIDList.forEach((branchUserID) => {
+					tempUIDList.push(branchUserID.userID)
+				});
+
+				console.log(tempUIDList)
+
+				userList.forEach( (user) => {
+					if (tempUIDList.includes(user.userID))
+						tempUserData.push({
+							userID: user.userID,
+							firstName: user.firstName,
+							lastName: user.lastName,
+							roleID: user.role,
+							isDisabled: user.isDisabled,
+						})
+				});
+			}
+
+			if (req.session.userData.role == "admin") {
+				userList.forEach( (user) => {
+					tempUserData.push({
+						userID: user.userID,
+						firstName: user.firstName,
+						lastName: user.lastName,
+						roleID: user.role,
+						isDisabled: user.isDisabled,
+					})
+				
+				});
+			}
 
 			let userData = JSON.stringify(tempUserData);
 
