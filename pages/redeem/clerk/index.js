@@ -437,6 +437,7 @@ function RedeemClerk({ currentUser}) {
         itemListID: itemListID,
         redeemArray: redeemArray,
         clerkID: currentUser.userID,
+        pawnTicketID: PTNumber,
         branchID: currentUser.branchID,
         totalAmount: amountToPay,
       };
