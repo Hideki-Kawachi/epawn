@@ -33,7 +33,8 @@ function UserCreate(foundBranchID){
 			firstName.length == 0 ||
 			lastName.length == 0 || 
 			middleName.length == 0 ||
-			password.length == 0 
+			password.length == 0 || 
+			branchID.length == 0
 		) {
 			setError(true);
 

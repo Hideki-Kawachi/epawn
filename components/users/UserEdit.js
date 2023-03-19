@@ -52,7 +52,7 @@ function UserEdit(foundID){
 				setIsDisabled(data.isDisabled);
 			});
 
-			fetch("/api/users/findBranchEmp?value={data.userID}", {
+			fetch(`/api/users/findBranchEmp?value=${foundID.foundID}`, {
 				method: "GET",
 				headers: {
 					Accept: "application/json",

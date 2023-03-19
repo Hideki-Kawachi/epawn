@@ -1,6 +1,8 @@
 import dbConnect from "../../../utilities/dbConnect";
 import User from "../../../schemas/user";
 import bcrypt from "bcrypt";
+import Branch from "../../../schemas/branch";
+import EmployeeInfo from "../../../schemas/employeeInfo";
 
 export default async function EditUser(req, res){
 
@@ -41,6 +43,27 @@ export default async function EditUser(req, res){
 			isDisabled: userInfo.isDisabled,
 		}
 	);
+
+	//Needed later
+	if (userInfo.role == "manager" && userInfo.isDisabled == false) {
+
+		let branch = await EmployeeInfo.findOne({userID: userInfo.userID}, {branchID: 1} );
+
+		let userList = await EmployeeInfo.find({branchID: branch.branchID}, {userID: 1} );
+
+		let idList = []
+
+		userList.map((user) => 
+			{
+				if (user.userID != userInfo.userID) {
+					idList.push(user.userID)
+			}}
+		)
+
+		let updateUsers = await User.update({userID: { "$in": idList}, role: "manager"}, {isDisabled: true})
+
+		// console.log("the users are" + updateUsers)
+	}
 
     //add branchid 
 
