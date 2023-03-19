@@ -257,8 +257,9 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
           )}
           {isOriginal == "authorized" && check == false ? (
             <p className="ml-40 text-sm text-red-400 px-5">
-              Missing Authorized Rep. Details
+              Missing Authorized <br/><span>Rep. Details</span>
             </p>
+            
           ) : (
             <></>
           )}

@@ -198,6 +198,7 @@ function RedeemClerk({ currentUser}) {
             setCustomerID(data.customerID);
             setTransactionID(data.transactionID);
             setPTinfo(JSON.parse(JSON.stringify(data)));
+            setItemListID(data.itemListID);
             setButton(false);
           } else {
             setPTinfo("N/A");
@@ -222,7 +223,6 @@ function RedeemClerk({ currentUser}) {
         .then((transaction) => {
           // console.log(data)
           if (transaction != null) {
-            setItemListID(transaction.itemListID); //temporary
             setBranch(transaction.branchID);
           } else {
             setItemListID("N/A");
@@ -312,11 +312,13 @@ function RedeemClerk({ currentUser}) {
 
   async function submitForm(){
     if (sendForm){
+      console.log(authStatus)
       if(authStatus)
       {
         //Adding new entries to User and RepresentativeInfo Schemas
         //User -> role, fName, lName, mName, password, isDisabled=false
         //RepresentativeInfo -> proof authorization, validID
+        console.log("YOU ARE CREATING AUTH REP")
         let publicID = "validID" + "-" + userID + "-" + new Date();
         let folder = "epawn/customerImage";
         let uploadPreset = "signed_preset";
@@ -695,7 +697,7 @@ function RedeemClerk({ currentUser}) {
               </button>
             ) : (
               <>
-                {redeemArray.length == 0 ? (
+                {redeemArray.length == 0 || !authStatus ? (
                   <button
                     className="px-10 mx-2 my-5 text-sm text-white bg-green-300 disabled:bg-gray-500 disabled:text-gray-500 "
                     onClick={submitOpen}
