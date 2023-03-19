@@ -1,6 +1,8 @@
 import dbConnect from "../../../utilities/dbConnect";
 import User from "../../../schemas/user";
 import bcrypt from "bcrypt";
+import Branch from "../../../schemas/branch";
+import EmployeeInfo from "../../../schemas/employeeInfo";
 
 export default async function EditUser(req, res){
 
@@ -41,6 +43,25 @@ export default async function EditUser(req, res){
 			isDisabled: userInfo.isDisabled,
 		}
 	);
+
+	//Needed later
+	// if (userInfo.role == "manager") {
+
+	// 	let branch = await Branch.findOne({userID: req.query.value,}, {branchID: 1} );
+	// 	let branchID = branch.branchID
+
+	// 	let userIDList = await EmployeeInfo.find({ branchID }, {userID: 1, branchID: 1})
+
+	// 	console.log(userIDList)
+
+
+	// 	// const userList = await User.find(
+	// 	// 	{ roleName: "manager"},
+	// 	// 	{ firstName: 1}
+	// 	// )
+
+	// 	// console.log("users are:" + userList.firstName)
+	// }
 
     //add branchid 
 
