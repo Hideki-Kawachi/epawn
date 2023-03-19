@@ -45,23 +45,25 @@ export default async function EditUser(req, res){
 	);
 
 	//Needed later
-	// if (userInfo.role == "manager") {
+	if (userInfo.role == "manager" && userInfo.isDisabled == false) {
 
-	// 	let branch = await Branch.findOne({userID: req.query.value,}, {branchID: 1} );
-	// 	let branchID = branch.branchID
+		let branch = await EmployeeInfo.findOne({userID: userInfo.userID}, {branchID: 1} );
 
-	// 	let userIDList = await EmployeeInfo.find({ branchID }, {userID: 1, branchID: 1})
+		let userList = await EmployeeInfo.find({branchID: branch.branchID}, {userID: 1} );
 
-	// 	console.log(userIDList)
+		let idList = []
 
+		userList.map((user) => 
+			{
+				if (user.userID != userInfo.userID) {
+					idList.push(user.userID)
+			}}
+		)
 
-	// 	// const userList = await User.find(
-	// 	// 	{ roleName: "manager"},
-	// 	// 	{ firstName: 1}
-	// 	// )
+		let updateUsers = await User.update({userID: { "$in": idList}}, {isDisabled: true})
 
-	// 	// console.log("users are:" + userList.firstName)
-	// }
+		// console.log("the users are" + updateUsers)
+	}
 
     //add branchid 
 

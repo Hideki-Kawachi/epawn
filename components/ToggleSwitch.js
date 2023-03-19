@@ -7,9 +7,8 @@ function ToggleSwitch({ disabled, setDisabled }) {
 	}
 
 	const status = {
-		false: (
+		true: (
 			<div
-				className="toggle-switch-main-container-enabled"
 				onClick={switchClicked}
 			>
 			<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -18,9 +17,8 @@ function ToggleSwitch({ disabled, setDisabled }) {
 
 			</div>
 		),
-		true: (
+		false: (
 			<div
-				className="toggle-switch-main-container-disabled"
 				onClick={switchClicked}
 			>
 
