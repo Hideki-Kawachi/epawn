@@ -7,7 +7,7 @@ export default function printPawnTicket(pawnTicketList) {
 		format: [8.5, 5.5],
 	});
 	docPT.setFont("Courier");
-	docPT.setFontSize(8);
+	docPT.setFontSize(9);
 
 	pawnTicketList.forEach((pawnTicketInfo, index) => {
 		if (index > 0) {
@@ -35,9 +35,9 @@ export default function printPawnTicket(pawnTicketList) {
 		});
 		docPT.text("Nominal Rate", 5, 2.75);
 		docPT.text("3.5%", 7.3, 2.75);
-		docPT.text("3.6%", 7.3, 3.2);
+		docPT.text("3.6%", 7.3, 2.93);
 		docPT.text("X", 6.6, 3.4);
-		docPT.text("1.0%", 7.3, 3.8);
+		docPT.text("1.0%", 7.3, 3.85);
 		docPT.text(pawnTicketInfo.clerkID, 7.25, 4.8);
 	});
 

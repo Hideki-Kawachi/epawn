@@ -6,6 +6,8 @@ import ReturnTable from "../../../components/pawn/ongoingTransaction/returnTable
 import ReturningCustomerData from "../../../components/tempData/returningCustomer.json";
 import { withIronSessionSsr } from "iron-session/next";
 import { ironOptions } from "../../../utilities/config";
+import dbConnect from "../../../utilities/dbConnect";
+import User from "../../../schemas/user";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {
@@ -15,8 +17,16 @@ export const getServerSideProps = withIronSessionSsr(
 				props: {},
 			};
 		} else if (req.session.userData.role == "clerk") {
+			await dbConnect();
+			let userList = await User.find(
+				{ role: "customer", isDisabled: false },
+				{ firstName: 1, lastName: 1, middleName: 1, userID: 1 }
+			).lean();
 			return {
-				props: { currentUser: req.session.userData },
+				props: {
+					currentUser: req.session.userData,
+					returnCustomerData: JSON.parse(JSON.stringify(userList)),
+				},
 			};
 		} else if (req.session.userData.role == "customer") {
 			return {
@@ -32,7 +42,7 @@ export const getServerSideProps = withIronSessionSsr(
 	ironOptions
 );
 
-function ReturningCustomer({ currentUser }) {
+function ReturningCustomer({ currentUser, returnCustomerData }) {
 	const columns = React.useMemo(
 		() => [
 			{
@@ -55,7 +65,7 @@ function ReturningCustomer({ currentUser }) {
 					<h1 className="text-2xl underline">PAWN</h1>
 					<span className="text-lg">Returning Customer</span>
 				</div>
-				<ReturnTable columns={columns} data={ReturningCustomerData} />
+				<ReturnTable columns={columns} data={returnCustomerData} />
 			</div>
 		</>
 	);

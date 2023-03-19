@@ -82,8 +82,12 @@ function NotificationTable({ role, data }) {
 				});
 			} else if (rowData.status == "rejected") {
 				console.log("CLICKED REJECTED");
-			} else if (rowData.state == "approved") {
-				console.log("CLICKED APPROVED");
+			} else if (rowData.status == "approved") {
+				fetch("/api/pawn/updateTransactionStatus", {
+					method: "POST",
+					body: JSON.stringify({ transactionID: rowData._id, status: "done" }),
+				});
+				router.reload();
 			}
 			// console.log("CLERK", rowData);
 		}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
 	useFilters,
 	useGlobalFilter,
@@ -6,8 +6,13 @@ import {
 	useTable,
 } from "react-table";
 import GlobalFilter from "../../../components/globalFilter";
+import Modal from "react-modal";
+import CustomerDetails from "../../modals/customerDetails";
 
 function ReturnTable({ columns, data }) {
+	const [customerModal, setCustomerModal] = useState(false);
+	const [customerData, setCustomerData] = useState({});
+	const [userData, setUserData] = useState({});
 	const {
 		getTableProps,
 		getTableBodyProps,
@@ -34,11 +39,42 @@ function ReturnTable({ columns, data }) {
 	);
 
 	function clickUser(userID) {
-		console.log("user id from table is:", userID);
+		fetch(`/api/users/customers/${userID}`, { method: "GET" })
+			.then((res) => res.json())
+			.then((data) => {
+				if (data) {
+					setCustomerData(data);
+				} else {
+					setCustomerData({});
+				}
+				fetch(`/api/users/${userID}`, { method: "GET" })
+					.then((res) => res.json())
+					.then((data) => {
+						setUserData(data);
+					});
+			});
 	}
+
+	useEffect(() => {
+		console.log("user DATA IS:", userData);
+		console.log("customer DATA IS:", customerData);
+		if (
+			Object.keys(userData).length !== 0 &&
+			Object.keys(customerData).length !== 0
+		)
+			setCustomerModal(true);
+	}, [userData]);
 
 	return (
 		<>
+			<Modal isOpen={customerModal} ariaHideApp={false} className="modal">
+				<CustomerDetails
+					trigger={customerModal}
+					setTrigger={setCustomerModal}
+					customerInfo={customerData}
+					userInfo={userData}
+				/>
+			</Modal>
 			<GlobalFilter
 				setGlobalFilter={setGlobalFilter}
 				placeHolder={"User ID or Name"}

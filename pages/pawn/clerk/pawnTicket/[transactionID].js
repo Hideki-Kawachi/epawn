@@ -177,17 +177,13 @@ function PawnTicketTransactionID({
 	}
 
 	useEffect(() => {
-		console.log("ITEMS are:", itemList);
-	}, [itemList]);
-
-	useEffect(() => {
-		console.log("ASJDKLAJSDKL:", itemList);
+		// console.log("ASJDKLAJSDKL:", itemList);
 		if (pawnTicketList.length > 0) {
 			let newItemList = itemList;
 			itemList.forEach((item, index) => {
 				pawnTicketList.forEach((pt) => {
 					pt.itemList.forEach((ptItem) => {
-						console.log("PT ITEM:", ptItem.itemID, "-", item.itemID);
+						// console.log("PT ITEM:", ptItem.itemID, "-", item.itemID);
 						if (ptItem.itemID == item.itemID) {
 							console.log("PUSH");
 							newItemList.splice(index, 1);
@@ -202,7 +198,7 @@ function PawnTicketTransactionID({
 
 	function submitForm() {
 		if (itemList.length == 0) {
-			console.log("pawnticket List:", pawnTicketList);
+			// console.log("pawnticket List:", pawnTicketList);
 			setLoading(true);
 			fetch("/api/pawn/forApproval", {
 				method: "POST",
@@ -213,7 +209,7 @@ function PawnTicketTransactionID({
 			})
 				.then((res) => res.json())
 				.then((data) => {
-					console.log("DATA IS:", data);
+					// console.log("DATA IS:", data);
 					router.replace("/");
 				});
 		}

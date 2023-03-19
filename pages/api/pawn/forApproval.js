@@ -24,40 +24,41 @@ export default async function forApproval(req, res) {
 
 	let itemListID = await generateItemListID();
 	let index = -1;
-	pawnTicketList.forEach((pawnTicket) => {
+
+	for (let pawnTicket of pawnTicketList) {
 		// create new item list per pawn ticket item list
 		index++;
 		console.log("item list id:", itemListID + index);
 		let loanAmount = 0;
-		ItemList.create({
+		await ItemList.create({
 			itemListID: itemListID + index,
 			branchID: transactionData.branchID,
 		});
 
 		// update itemListID of all items
-		pawnTicket.itemList.forEach((item) => {
+		for (let item of pawnTicket.itemList) {
 			console.log("ITEM ITEM:", itemListID + index);
-			Item.findOneAndUpdate(
+			await Item.findOneAndUpdate(
 				{ itemID: item.itemID },
 				{ itemListID: itemListID + index }
 			);
 			loanAmount += item.price;
-		});
-		let loanDate = new Date();
+		}
 
 		// create pawnTicket with no pawnTicketID
-		PawnTicket.create({
+		let loanDate = new Date();
+		await PawnTicket.create({
 			pawnTicketID: "",
 			transactionID: transactionData._id,
 			customerID: transactionData.customerID,
 			itemListID: itemListID + index,
 			loanDate: loanDate,
-			maturityDate: new Date(loanDate.setDate(loanDate.getDate() + 30)),
-			expiryDate: new Date(loanDate.setDate(loanDate.getDate() + 30)),
+			maturityDate: new Date().setDate(loanDate.getDate() + 30),
+			expiryDate: new Date().setDate(loanDate.getDate() + 60),
 			loanAmount: loanAmount,
 			isInactive: false,
 		});
-	});
+	}
 
 	res.json("success");
 }

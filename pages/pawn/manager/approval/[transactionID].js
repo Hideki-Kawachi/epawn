@@ -147,7 +147,7 @@ function ApprovalTransactionID({
 			method: "POST",
 			body: JSON.stringify({
 				pawnTicketList: pawnTicketList,
-				transactionID: transactionData._id,
+				transactionData: transactionData,
 				branchID: branchData.branchID,
 			}),
 		})

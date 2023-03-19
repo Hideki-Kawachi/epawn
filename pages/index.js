@@ -38,7 +38,7 @@ export const getServerSideProps = withIronSessionSsr(
 				transactionData = await Transaction.find({
 					branchID: req.session.userData.branchID,
 					clerkID: req.session.userData.userID,
-					status: { $ne: "Done" },
+					status: { $ne: "done" },
 				})
 					.sort({ updatedAt: -1 })
 					.lean();
@@ -49,7 +49,7 @@ export const getServerSideProps = withIronSessionSsr(
 				transactionData = await Transaction.find({
 					branchID: req.session.userData.branchID,
 					managerID: req.session.userData.userID,
-					status: { $ne: "Done" },
+					status: { $ne: "done" },
 				})
 					.sort({ updatedAt: -1 })
 					.lean();
@@ -112,7 +112,8 @@ export default function Home({ currentUser, notifData }) {
 			await waitNotif();
 		} else if (res.status != 200) {
 			// console.log("2-RESPONSE:", res.statusText);
-			await new Promise((resolve) => setTimeout(resolve, 1000));
+			await notifData();
+			// await new Promise((resolve) => setTimeout(resolve, 1000));
 		} else {
 			let notifShow = await res.json();
 			// console.log("NOTIF DATA BACK IS:", notifShow);
