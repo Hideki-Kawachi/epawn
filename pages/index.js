@@ -55,6 +55,8 @@ export const getServerSideProps = withIronSessionSsr(
 					.lean();
 			}
 
+			console.log("trans data:", transactionData);
+
 			let notifData = [];
 			transactionData.forEach((transaction) => {
 				let customerInfo = customerData.find(
@@ -95,7 +97,6 @@ export default function Home({ currentUser, notifData }) {
 
 	useEffect(() => {
 		waitNotif();
-		console.log("ASKDL:");
 	}, [showData]);
 
 	async function waitNotif() {
@@ -112,7 +113,7 @@ export default function Home({ currentUser, notifData }) {
 			await waitNotif();
 		} else if (res.status != 200) {
 			// console.log("2-RESPONSE:", res.statusText);
-			await notifData();
+			await waitNotif();
 			// await new Promise((resolve) => setTimeout(resolve, 1000));
 		} else {
 			let notifShow = await res.json();

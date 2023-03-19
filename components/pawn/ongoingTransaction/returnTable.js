@@ -8,8 +8,10 @@ import {
 import GlobalFilter from "../../../components/globalFilter";
 import Modal from "react-modal";
 import CustomerDetails from "../../modals/customerDetails";
+import InputCustomerDetails from "../../modals/inputCustomerDetails";
+import LoadingSpinner from "../../loadingSpinner";
 
-function ReturnTable({ columns, data }) {
+function ReturnTable({ columns, data, setLoading }) {
 	const [customerModal, setCustomerModal] = useState(false);
 	const [customerData, setCustomerData] = useState({});
 	const [userData, setUserData] = useState({});
@@ -61,20 +63,24 @@ function ReturnTable({ columns, data }) {
 		if (
 			Object.keys(userData).length !== 0 &&
 			Object.keys(customerData).length !== 0
-		)
+		) {
 			setCustomerModal(true);
+		}
 	}, [userData]);
 
 	return (
 		<>
 			<Modal isOpen={customerModal} ariaHideApp={false} className="modal">
-				<CustomerDetails
+				<InputCustomerDetails
 					trigger={customerModal}
 					setTrigger={setCustomerModal}
 					customerInfo={customerData}
 					userInfo={userData}
+					transactionID
+					setLoading={setLoading}
 				/>
 			</Modal>
+
 			<GlobalFilter
 				setGlobalFilter={setGlobalFilter}
 				placeHolder={"User ID or Name"}

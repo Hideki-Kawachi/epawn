@@ -2,6 +2,7 @@ import Close from "../closebutton";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { Router, useRouter } from "next/router";
+import dayjs, { Dayjs } from "dayjs";
 function InputCustomerDetails({
 	trigger,
 	setTrigger,
@@ -20,10 +21,12 @@ function InputCustomerDetails({
 		userInfo.lastName ? userInfo.lastName : ""
 	);
 	const [birthDate, setBirthDate] = useState(
-		userInfo.birthDate ? userInfo.birthDate : ""
+		customerInfo.birthDate
+			? dayjs(customerInfo.birthDate).format("YYYY-MM-DD")
+			: ""
 	);
 	const [birthPlace, setBirthPlace] = useState(
-		userInfo.birthPlace ? userInfo.birthPlace : ""
+		customerInfo.birthPlace ? customerInfo.birthPlace : ""
 	);
 	const [contactNumber, setContactNumber] = useState(
 		customerInfo.contactNumber ? customerInfo.contactNumber : ""
@@ -77,7 +80,7 @@ function InputCustomerDetails({
 		setTrigger(!trigger);
 	}
 
-	async function submitForm() {
+	function submitForm() {
 		let publicID = "validID-" + userInfo.userID + "-" + new Date();
 		let uploadPreset = "signed_preset";
 		let type = "authenticated";
@@ -85,76 +88,127 @@ function InputCustomerDetails({
 		let signURL = "true";
 
 		setLoading(true);
-
-		fetch("/api/signUploadForm", {
-			method: "POST",
-			body: JSON.stringify({
-				public_id: publicID,
-				upload_preset: uploadPreset,
-				folder: folder,
-				type: type,
-			}),
-		})
-			.then((res) => res.json())
-			.then((data) => {
-				const formData1 = new FormData();
-
-				formData1.append("file", validID);
-				formData1.append("upload_preset", uploadPreset);
-				formData1.append("folder", folder);
-				formData1.append("sign_url", signURL);
-				formData1.append("type", type);
-				formData1.append("api_key", data.apiKey);
-				formData1.append("timestamp", data.timestamp);
-				formData1.append("signature", data.signature);
-				fetch("https://api.cloudinary.com/v1_1/cloudurlhc/image/upload", {
+		if (typeof transactionID != "boolean") {
+			if (validID.length == 0) {
+				fetch("/api/signUploadForm", {
 					method: "POST",
-					body: formData1,
+					body: JSON.stringify({
+						public_id: publicID,
+						upload_preset: uploadPreset,
+						folder: folder,
+						type: type,
+					}),
 				})
 					.then((res) => res.json())
 					.then((data) => {
-						console.log("DATA IS:", data);
-						setUriValidID(data.secure_url);
+						const formData1 = new FormData();
+
+						formData1.append("file", validID);
+						formData1.append("upload_preset", uploadPreset);
+						formData1.append("folder", folder);
+						formData1.append("sign_url", signURL);
+						formData1.append("type", type);
+						formData1.append("api_key", data.apiKey);
+						formData1.append("timestamp", data.timestamp);
+						formData1.append("signature", data.signature);
+						fetch("https://api.cloudinary.com/v1_1/cloudurlhc/image/upload", {
+							method: "POST",
+							body: formData1,
+						})
+							.then((res) => res.json())
+							.then((data) => {
+								console.log("DATA IS:", data);
+								setUriValidID(data.secure_url);
+							});
 					});
-			});
+			}
 
-		publicID = "customerInfoSheet-" + userInfo.userID + "-" + new Date();
+			if (customerInfoSheet.length == 0) {
+				publicID = "customerInfoSheet-" + userInfo.userID + "-" + new Date();
 
-		fetch("/api/signUploadForm", {
-			method: "POST",
-			body: JSON.stringify({
-				public_id: publicID,
-				upload_preset: uploadPreset,
-				folder: folder,
-				type: type,
-			}),
-		})
-			.then((res) => res.json())
-			.then((data) => {
-				const formData2 = new FormData();
-
-				formData2.append("file", customerInfoSheet);
-				formData2.append("upload_preset", uploadPreset);
-				formData2.append("folder", folder);
-				formData2.append("sign_url", signURL);
-				formData2.append("type", type);
-				formData2.append("api_key", data.apiKey);
-				formData2.append("timestamp", data.timestamp);
-				formData2.append("signature", data.signature);
-				fetch("https://api.cloudinary.com/v1_1/cloudurlhc/image/upload", {
+				fetch("/api/signUploadForm", {
 					method: "POST",
-					body: formData2,
+					body: JSON.stringify({
+						public_id: publicID,
+						upload_preset: uploadPreset,
+						folder: folder,
+						type: type,
+					}),
 				})
 					.then((res) => res.json())
 					.then((data) => {
-						console.log("DATA IS:", data);
-						setUriCustomerInfoSheet(data.secure_url);
+						const formData2 = new FormData();
+
+						formData2.append("file", customerInfoSheet);
+						formData2.append("upload_preset", uploadPreset);
+						formData2.append("folder", folder);
+						formData2.append("sign_url", signURL);
+						formData2.append("type", type);
+						formData2.append("api_key", data.apiKey);
+						formData2.append("timestamp", data.timestamp);
+						formData2.append("signature", data.signature);
+						fetch("https://api.cloudinary.com/v1_1/cloudurlhc/image/upload", {
+							method: "POST",
+							body: formData2,
+						})
+							.then((res) => res.json())
+							.then((data) => {
+								console.log("DATA IS:", data);
+								setUriCustomerInfoSheet(data.secure_url);
+							});
 					});
-			});
+			}
+		} else if (
+			validID.length > 0 &&
+			customerInfoSheet.length > 0 &&
+			typeof transactionID == "boolean"
+		) {
+			let customerData = {
+				userID: userInfo.userID,
+				birthDate: birthDate,
+				birthPlace: birthPlace,
+				contactNumber: contactNumber,
+				permanentAddress: permanentAddress,
+				presentAddress: presentAddress,
+				sex: sex,
+				status: status,
+				height: height,
+				weight: weight,
+				complexion: complexion,
+				identifyingMark: identifyingMark,
+				email: email,
+				employerName: employerName,
+				jobPosition: jobPosition,
+				workNature: workNature,
+				customerInfoSheet: customerInfoSheet,
+				validID: validID,
+			};
+			console.log("cust data:", customerData);
+
+			fetch("/api/pawn/updateCustomerInfo", {
+				method: "POST",
+				body: JSON.stringify(customerData),
+			})
+				.then((res) => res.json())
+				.then((data) => {
+					console.log("DATA FROM SUBMIT IS:", data);
+					setLoading(false);
+					if (data == "success") {
+						router.replace({
+							pathname: "/pawn/clerk/returningCustomer/[userID]",
+							query: { userID: userInfo.userID },
+						});
+					}
+				});
+		}
 	}
 
 	useEffect(() => {
-		if (uriValidID && uriCustomerInfoSheet) {
+		if (
+			uriValidID &&
+			uriCustomerInfoSheet &&
+			typeof transactionID != "boolean"
+		) {
 			let customerData = {
 				userID: userInfo.userID,
 				birthDate: birthDate,
@@ -191,6 +245,17 @@ function InputCustomerDetails({
 		}
 	}, [uriValidID, uriCustomerInfoSheet]);
 
+	function submitDisabled() {
+		return !(
+			birthDate.length > 0 &&
+			birthPlace.length > 0 &&
+			contactNumber.length > 0 &&
+			presentAddress.length > 0 &&
+			(customerInfoSheet.length > 0 || uriCustomerInfoSheet.length > 0) &&
+			(validID.length > 0 || uriValidID.length > 0)
+		);
+	}
+
 	return (
 		<>
 			<div id="modal-content-area">
@@ -226,7 +291,11 @@ function InputCustomerDetails({
 						</div>
 						<div className="mt-[69px] font-dosis text-sm flex flex-col items-end w-min gap-2">
 							{customerInfo.validID ? (
-								<a className="block font-semibold text-right text-green-500 hover:underline hover:text-green-400 hover:cursor-pointer">
+								<a
+									className="block font-semibold text-right text-green-500 hover:underline hover:text-green-400 hover:cursor-pointer no whitespace-nowrap"
+									href={customerInfo.validID}
+									target={"_blank"}
+								>
 									View Valid ID
 								</a>
 							) : (
@@ -242,7 +311,11 @@ function InputCustomerDetails({
 								</div>
 							)}
 							{customerInfo.customerInfoSheet ? (
-								<a className="block font-semibold text-right text-green-500 hover:underline hover:text-green-400 hover:cursor-pointer">
+								<a
+									className="block font-semibold text-right text-green-500 hover:underline hover:text-green-400 hover:cursor-pointer no whitespace-nowrap"
+									href={customerInfo.customerInfoSheet}
+									target={"_blank"}
+								>
 									View Customer Info Sheet
 								</a>
 							) : (
@@ -422,7 +495,11 @@ function InputCustomerDetails({
 							<button className="bg-red-300" onClick={() => closeModal()}>
 								Cancel
 							</button>
-							<button className="bg-green-300" onClick={() => submitForm()}>
+							<button
+								className="bg-green-300"
+								onClick={() => submitForm()}
+								disabled={submitDisabled()}
+							>
 								Save
 							</button>
 						</div>

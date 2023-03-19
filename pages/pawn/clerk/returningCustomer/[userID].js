@@ -1,25 +1,33 @@
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import Header from "../../../components/header";
-import NavBar from "../../../components/navigation/navBar";
-import NewItemList from "../../../components/pawn/newTransaction/newItemList";
+import Header from "../../../../components/header";
+import NavBar from "../../../../components/navigation/navBar";
+import NewItemList from "../../../../components/pawn/newTransaction/newItemList";
 import Modal from "react-modal";
-import Cancel from "../../../components/modals/cancel";
-import AskPrice from "../../../components/modals/askPrice";
+import Cancel from "../../../../components/modals/cancel";
+import AskPrice from "../../../../components/modals/askPrice";
 import { withIronSessionSsr } from "iron-session/next";
-import { ironOptions } from "../../../utilities/config";
-import LoadingSpinner from "../../../components/loadingSpinner";
+import { ironOptions } from "../../../../utilities/config";
+import LoadingSpinner from "../../../../components/loadingSpinner";
+import User from "../../../../schemas/user";
 
 export const getServerSideProps = withIronSessionSsr(
-	async function getServerSideProps({ req }) {
+	async function getServerSideProps({ req, query }) {
 		if (!req.session.userData) {
 			return {
 				redirect: { destination: "/signIn", permanent: true },
 				props: {},
 			};
-		} else if (req.session.userData.role == "clerk") {
+		} else if (
+			req.session.userData.role == "clerk" &&
+			query.userID.length == 7
+		) {
+			let userInfo = await User.findOne({ userID: query.userID }).lean();
 			return {
-				props: { currentUser: req.session.userData },
+				props: {
+					currentUser: req.session.userData,
+					userData: JSON.parse(JSON.stringify(userInfo)),
+				},
 			};
 		} else if (req.session.userData.role == "customer") {
 			return {
@@ -35,14 +43,11 @@ export const getServerSideProps = withIronSessionSsr(
 	ironOptions
 );
 
-function NewCustomer({ currentUser }) {
+function ReturningCustomerUserID({ currentUser, userData }) {
 	// MODALS
 	const [submitOpen, setSubmitOpen] = useState(false); //Submit
 	const [cancelOpen, setCancelOpen] = useState(false); //Cancel
 
-	const [firstName, setFirstName] = useState("");
-	const [lastName, setLastName] = useState("");
-	const [middleName, setMiddleName] = useState("");
 	const [askPrice, setAskPrice] = useState(0);
 	const [askPriceShow, setAskPriceShow] = useState("0");
 	const [itemIDs, setItemIDs] = useState(0);
@@ -93,12 +98,7 @@ function NewCustomer({ currentUser }) {
 			});
 		}
 
-		if (
-			firstName.length == 0 ||
-			lastName.length == 0 ||
-			askPrice == 0 ||
-			errorTemp
-		) {
+		if (askPrice == 0 || errorTemp) {
 			setError(true);
 		} else {
 			setSubmitOpen(true);
@@ -171,16 +171,14 @@ function NewCustomer({ currentUser }) {
 									console.log("UPDATED ITEM:", updatedItemList);
 
 									let transac = {
-										firstName: firstName,
-										middleName: middleName,
-										lastName: lastName,
+										userID: userData.userID,
 										askPrice: askPrice,
 										itemList: updatedItemList,
 										clerkID: currentUser.userID,
 										branchID: currentUser.branchID,
 									};
 
-									fetch("/api/pawn/newCustomerPawn", {
+									fetch("/api/pawn/returningCustomerPawn", {
 										method: "POST",
 										body: JSON.stringify(transac),
 									})
@@ -202,15 +200,6 @@ function NewCustomer({ currentUser }) {
 		}
 	}, [sendForm]);
 
-	function submitDisabled() {
-		return !(
-			firstName.length > 0 &&
-			lastName.length > 0 &&
-			itemList.length > 0 &&
-			askPrice > 0
-		);
-	}
-
 	return (
 		<>
 			<LoadingSpinner isLoading={loading}></LoadingSpinner>
@@ -225,8 +214,8 @@ function NewCustomer({ currentUser }) {
 			</Modal>
 			<Modal isOpen={submitOpen} ariaHideApp={false} className="modal">
 				<AskPrice
-					firstName={firstName}
-					lastName={lastName}
+					firstName={userData.firstName}
+					lastName={userData.lastName}
 					askPrice={askPrice}
 					setSubmitOpen={setSubmitOpen}
 					setSendForm={setSendForm}
@@ -235,42 +224,20 @@ function NewCustomer({ currentUser }) {
 			<div id="main-content-area">
 				<div className="font-semibold text-center font-dosis">
 					<h1 className="text-2xl underline">PAWN</h1>
-					<span className="text-lg">New Customer</span>
+					<span className="text-lg">Returning Customer</span>
 				</div>
 				<form className="flex gap-40 mt-[5vh] text-base font-nunito">
-					<div className="flex flex-col items-end gap-5 w-[30vw]">
-						<label htmlFor="firstName">
-							First Name:
-							<input
-								type="text"
-								id="firstName"
-								className="ml-4"
-								required
-								value={firstName}
-								onChange={(e) => setFirstName(e.target.value)}
-							></input>
-						</label>
-						<label htmlFor="middleName">
-							Middle Name:
-							<input
-								type="text"
-								id="middleName"
-								className="ml-4"
-								value={middleName}
-								onChange={(e) => setMiddleName(e.target.value)}
-							></input>
-						</label>
-						<label htmlFor="lastName">
-							Last Name:
-							<input
-								type="text"
-								id="lastName"
-								className="ml-4"
-								required
-								value={lastName}
-								onChange={(e) => setLastName(e.target.value)}
-							></input>
-						</label>
+					<div className="flex flex-row gap-5 w-[30vw] justify-end">
+						<div className="flex flex-col gap-5 font-bold text-end">
+							<span>First Name:</span>
+							<span>Middle Name:</span>
+							<span>Last Name: </span>
+						</div>
+						<div className="flex flex-col gap-5">
+							<span>{userData.firstName}</span>
+							<span> {userData.middleName}</span>
+							<span>{userData.lastName}</span>
+						</div>
 					</div>
 					<div className="w-[40vw] flex flex-col gap-5">
 						<label htmlFor="askName">
@@ -322,7 +289,6 @@ function NewCustomer({ currentUser }) {
 								className="px-10 mx-2 my-5 bg-green-300"
 								type="button"
 								onClick={() => checkForm()}
-								disabled={submitDisabled()}
 							>
 								Submit
 							</button>
@@ -334,4 +300,4 @@ function NewCustomer({ currentUser }) {
 	);
 }
 
-export default NewCustomer;
+export default ReturningCustomerUserID;

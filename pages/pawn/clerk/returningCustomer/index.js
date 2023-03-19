@@ -1,13 +1,13 @@
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import Header from "../../../components/header";
-import NavBar from "../../../components/navigation/navBar";
-import ReturnTable from "../../../components/pawn/ongoingTransaction/returnTable";
-import ReturningCustomerData from "../../../components/tempData/returningCustomer.json";
+import Header from "../../../../components/header";
+import NavBar from "../../../../components/navigation/navBar";
+import ReturnTable from "../../../../components/pawn/ongoingTransaction/returnTable";
 import { withIronSessionSsr } from "iron-session/next";
-import { ironOptions } from "../../../utilities/config";
-import dbConnect from "../../../utilities/dbConnect";
-import User from "../../../schemas/user";
+import { ironOptions } from "../../../../utilities/config";
+import dbConnect from "../../../../utilities/dbConnect";
+import User from "../../../../schemas/user";
+import LoadingSpinner from "../../../../components/loadingSpinner";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {
@@ -55,17 +55,23 @@ function ReturningCustomer({ currentUser, returnCustomerData }) {
 		],
 		[]
 	);
+	const [loading, setLoading] = useState(false);
 
 	return (
 		<>
 			<NavBar currentUser={currentUser}></NavBar>
 			<Header currentUser={currentUser}></Header>
+			<LoadingSpinner isLoading={loading}></LoadingSpinner>
 			<div id="main-content-area">
 				<div className="font-semibold text-center font-dosis">
 					<h1 className="text-2xl underline">PAWN</h1>
 					<span className="text-lg">Returning Customer</span>
 				</div>
-				<ReturnTable columns={columns} data={returnCustomerData} />
+				<ReturnTable
+					columns={columns}
+					data={returnCustomerData}
+					setLoading={setLoading}
+				/>
 			</div>
 		</>
 	);

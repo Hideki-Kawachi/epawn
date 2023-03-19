@@ -20,13 +20,13 @@ export default async function NotifTable(req, res) {
 			transactionData = await Transaction.find({
 				branchID: userInfo.branchid,
 				clerkID: userInfo.userid,
-				status: { $ne: "Done" },
+				status: { $ne: "done" },
 			}).lean();
 		} else if (userInfo.role == "manager") {
 			transactionData = await Transaction.find({
 				branchID: userInfo.branchid,
 				managerID: userInfo.userid,
-				status: { $ne: "Done" },
+				status: { $ne: "done" },
 			}).lean();
 		}
 

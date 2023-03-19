@@ -15,6 +15,7 @@ import NewItemCard from "../../../../components/pawn/newTransaction/newItemCard"
 import { useRouter } from "next/router";
 import InputCustomerDetails from "../../../../components/modals/inputCustomerDetails";
 import Modal from "react-modal";
+import CustomerInfo from "../../../../schemas/customerInfo";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req, query }) {
@@ -41,16 +42,21 @@ export const getServerSideProps = withIronSessionSsr(
 				let itemList = await Item.find({
 					itemListID: transactionInfo.itemListID,
 				}).lean();
-				let customerInfo = await User.findOne({
+				let userInfo = await User.findOne({
 					userID: transactionInfo.customerID,
 				});
+				let customerInfo = await CustomerInfo.find({
+					userID: transactionInfo.customerID,
+				}).lean();
+				let isReturningCustomer = customerInfo.length > 0;
 				return {
 					props: {
 						currentUser: req.session.userData,
 						transactionData: JSON.parse(JSON.stringify(transactionInfo)),
 						priceHistory: JSON.parse(JSON.stringify(priceHistoryList)),
 						itemData: JSON.parse(JSON.stringify(itemList)),
-						customerData: JSON.parse(JSON.stringify(customerInfo)),
+						userData: JSON.parse(JSON.stringify(userInfo)),
+						isReturningCustomer: isReturningCustomer,
 					},
 				};
 			} else {
@@ -77,7 +83,8 @@ function OngoingTransactionTransactionID({
 	transactionData,
 	priceHistory,
 	itemData,
-	customerData,
+	userData,
+	isReturningCustomer,
 }) {
 	const [loading, setLoading] = useState(false);
 	const [askPrice, setAskPrice] = useState(
@@ -96,7 +103,7 @@ function OngoingTransactionTransactionID({
 	// console.log("transact data:", transactionData);
 	// console.log("price hist:", priceHistory);
 	// console.log("item Da:", itemData);
-	// console.log("customer Da:", customerData);
+	// console.log("customer Da:", userData);
 
 	function deleteItem(id) {
 		let newList = itemList.filter((items) => {
@@ -133,10 +140,6 @@ function OngoingTransactionTransactionID({
 		}
 		// console.log("new item list:", newItemList);
 	}, [newItemList]);
-
-	function submitForm() {
-		console.log("SUBMIT");
-	}
 
 	function renegotiateForm() {
 		console.log("RENEGOTIATE");
@@ -260,6 +263,18 @@ function OngoingTransactionTransactionID({
 		router.push("/");
 	}
 
+	function submitForm() {
+		console.log("SUBMIT");
+		if (isReturningCustomer) {
+			router.replace({
+				pathname: "/pawn/clerk/pawnTicket/[transactionID]",
+				query: { transactionID: transactionData._id },
+			});
+		} else {
+			setCustomerInfoShow(true);
+		}
+	}
+
 	return (
 		<>
 			<LoadingSpinner isLoading={loading}></LoadingSpinner>
@@ -271,7 +286,7 @@ function OngoingTransactionTransactionID({
 						trigger={customerInfoShow}
 						setTrigger={setCustomerInfoShow}
 						customerInfo={customerInfo}
-						userInfo={customerData}
+						userInfo={userData}
 						transactionID={transactionData._id}
 						setLoading={setLoading}
 					/>
@@ -283,7 +298,7 @@ function OngoingTransactionTransactionID({
 					<span className="w-full text-base font-bold text-center font-nunito">
 						Customer Name:{" "}
 						<span className="font-normal">
-							{customerData.firstName} {customerData.lastName}
+							{userData.firstName} {userData.lastName}
 						</span>
 					</span>
 
@@ -387,7 +402,7 @@ function OngoingTransactionTransactionID({
 					<button
 						className="px-10 mx-2 my-5 bg-green-300"
 						type="button"
-						onClick={() => setCustomerInfoShow(true)}
+						onClick={() => submitForm()}
 					>
 						Proceed
 					</button>
