@@ -60,7 +60,7 @@ export default async function EditUser(req, res){
 			}}
 		)
 
-		let updateUsers = await User.update({userID: { "$in": idList}}, {isDisabled: true})
+		let updateUsers = await User.update({userID: { "$in": idList}, role: "manager"}, {isDisabled: true})
 
 		// console.log("the users are" + updateUsers)
 	}
