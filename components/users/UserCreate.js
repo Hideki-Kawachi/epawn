@@ -12,7 +12,7 @@ function UserCreate(foundBranchID){
 	const [lastName, setLastName] = useState("");
 	const [password, setPassword] = useState("");
 	const [roleName, setRoleName] = useState("Clerk");
-	const [isDisabled, setIsDisabled] = useState(false);
+	const [isDisabled, setIsDisabled] = useState(true);
 	const [branchID, setBranchID] = useState(foundBranchID.foundBranchID);
 
 	const [error, setError] = useState(false);
