@@ -34,6 +34,7 @@ export const getServerSideProps = withIronSessionSsr(
 			var tempUserData = [];
 
 			// For Manager
+			let foundBranchID = ""
 
 			if (req.session.userData.role == "manager") {
 				let manUID = req.session.userData.userID
@@ -43,7 +44,7 @@ export const getServerSideProps = withIronSessionSsr(
 					{ branchID: 1}
 				)
 
-				let foundBranchID = manager.branchID
+				foundBranchID = manager.branchID
 
 				const branchUserIDList = await EmployeeInfo.find(
 					{ foundBranchID},
@@ -89,7 +90,7 @@ export const getServerSideProps = withIronSessionSsr(
 			// console.log(userData);
 
 			return {
-				props: { currentUser: req.session.userData, userData},
+				props: { currentUser: req.session.userData, userData, foundBranchID},
 			};
 		} else if (req.session.userData.role == "customer") {
 			return {
@@ -106,7 +107,7 @@ export const getServerSideProps = withIronSessionSsr(
 	ironOptions
 );
 
-function Users({ currentUser, userData}) {
+function Users({ currentUser, userData, foundBranchID}) {
 	
 	const users = JSON.parse(userData);
 
@@ -166,7 +167,7 @@ function Users({ currentUser, userData}) {
 						id="role-filter"
 						value={filter}
 					>
-						<option value={"All"} selected>
+						<option value={"All"}>
 							All
 						</option>
 						<option value={"clerk"}>Clerk</option>
@@ -194,7 +195,10 @@ function Users({ currentUser, userData}) {
 				</div>
 
 				<div className="relative w-full m-10 bg-white h-60">
-					<UserCreate></UserCreate>
+					{ console.log({foundBranchID})}
+					<UserCreate
+						foundBranchID={foundBranchID.toString()}
+					></UserCreate>
 
 				</div>
 			</div>

@@ -1,22 +1,31 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // import BasicButton from "../BasicButton";
 // import ToggleSwitch from "../ToggleSwitch";
 import Router from "next/router";
 
 import MockUsers from "../../components/users/User_MOCK_DATA.json";
 
-function UserCreate(){
+function UserCreate(foundBranchID){
 
 	const [firstName, setFirstName] = useState("");
 	const [middleName, setMiddleName] = useState("");
 	const [lastName, setLastName] = useState("");
 	const [password, setPassword] = useState("");
-	const [roleName, setRoleName] = useState("Null Role");
+	const [roleName, setRoleName] = useState("Clerk");
 	const [isDisabled, setIsDisabled] = useState(false);
-	const [branchID, setBranchID] = useState("");
+	const [branchID, setBranchID] = useState(foundBranchID.foundBranchID);
 
 	const [error, setError] = useState(false);
 	const [employeeIDError, setEmployeeIDError] = useState("");
+
+	function isManager(){
+
+		if (foundBranchID.foundBranchID != ""){
+			return true;
+		}
+
+		return false;
+	}
 
 	function submitForm(){
 
@@ -24,8 +33,7 @@ function UserCreate(){
 			firstName.length == 0 ||
 			lastName.length == 0 || 
 			middleName.length == 0 ||
-			password.length == 0 ||
-			roleName.length == 0
+			password.length == 0 
 		) {
 			setError(true);
 
@@ -136,12 +144,13 @@ function UserCreate(){
 								onChange={(e) => setPassword(e.target.value)}
 						 />
 					</div>
-
 					   <div className="flex w-1/4 flex-col">
 						<span className="font-bold pr-7">Branch ID: </span>
           				<input className="border rounded-md stroke-gray-500 px-3"
 								type="text"
 								id="branchID"
+								value={branchID}
+								disabled={isManager()}
 								onChange={(e) => setBranchID(e.target.value)}
 						 />
 					</div>
