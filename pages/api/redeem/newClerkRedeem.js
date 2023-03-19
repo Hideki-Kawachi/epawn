@@ -77,7 +77,8 @@ export default async function newClerkRedeem(req,res){
             { itemID: redeem.itemID },
             {
               isRedeemed: true,
-              transactionID: "ObjectId('" + newRedeem.transactionID + "')"
+              transactionID: "ObjectId('" + newRedeem.transactionID + "')",
+              redeemID: redeemID,
             }
           );
           if (result.modifiedCount != 0) console.log("Updated the item");
