@@ -96,7 +96,7 @@ function UserCreate(){
 					</div>
 
 					<div className="flex w-1/4 flex-col">
-						<span className="font-bold pr-7">Middle Name: </span>
+						<span className="font-bold pr-7">Mid Name:</span>
           				<input className="border rounded-md stroke-gray-500 px-3" 
 								type="text"
 								id="middleName"
@@ -116,11 +116,16 @@ function UserCreate(){
 					<div className="flex w-1/4 flex-col">
 						<span className="font-bold pr-7">Role   : </span>
 						{/* Change to Select */}
-          				<input className="border rounded-md stroke-gray-500 px-3"
-							type="text"
-							id="roleName"
+						<select
+							className="border rounded-md stroke-gray-500 px-3"
 							onChange={(e) => setRoleName(e.target.value)}
-						/>
+							id="roleName"
+						>
+						<option value={"clerk"}>Clerk</option>
+						<option value={"manager"}>Manager</option>
+						<option value={"admin"}>Admin</option>
+						<option value={"customer"}>Customer</option>
+					</select>
 					</div>
 
                     <div className="flex w-1/4 flex-col">
