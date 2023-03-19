@@ -17,10 +17,19 @@ function UserEdit(foundID){
 	const [isDisabled, setIsDisabled] = useState("");
 	const [branchID, setBranchID] = useState("")
 
+	const [roles, setRoles] = useState([]);
+
 	const [error, setError] = useState(false);
 	const [employeeIDError, setEmployeeIDError] = useState("");
 
 	useEffect(() => {
+
+		//Set roles
+		roles.push("admin")
+		roles.push("manager")
+		roles.push("clerk")
+		roles.push("customer")
+
 		// console.log("here is the key" + foundID.foundID)
 
 		fetch("/api/users/" + foundID.foundID, {
@@ -110,6 +119,39 @@ function UserEdit(foundID){
 
 
 	} 
+
+	function findCurrentRole(){
+
+		// let roles = []
+
+		// roles.push("admin")
+		// roles.push("manager")
+		// roles.push("clerk")
+		// roles.push("customer")
+
+
+		// console.log("moshi moshi" + roleName.toString())
+
+		// roles.map((role) => {
+
+		// 	if (role == roleName.toString()) {
+
+		// 		return (
+		// 			<option value={roleName.toString()} selected>
+		// 				{role}
+		// 			</option>
+		// 		);
+		// 	} else {
+		// 		return (
+		// 			<option value={role}>
+		// 					{role.charAt(0).toUpperCase() + role.slice(1)}
+		// 			</option>
+		// 		)
+		// 	}
+		// })
+
+
+	}
     
     return( 
         <>
@@ -143,12 +185,36 @@ function UserEdit(foundID){
 
                     <div className="flex w-1/4 flex-col select-none">
 						<span className="font-bold pr-7">Role   : </span>
-          				<input className="border rounded-md stroke-gray-500 px-3"
+          				{/* <input className="border rounded-md stroke-gray-500 px-3"
 							type="text"
 							id="roleName"
 							value={roleName}
 							onChange={(e) => setRoleName(e.target.value)}
-						/>
+						/> */}
+						<select
+							className="border rounded-md stroke-gray-500 px-3"
+							onChange={(e) => setRoleName(e.target.value)}
+							id="roleName"
+							value={roleName}
+						>
+						{	roles.map((role) => {
+								// console.log("role is: " + role)
+								if (role == roleName.toString()) {
+									return (
+										<option value={role} selected>
+											{role.charAt(0).toUpperCase() + role.slice(1)}
+										</option>
+									);
+								} else {
+									return (
+										<option value={role}>
+												{role.charAt(0).toUpperCase() + role.slice(1)}
+										</option>
+									);
+								}
+							})
+						}
+						</select>
 					</div>
 
                     <div className="flex w-1/4 flex-col select-none">
