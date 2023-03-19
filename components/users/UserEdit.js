@@ -48,8 +48,21 @@ function UserEdit(foundID){
 				setLastName(data.lastName);
 				setPassword(data.password);
 				setRoleName(data.role);
-				setBranchID(data.branchID);
+				// setBranchID(data.branchID);
 				setIsDisabled(data.isDisabled);
+			});
+
+			fetch("/api/users/findBranchEmp?value={data.userID}", {
+				method: "GET",
+				headers: {
+					Accept: "application/json",
+					"Content-Type": "application/json",
+				},
+			})
+				.then((res) => res.json())
+				.then((data) => {
+					console.log("RECEIVED DATA:", data);
+					setBranchID(data.branchID);
 			});
 
 
@@ -262,6 +275,7 @@ function UserEdit(foundID){
 							type="text"
 							id="branchID"
 							value={branchID}
+							disabled={true}
 							onChange={(e) => setBranchID(e.target.value)}
 						/>
 					</div>
