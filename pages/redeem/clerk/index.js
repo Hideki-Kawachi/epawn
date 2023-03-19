@@ -381,7 +381,7 @@ function RedeemClerk({ currentUser }) {
 						})
 							.then((res) => res.json())
 							.then((data) => {
-								console.log("AUTH DATA IS " + data);
+								console.log("AuthRep pics Posted data is" + data);
 								setUrlAuthorziation(data.secure.url);
 							});
 					});
@@ -404,6 +404,7 @@ function RedeemClerk({ currentUser }) {
 						authorization: urlAuthorization,
 						validID: urlValidID,
 					};
+          console.log(newrep);
 					fetch("/api/redeem/newRepresentative", {
 						method: "POST",
 						body: JSON.stringify(newrep),
@@ -504,6 +505,7 @@ function RedeemClerk({ currentUser }) {
 						authData={authRep}
 						setAuth={submitAuthorizedRep}
 						check={authStatus}
+            setCheck={setAuthStatus}
 						getAmount={setAmountToPay}
 					/>
 				</div>

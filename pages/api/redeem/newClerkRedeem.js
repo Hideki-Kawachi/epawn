@@ -10,8 +10,9 @@ import generateRedeemID from "../../../utilities/generateRedeemID";
 
 
 export default async function newClerkRedeem(req,res){
-   await dbConnect();
+    dbConnect();
     //console.log("LOL")
+    
     let body = JSON.parse(req.body);
 
     let branchInfo = await EmployeeInfo.findOne({ userID: body.clerkID });
@@ -21,6 +22,49 @@ export default async function newClerkRedeem(req,res){
         isDisabled : false,
     }).lean();
     
+    let managerID;
+
+    // branchManagers.map(async (branchManager) => {
+    //     let temp = await EmployeeInfo.findOne({
+    //         userID: branchManager.userID,
+    //         branchID: branchInfo.branchID
+    //     });
+
+    //     if (temp){
+    //         managerID = branchManager.userID;
+    //        // console.log("Manager ID is " + managerID);
+    //     }
+    // })
+
+    for (const branchManager of branchManagers) {
+      let temp = await EmployeeInfo.findOne({
+        userID: branchManager.userID,
+        branchID: branchInfo.branchID,
+      });
+
+      if (temp) {
+        managerID = branchManager.userID;
+        break; // exit the loop once a manager is found
+      }
+    }
+    
+    let newTransaction = await Transaction.create({
+        customerID: body.customerID,
+        branchID: branchInfo.branchID,
+        clerkID: body.clerkID,
+        managerID: managerID,
+        itemListID: body.itemListID,
+        transactionType: "Redeem",
+        status: "Pending",
+        creationDate: new Date(),
+        rejectMessage: "",
+        amountPaid: 0,
+      
+    })
+
+    console.log("Manager ID is " + managerID);
+
+
     body.redeemArray.map(async (redeem) => { 
         let result = await Item.updateOne(
             {itemID: redeem.itemID},
@@ -33,31 +77,7 @@ export default async function newClerkRedeem(req,res){
             console.log("Updated the thing")
     })
 
-    let managerID;
 
-    branchManagers.map(async (branchManager) => {
-        let temp = await EmployeeInfo.findOne({
-            userID: branchManager.userID,
-            branchID: branchInfo.branchID
-        });
-
-        if (temp){
-            managerID = branchManager.userID;
-        }
-    })
-
-    let newTransaction = await Transaction.create({
-        customerID: body.customerID,
-        branchID: branchInfo.branchID,
-        clerkID: body.clerkID,
-        managerID: managerID,
-        itemListID: body.itemListID,
-        transactionType: "Redeem",
-        status: "Pending",
-        creationDate: new Date(),
-        rejectMessage: "",
-        amountPaid: 0,
-    })
     //console.log(JSON.stringify(newTransaction))
     
     let redeemID = await generateRedeemID();

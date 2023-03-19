@@ -5,7 +5,7 @@ import CustomerDetails from "../modals/customerDetails";
 import PawnHistory from "../modals/pawnHistory";
 import dayjs from "dayjs";
 
-function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, customer, branch, authData, setAuth, check, getAmount}) {
+function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, customer, branch, authData, setAuth, check, getAmount, setCheck}) {
   const [isOriginal, setOriginal] = useState("original");
   const [repModal, setRepModal] = useState(false); 
   const [customerModal, setCustomerModal] = useState(false);
@@ -17,7 +17,7 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
   const [PT, setPT] = useState()
   function repOpen(){
     setRepModal(true);
-    console.log("Auth Data is" + JSON.stringify(authData))
+   // console.log("Auth Data is" + JSON.stringify(authData))
   }
 
   function customerOpen() {
@@ -128,6 +128,15 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
     }
   },[totalAmount])
 
+  useEffect(() => {
+    if (isOriginal == "original") {
+      setCheck(true)
+    }
+    else if(isOriginal == "authorized" && authData[0].fName == ""){
+      setCheck(false)
+    }
+
+  }, [isOriginal, authData])
 
   return (
     <>
