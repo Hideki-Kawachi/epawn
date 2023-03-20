@@ -1,26 +1,159 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import Modal from "react-modal";
-import AuthorizedRep from "../modals/authorizedRep";
 import CustomerDetails from "../modals/customerDetails";
 import PawnHistory from "../modals/pawnHistory";
-function DetailsCardRenewClerk({customerName, contactNumber}) {
-  const [isOriginal, setOriginal] = useState("original");
-  const [repModal, setRepModal] = useState(false); 
+import dayjs from "dayjs";
+
+function DetailsCardRenewClerk({
+  pawnTicket,
+  search,
+  mode,
+  PTNumber,
+  user,
+  customer,
+  branch,
+  getAmount,
+  getNewLoan,
+  amountToPay,
+  button2,
+  setButton2
+}) {
   const [customerModal, setCustomerModal] = useState(false);
   const [historyModal, setHistoryModal] = useState(false);
-  function repOpen(){
+  const [totalAmount, setTotalAmount] = useState(0);
+  const [loanAmount, setLoan] = useState();
+  const [partial, setPartial] = useState(0);
+  const [PT, setPT] = useState();
+
+  function repOpen() {
     setRepModal(true);
+    // console.log("Auth Data is" + JSON.stringify(authData))
   }
 
-    function customerOpen() {
-      setCustomerModal(true);
-    }
+  function customerOpen() {
+    setCustomerModal(true);
+  }
 
-    
-    function historyOpen() {
-      setHistoryModal(true);
-    }
+  function historyOpen() {
+    setHistoryModal(true);
+  }
 
+  function searchPT(pawnticketID) {
+    search(pawnticketID);
+  }
+
+  function partialPayment(amount, interest){
+    if (amount == NaN || interest == NaN){
+      return 0;
+    }
+    else if (Number(amount) - Number(interest) < 0) return 0;
+    else if (Number(amount) - Number(interest) > loanAmount) return 0;
+    else {
+      //  setPartial(amount - interest);
+      return Number(amount) - Number(interest);
+    }
+  }
+  function amountLoan(amount) {
+    getNewLoan(amount);
+  }
+
+  function payAmount(number){
+    getAmount(number)
+  }
+  function getInterest(loan) {
+    //plan: multiply loan * 0.035 with month diff
+    if (pawnTicket.loanDate == null || pawnTicket.maturityDate == null)
+      return "N/A";
+    else {
+      const date1 = dayjs(pawnTicket.loanDate, "MM/DD/YYYY");
+      const date2 = dayjs(pawnTicket.maturityDate, "MM/DD/YYYY");
+      const diffInMonths = date2.diff(date1, "month");
+      //setInterest(loan * 0.035 * diffInMonths);
+      return loan * 0.035 * diffInMonths;
+    }
+  }
+
+  function getAdvInterest(newLoan) {
+    if (pawnTicket.loanDate == null || pawnTicket.maturityDate == null)
+      return "N/A";
+    else{
+    //  setAdvInterest(newLoan * 0.035)
+      return newLoan * 0.035;
+    };
+  }
+
+  function getTotalInterest(int, advint) {
+    //console.log("test " + (int + advint));
+    if (int == NaN || advint == NaN){
+     // setTotalInterest(0);
+      return 0;
+    }
+    else{
+     // setTotalInterest(int + advint);
+    } return int + advint;
+  }
+
+  function getNewLoanAmount(loan, partial) {
+    if((loan-partial) < 0)
+      return 0
+    else
+    return Number(loan) - Number(partial);
+  }
+
+  function convertFloat(number) {
+    if (mode) return "0.00";
+    else {
+      return Number(number).toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    }
+  }
+
+  function convertDate(date) {
+    if (date == null) return "N/A";
+    else {
+      const dt = new Date(date);
+      //console.log(dt);
+      return dayjs(dt).format("MM/DD/YYYY");
+    }
+  }
+
+
+  function getFullName(user, fname, mname, lname) {
+    if (fname == undefined && lname == undefined) return " ";
+    else return fname + " " + mname + " " + lname;
+  }
+
+  useEffect(() => {
+    if (pawnTicket != null) {
+      setPT(pawnTicket);
+      setLoan(Number(pawnTicket.loanAmount));
+      amountLoan(loanAmount);
+    }
+  }, [pawnTicket, loanAmount]);
+
+  useEffect(() => {
+    if (totalAmount != null) {
+      getAmount(totalAmount);
+    }
+  }, [totalAmount]);
+
+  useEffect(() => {
+    if(amountToPay <
+      getTotalInterest(
+        getInterest(loanAmount),
+        getAdvInterest(getNewLoanAmount(loanAmount, partial))
+      )-1){
+        setButton2(true)
+      }
+    else if(loanAmount - amountToPay <= 2500){
+      setButton2(true)
+    }
+      else
+      setButton2(false)
+      ;
+  }, [amountToPay])
 
   return (
     <>
@@ -28,9 +161,6 @@ function DetailsCardRenewClerk({customerName, contactNumber}) {
         id="detailscard"
         className="drop-shadow-lg flex text-base font-nunito pr-10"
       >
-        <Modal isOpen={repModal} ariaHideApp={false} className="modal">
-          <AuthorizedRep trigger={repModal} setTrigger={setRepModal} />
-        </Modal>
         <Modal isOpen={historyModal} ariaHideApp={false} className="modal">
           <PawnHistory trigger={historyModal} setTrigger={setHistoryModal} />
         </Modal>
@@ -38,14 +168,26 @@ function DetailsCardRenewClerk({customerName, contactNumber}) {
           <CustomerDetails
             trigger={customerModal}
             setTrigger={setCustomerModal}
+            customerInfo={customer}
+            userInfo={user}
           />
         </Modal>
         {/* Left Side of the Card (Details) */}
         <div className="m-10 ">
           <span className="font-bold pr-7">PT Number:</span>
-          <input className="border rounded-md stroke-gray-500 px-3" />
-          <p className="text-sm text-gray-300 pl-[163px]">Format: X-XXXX </p>
-
+          {mode == false ? (
+            <span>{PTNumber}</span>
+          ) : (
+            <span>
+              <input
+                className="border rounded-md stroke-gray-500 px-3"
+                onChange={(e) => searchPT(e.target.value)}
+              />
+              <p className="text-sm text-gray-300 pl-[163px]">
+                Format: X-XXXX{" "}
+              </p>
+            </span>
+          )}
           <hr className="h-px my-8 bg-gray-500 border-0" />
 
           {/* Customer Details */}
@@ -78,11 +220,18 @@ function DetailsCardRenewClerk({customerName, contactNumber}) {
               <p className="">Address:</p>
             </div>
             <div className="text-left ml-5">
-              <p className="">{customerName}</p>
-              <p className="">{contactNumber}</p>
+              <p className="">
+                {getFullName(
+                  user,
+                  user.firstName,
+                  user.middleName,
+                  user.lastName
+                )}
+              </p>
+              <p className="">{customer.contactNumber}</p>
               <p className="max-w-md">
                 {/* Used to make long address break line */}
-                One Archers Residences, Taft Ave, Malate, Metro Manila
+                {customer.presentAddress}
               </p>
             </div>
           </div>
@@ -119,10 +268,10 @@ function DetailsCardRenewClerk({customerName, contactNumber}) {
               <p className="">Branch:</p>
             </div>
             <div className="text-left ml-5">
-              <p className="">12/09/2022</p>
-              <p className="">01/09/2022</p>
-              <p className="">02/09/2022</p>
-              <p className="">Sta. Ana, Manila</p>
+              <p className="">{convertDate(pawnTicket.loanDate)}</p>
+              <p className="">{convertDate(pawnTicket.maturityDate)}</p>
+              <p className="">{convertDate(pawnTicket.expiryDate)}</p>
+              <p className="">{branch}</p>
             </div>
           </div>
         </div>
@@ -137,7 +286,7 @@ function DetailsCardRenewClerk({customerName, contactNumber}) {
                 <p>Adv. Interest:</p>
                 <p>Total Interest:</p>
                 <p>Penalties (1%):</p>
-                <p>Other Charges:</p>
+                <p>Partial Payment:</p>
                 <p className="mt-3">Amount Paid:</p>
                 <br />
                 <p>
@@ -146,30 +295,87 @@ function DetailsCardRenewClerk({customerName, contactNumber}) {
               </div>
               <div className="text-right ml-10 pr-10 min-w-fit">
                 <br />
-                <p> Php 3,203.50 </p>
-                <p> 3,203.50 </p>
+                {/* interest */}
+                <p> Php {convertFloat(getInterest(loanAmount))} </p>
+                <p>
+                  {/*Advance interest */}
+                  {convertFloat(
+                    getAdvInterest(getNewLoanAmount(loanAmount, partial))
+                  )}{" "}
+                </p>
               </div>
               <div className="text-right min-w-fit">
-                <p className="font-bold mr-3">Php 95,000.00</p>
+                {/* loanAmount */}
+                <p className="font-bold mr-3">Php {convertFloat(loanAmount)}</p>
                 <br />
                 <br />
-                <p className="mr-3">6,528.50</p>
+                <p className="mr-3">
+                  {convertFloat(
+                    getTotalInterest(
+                      getInterest(loanAmount),
+                      getAdvInterest(getNewLoanAmount(loanAmount, partial))
+                    )
+                  )}
+                </p>
                 <p className="mr-3">0.00</p>
-                <p>
-                  <input
-                    type="number"
-                    className="text-right border rounded-md stroke-gray-500 px-3 w-40 mb-1"
-                  />
+                <p className="mr-3">
+                  {convertFloat(
+                    partialPayment(
+                      amountToPay,
+                      getTotalInterest(
+                        getInterest(loanAmount),
+                        getAdvInterest(getNewLoanAmount(loanAmount, partial))
+                      )
+                    )
+                  )}
                 </p>
-                <p>
-                  {" "}
-                  <input
-                    type="number"
-                    className="text-right border rounded-md stroke-gray-500 px-3 w-40 mb-1"
-                  />
-                </p>
+                <input
+                  type="number"
+                  className="text-right border rounded-md stroke-gray-500 px-3 w-40 mb-1 mt-3"
+                  onChange={(e) => payAmount(e.target.value)}
+                  disabled={mode}
+                />
+                {amountToPay <
+                  getTotalInterest(
+                    getInterest(loanAmount),
+                    getAdvInterest(getNewLoanAmount(loanAmount, partial))
+                  )-1 && mode == false ? (
+                  <p className="text-[16px] text-red-500">
+                    {" "}
+                    Amount of payment must be higher
+                    <br />
+                    or equal to the total interest!{" "}
+                  </p>
+                ) : (
+                  <></>
+                )}
+                {loanAmount - amountToPay <= 2500 && mode == false ? (
+                  <p className="text-[16px] text-red-500">
+                    {" "}
+                    The amount of loan cannot go below Php 2,500.00. 
+                    <br/>
+                    Customer should REDEEM item.
+                  </p>
+                ) : (
+                  <></>
+                )}
+
                 <hr className="my-3" />
-                <p className="font-bold mr-3">Php 95,000.00</p>
+                <p className="font-bold mr-3">
+                  Php{" "}
+                  {convertFloat(
+                    getNewLoanAmount(
+                      loanAmount,
+                      partialPayment(
+                        amountToPay,
+                        getTotalInterest(
+                          getInterest(loanAmount),
+                          getAdvInterest(getNewLoanAmount(loanAmount, partial))
+                        )
+                      )
+                    )
+                  )}
+                </p>
               </div>
             </div>
           </div>

@@ -22,7 +22,7 @@ export default async function generateRedeemID() {
   let latestID;
 
   if (latestRedeem.length == 0) {
-    latestID = "RED-000";
+    latestID = "RED-000000";
   } else {
     latestID = latestRedeem[0].redeemID;
     let idSections = latestID.split("-");

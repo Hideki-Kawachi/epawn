@@ -505,7 +505,7 @@ function RedeemClerk({ currentUser }) {
 						authData={authRep}
 						setAuth={submitAuthorizedRep}
 						check={authStatus}
-            setCheck={setAuthStatus}
+            			setCheck={setAuthStatus}
 						getAmount={setAmountToPay}
 					/>
 				</div>

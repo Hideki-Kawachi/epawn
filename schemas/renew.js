@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 
 const RenewSchema = new mongoose.Schema({
-	renewID: { type: Number, require: true, unique: true },
-	transactionID: { type: Number, require: true, unique: true },
+	renewID: { type: String, require: true, unique: true },
+	transactionID: { type: String, require: true, unique: true },
 	newPawnTicketID: { type: String, require: true },
 	prevPawnTicketID: { type: String, require: true },
 	payment: { type: Number, require: true },
