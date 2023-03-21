@@ -35,7 +35,7 @@ export const getServerSideProps = withIronSessionSsr(
         transactionData = await Transaction.find({
           branchID: req.session.userData.branchID,
           managerID: req.session.userData.userID,
-          transactionType: "Renew",
+          transactionType: "Redeem",
           status: { $ne: "done" },
         })
           .sort({ updatedAt: -1 })
@@ -127,7 +127,7 @@ export default function Home({ currentUser, notifData }) {
     <>
       <div>
         <Head>
-          <title>E-Pawn: Renewals</title>
+          <title>E-Pawn: Redemptions</title>
           <meta
             name="description"
             content="R. Raymundo Pawnshop Information System"
@@ -140,10 +140,10 @@ export default function Home({ currentUser, notifData }) {
 
         <div id="main-content-area">
           <p className="text-xl font-semibold text-green-500 underline font-dosis">
-            Renew
+            Redeem
           </p>
           <p className="mb-5 text-lg text-green-500 font-dosis">
-            Ongoing Renewals
+            Ongoing Redemptions
           </p>
           {/* <button onClick={() => buttonClick()}>HELLO WORLD</button> */}
           <RenewTable

@@ -70,8 +70,7 @@ export default async function newClerkRedeem(req, res) {
     prevPawnTicketID: body.pawnTicketID,
     newPawnTicketID: "",
     payment: body.totalAmount,
-    redeemerID: body.customerID,
-    redeemDate: new Date(),
+    renewDate: new Date(),
   });
  
 
