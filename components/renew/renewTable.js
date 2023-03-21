@@ -18,7 +18,6 @@ function RenewTable({ role, data }) {
       },
       { Header: "PT Number", accessor: "ptNumber" },
       { Header: "Customer Name", accessor: "customerName" },
-      { Header: "Total Amount to be Paid", accessor: "amountPaid", disableGlobalFilter: true },
       { Header: "Date", accessor: "date", disableGlobalFilter: true },
       { Header: "Time", accessor: "time", disableGlobalFilter: true },
       { Header: "Type", accessor: "status", disableGlobalFilter: true },

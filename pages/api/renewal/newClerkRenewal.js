@@ -65,7 +65,6 @@ export default async function newClerkRedeem(req, res) {
 
   let newRenew = await Renew.create({
     renewID: renewID,
-
     transactionID: newTransaction._id,
     prevPawnTicketID: body.pawnTicketID,
     newPawnTicketID: "",

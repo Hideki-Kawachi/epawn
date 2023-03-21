@@ -265,8 +265,6 @@ function RenewClerk({ currentUser }) {
           PTnumber={PTNumber}
           itemList={itemList}
           setSendForm={setSendForm}
-          sendForm={sendForm}
-          submitForm={submitForm}
           amountToPay={amountToPay}
         />
       </Modal>

@@ -1,164 +1,154 @@
-import React, { useState, useEffect, useRef } from "react";
+import Head from "next/head";
+import Link from "next/link";
+import React, { useEffect, useState } from "react";
 import Header from "../../../components/header";
 import NavBar from "../../../components/navigation/navBar";
-import DetailsCard from "../../../components/redeem/detailsManager";
-import Modal from "react-modal";
-import Submit from "../../../components/modals/submitRedeem";
-import Cancel from "../../../components/modals/cancel";
-import PawnDetails from "../../../components/modals/pawnDetails";
-import ItemMockData from "./ITEMS_MOCK_DATA";
-import ItemCard from "../../../components/itemcard";
+import dbConnect from "../../../utilities/dbConnect";
+import mongoose from "mongoose";
+import NotifTable from "../../api/notifTable";
+import RenewTable from "../../../components/renew/renewTable";
 import { withIronSessionSsr } from "iron-session/next";
 import { ironOptions } from "../../../utilities/config";
+import Transaction from "../../../schemas/transaction";
+import Renew from "../../../schemas/renew";
+import User from "../../../schemas/user";
 
 export const getServerSideProps = withIronSessionSsr(
-	async function getServerSideProps({ req }) {
-		if (!req.session.userData) {
-			return {
-				redirect: { destination: "/signIn", permanent: true },
-				props: {},
-			};
-		} else if (req.session.userData.role == "manager") {
-			return {
-				props: { currentUser: req.session.userData },
-			};
-		} else if (req.session.userData.role == "customer") {
-			return {
-				redirect: { destination: "/customer", permanent: true },
-				props: {},
-			};
-		} else {
-			return {
-				redirect: { destination: "/" },
-			};
-		}
-	},
-	ironOptions
+  async function getServerSideProps({ req }) {
+    if (!req.session.userData) {
+      return {
+        redirect: { destination: "/signIn", permanent: true },
+        props: {},
+      };
+    } else if (req.session.userData.role == "customer") {
+      return {
+        redirect: { destination: "/customer", permanent: true },
+        props: {},
+      };
+    } else {
+      await dbConnect();
+
+      let transactionData;
+      let renewData;
+      let customerData = await User.find({ isDisabled: false }).lean();
+
+      transactionData = await Transaction.find({
+        branchID: req.session.userData.branchID,
+        managerID: req.session.userData.userID,
+        transactionType: "Redeem",
+        status: { $ne: "done" },
+      })
+        .sort({ updatedAt: -1 })
+        .lean();
+
+      renewData = await Renew.find({}).lean();
+
+      // console.log("trans data: ", transactionData);
+      //console.log("renew data: ", renewData);
+
+      let notifData = [];
+      transactionData.forEach((transaction) => {
+        let customerInfo = customerData.find(
+          (customer) => customer.userID == transaction.customerID
+        );
+        //looks for PT number of that transaction
+        renewData.forEach((renew) => {
+          if (renew.transactionID == transaction._id) {
+            transaction.ptNumber = renew.prevPawnTicketID;
+          }
+        });
+
+        if (customerInfo) {
+          notifData.push({
+            _id: transaction._id,
+            customerName: customerInfo.firstName + " " + customerInfo.lastName,
+            date: transaction.updatedAt
+              .toDateString()
+              .substring(4, transaction.creationDate.length),
+            time: transaction.updatedAt.toLocaleTimeString("en-GB"),
+            transactionType: transaction.transactionType,
+            ptNumber: transaction.ptNumber,
+            amountPaid: "Php " + convertFloat(transaction.amountPaid),
+            status: transaction.status,
+          });
+        }
+      });
+      return {
+        props: {
+          currentUser: req.session.userData,
+          notifData: JSON.parse(JSON.stringify(notifData)),
+        },
+      };
+    }
+  },
+  ironOptions
 );
 
-function RedeemManager({ currentUser }) {
-	// Modals
-	const [submitModal, setSubmitOpen] = useState(false); //Submit
-	const [cancelModal, setCancelOpen] = useState(false); //Cancel
-	const [PTNumber, setPTNumber] = useState("A-123456");
-	const [checkedBoxes, setCheck] = useState();
-	const redeem = [];
-	let data = JSON.stringify(ItemMockData);
-	let mockData = JSON.parse(data);
-	let itemList = [];
-	itemList = JSON.parse(data);
+function convertFloat(number) {
+  return Number(number).toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
 
-	// useEffect(() => {
-	// 	countCheck();
-	//   });
+export default function Home({ currentUser, notifData }) {
+  const [showData, setShowData] = useState(notifData);
 
-	function submitForm() {
-		setSubmitOpen(true);
-	}
-	function countCheck() {
-		setCheck(document.querySelectorAll('input[type="checkbox"]:checked'));
-	}
-	function cancelForm() {
-		setCancelOpen(true);
-	}
+  useEffect(() => {
+    waitNotif();
+  }, [showData]);
 
-	function cancelContentShow() {
-		return (
-			<>
-				Are you sure you want to cancel <b> Redemption</b> of <br />
-				<b>{PTNumber}</b>? <br /> <br />
-				All unsubmitted data will be lost.
-			</>
-		);
-	}
+  async function waitNotif() {
+    let res = await fetch("/api/notifTable", {
+      method: "GET",
+      headers: {
+        userID: currentUser.userID,
+        branchID: currentUser.branchID,
+        role: currentUser.role,
+      },
+    });
 
-	return (
+    if (res.status == 502) {
+      await waitNotif();
+    } else if (res.status != 200) {
+      // console.log("2-RESPONSE:", res.statusText);
+      await waitNotif();
+      // await new Promise((resolve) => setTimeout(resolve, 1000));
+    } else {
+      let notifShow = await res.json();
+      // console.log("NOTIF DATA BACK IS:", notifShow);
+      setShowData(notifShow);
+
+      await waitNotif();
+    }
+  }
+
+  return (
     <>
-      <NavBar currentUser={currentUser}></NavBar>
-      <Header currentUser={currentUser}></Header>
-      {/* First Half */}
+      <div>
+        <Head>
+          <title>E-Pawn: Redemptions</title>
+          <meta
+            name="description"
+            content="R. Raymundo Pawnshop Information System"
+          />
+          <link rel="icon" href="/favicon.ico" />
+        </Head>
 
-      <Modal isOpen={submitModal} ariaHideApp={false} className="modal">
-        <Submit trigger={submitModal} setTrigger={setSubmitOpen} />
-      </Modal>
+        <NavBar currentUser={currentUser}></NavBar>
+        <Header currentUser={currentUser}></Header>
 
-      <Modal isOpen={cancelModal} ariaHideApp={false} className="modal">
-        <Cancel
-          trigger={cancelModal}
-          setTrigger={setCancelOpen}
-          content={cancelContentShow()}
-        />
-      </Modal>
-
-      <div id="main-content-area" className="flex-col">
-        <p className="mb-5 text-xl font-semibold text-green-500 underline font-dosis">
-          Redeem
-        </p>
-        <div className="flex">
-          <DetailsCard></DetailsCard>
-        </div>
-
-        {/* Second Half */}
-
-        <div className="flex">
-          {/* Remaining Items  */}
-
-          <div className="mt-20">
-            <p className="ml-10 text-base font-bold font-nunito">
-              Remaining Items:{" "}
-            </p>
-            {/* plan: CheckItem is ItemCard w/ Check*/}
-            <div className="bg-white p-5 mx-10 w-[720px] h-[450px] overflow-y-scroll border-2">
-              {itemList.map((items, index) => (
-                <ItemCard
-                  key={index}
-                  itemName={items.Name}
-                  itemType={items.Type}
-                  itemPrice={items.Price}
-                ></ItemCard>
-              ))}
-            </div>
-          </div>
-
-          {/*Items for Redemption */}
-          <div className="mt-20 ">
-            <p className="ml-10 text-base font-bold font-nunito">
-              Items for Redemption:{" "}
-            </p>
-            <div className="bg-white p-5 mx-10 w-[720px] h-[450px] overflow-y-scroll border-2">
-              {itemList.map((items, index) => (
-                <ItemCard
-                  key={items.ItemID}
-                  itemID={items.ItemID}
-                  itemName={items.Name}
-                  itemType={items.Type}
-                  itemPrice={items.Price}
-                ></ItemCard>
-              ))}
-            </div>
-          </div>
-        </div>
-        <div className="mt-5 flex flex-row ml-[1180px]">
-          <div>
-            <button
-              className="px-10 mx-2 my-5 text-base text-white bg-red-300"
-              onClick={cancelForm}
-            >
-              Cancel
-            </button>
-          </div>
-          <div>
-            <button
-              className="px-10 mx-2 my-5 text-base text-white bg-green-300"
-              onClick={submitForm}
-            >
-              Submit
-            </button>
-          </div>
+        <div id="main-content-area">
+          <p className="text-xl font-semibold text-green-500 underline font-dosis">
+            Redeem
+          </p>
+          <p className="mb-5 text-lg text-green-500 font-dosis">
+            Ongoing Redemptions
+          </p>
+          {/* <button onClick={() => buttonClick()}>HELLO WORLD</button> */}
+          <RenewTable role={"manager"} data={notifData}></RenewTable>
         </div>
       </div>
     </>
   );
 }
-
-export default RedeemManager;
