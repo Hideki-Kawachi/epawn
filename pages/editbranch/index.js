@@ -7,6 +7,7 @@ import NavBar from "../../components/navigation/navBar";
 import Header from "../../components/header";
 
 import EmployeeInfo from "../../schemas/employeeInfo";
+import Branch from "../../schemas/branch";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {
@@ -19,13 +20,28 @@ export const getServerSideProps = withIronSessionSsr(
 			req.session.userData.role == "manager"
 		) {
 			await dbConnect();
-            let branchID = await EmployeeInfo.findOne({userID: req.session.userData.userID}, {branchID: 1})
-            console.log(branchID)
+            let empBranch = await EmployeeInfo.findOne({userID: req.session.userData.userID}, {branchID: 1})
+            
+            // console.log("benlo " + empBranch.branchID)
 
+            let foundBranch = await Branch.findOne({branchID: empBranch.branchID}, ) 
+
+            // console.log("iz data UwU " + branchData)
+            
+
+            let branchData = JSON.stringify(foundBranch)
+            
+            // branchData.push({
+            //     branchID: foundBranch.branchID,
+            //     branchName: foundBranch.branchName,
+            //     branchAddress: foundBranch.branchAddress,
+            //     currentPawnTicketID: foundBranch.currentPawnTicketID,
+            //     endingPawnTicketID: foundBranch.endingPawnTicketID
+            // })
 
 
 			return {
-				props: { currentUser: req.session.userData }
+				props: { currentUser: req.session.userData, branchData}
 			};
 		} else if (req.session.userData.role == "customer") {
 			return {
@@ -42,18 +58,24 @@ export const getServerSideProps = withIronSessionSsr(
 	ironOptions
 );
 
-function Branch({ currentUser }) {
+useEffect(){
+    
+}
+
+function EditBranch({ currentUser, branchData }) {
 
     return (
         <>
             <NavBar currentUser={currentUser}></NavBar>
 			<Header currentUser={currentUser}></Header>
 
+            {console.log("enlo" + branchData.branchName)}
+
             <div id="not-main-content-area" className="bg-black items-start">
                 <div className="flex-col items-start justify-center font-nunito my-5">
                     <span className="text-base">Branch ID:  </span> <span className="text-[#FF0000]">*</span>  
                     <div className="border-2">
-                    <span className="text-sm"> {"1"} </span>
+                    <span className="text-sm"> 1 </span>
                     </div>
                 </div>
                 <div className="flex-col items-start justify-centerfont-nunito my-5">
@@ -101,4 +123,4 @@ function Branch({ currentUser }) {
  }
 
 
-export default Branch;
+export default EditBranch;
