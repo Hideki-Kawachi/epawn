@@ -25,11 +25,6 @@ function DetailsCardRenewClerk({
   const [partial, setPartial] = useState(0);
   const [PT, setPT] = useState();
 
-  function repOpen() {
-    setRepModal(true);
-    // console.log("Auth Data is" + JSON.stringify(authData))
-  }
-
   function customerOpen() {
     setCustomerModal(true);
   }

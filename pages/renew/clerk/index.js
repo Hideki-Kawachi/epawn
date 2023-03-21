@@ -177,9 +177,7 @@ function RenewClerk({ currentUser }) {
             // console.log(JSON.stringify(info))
             let list = JSON.stringify(info);
             setitemList(JSON.parse(list)); //temporary
-          } else {
-            // setitemList(JSON.parse(data));
-          }
+          } 
         });
     }
   }, [itemListID]);
@@ -253,9 +251,6 @@ function RenewClerk({ currentUser }) {
     }
   }, [sendForm, customerID]);
 
-  function submitForm(){
-
-  }
   return (
     <>
       <NavBar currentUser={currentUser}></NavBar>
