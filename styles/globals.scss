@@ -29,6 +29,15 @@ html{
     background-color: theme('colors.gray.150');
 }
 
+#not-main-content-area{
+    display: flex;
+    margin-left: 7.5rem;
+    min-height: 100vh;
+    padding: 100px;
+    flex-direction: column;
+    background-color: theme('colors.gray.150');
+}
+
 #modal-content-area{
     display: flex;
     margin-left: 7.5rem;

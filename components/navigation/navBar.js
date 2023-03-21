@@ -311,6 +311,24 @@ function NavBar({ currentUser }) {
 							</a>
 						</Link>
 					)}
+
+					<Link href={"/branch"}>
+						<a id="nav-branch" className="nav-button">
+							<svg width="56" height="64" viewBox="0 0 56 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<g clip-path="url(#clip0_314_4242)">
+								<path d="M0 64V16.8421H18.6667V10.1053L28 0L37.3333 10.1053V30.3158H56V64H0ZM6.22222 57.2632H12.4444V50.5263H6.22222V57.2632ZM6.22222 43.7895H12.4444V37.0526H6.22222V43.7895ZM6.22222 30.3158H12.4444V23.5789H6.22222V30.3158ZM24.8889 57.2632H31.1111V50.5263H24.8889V57.2632ZM24.8889 43.7895H31.1111V37.0526H24.8889V43.7895ZM24.8889 30.3158H31.1111V23.5789H24.8889V30.3158ZM24.8889 16.8421H31.1111V10.1053H24.8889V16.8421ZM43.5556 57.2632H49.7778V50.5263H43.5556V57.2632ZM43.5556 43.7895H49.7778V37.0526H43.5556V43.7895Z" fill="#14C6A5"/>
+								</g>
+								<defs>
+								<clipPath id="clip0_314_4242">
+								<rect width="56" height="64" fill="none"/>
+								</clipPath>
+								</defs>
+							</svg>
+
+
+							<h1>Branch</h1>
+						</a>
+					</Link>
 				</nav>
 			)}
 		</>
