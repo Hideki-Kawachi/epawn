@@ -6,77 +6,76 @@ import Renew from "../../../schemas/renew";
 import generateRenewalID from "../../../utilities/generateRenewalID";
 
 export default async function newClerkRedeem(req, res) {
-  dbConnect();
-  //console.log("LOL")
+	dbConnect();
+	//console.log("LOL")
 
-  let body = JSON.parse(req.body);
+	let body = JSON.parse(req.body);
 
-  let branchInfo = await EmployeeInfo.findOne({ userID: body.clerkID });
+	let branchInfo = await EmployeeInfo.findOne({ userID: body.clerkID });
 
-  let branchManagers = await User.find({
-    role: "manager",
-    isDisabled: false,
-  }).lean();
+	let branchManagers = await User.find({
+		role: "manager",
+		isDisabled: false,
+	}).lean();
 
-  let managerID;
+	let managerID;
 
-  // branchManagers.map(async (branchManager) => {
-  //     let temp = await EmployeeInfo.findOne({
-  //         userID: branchManager.userID,
-  //         branchID: branchInfo.branchID
-  //     });
+	// branchManagers.map(async (branchManager) => {
+	//     let temp = await EmployeeInfo.findOne({
+	//         userID: branchManager.userID,
+	//         branchID: branchInfo.branchID
+	//     });
 
-  //     if (temp){
-  //         managerID = branchManager.userID;
-  //        // console.log("Manager ID is " + managerID);
-  //     }
-  // })
+	//     if (temp){
+	//         managerID = branchManager.userID;
+	//        // console.log("Manager ID is " + managerID);
+	//     }
+	// })
 
-  for (const branchManager of branchManagers) {
-    let temp = await EmployeeInfo.findOne({
-      userID: branchManager.userID,
-      branchID: branchInfo.branchID,
-    });
+	for (const branchManager of branchManagers) {
+		let temp = await EmployeeInfo.findOne({
+			userID: branchManager.userID,
+			branchID: branchInfo.branchID,
+		});
 
-    if (temp) {
-      managerID = branchManager.userID;
-      break; // exit the loop once a manager is found
-    }
-  }
+		if (temp) {
+			managerID = branchManager.userID;
+			break; // exit the loop once a manager is found
+		}
+	}
 
-  let newTransaction = await Transaction.create({
-    customerID: body.customerID,
-    branchID: branchInfo.branchID,
-    clerkID: body.clerkID,
-    managerID: managerID,
-    itemListID: body.itemListID,
-    transactionType: "Renew",
-    status: "Pending",
-    creationDate: new Date(),
-    rejectMessage: "",
-    amountPaid: body.totalAmount,
-  });
+	let newTransaction = await Transaction.create({
+		customerID: body.customerID,
+		branchID: branchInfo.branchID,
+		clerkID: body.clerkID,
+		managerID: managerID,
+		itemListID: body.itemListID,
+		transactionType: "Renew",
+		status: "Pending",
+		creationDate: new Date(),
+		rejectMessage: "",
+		amountPaid: body.totalAmount,
+	});
 
-  console.log("Manager ID is " + managerID);
+	console.log("Manager ID is " + managerID);
 
-  //console.log(JSON.stringify(newTransaction))
+	//console.log(JSON.stringify(newTransaction))
 
-  let renewID = await generateRenewalID();
+	let renewID = await generateRenewalID();
 
-  let newRenew = await Renew.create({
-    renewID: renewID,
+	let newRenew = await Renew.create({
+		renewID: renewID,
 
-    transactionID: "ObjectId('" + newTransaction._id + "')",
-    pawnTicketID: body.pawnTicketID,
-    payment: body.totalAmount,
-    redeemerID: body.customerID,
-    redeemDate: new Date(),
-  });
+		transactionID: newTransaction._id,
+		pawnTicketID: body.pawnTicketID,
+		payment: body.totalAmount,
+		redeemerID: body.customerID,
+		redeemDate: new Date(),
+	});
 
-
-  if (newTransaction && newRenew) {
-    res.json("renew posted successfully");
-  } else {
-    res.json("error");
-  }
+	if (newTransaction && newRenew) {
+		res.json("renew posted successfully");
+	} else {
+		res.json("error");
+	}
 }

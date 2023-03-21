@@ -7,6 +7,7 @@ function MyApp({ Component, pageProps }) {
 	const [isLoading, setIsLoading] = useState(false);
 
 	useEffect(() => {
+		localStorage.clear();
 		const start = () => {
 			setIsLoading(true);
 		};
