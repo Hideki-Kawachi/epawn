@@ -1,39 +1,147 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import Modal from "react-modal";
-import AuthorizedRep from "../modals/authorizedRep";
 import CustomerDetails from "../modals/customerDetails";
 import ViewComputation from "../modals/viewComputations";
 import PawnHistory from "../modals/pawnHistory";
-function DetailsCardRenewManager() {
-  const [isOriginal, setOriginal] = useState("original");
-  const [repModal, setRepModal] = useState(false); 
+import dayjs from "dayjs";
+
+function DetailsCardRenewManager({
+  pawnTicket,
+  search,
+  mode,
+  PTNumber,
+  customer,
+  user,
+  branch,
+  newLoan,
+  getNewLoan,
+  amountToPay,
+  button2,
+  setButton2,
+}) {
   const [customerModal, setCustomerModal] = useState(false);
   const [computationModal, setCompOpen] = useState(false);
+  const [cashTendered, setCashTendered] = useState(0);
   const [historyModal, setHistoryModal] = useState(false);
+  const [partial, setPartial] = useState(0);
+
+    function partialPayment(amount, interest) {
+      if (amount == NaN || interest == NaN) {
+        return 0;
+      } else if (Number(amount) - Number(interest) < 0) return 0;
+      else if (Number(amount) - Number(interest) > pawnTicket.loanAmount) return 0;
+      else {
+        //  setPartial(amount - interest);
+        return Number(amount) - Number(interest);
+      }
+    }
+      function getTotalInterest(int, advint) {
+        //console.log("test " + (int + advint));
+        if (int == NaN || advint == NaN) {
+          // setTotalInterest(0);
+          return 0;
+        } else {
+          // setTotalInterest(int + advint);
+        }
+        return int + advint;
+      }
+
+    function getInterest(loan) {
+      //plan: multiply loan * 0.035 with month diff
+      if (pawnTicket.loanDate == null || pawnTicket.maturityDate == null)
+        return "N/A";
+      else {
+        const date1 = dayjs(pawnTicket.loanDate, "MM/DD/YYYY");
+        const date2 = dayjs(pawnTicket.maturityDate, "MM/DD/YYYY");
+        const diffInMonths = date2.diff(date1, "month");
+        //setInterest(loan * 0.035 * diffInMonths);
+        return loan * 0.035 * diffInMonths;
+      }
+    }
+
+    function getAdvInterest(newLoan) {
+      if (pawnTicket.loanDate == null || pawnTicket.maturityDate == null)
+        return "N/A";
+      else {
+        //  setAdvInterest(newLoan * 0.035)
+        return newLoan * 0.035;
+      }
+    }
+    
+  function getCash(cash){
+    setCashTendered(cash)
+  }
   function compOpen() {
     setCompOpen(true);
   }
-  function repOpen(){
-    setRepModal(true);
+
+  function customerOpen() {
+    setCustomerModal(true);
   }
 
-    function customerOpen() {
-      setCustomerModal(true);
+  function setNewLoan(number){
+    getNewLoan(number)
+  }
+
+  function historyOpen() {
+    setHistoryModal(true);
+  }
+
+    function getNewLoanAmount(loan, partial) {
+      if (loan - partial < 0) return 0;
+      else return Number(loan) - Number(partial);
     }
 
-    function historyOpen() {
-      setHistoryModal(true);
+
+    function getFullName(fname, mname, lname) {
+      if (fname == undefined && lname == undefined) return " ";
+      else return fname + " " + mname + " " + lname;
     }
 
+     function convertFloat(number) {
+         return Number(number).toLocaleString("en-US", {
+           minimumFractionDigits: 2,
+           maximumFractionDigits: 2,
+         });
+     }
+  function convertDate(date) {
+    if (date == null) return "N/A";
+    else {
+      const dt = new Date(date);
+      //console.log(dt);
+      return dayjs(dt).format("MM/DD/YYYY");
+    }
+  }
+
+  function getChange(amount, cash){
+    if (amount == NaN || cash == NaN )
+    return 0
+    else if ((cash-amount) < 0)
+    return 0
+    else
+    return cash-amount;
+  }
+
+   useEffect(() => {
+    setNewLoan(
+      getNewLoanAmount(
+        pawnTicket.loanAmount,
+        partialPayment(
+          amountToPay,
+          getTotalInterest(
+            getInterest(pawnTicket.loanAmount),
+            getAdvInterest(getNewLoanAmount(pawnTicket.loanAmount, partial))
+          )
+        )
+      )
+    );
+   });
   return (
     <>
       <div
         id="detailscard"
         className="drop-shadow-lg flex text-base font-nunito pr-10"
       >
-        <Modal isOpen={repModal} ariaHideApp={false} className="modal">
-          <AuthorizedRep trigger={repModal} setTrigger={setRepModal} />
-        </Modal>
         <Modal isOpen={historyModal} ariaHideApp={false} className="modal">
           <PawnHistory trigger={historyModal} setTrigger={setHistoryModal} />
         </Modal>
@@ -42,18 +150,23 @@ function DetailsCardRenewManager() {
           <ViewComputation
             trigger={computationModal}
             setTrigger={setCompOpen}
+            pawnTicket={pawnTicket}
+            amountToPay={amountToPay}
           />
         </Modal>
         <Modal isOpen={customerModal} ariaHideApp={false} className="modal">
           <CustomerDetails
             trigger={customerModal}
             setTrigger={setCustomerModal}
+            customerInfo={customer}
+            userInfo={user}
           />
         </Modal>
         {/* Left Side of the Card (Details) */}
         <div className="m-10 ">
           <span className="font-bold pr-7">PT Number:</span>
-          <input className="border rounded-md stroke-gray-500 px-3" />
+          <span>{String(PTNumber) + ""}</span>
+          {console.log("Pt number is " + PTNumber)}
           <p className="text-sm text-gray-300 pl-[163px]">Format: X-XXXX </p>
 
           <hr className="h-px my-8 bg-gray-500 border-0" />
@@ -88,11 +201,11 @@ function DetailsCardRenewManager() {
               <p className="">Address:</p>
             </div>
             <div className="text-left ml-5">
-              <p className="">Joseph L. Dela Cruz</p>
-              <p className="">09175301700</p>
+              {getFullName(user.firstName, user.middleName, user.lastName)}
+              <p className="">{customer.contactNumber}</p>
               <p className="max-w-md">
                 {/* Used to make long address break line */}
-                One Archers Residences, Taft Ave, Malate, Metro Manila
+                {customer.presentAddress}
               </p>
             </div>
           </div>
@@ -129,10 +242,10 @@ function DetailsCardRenewManager() {
               <p className="">Branch:</p>
             </div>
             <div className="text-left ml-5">
-              <p className="">12/09/2022</p>
-              <p className="">01/09/2022</p>
-              <p className="">02/09/2022</p>
-              <p className="">Sta. Ana, Manila</p>
+              <p className="">{convertDate(pawnTicket.loanDate)}</p>
+              <p className="">{convertDate(pawnTicket.maturityDate)}</p>
+              <p className="">{convertDate(pawnTicket.expiryDate)}</p>
+              <p className="">{branch}</p>
             </div>
           </div>
         </div>
@@ -172,18 +285,39 @@ function DetailsCardRenewManager() {
               </div>
 
               <div className="ml-10 text-right min-w-fit">
-                <p className="font-bold mr-3">Php 95,000.00</p>
-                <p className="mr-3"> 10,000.00 </p>
+                <p className="font-bold mr-3">
+                  Php {convertFloat(pawnTicket.loanAmount)}
+                </p>
+                <p className="mr-3"> {convertFloat(amountToPay)} </p>
                 <p>
                   <input
                     type="number"
                     className="text-right border rounded-md stroke-gray-500 px-3 w-40 mb-1"
+                    onChange={(e) => getCash(e.target.value)}
                   />
                 </p>
-                <p className="mr-3">0.00</p>
+                <p className="mr-3">
+                  {convertFloat(getChange(amountToPay, cashTendered))}
+                </p>
 
                 <hr className="my-3" />
-                <p className="font-bold mr-3">Php 91,528.00</p>
+                <p className="font-bold mr-3">
+                  Php{" "}
+                  {convertFloat(
+                    getNewLoanAmount(
+                      pawnTicket.loanAmount,
+                      partialPayment(
+                        amountToPay,
+                        getTotalInterest(
+                          getInterest(pawnTicket.loanAmount),
+                          getAdvInterest(
+                            getNewLoanAmount(pawnTicket.loanAmount, partial)
+                          )
+                        )
+                      )
+                    )
+                  )}
+                </p>
               </div>
             </div>
           </div>

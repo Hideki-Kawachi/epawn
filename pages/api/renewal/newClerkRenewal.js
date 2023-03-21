@@ -65,12 +65,11 @@ export default async function newClerkRedeem(req, res) {
 
 	let newRenew = await Renew.create({
 		renewID: renewID,
-
 		transactionID: newTransaction._id,
-		pawnTicketID: body.pawnTicketID,
+		prevPawnTicketID: body.pawnTicketID,
+		newPawnTicketID: "",
 		payment: body.totalAmount,
-		redeemerID: body.customerID,
-		redeemDate: new Date(),
+		renewDate: new Date(),
 	});
 
 	if (newTransaction && newRenew) {

@@ -1,15 +1,17 @@
-import React, { useState, useEffect, useRef } from "react";
+import Head from "next/head";
+import Link from "next/link";
+import React, { useEffect, useState } from "react";
 import Header from "../../../components/header";
 import NavBar from "../../../components/navigation/navBar";
-import DetailsCardRenewManager from "../../../components/renew/detailsManager";
-import Modal from "react-modal";
-import Submit from "../../../components/modals/submitRedeem";
-import Cancel from "../../../components/modals/cancel";
-import PawnDetails from "../../../components/modals/pawnDetails";
-import ItemMockData from "./ITEMS_MOCK_DATA";
-import ItemCard from "../../../components/itemcard";
+import dbConnect from "../../../utilities/dbConnect";
+import mongoose from "mongoose";
+import NotifTable from "../../api/notifTable";
+import RenewTable from "../../../components/renew/renewTable";
 import { withIronSessionSsr } from "iron-session/next";
 import { ironOptions } from "../../../utilities/config";
+import Transaction from "../../../schemas/transaction";
+import Renew from "../../../schemas/renew";
+import User from "../../../schemas/user";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {
@@ -18,57 +20,83 @@ export const getServerSideProps = withIronSessionSsr(
 				redirect: { destination: "/signIn", permanent: true },
 				props: {},
 			};
-		} else if (req.session.userData.role == "manager") {
-			return {
-				props: { currentUser: req.session.userData },
-			};
 		} else if (req.session.userData.role == "customer") {
 			return {
 				redirect: { destination: "/customer", permanent: true },
 				props: {},
 			};
 		} else {
+			await dbConnect();
+
+			let transactionData;
+			let renewData;
+			let customerData = await User.find({ isDisabled: false }).lean();
+
+			transactionData = await Transaction.find({
+				branchID: req.session.userData.branchID,
+				managerID: req.session.userData.userID,
+				transactionType: { $regex: "Renew" },
+				status: { $ne: "done" },
+			})
+				.sort({ updatedAt: -1 })
+				.lean();
+
+			renewData = await Renew.find({}).lean();
+
+			// console.log("trans data: ", transactionData);
+			//console.log("renew data: ", renewData);
+
+			let notifData = [];
+			transactionData.forEach((transaction) => {
+				let customerInfo = customerData.find(
+					(customer) => customer.userID == transaction.customerID
+				);
+				//looks for PT number of that transaction
+				renewData.forEach((renew) => {
+					if (renew.transactionID == transaction._id) {
+						transaction.ptNumber = renew.prevPawnTicketID;
+					}
+				});
+
+				if (customerInfo) {
+					notifData.push({
+						_id: transaction._id,
+						customerName: customerInfo.firstName + " " + customerInfo.lastName,
+						date: transaction.updatedAt
+							.toDateString()
+							.substring(4, transaction.creationDate.length),
+						time: transaction.updatedAt.toLocaleTimeString("en-GB"),
+						transactionType: transaction.transactionType,
+						ptNumber: transaction.ptNumber,
+						amountPaid: "Php " + convertFloat(transaction.amountPaid),
+						status: transaction.status,
+					});
+				}
+			});
 			return {
-				redirect: { destination: "/" },
+				props: {
+					currentUser: req.session.userData,
+					notifData: JSON.parse(JSON.stringify(notifData)),
+				},
 			};
 		}
 	},
 	ironOptions
 );
 
-function RenewManager({ currentUser }) {
-	// Modals
-	const [submitModal, setSubmitOpen] = useState(false); //Submit
-	const [cancelModal, setCancelOpen] = useState(false); //Cancel
-	const [customerModal, setCustomerOpen] = useState(false); //View Customer Details
-	const [historyModal, setHistoryOpen] = useState(false); //Pawn History
-	const [PTNumber, setPTNumber] = useState("A-123456");
-	const [checkedBoxes, setCheck] = useState();
-	const redeem = [];
-	let data = JSON.stringify(ItemMockData);
-	let mockData = JSON.parse(data);
-	let itemList = [];
-	itemList = JSON.parse(data);
+function convertFloat(number) {
+	return Number(number).toLocaleString("en-US", {
+		minimumFractionDigits: 2,
+		maximumFractionDigits: 2,
+	});
+}
 
-	function submitForm() {
-		setSubmitOpen(true);
-	}
-	function countCheck() {
-		setCheck(document.querySelectorAll('input[type="checkbox"]:checked'));
-	}
-	function cancelForm() {
-		setCancelOpen(true);
-	}
+export default function Home({ currentUser, notifData }) {
+	const [showData, setShowData] = useState(notifData);
 
-	function cancelContentShow() {
-		return (
-			<>
-				Are you sure you want to cancel <b> Redemption</b> of <br />
-				<b>{PTNumber}</b>? <br /> <br />
-				All unsubmitted data will be lost.
-			</>
-		);
-	}
+	useEffect(() => {
+		waitNotif();
+	}, [showData]);
 
 	return (
 		<>
@@ -177,5 +205,3 @@ function RenewManager({ currentUser }) {
 		</>
 	);
 }
-
-export default RenewManager;
