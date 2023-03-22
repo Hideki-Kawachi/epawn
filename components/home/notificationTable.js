@@ -100,15 +100,7 @@ function NotificationTable({ role, data }) {
 				fetch("api/pawn/updateTransactionStatus", {
 					method: "POST",
 					body: JSON.stringify({ transactionID: rowData._id, status: "Done" }),
-				})
-					.then((res) => res.json())
-					.then((data) => {
-						if (data == "success") {
-							router.reload();
-						} else {
-							console.log("ERROR", data);
-						}
-					});
+				});
 			}
 			// console.log("CLERK", rowData);
 		}

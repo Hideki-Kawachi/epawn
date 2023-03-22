@@ -88,7 +88,11 @@ function RenewPawnTicketID({
 			0.035 *
 			monthDiff(new Date(pawnTicketData.maturityDate), new Date())
 	);
-	const [penalties, setPenalties] = useState(0);
+	const [penalties, setPenalties] = useState(
+		pawnTicketData.loanAmount *
+			0.01 *
+			monthDiff(new Date(pawnTicketData.expiryDate), new Date())
+	);
 	const [minPayment, setMinPayment] = useState(
 		interest * 2 + penalties + advInterest
 	);
