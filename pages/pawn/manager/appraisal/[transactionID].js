@@ -125,7 +125,7 @@ function AppraisalTransactionID({
 	useEffect(() => {
 		let sum = 0;
 		itemList.map((item) => {
-			sum += item.price;
+			sum += Number(item.price);
 		});
 		setAppraisalPrice(sum);
 	}, [itemList]);

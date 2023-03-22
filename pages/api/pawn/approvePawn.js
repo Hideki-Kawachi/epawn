@@ -18,12 +18,6 @@ export default async function ApprovePawn(req, res) {
 	let transactionData = body.transactionData;
 	let branchID = body.branchID;
 
-	// update transaction status to approved
-	await Transaction.findByIdAndUpdate(
-		new mongoose.Types.ObjectId(transactionData._id),
-		{ status: "Approved" }
-	);
-
 	// get current and ending pawnticket number for branch
 	let pawnTicketInfo = await Branch.findOne(
 		{ branchID: branchID },
@@ -38,7 +32,7 @@ export default async function ApprovePawn(req, res) {
 	});
 
 	let pawnTicketPrint = [];
-
+	let totalNetProceeds = 0;
 	let newPawnTicketID = pawnTicketInfo.currentPawnTicketID;
 	for (let pawnTicket of pawnTicketList) {
 		// generate and update pawnticket ID
@@ -85,6 +79,7 @@ export default async function ApprovePawn(req, res) {
 				}
 				itemDescription = itemDescription.concat(tempString);
 			});
+			totalNetProceeds += ptInfo.loanAmount - ptInfo.loanAmount * 0.035;
 
 			pawnTicketPrint.push({
 				pawnTicketID: newPawnTicketID,
@@ -102,6 +97,12 @@ export default async function ApprovePawn(req, res) {
 			});
 		}
 	}
+
+	// update transaction status to approved
+	await Transaction.findByIdAndUpdate(
+		new mongoose.Types.ObjectId(transactionData._id),
+		{ status: "Approved", amountPaid: -totalNetProceeds }
+	);
 
 	if (pawnTicketExists.length == 0) {
 		await Branch.findOneAndUpdate(

@@ -156,11 +156,7 @@ function InputCustomerDetails({
 							});
 					});
 			}
-		} else if (
-			validID.length > 0 &&
-			customerInfoSheet.length > 0 &&
-			typeof transactionID == "boolean"
-		) {
+		} else if (typeof transactionID == "boolean") {
 			let customerData = {
 				userID: userInfo.userID,
 				birthDate: birthDate,
@@ -202,14 +198,6 @@ function InputCustomerDetails({
 	}
 
 	useEffect(() => {
-		console.log(
-			"validID:",
-			uriValidID.length,
-			"--",
-			uriCustomerInfoSheet.length,
-			"--",
-			typeof transactionID
-		);
 		if (
 			uriValidID.length > 0 &&
 			uriCustomerInfoSheet.length > 0 &&

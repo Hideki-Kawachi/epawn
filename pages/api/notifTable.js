@@ -30,6 +30,7 @@ export default async function NotifTable(req, res) {
 			}).lean();
 		}
 
+		console.log("transac data:", transactionData);
 		if (transactionData[0].updatedAt) {
 			transactionData.sort((a, b) => {
 				return new Date(a.updatedAt) > new Date(b.updatedAt);

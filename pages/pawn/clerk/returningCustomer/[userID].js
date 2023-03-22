@@ -235,7 +235,11 @@ function ReturningCustomerUserID({ currentUser, userData }) {
 						</div>
 						<div className="flex flex-col gap-5">
 							<span>{userData.firstName}</span>
-							<span> {userData.middleName}</span>
+							{userData.middleName ? (
+								<span>{userData.middleName}</span>
+							) : (
+								<br></br>
+							)}
 							<span>{userData.lastName}</span>
 						</div>
 					</div>
