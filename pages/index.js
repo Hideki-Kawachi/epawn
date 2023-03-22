@@ -113,8 +113,8 @@ export default function Home({ currentUser, notifData }) {
 			await waitNotif();
 		} else if (res.status != 200) {
 			// console.log("2-RESPONSE:", res.statusText);
-			await waitNotif();
-			// await new Promise((resolve) => setTimeout(resolve, 1000));
+			// await waitNotif();
+			await new Promise((resolve) => setTimeout(resolve, 1000));
 		} else {
 			let notifShow = await res.json();
 			// console.log("NOTIF DATA BACK IS:", notifShow);
