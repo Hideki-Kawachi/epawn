@@ -38,7 +38,7 @@ export const getServerSideProps = withIronSessionSsr(
 				transactionData = await Transaction.find({
 					branchID: req.session.userData.branchID,
 					clerkID: req.session.userData.userID,
-					status: { $ne: "done" },
+					status: { $ne: "Done" },
 				})
 					.sort({ updatedAt: -1 })
 					.lean();
@@ -49,7 +49,7 @@ export const getServerSideProps = withIronSessionSsr(
 				transactionData = await Transaction.find({
 					branchID: req.session.userData.branchID,
 					managerID: req.session.userData.userID,
-					status: { $ne: "done" },
+					status: { $ne: "Done" },
 				})
 					.sort({ updatedAt: -1 })
 					.lean();

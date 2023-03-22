@@ -36,7 +36,7 @@ export const getServerSideProps = withIronSessionSsr(
 				branchID: req.session.userData.branchID,
 				managerID: req.session.userData.userID,
 				transactionType: { $regex: "Renew" },
-				status: { $ne: "done" },
+				status: { $ne: "Done" },
 			})
 				.sort({ updatedAt: -1 })
 				.lean();

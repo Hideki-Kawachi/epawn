@@ -20,7 +20,7 @@ export default async function NotifTable(req, res) {
 			transactionData = await Transaction.find({
 				branchID: userInfo.branchid,
 				clerkID: userInfo.userid,
-				status: { $ne: "done" },
+				status: { $ne: "Done" },
 			})
 				.sort({ updatedAt: -1 })
 				.lean();
@@ -28,7 +28,7 @@ export default async function NotifTable(req, res) {
 			transactionData = await Transaction.find({
 				branchID: userInfo.branchid,
 				managerID: userInfo.userid,
-				status: { $ne: "done" },
+				status: { $ne: "Done" },
 			})
 				.sort({ updatedAt: -1 })
 				.lean();

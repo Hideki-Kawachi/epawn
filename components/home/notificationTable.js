@@ -89,7 +89,7 @@ function NotificationTable({ role, data }) {
 				});
 				// fetch("/api/pawn/updateTransactionStatus", {
 				// 	method: "POST",
-				// 	body: JSON.stringify({ transactionID: rowData._id, status: "done" }),
+				// 	body: JSON.stringify({ transactionID: rowData._id, status: "Done" }),
 				// });
 				// router.reload();
 			}
