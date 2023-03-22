@@ -120,7 +120,7 @@ function UserEdit(foundID){
 			.then((res) => res.json())
 			.then((data) => {
 
-					console.log(data + "hello")
+					// console.log(data + "hello")
 					// setNotifResult(data);
 					// if (data != "No Fields Edited") {
 					// 	setTimeout(() => window.location.reload(), 800);
