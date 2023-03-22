@@ -45,9 +45,9 @@ export default async function newManagerRenewal(req, res) {
 	console.log("New PT is " + newPawnTicketID);
 	let pawnTicketID = await generatePawnTicketID(newPawnTicketID);
 	console.log("PT is " + pawnTicketID);
-
+	let pt = null;
 	if (pawnTicketExists.length == 0) {
-		let pt = await PawnTicket.create({
+		pt = await PawnTicket.create({
 			pawnTicketID: pawnTicketID,
 			transactionID: body.transactionID,
 			customerID: body.customerID,
@@ -58,13 +58,13 @@ export default async function newManagerRenewal(req, res) {
 			loanAmount: body.newLoanAmount,
 			isInactive: false,
 		});
+	}
 
-		if (pt) {
-			await Branch.findOneAndUpdate(
-				{ branchID: body.branchID },
-				{ currentPawnTicketID: pt.pawnTickedID }
-			);
-		}
+	if (pt) {
+		await Branch.findOneAndUpdate(
+			{ branchID: body.branchID },
+			{ currentPawnTicketID: pt.pawnTickedID }
+		);
 	}
 
 	let oldPT = await PawnTicket.updateOne(
