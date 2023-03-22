@@ -5,6 +5,10 @@ import CustomerHeader from "../../../components/customer/header";
 import Link from "next/link";
 import { withIronSessionSsr } from "iron-session/next";
 import { ironOptions } from "../../../utilities/config";
+import dbConnect from "../../../utilities/dbConnect";
+import Transaction from "../../../schemas/transaction";
+import PawnTicket from "../../../schemas/pawnTicket";
+import Item from "../../../schemas/item";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {
@@ -14,8 +18,27 @@ export const getServerSideProps = withIronSessionSsr(
 				props: {},
 			};
 		} else if (req.session.userData.role == "customer") {
+			await dbConnect();
+			let transactionInfo = await Transaction.find({
+				customerID: req.session.userData.userID,
+			});
+			let pawnTicketInfo = await PawnTicket.find({
+				customerID: req.session.userData.userID,
+			});
+			let itemList = [];
+			for (const pt of pawnTicketInfo) {
+				let itemInfo = await Item.find({ itemListID: pt.itemListID });
+				if (itemInfo) {
+					itemList = itemList.concat(itemInfo);
+				}
+			}
 			return {
-				props: { currentUser: req.session.userData },
+				props: {
+					currentUser: req.session.userData,
+					transactionData: JSON.parse(JSON.stringify(transactionInfo)),
+					pawnTicketData: JSON.parse(JSON.stringify(pawnTicketInfo)),
+					itemData: JSON.parse(JSON.stringify(itemList)),
+				},
 			};
 		} else {
 			return {
@@ -27,7 +50,15 @@ export const getServerSideProps = withIronSessionSsr(
 	ironOptions
 );
 
-function PastTransactions({ currentUser }) {
+function PastTransactions({
+	currentUser,
+	transactionData,
+	pawnTicketData,
+	itemData,
+}) {
+	console.log("trans data:", transactionData);
+	console.log("pt data:", pawnTicketData);
+	console.log("item data", itemData);
 	return (
 		<div className="flex flex-col items-center">
 			<div className="fixed flex flex-col items-center w-full h-full border-2 md:w-1/4">

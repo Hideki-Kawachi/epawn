@@ -11,7 +11,6 @@ function AppraisalItemsDetails({ itemDetails, setItemDetails }) {
 	const [itemType, setItemType] = useState("");
 	const [itemCategory, setItemCategory] = useState("");
 	const [price, setPrice] = useState(0);
-	const [priceShow, setPriceShow] = useState("0");
 
 	function convertPrice(value) {
 		let newString = "";
@@ -27,10 +26,8 @@ function AppraisalItemsDetails({ itemDetails, setItemDetails }) {
 				newString = value;
 			}
 			setPrice(parseInt(newString));
-			setPriceShow(parseInt(newString).toLocaleString("en-US"));
 		} else if (price < 9) {
 			setPrice(0);
-			setPriceShow("0");
 		}
 	}
 
@@ -49,7 +46,6 @@ function AppraisalItemsDetails({ itemDetails, setItemDetails }) {
 			setItemName(itemDetails.itemName);
 			setItemType(itemDetails.itemType);
 			setPrice(itemDetails.price);
-			setPriceShow(itemDetails.price);
 		}
 		// console.log("item Details are:", itemDetails);
 	}, [itemDetails]);
@@ -59,7 +55,7 @@ function AppraisalItemsDetails({ itemDetails, setItemDetails }) {
 			let updatedItem = Object.assign(itemDetails, {
 				itemName: itemName,
 				itemType: itemType,
-				price: price,
+				price: parseFloat(price),
 				itemCategory: itemCategory,
 			});
 			// console.log("SET", itemDetails);
@@ -102,11 +98,11 @@ function AppraisalItemsDetails({ itemDetails, setItemDetails }) {
 								))}
 							</select>
 							<input
-								type="text"
+								type="number"
 								id="price"
 								required
-								value={priceShow}
-								onChange={(e) => convertPrice(e.target.value)}
+								value={price}
+								onChange={(e) => setPrice(e.target.value)}
 							></input>
 							<select
 								className="w-full"

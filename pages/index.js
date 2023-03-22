@@ -32,7 +32,7 @@ export const getServerSideProps = withIronSessionSsr(
 			await dbConnect();
 
 			let transactionData;
-			let customerData = await User.find({ isDisabled: false }).lean();
+			let customerData = await User.find({}).lean();
 
 			if (req.session.userData.role == "clerk") {
 				transactionData = await Transaction.find({
@@ -55,13 +55,14 @@ export const getServerSideProps = withIronSessionSsr(
 					.lean();
 			}
 
-			console.log("trans data:", transactionData);
+			// console.log("trans data:", transactionData);
 
 			let notifData = [];
 			transactionData.forEach((transaction) => {
 				let customerInfo = customerData.find(
 					(customer) => customer.userID == transaction.customerID
 				);
+				// console.log("CUST INFO:", customerInfo);
 				if (customerInfo) {
 					notifData.push({
 						_id: transaction._id,

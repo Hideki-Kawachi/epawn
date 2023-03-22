@@ -65,12 +65,8 @@ function InputCustomerDetails({
 	const [workNature, setWorkNature] = useState(
 		customerInfo.workNature ? customerInfo.workNature : ""
 	);
-	const [customerInfoSheet, setCustomerInfoSheet] = useState(
-		customerInfo.customerInfoSheet ? customerInfo.customerInfoSheet : ""
-	);
-	const [validID, setValidID] = useState(
-		customerInfo.validID ? customerInfo.validID : ""
-	);
+	const [customerInfoSheet, setCustomerInfoSheet] = useState();
+	const [validID, setValidID] = useState();
 	const [uriValidID, setUriValidID] = useState("");
 	const [uriCustomerInfoSheet, setUriCustomerInfoSheet] = useState("");
 
@@ -80,7 +76,7 @@ function InputCustomerDetails({
 		setTrigger(!trigger);
 	}
 
-	function submitForm() {
+	async function submitForm() {
 		let publicID = "validID-" + userInfo.userID + "-" + new Date();
 		let uploadPreset = "signed_preset";
 		let type = "authenticated";
@@ -89,7 +85,8 @@ function InputCustomerDetails({
 
 		setLoading(true);
 		if (typeof transactionID != "boolean") {
-			if (validID.length == 0) {
+			if (validID) {
+				console.log("valid id in");
 				fetch("/api/signUploadForm", {
 					method: "POST",
 					body: JSON.stringify({
@@ -123,8 +120,9 @@ function InputCustomerDetails({
 					});
 			}
 
-			if (customerInfoSheet.length == 0) {
+			if (customerInfoSheet) {
 				publicID = "customerInfoSheet-" + userInfo.userID + "-" + new Date();
+				console.log("customer info in");
 
 				fetch("/api/signUploadForm", {
 					method: "POST",
@@ -158,11 +156,7 @@ function InputCustomerDetails({
 							});
 					});
 			}
-		} else if (
-			validID.length > 0 &&
-			customerInfoSheet.length > 0 &&
-			typeof transactionID == "boolean"
-		) {
+		} else if (typeof transactionID == "boolean") {
 			let customerData = {
 				userID: userInfo.userID,
 				birthDate: birthDate,
@@ -205,8 +199,8 @@ function InputCustomerDetails({
 
 	useEffect(() => {
 		if (
-			uriValidID &&
-			uriCustomerInfoSheet &&
+			uriValidID.length > 0 &&
+			uriCustomerInfoSheet.length > 0 &&
 			typeof transactionID != "boolean"
 		) {
 			let customerData = {
@@ -250,9 +244,7 @@ function InputCustomerDetails({
 			birthDate.length > 0 &&
 			birthPlace.length > 0 &&
 			contactNumber.length > 0 &&
-			presentAddress.length > 0 &&
-			(customerInfoSheet.length > 0 || uriCustomerInfoSheet.length > 0) &&
-			(validID.length > 0 || uriValidID.length > 0)
+			presentAddress.length > 0
 		);
 	}
 
@@ -290,7 +282,7 @@ function InputCustomerDetails({
 							</p>
 						</div>
 						<div className="mt-[69px] font-dosis text-sm flex flex-col items-end w-min gap-2">
-							{customerInfo.validID ? (
+							{typeof transactionID == "boolean" ? (
 								<a
 									className="block font-semibold text-right text-green-500 hover:underline hover:text-green-400 hover:cursor-pointer no whitespace-nowrap"
 									href={customerInfo.validID}
@@ -310,7 +302,7 @@ function InputCustomerDetails({
 									></input>
 								</div>
 							)}
-							{customerInfo.customerInfoSheet ? (
+							{typeof transactionID === "boolean" ? (
 								<a
 									className="block font-semibold text-right text-green-500 hover:underline hover:text-green-400 hover:cursor-pointer no whitespace-nowrap"
 									href={customerInfo.customerInfoSheet}

@@ -9,6 +9,7 @@ import Transaction from "../../../schemas/transaction";
 import User from "../../../schemas/user";
 import dbConnect from "../../../utilities/dbConnect";
 import generatePawnTicketID from "../../../utilities/generatePawnTicketID";
+import bcrypt from "bcrypt";
 
 export default async function ApprovePawn(req, res) {
 	await dbConnect();
@@ -16,12 +17,6 @@ export default async function ApprovePawn(req, res) {
 	let pawnTicketList = body.pawnTicketList;
 	let transactionData = body.transactionData;
 	let branchID = body.branchID;
-
-	// update transaction status to approved
-	await Transaction.findByIdAndUpdate(
-		new mongoose.Types.ObjectId(transactionData._id),
-		{ status: "Approved" }
-	);
 
 	// get current and ending pawnticket number for branch
 	let pawnTicketInfo = await Branch.findOne(
@@ -37,7 +32,7 @@ export default async function ApprovePawn(req, res) {
 	});
 
 	let pawnTicketPrint = [];
-
+	let totalNetProceeds = 0;
 	let newPawnTicketID = pawnTicketInfo.currentPawnTicketID;
 	for (let pawnTicket of pawnTicketList) {
 		// generate and update pawnticket ID
@@ -57,7 +52,6 @@ export default async function ApprovePawn(req, res) {
 					new mongoose.Types.ObjectId(pawnTicket.ptID)
 				);
 			}
-
 			let itemList = await Item.find({ itemListID: ptInfo.itemListID }).lean();
 			let userDetails = await User.findOne({ userID: ptInfo.customerID });
 			let customerDetails = await CustomerInfo.findOne({
@@ -85,6 +79,7 @@ export default async function ApprovePawn(req, res) {
 				}
 				itemDescription = itemDescription.concat(tempString);
 			});
+			totalNetProceeds += ptInfo.loanAmount - ptInfo.loanAmount * 0.035;
 
 			pawnTicketPrint.push({
 				pawnTicketID: newPawnTicketID,
@@ -102,6 +97,12 @@ export default async function ApprovePawn(req, res) {
 			});
 		}
 	}
+
+	// update transaction status to approved
+	await Transaction.findByIdAndUpdate(
+		new mongoose.Types.ObjectId(transactionData._id),
+		{ status: "Approved", amountPaid: -totalNetProceeds }
+	);
 
 	if (pawnTicketExists.length == 0) {
 		await Branch.findOneAndUpdate(

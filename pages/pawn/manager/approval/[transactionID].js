@@ -17,6 +17,7 @@ import Branch from "../../../../schemas/branch";
 import PawnTicketCard from "../../../../components/pawn/pawnTicketCard";
 import LoadingSpinner from "../../../../components/loadingSpinner";
 import printPawnTicket from "../../../../utilities/printPawnTicket";
+import { useRouter } from "next/router";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req, query }) {
@@ -118,6 +119,7 @@ function ApprovalTransactionID({
 	const [loading, setLoading] = useState(false);
 	const advInterest = parseFloat(loanAmount) * 0.035;
 	const netProceeds = parseFloat(loanAmount) - advInterest;
+	const router = useRouter();
 
 	function convertDate(date) {
 		if (date == null) return "N/A";
@@ -155,7 +157,7 @@ function ApprovalTransactionID({
 			.then((data) => {
 				printPawnTicket(data);
 				setLoading(false);
-				console.log("PRINTING");
+				router.replace("/");
 			});
 	}
 
