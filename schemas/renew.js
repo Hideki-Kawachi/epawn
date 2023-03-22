@@ -11,7 +11,7 @@ const RenewSchema = new mongoose.Schema({
 
 let Renew;
 try {
-	Renew = mongoose.model();
+	Renew = mongoose.model("renew");
 } catch (error) {
 	Renew = mongoose.model("renew", RenewSchema);
 }

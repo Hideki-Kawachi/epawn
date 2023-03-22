@@ -12,7 +12,7 @@ import { ironOptions } from "../../../utilities/config";
 import Transaction from "../../../schemas/transaction";
 import Redeem from "../../../schemas/redeem";
 import User from "../../../schemas/user";
-
+import RedeemTable from "../../../components/redeem/redeemTable";
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {
 		if (!req.session.userData) {
@@ -55,7 +55,7 @@ export const getServerSideProps = withIronSessionSsr(
 				redeemData.forEach((redeem) => {
 					if (redeem.transactionID == transaction._id) {
 						transaction.ptNumber = redeem.pawnTicketID;
-					console.log(JSON.stringify(redeem))
+				//	console.log(JSON.stringify(redeem))
           }
 				});
 
@@ -147,7 +147,7 @@ export default function Home({ currentUser, notifData }) {
 						Ongoing Redemptions
 					</p>
 					{/* <button onClick={() => buttonClick()}>HELLO WORLD</button> */}
-					<RenewTable role={"manager"} data={notifData}></RenewTable>
+					<RedeemTable role={"manager"} data={notifData}></RedeemTable>
 				</div>
 			</div>
 		</>
