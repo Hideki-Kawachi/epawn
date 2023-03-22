@@ -255,7 +255,7 @@ function RenewPawnTicketID({
 										{dayjs(loanDate).add(1, "M").format("MMM DD, YYYY")}
 									</span>
 									<span>
-										{dayjs(loanDate).add(2, "M").format("MMM DD, YYYY")}
+										{dayjs(loanDate).add(4, "M").format("MMM DD, YYYY")}
 									</span>
 								</div>
 							</div>

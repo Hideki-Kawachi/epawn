@@ -93,6 +93,22 @@ function NotificationTable({ role, data }) {
 					pathname: "pawn/clerk/approved/[transactionID]",
 					query: { transactionID: rowData._id },
 				});
+			} else if (
+				rowData.status == "Approved" &&
+				rowData.transactionType == "Renew"
+			) {
+				fetch("api/pawn/updateTransactionStatus", {
+					method: "POST",
+					body: JSON.stringify({ transactionID: rowData._id, status: "Done" }),
+				})
+					.then((res) => res.json())
+					.then((data) => {
+						if (data == "success") {
+							router.reload();
+						} else {
+							console.log("ERROR", data);
+						}
+					});
 			}
 			// console.log("CLERK", rowData);
 		}

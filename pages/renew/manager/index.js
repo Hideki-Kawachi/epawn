@@ -10,9 +10,9 @@ import RenewTable from "../../../components/renew/renewTable";
 import { withIronSessionSsr } from "iron-session/next";
 import { ironOptions } from "../../../utilities/config";
 import Transaction from "../../../schemas/transaction";
-import Redeem from "../../../schemas/redeem";
+import Renew from "../../../schemas/renew";
 import User from "../../../schemas/user";
-import RedeemTable from "../../../components/redeem/redeemTable";
+
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {
 		if (!req.session.userData) {
@@ -29,19 +29,19 @@ export const getServerSideProps = withIronSessionSsr(
 			await dbConnect();
 
 			let transactionData;
-			let redeemData;
+			let renewData;
 			let customerData = await User.find({ isDisabled: false }).lean();
 
 			transactionData = await Transaction.find({
 				branchID: req.session.userData.branchID,
 				managerID: req.session.userData.userID,
-				transactionType: "Redeem",
+				transactionType: { $regex: "Renew" },
 				status: { $ne: "Done" },
 			})
 				.sort({ updatedAt: -1 })
 				.lean();
 
-			redeemData = await Redeem.find({}).lean();
+			renewData = await Renew.find({}).lean();
 
 			// console.log("trans data: ", transactionData);
 			//console.log("renew data: ", renewData);
@@ -52,11 +52,10 @@ export const getServerSideProps = withIronSessionSsr(
 					(customer) => customer.userID == transaction.customerID
 				);
 				//looks for PT number of that transaction
-				redeemData.forEach((redeem) => {
-					if (redeem.transactionID == transaction._id) {
-						transaction.ptNumber = redeem.pawnTicketID;
-				//	console.log(JSON.stringify(redeem))
-          }
+				renewData.forEach((renew) => {
+					if (renew.transactionID == transaction._id) {
+						transaction.ptNumber = renew.prevPawnTicketID;
+					}
 				});
 
 				if (customerInfo) {
@@ -93,42 +92,42 @@ function convertFloat(number) {
 }
 
 export default function Home({ currentUser, notifData }) {
-	const [showData, setShowData] = useState(notifData);
+	// const [showData, setShowData] = useState(notifData);
 
-	useEffect(() => {
-		waitNotif();
-	}, [showData]);
+	// useEffect(() => {
+	// 	waitNotif();
+	// }, [showData]);
 
-	async function waitNotif() {
-		let res = await fetch("/api/notifTable", {
-			method: "GET",
-			headers: {
-				userID: currentUser.userID,
-				branchID: currentUser.branchID,
-				role: currentUser.role,
-			},
-		});
+	// async function waitNotif() {
+	// 	let res = await fetch("/api/notifTable", {
+	// 		method: "GET",
+	// 		headers: {
+	// 			userID: currentUser.userID,
+	// 			branchID: currentUser.branchID,
+	// 			role: currentUser.role,
+	// 		},
+	// 	});
 
-		if (res.status == 502) {
-			await waitNotif();
-		} else if (res.status != 200) {
-			// console.log("2-RESPONSE:", res.statusText);
-			// await waitNotif();
-			await new Promise((resolve) => setTimeout(resolve, 1000));
-		} else {
-			let notifShow = await res.json();
-			// console.log("NOTIF DATA BACK IS:", notifShow);
-			setShowData(notifShow);
+	// 	if (res.status == 502) {
+	// 		await waitNotif();
+	// 	} else if (res.status != 200) {
+	// 		// console.log("2-RESPONSE:", res.statusText);
+	// 		await waitNotif();
+	// 		// await new Promise((resolve) => setTimeout(resolve, 1000));
+	// 	} else {
+	// 		let notifShow = await res.json();
+	// 		// console.log("NOTIF DATA BACK IS:", notifShow);
+	// 		setShowData(notifShow);
 
-			await waitNotif();
-		}
-	}
+	// 		await waitNotif();
+	// 	}
+	// }
 
 	return (
 		<>
 			<div>
 				<Head>
-					<title>E-Pawn: Redemptions</title>
+					<title>E-Pawn: Renewals</title>
 					<meta
 						name="description"
 						content="R. Raymundo Pawnshop Information System"
@@ -141,13 +140,13 @@ export default function Home({ currentUser, notifData }) {
 
 				<div id="main-content-area">
 					<p className="text-xl font-semibold text-green-500 underline font-dosis">
-						Redeem
+						Renew
 					</p>
 					<p className="mb-5 text-lg text-green-500 font-dosis">
-						Ongoing Redemptions
+						Ongoing Renewals
 					</p>
 					{/* <button onClick={() => buttonClick()}>HELLO WORLD</button> */}
-					<RedeemTable role={"manager"} data={notifData}></RedeemTable>
+					<RenewTable role={currentUser.role} data={notifData}></RenewTable>
 				</div>
 			</div>
 		</>
