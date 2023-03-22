@@ -8,6 +8,7 @@ import Header from "../../components/header";
 
 import EmployeeInfo from "../../schemas/employeeInfo";
 import Branch from "../../schemas/branch";
+import { parse } from "postcss";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {
@@ -23,21 +24,12 @@ export const getServerSideProps = withIronSessionSsr(
 				{ branchID: 1 }
 			);
 
-			// console.log("benlo " + empBranch.branchID)
 
 			let foundBranch = await Branch.findOne({ branchID: empBranch.branchID });
 
-			// console.log("iz data UwU " + branchData)
+			console.log("no " + foundBranch.branchID)
 
 			let branchData = JSON.stringify(foundBranch);
-
-			// branchData.push({
-			//     branchID: foundBranch.branchID,
-			//     branchName: foundBranch.branchName,
-			//     branchAddress: foundBranch.branchAddress,
-			//     currentPawnTicketID: foundBranch.currentPawnTicketID,
-			//     endingPawnTicketID: foundBranch.endingPawnTicketID
-			// })
 
 			return {
 				props: { currentUser: req.session.userData, branchData },
@@ -58,26 +50,27 @@ export const getServerSideProps = withIronSessionSsr(
 );
 
 function EditBranch({ currentUser, branchData }) {
+
+	let parsedBranch = JSON.parse(branchData)
+
 	return (
 		<>
 			<NavBar currentUser={currentUser}></NavBar>
 			<Header currentUser={currentUser}></Header>
-
-			{console.log("enlo" + branchData.branchName)}
 
 			<div id="not-main-content-area" className="items-start bg-black">
 				<div className="flex-col items-start justify-center my-5 font-nunito">
 					<span className="text-base">Branch ID: </span>{" "}
 					<span className="text-[#FF0000]">*</span>
 					<div className="border-2">
-						<span className="text-sm"> 1 </span>
+						<span className="text-sm"> {parsedBranch.branchID} </span>
 					</div>
 				</div>
 				<div className="flex-col items-start my-5 justify-centerfont-nunito">
 					<span className="text-base">Branch Name: </span>{" "}
 					<span className="text-[#FF0000]">*</span>
 					<div className="border-2">
-						<span className="text-sm"> {"Sta. Ana (Temp)"} </span>
+						<span className="text-sm"> {parsedBranch.branchName} </span>
 					</div>
 				</div>
 				<div className="flex-col items-start my-5 justify-centerfont-nunito">
@@ -86,9 +79,8 @@ function EditBranch({ currentUser, branchData }) {
 					<div className="border-2">
 						<span className="text-sm">
 							{" "}
-							{
-								"3411 New Panaderos Ext, Santa Ana, Manila, 1009 Metro Manila"
-							}{" "}
+							{parsedBranch.branchAddress}
+							{" "}
 						</span>
 					</div>
 				</div>
@@ -97,7 +89,7 @@ function EditBranch({ currentUser, branchData }) {
 					<span className="text-[#FF0000] mx-2">*</span>
 					<div>
 						<select>
-							<option value="A-000000">A-000000</option>
+							<option value="parsedBranch.currentPawnTicketID">{parsedBranch.currentPawnTicketID}</option>
 							<option value="B-000000">B-000000</option>
 							<option value="C-000000">C-000000</option>
 							<option value="D-000000">D-000000</option>
