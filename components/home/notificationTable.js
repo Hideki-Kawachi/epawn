@@ -85,16 +85,14 @@ function NotificationTable({ role, data }) {
 					pathname: "pawn/clerk/rejected/[transactionID]",
 					query: { transactionID: rowData._id },
 				});
-			} else if (rowData.status == "Approved") {
+			} else if (
+				rowData.status == "Approved" &&
+				rowData.transactionType == "Pawn"
+			) {
 				router.push({
 					pathname: "pawn/clerk/approved/[transactionID]",
 					query: { transactionID: rowData._id },
 				});
-				// fetch("/api/pawn/updateTransactionStatus", {
-				// 	method: "POST",
-				// 	body: JSON.stringify({ transactionID: rowData._id, status: "Done" }),
-				// });
-				// router.reload();
 			}
 			// console.log("CLERK", rowData);
 		}
