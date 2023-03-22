@@ -29,6 +29,7 @@ export const getServerSideProps = withIronSessionSsr(
 			let pawnTicketInfo = await PawnTicket.findOne({
 				pawnTicketID: query.pawnTicketID,
 			});
+			console.log("pt info:", pawnTicketInfo);
 			let itemList = await Item.find({
 				itemListID: pawnTicketInfo.itemListID,
 				isRedeemed: false,
@@ -79,10 +80,30 @@ function RenewPawnTicketID({
 	const [newLoanAmount, setNewLoanAmount] = useState(0);
 	const [amountToPay, setAmountToPay] = useState(0);
 	const [partialPayment, setPartialPayment] = useState(0);
-	const [advInterest, setAdvInterest] = useState(0);
-	const [interest, setInterest] = useState(pawnTicketData.loanAmount * 0.035);
+	const [advInterest, setAdvInterest] = useState(
+		pawnTicketData.loanAmount * 0.035
+	);
+	const [interest, setInterest] = useState(
+		pawnTicketData.loanAmount *
+			0.035 *
+			monthDiff(new Date(pawnTicketData.maturityDate), new Date())
+	);
 	const [penalties, setPenalties] = useState(0);
-	const [minPayment, setMinPayment] = useState(interest * 2 + penalties);
+	const [minPayment, setMinPayment] = useState(
+		interest * 2 + penalties + advInterest
+	);
+
+	function monthDiff(dateFrom, dateTo) {
+		let diff =
+			dateTo.getMonth() -
+			dateFrom.getMonth() +
+			12 * (dateTo.getFullYear() - dateFrom.getFullYear());
+		if (diff > 0) {
+			return diff;
+		} else {
+			return 0;
+		}
+	}
 
 	function renewPawnTicket() {
 		var base_url = window.location.origin;
@@ -122,6 +143,7 @@ function RenewPawnTicketID({
 						amountPaid: amountToPay,
 						oldPawnTicketID: pawnTicketData.pawnTicketID,
 						newLoanAmount: newLoanAmount,
+						branchName: branchData.branchName,
 					})
 				);
 				window.open(response.data.attributes.redirect.checkout_url, "_self");
@@ -129,19 +151,36 @@ function RenewPawnTicketID({
 	}
 
 	useEffect(() => {
-		let amountLeftFromCash = amountToPay - interest - penalties;
-		let partialPayment =
-			(amountLeftFromCash - pawnTicketData.loanAmount * 0.035) / 0.965;
-		let newLoanAmount = pawnTicketData.loanAmount - partialPayment;
-		let advInterest = newLoanAmount * 0.035;
-		setAdvInterest(advInterest);
-		setNewLoanAmount(newLoanAmount);
-		setPartialPayment(partialPayment < 0 ? 0 : partialPayment);
-		if (amountToPay < minPayment) {
-			console.log("NO");
+		if (amountToPay > minPayment) {
+			let amountLeftFromCash = amountToPay - interest - penalties;
+			let partialPayment =
+				(amountLeftFromCash - pawnTicketData.loanAmount * 0.035) / 0.965;
+			let newLoanAmount = pawnTicketData.loanAmount - partialPayment;
+			let tempAdvInterest = 0;
+			if (newLoanAmount > pawnTicketData.loanAmount) {
+				setNewLoanAmount(pawnTicketData.loanAmount);
+				setAdvInterest(pawnTicketData.loanAmount * 0.035);
+			} else {
+				tempAdvInterest = newLoanAmount * 0.035;
+				setAdvInterest(tempAdvInterest);
+				setNewLoanAmount(newLoanAmount);
+			}
+
+			setPartialPayment(partialPayment < 0 ? 0 : partialPayment);
+			document.getElementById("amount_to_pay_input").style.borderColor =
+				"black";
+		} else {
 			document.getElementById("amount_to_pay_input").style.borderColor = "red";
+			setMinPayment(pawnTicketData.loanAmount * 0.035 + interest + penalties);
+		}
+
+		if (amountToPay < minPayment) {
 		}
 	}, [amountToPay]);
+
+	useEffect(() => {
+		setMinPayment(pawnTicketData.loanAmount * 0.035);
+	}, []);
 
 	return (
 		<div className="flex flex-col items-center">
@@ -232,7 +271,7 @@ function RenewPawnTicketID({
 									<span>Remaining Balance:</span>
 								</div>
 								<div className="flex flex-col items-end">
-									<span>Php {pawnTicketData.loanAmount}</span>
+									<span>Php {pawnTicketData.loanAmount.toFixed(2)}</span>
 									<span>Php {interest.toFixed(2)}</span>
 									<span>
 										Php{" "}
@@ -276,7 +315,11 @@ function RenewPawnTicketID({
 								<button
 									onClick={() => renewPawnTicket()}
 									className="bg-green-300"
-									disabled={minPayment >= amountToPay || isNaN(amountToPay)}
+									disabled={
+										minPayment >= amountToPay ||
+										isNaN(amountToPay) ||
+										amountToPay >= pawnTicketData.loanAmount
+									}
 								>
 									Renew PawnTicket
 								</button>

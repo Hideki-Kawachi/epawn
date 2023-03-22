@@ -1,6 +1,10 @@
 import { withIronSessionSsr } from "iron-session/next";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import CustomerHeader from "../../../components/customer/header";
+import Branch from "../../../schemas/branch";
 import { ironOptions } from "../../../utilities/config";
+import dbConnect from "../../../utilities/dbConnect";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {
@@ -27,6 +31,7 @@ export const getServerSideProps = withIronSessionSsr(
 
 function Success({ currentUser }) {
 	const [pawnTicketData, setPawnTicketData] = useState({});
+	const router = useRouter();
 	useEffect(() => {
 		//get payment status
 		const options2 = {
@@ -39,15 +44,15 @@ function Success({ currentUser }) {
 		let sourceID = localStorage.getItem("sourceID");
 		if (localStorage.getItem("pawnTicketData") != null) {
 			setPawnTicketData(JSON.parse(localStorage.getItem("pawnTicketData")));
+			fetch("https://api.paymongo.com/v1/sources/" + sourceID, options2)
+				.then((response) => response.json())
+				.then((response) => {
+					localStorage.clear();
+				})
+				.catch((err) => console.error(err));
+		} else {
+			router.replace("/customer");
 		}
-
-		fetch("https://api.paymongo.com/v1/sources/" + sourceID, options2)
-			.then((response) => response.json())
-			.then((response) => {
-				console.log("resres", response);
-				localStorage.clear();
-			})
-			.catch((err) => console.error(err));
 	}, []);
 
 	useEffect(() => {
@@ -66,8 +71,28 @@ function Success({ currentUser }) {
 		}
 	}, [pawnTicketData]);
 	return (
-		<div>
-			<span>SUCCESS</span>
+		<div className="flex flex-col items-center">
+			<div className="fixed flex flex-col items-center w-full h-full border-2 md:w-1/4">
+				<CustomerHeader></CustomerHeader>
+				<div className="flex flex-col items-center w-full h-full pt-[20vh] overflow-y-auto bg-green-50 font-nunito">
+					<h1 className="text-lg font-bold">Payment Successful!</h1>
+					<div className="flex flex-col gap-4 p-4 text-base text-center">
+						<p>
+							Please wait for your new PawnTicket to be released within the day.
+						</p>
+						<b>
+							You can pickup the new PawnTicket at our{" "}
+							{pawnTicketData.branchName} branch
+						</b>
+					</div>
+					<button
+						className="absolute text-base bg-green-300 top-3/4"
+						onClick={() => router.replace("/customer")}
+					>
+						Done
+					</button>
+				</div>
+			</div>
 		</div>
 	);
 }

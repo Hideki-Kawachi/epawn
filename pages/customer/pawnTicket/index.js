@@ -19,7 +19,7 @@ export const getServerSideProps = withIronSessionSsr(
 			await dbConnect();
 			let pawnTicketInfo = await PawnTicket.find({
 				customerID: req.session.userData.userID,
-				isDisabled: false,
+				isInactive: false,
 			}).lean();
 			return {
 				props: {
