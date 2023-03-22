@@ -121,7 +121,7 @@ function PawnTicketTransactionID({
 	useEffect(() => {
 		let date = new Date(loanDate);
 		setMaturityDate(new Date(date.setDate(date.getDate() + 30)));
-		setExpiryDate(new Date(date.setDate(date.getDate() + 30)));
+		setExpiryDate(new Date(date.setDate(date.getDate() + 90)));
 	}, [loanDate]);
 
 	useEffect(() => {

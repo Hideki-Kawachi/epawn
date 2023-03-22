@@ -54,7 +54,7 @@ export default async function forApproval(req, res) {
 			itemListID: itemListID + index,
 			loanDate: loanDate,
 			maturityDate: new Date().setDate(loanDate.getDate() + 30),
-			expiryDate: new Date().setDate(loanDate.getDate() + 60),
+			expiryDate: new Date().setDate(loanDate.getDate() + 90),
 			loanAmount: loanAmount,
 			isInactive: false,
 		});
