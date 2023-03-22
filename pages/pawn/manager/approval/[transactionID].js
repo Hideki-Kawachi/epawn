@@ -32,7 +32,7 @@ export const getServerSideProps = withIronSessionSsr(
 			await dbConnect();
 			let transactionInfo = await Transaction.findOne({
 				_id: new mongoose.Types.ObjectId(query.transactionID),
-				status: "for approval",
+				status: "For Approval",
 			}).lean();
 			if (transactionInfo) {
 				let pawnTicketList = await PawnTicket.find({

@@ -21,22 +21,18 @@ export default async function NotifTable(req, res) {
 				branchID: userInfo.branchid,
 				clerkID: userInfo.userid,
 				status: { $ne: "done" },
-			}).lean();
+			})
+				.sort({ updatedAt: -1 })
+				.lean();
 		} else if (userInfo.role == "manager") {
 			transactionData = await Transaction.find({
 				branchID: userInfo.branchid,
 				managerID: userInfo.userid,
 				status: { $ne: "done" },
-			}).lean();
+			})
+				.sort({ updatedAt: -1 })
+				.lean();
 		}
-
-		transactionData.sort((a, b) => {
-			if (a.updatedAt > b.updatedAt) {
-				return 1;
-			} else {
-				return -1;
-			}
-		});
 
 		let notifData = [];
 		transactionData.forEach((transaction) => {

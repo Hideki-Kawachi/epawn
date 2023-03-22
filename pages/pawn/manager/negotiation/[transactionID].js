@@ -33,7 +33,7 @@ export const getServerSideProps = withIronSessionSsr(
 			await dbConnect();
 			let transactionInfo = await Transaction.findOne({
 				_id: new mongoose.Types.ObjectId(query.transactionID),
-				status: "for negotiation",
+				status: "For Negotiation",
 			}).lean();
 			if (transactionInfo) {
 				let priceHistoryList = await PriceHistory.find({
@@ -174,7 +174,7 @@ function NegotiationTransactionID({
 		fetch("/api/pawn/updateTransactionStatus", {
 			method: "POST",
 			body: JSON.stringify({
-				status: "appraised",
+				status: "Appraised",
 				transactionID: transactionData._id,
 			}),
 		})

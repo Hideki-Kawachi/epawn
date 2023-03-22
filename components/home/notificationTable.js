@@ -57,17 +57,17 @@ function NotificationTable({ role, data }) {
 
 	function openRow(rowData) {
 		if (role == "manager") {
-			if (rowData.status == "for appraisal") {
+			if (rowData.status == "For Appraisal") {
 				router.push({
 					pathname: "pawn/manager/appraisal/[transactionID]",
 					query: { transactionID: rowData._id },
 				});
-			} else if (rowData.status == "for negotiation") {
+			} else if (rowData.status == "For Negotiation") {
 				router.push({
 					pathname: "pawn/manager/negotiation/[transactionID]",
 					query: { transactionID: rowData._id },
 				});
-			} else if (rowData.status == "for approval") {
+			} else if (rowData.status == "For Approval") {
 				router.push({
 					pathname: "pawn/manager/approval/[transactionID]",
 					query: { transactionID: rowData._id },
@@ -75,19 +75,23 @@ function NotificationTable({ role, data }) {
 			}
 			// console.log("MANAGER", rowData);
 		} else if (role == "clerk") {
-			if (rowData.status == "appraised") {
+			if (rowData.status == "Appraised") {
 				router.push({
 					pathname: "pawn/clerk/ongoingTransaction/[transactionID]",
 					query: { transactionID: rowData._id },
 				});
-			} else if (rowData.status == "rejected") {
+			} else if (rowData.status == "Rejected") {
 				console.log("CLICKED REJECTED");
-			} else if (rowData.status == "approved") {
-				fetch("/api/pawn/updateTransactionStatus", {
-					method: "POST",
-					body: JSON.stringify({ transactionID: rowData._id, status: "done" }),
+			} else if (rowData.status == "Approved") {
+				router.push({
+					pathname: "pawn/clerk/approved/[transactionID]",
+					query: { transactionID: rowData._id },
 				});
-				router.reload();
+				// fetch("/api/pawn/updateTransactionStatus", {
+				// 	method: "POST",
+				// 	body: JSON.stringify({ transactionID: rowData._id, status: "done" }),
+				// });
+				// router.reload();
 			}
 			// console.log("CLERK", rowData);
 		}
@@ -122,12 +126,12 @@ function NotificationTable({ role, data }) {
 					defaultValue={""}
 				>
 					<option value={""}>All</option>
-					<option value={"for appraisal"}>For Appraisal</option>
-					<option value={"for negoation"}>For Negotiation</option>
-					<option value={"for approval"}>For Approval</option>
-					<option value={"appraised"}>Appraised</option>
-					<option value={"pending"}>Pending</option>
-					<option value={"approved"}>Approved</option>
+					<option value={"For Appraisal"}>For Appraisal</option>
+					<option value={"For Negoation"}>For Negotiation</option>
+					<option value={"For Approval"}>For Approval</option>
+					<option value={"Appraised"}>Appraised</option>
+					<option value={"Pending"}>Pending</option>
+					<option value={"Approved"}>Approved</option>
 				</select>
 			</div>
 			<table {...getTableProps()} className="w-3/4 text-base">

@@ -20,7 +20,7 @@ export default async function ApprovePawn(req, res) {
 	// update transaction status to approved
 	await Transaction.findByIdAndUpdate(
 		new mongoose.Types.ObjectId(transactionData._id),
-		{ status: "approved" }
+		{ status: "Approved" }
 	);
 
 	// get current and ending pawnticket number for branch

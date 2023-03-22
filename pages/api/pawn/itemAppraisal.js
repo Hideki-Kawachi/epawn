@@ -19,7 +19,7 @@ export default async function ItemAppraisal(req, res) {
 
 	let transaction = await Transaction.findByIdAndUpdate(
 		new mongoose.Types.ObjectId(transactionID),
-		{ status: "appraised" }
+		{ status: "Appraised" }
 	);
 	let priceHistory = await PriceHistory.findOneAndUpdate(
 		{ transactionID: transactionID, sort: { createdAt: -1 } },

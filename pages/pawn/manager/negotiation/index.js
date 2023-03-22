@@ -20,7 +20,7 @@ export const getServerSideProps = withIronSessionSsr(
 			await dbConnect();
 			let forAppraisal = await Transaction.find({
 				branchID: req.session.userData.branchID,
-				status: "for negotiation",
+				status: "For Negotiation",
 			}).lean();
 			let customerData = await User.find({ isDisabled: false }).lean();
 			let priceHistory = await PriceHistory.find({}).lean();

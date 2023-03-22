@@ -17,7 +17,7 @@ export default async function forApproval(req, res) {
 	// update transaction status and delete itemListID
 	await Transaction.findByIdAndUpdate(
 		new mongoose.Types.ObjectId(transactionData._id),
-		{ status: "for approval", itemListID: null }
+		{ status: "For Approval", itemListID: null }
 	);
 
 	await ItemList.deleteOne({ itemListID: transactionData.itemListID });

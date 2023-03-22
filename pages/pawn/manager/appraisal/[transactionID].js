@@ -30,7 +30,7 @@ export const getServerSideProps = withIronSessionSsr(
 			await dbConnect();
 			let transactionInfo = await Transaction.findOne({
 				_id: new mongoose.Types.ObjectId(query.transactionID),
-				status: "for appraisal",
+				status: "For Appraisal",
 			}).lean();
 			if (transactionInfo) {
 				let priceHistoryList = await PriceHistory.find({
