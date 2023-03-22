@@ -102,11 +102,11 @@ function AppraisalItemsDetails({ itemDetails, setItemDetails }) {
 								))}
 							</select>
 							<input
-								type="text"
+								type="number"
 								id="price"
 								required
-								value={priceShow}
-								onChange={(e) => convertPrice(e.target.value)}
+								value={price}
+								onChange={(e) => setPrice(e.target.value)}
 							></input>
 							<select
 								className="w-full"

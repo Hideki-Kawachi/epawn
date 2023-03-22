@@ -15,6 +15,8 @@ import AppraisalItemListCard from "../../../../components/pawn/appraisal/apprais
 import AppraisalItemsDetails from "../../../../components/pawn/appraisal/appraisalItemDetails";
 import mongoose from "mongoose";
 import LoadingSpinner from "../../../../components/loadingSpinner";
+import Modal from "react-modal";
+import RejectionManager from "../../../../components/modals/rejectionManager";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req, query }) {
@@ -84,6 +86,7 @@ function AppraisalTransactionID({
 	const [itemShow, setItemShow] = useState();
 	const [loading, setLoading] = useState(false);
 	const [deleteList, setDeleteList] = useState([]);
+	const [rejectShow, setRejectShow] = useState(false);
 
 	const router = useRouter();
 	// console.log("price history:", priceHistory);
@@ -128,7 +131,7 @@ function AppraisalTransactionID({
 	}, [itemList]);
 
 	function cancelForm() {
-		console.log("CANCEL FORM");
+		setRejectShow(true);
 	}
 
 	function submitForm() {
@@ -167,6 +170,13 @@ function AppraisalTransactionID({
 			<NavBar currentUser={currentUser}></NavBar>
 			<Header currentUser={currentUser}></Header>
 			<div id="main-content-area">
+				<Modal isOpen={rejectShow} ariaHideApp={false} className="modal">
+					<RejectionManager
+						trigger={rejectShow}
+						setTrigger={setRejectShow}
+						transactionID={transactionData._id}
+					/>
+				</Modal>
 				<div className="font-semibold text-center font-dosis">
 					<h1 className="text-2xl underline">PAWN</h1>
 					<span className="text-lg">Appraisal Details</span>
@@ -197,11 +207,14 @@ function AppraisalTransactionID({
 					<div className="flex flex-col items-center w-full text-base">
 						<span className="flex justify-end w-full pr-[35%] font-normal">
 							<span className="mr-2 font-bold">Asking Price: </span>
-							Php {priceHistory[0].askPrice}
+							Php {priceHistory[0].askPrice.toFixed(2)}
 						</span>
 						<span className="flex justify-end w-full font-normal pr-[35%]">
 							<span className="mr-2 font-bold">Appraisal Price: </span>
-							Php {appraisalPrice}
+							Php{" "}
+							{isNaN(appraisalPrice)
+								? "0.00"
+								: Number(appraisalPrice).toFixed(2)}
 						</span>
 						<h2 className="mt-10 font-bold text-center">Item Details</h2>
 						<div className="h-[50vh] overflow-y-scroll w-full bg-gray-100 border-2 p-4 flex flex-col gap-4">
@@ -216,15 +229,15 @@ function AppraisalTransactionID({
 					<div>
 						<button
 							className="px-10 mx-2 my-5 text-base text-white bg-red-300"
-							onClick={cancelForm}
+							onClick={() => cancelForm()}
 						>
-							Cancel
+							Reject
 						</button>
 					</div>
 					<div>
 						<button
 							className="px-10 mx-2 my-5 text-base text-white bg-green-300"
-							onClick={submitForm}
+							onClick={() => submitForm()}
 						>
 							Submit
 						</button>

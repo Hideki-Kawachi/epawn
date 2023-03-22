@@ -24,6 +24,7 @@ export default async function NewCustomerPawn(req, res) {
 		firstName: body.firstName,
 		middleName: body.middleName,
 		lastName: body.lastName,
+		isDisabled: true,
 	});
 
 	let branchInfo = await EmployeeInfo.findOne({ userID: body.clerkID });

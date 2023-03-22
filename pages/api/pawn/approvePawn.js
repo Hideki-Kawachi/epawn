@@ -9,6 +9,7 @@ import Transaction from "../../../schemas/transaction";
 import User from "../../../schemas/user";
 import dbConnect from "../../../utilities/dbConnect";
 import generatePawnTicketID from "../../../utilities/generatePawnTicketID";
+import bcrypt from "bcrypt";
 
 export default async function ApprovePawn(req, res) {
 	await dbConnect();
@@ -57,7 +58,6 @@ export default async function ApprovePawn(req, res) {
 					new mongoose.Types.ObjectId(pawnTicket.ptID)
 				);
 			}
-
 			let itemList = await Item.find({ itemListID: ptInfo.itemListID }).lean();
 			let userDetails = await User.findOne({ userID: ptInfo.customerID });
 			let customerDetails = await CustomerInfo.findOne({

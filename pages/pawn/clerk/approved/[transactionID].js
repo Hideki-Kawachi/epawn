@@ -19,6 +19,7 @@ import LoadingSpinner from "../../../../components/loadingSpinner";
 import printPawnTicket from "../../../../utilities/printPawnTicket";
 import printItemID from "../../../../utilities/printItemID";
 import { useRouter } from "next/router";
+import printCustomerDetails from "../../../../utilities/printCustomerDetails";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req, query }) {
@@ -149,17 +150,33 @@ function ApprovedTransactionID({
 
 	function submitForm() {
 		setLoading(true);
-		fetch("/api/pawn/updateTransactionStatus", {
+
+		// generate pass
+		fetch("/api/users/customers/newCustomerPass", {
 			method: "POST",
-			body: JSON.stringify({
-				transactionID: transactionData._id,
-				status: "Done",
-			}),
+			body: userData.userID,
 		})
 			.then((res) => res.json())
 			.then((data) => {
-				setLoading(false);
-				router.replace("/");
+				console.log("DATA IS:", data);
+				printCustomerDetails({
+					userID: userData.userID,
+					password: data,
+				});
+
+				//update transaction
+				fetch("/api/pawn/updateTransactionStatus", {
+					method: "POST",
+					body: JSON.stringify({
+						transactionID: transactionData._id,
+						status: "Done",
+					}),
+				})
+					.then((res) => res.json())
+					.then((data) => {
+						setLoading(false);
+						router.replace("/");
+					});
 			});
 	}
 
@@ -314,7 +331,7 @@ function ApprovedTransactionID({
 					<button
 						className="px-10 mx-2 my-5 bg-green-300"
 						type="button"
-						onClick={() => submitForm(itemData)}
+						onClick={() => submitForm()}
 					>
 						Finish Transaction
 					</button>

@@ -423,7 +423,7 @@ function ItemCategoryDetails({ itemCategory, itemDetails, setItemDetails }) {
 							onChange={(e) => weightInsert(e.target.value)}
 							value={parseFloat(weight)}
 						></input>
-						<select>
+						<select value={purity} onChange={(e) => setPurity(e.target.value)}>
 							{PlatinumPurityValues.map((value) => (
 								<option key={value.platinumPurity} value={value.platinumPurity}>
 									{value.platinumPurity}

@@ -238,7 +238,7 @@ function NegotiationTransactionID({
 					<div className="flex flex-col items-center w-full text-base">
 						<span className="flex justify-end w-full pr-[35%] font-normal">
 							<span className="mr-2 font-bold">Asking Price: </span>
-							Php {priceHistory[0].askPrice}
+							Php {priceHistory[0].askPrice.toFixed(2)}
 						</span>
 						<button
 							className="absolute ml-[30vw] text-sm bg-blue-300"
@@ -248,7 +248,10 @@ function NegotiationTransactionID({
 						</button>
 						<span className="flex justify-end w-full font-normal pr-[35%]">
 							<span className="mr-2 font-bold">Appraisal Price: </span>
-							Php {appraisalPrice}
+							Php{" "}
+							{isNaN(appraisalPrice)
+								? "0.00"
+								: Number(appraisalPrice).toFixed(2)}
 						</span>
 
 						<h2 className="mt-10 font-bold text-center">Item Details</h2>

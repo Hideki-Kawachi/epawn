@@ -8,16 +8,10 @@ import {
 	useTable,
 } from "react-table";
 
-function NotificationTable({ role, data }) {
+function OngoingTable({ role, data }) {
 	const columns = React.useMemo(
 		() => [
-			{
-				Header: "Transaction",
-				accessor: "transactionType",
-				disableGlobalFilter: true,
-			},
 			{ Header: "Customer Name", accessor: "customerName" },
-			{ Header: "PT Number", accessor: "ptNumber" },
 			{ Header: "Date", accessor: "date", disableGlobalFilter: true },
 			{ Header: "Time", accessor: "time", disableGlobalFilter: true },
 			{ Header: "Status", accessor: "status", disableGlobalFilter: true },
@@ -109,19 +103,9 @@ function NotificationTable({ role, data }) {
 					onChange={(e) => {
 						setGlobalFilter(e.target.value);
 					}}
-					placeholder={"PT Number or Customer Name"}
+					placeholder={"Customer Name"}
 				/>
-				<span className="ml-5">Transaction: </span>
-				<select
-					className="h-fit"
-					onChange={(e) => setFilter("transactionType", e.target.value)}
-					defaultValue={""}
-				>
-					<option value={""}>All</option>
-					<option value={"Pawn"}>Pawn</option>
-					<option value={"Renew"}>Renew</option>
-					<option value={"Redeem"}>Redeem</option>
-				</select>
+
 				<span className="ml-5">Status: </span>
 				<select
 					className="h-fit"
@@ -142,10 +126,7 @@ function NotificationTable({ role, data }) {
 					{headerGroups.map((headerGroup) => (
 						<tr {...headerGroup.getHeaderGroupProps()}>
 							{headerGroup.headers.map((column) => {
-								if (
-									column.Header !== "Transaction" &&
-									column.Header.toString() !== "Status"
-								) {
+								if (column.Header.toString() !== "Status") {
 									return (
 										<th
 											{...column.getHeaderProps(column.getSortByToggleProps())}
@@ -223,4 +204,4 @@ function NotificationTable({ role, data }) {
 	);
 }
 
-export default NotificationTable;
+export default OngoingTable;

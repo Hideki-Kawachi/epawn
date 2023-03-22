@@ -1,6 +1,7 @@
 import Close from "../closebutton";
 import Image from "next/image";
 import React from "react";
+import dayjs from "dayjs";
 function CustomerDetails({ trigger, setTrigger, customerInfo, userInfo }) {
 	function closeModal() {
 		setTrigger(!trigger);
@@ -107,7 +108,7 @@ function CustomerDetails({ trigger, setTrigger, customerInfo, userInfo }) {
 							</div>
 
 							<div className="mx-5 text-left">
-								<p>{customerInfo.birthDate}</p>
+								<p>{dayjs(customerInfo.birthDate).format("MMM DD,YYYY")}</p>
 								<p>{customerInfo.birthPlace}</p>
 								<p>{customerInfo.presentAddress}</p>
 								<p>{customerInfo.permanentAddress}</p>
