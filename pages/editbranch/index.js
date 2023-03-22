@@ -27,7 +27,7 @@ export const getServerSideProps = withIronSessionSsr(
 
 			let foundBranch = await Branch.findOne({ branchID: empBranch.branchID });
 
-			console.log("no " + foundBranch.branchID)
+			// console.log("no " + foundBranch.branchID)
 
 			let branchData = JSON.stringify(foundBranch);
 
@@ -49,9 +49,55 @@ export const getServerSideProps = withIronSessionSsr(
 	ironOptions
 );
 
+
 function EditBranch({ currentUser, branchData }) {
 
-	let parsedBranch = JSON.parse(branchData)
+	const parsedBranch = JSON.parse(branchData)
+
+	const [currentPawnTicketID, setCurrentPawnTicketID] = useState(parsedBranch.currentPawnTicketID);
+	const [endingPawnTicketID, setEndingPawnTicketID] = useState(parsedBranch.endingPawnTicketID);
+
+	function submitForm(){
+		if (
+			currentPawnTicketID.length == 0 ||
+			endingPawnTicketID.length == 0 || 
+			currentPawnTicketID.length != 8 ||
+			endingPawnTicketID.length != 8
+		) {
+			setError(true);
+
+			console.log("Length is 0")
+		}  else {
+
+			let newBranchInfo = {
+				branchID: parsedBranch.branchID,
+				currentPawnTicketID: currentPawnTicketID,
+				endingPawnTicketID: endingPawnTicketID
+			}
+
+			// console.log(newBranchInfo)
+
+			fetch("/api/editBranchInfo", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(newBranchInfo),
+			})
+			.then((res) => res.json())
+			.then((data) => {
+
+					console.log(data + "hello")
+					// setNotifResult(data);
+					// if (data != "No Fields Edited") {
+					// 	setTimeout(() => window.location.reload(), 800);
+					// }
+					window.location.reload()
+				});
+
+		}
+	}
+
 
 	return (
 		<>
@@ -87,29 +133,32 @@ function EditBranch({ currentUser, branchData }) {
 				<div className="flex-col items-start my-5 justify-centerfont-nunito">
 					<span className="text-base">Current Pawn Ticket ID: </span>
 					<span className="text-[#FF0000] mx-2">*</span>
-					<div>
-						<select>
-							<option value="parsedBranch.currentPawnTicketID">{parsedBranch.currentPawnTicketID}</option>
-							<option value="B-000000">B-000000</option>
-							<option value="C-000000">C-000000</option>
-							<option value="D-000000">D-000000</option>
-							<option value="E-000000">E-000000</option>
-						</select>
-					</div>
+					<input 
+						  	className="border rounded-md stroke-gray-500 px-3"
+							type="text"
+							id="currentPawnTicketID"
+							defaultValue={parsedBranch.currentPawnTicketID}
+							onChange={(e) => setCurrentPawnTicketID(e.target.value)}
+					/>
 				</div>
 				<div className="flex-col items-start my-5 justify-centerfont-nunito">
 					<span className="text-base">Ending Pawn Ticket ID: </span>
 					<span className="text-[#FF0000] mx-2">*</span>
-					<div>
-						<select>
-							<option value="A-999999">A-999999</option>
-							<option value="B-999999">B-999999</option>
-							<option value="C-999999">C-999999</option>
-							<option value="D-999999">D-999999</option>
-							<option value="E-999999">E-999999</option>
-						</select>
-					</div>
+						<input 
+								className="border rounded-md stroke-gray-500 px-3"
+								type="text"
+								id="endingPawnTicketID"
+								defaultValue={parsedBranch.endingPawnTicketID}
+								onChange={(e) => setEndingPawnTicketID(e.target.value)}
+						/>
 				</div>
+
+				<button className=" bg-[#14C6A5] select-none "
+						type="button"
+						onClick={submitForm}
+					>
+						<p>Save Changes</p>
+				</button>
 			</div>
 		</>
 	);
