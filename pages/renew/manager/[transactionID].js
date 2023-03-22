@@ -5,14 +5,10 @@ import DetailsCardRenewManager from "../../../components/renew/detailsManager";
 import Modal from "react-modal";
 import Submit from "../../../components/modals/submitRenewal";
 import Cancel from "../../../components/modals/cancel";
-import dbConnect from "../../../utilities/dbConnect";
-import PawnDetails from "../../../components/modals/pawnDetails";
-import ItemMockData from "./ITEMS_MOCK_DATA";
 import ItemCard from "../../../components/itemcard";
 import { withIronSessionSsr } from "iron-session/next";
 import { useRouter } from "next/router";
 import { ironOptions } from "../../../utilities/config";
-import Renew from "../../../schemas/renew";
 import dayjs from "dayjs";
 
 export const getServerSideProps = withIronSessionSsr(
@@ -64,7 +60,7 @@ function RenewManager({ currentUser }) {
 	const router = useRouter();
 
 	//Item List Backend States
-	const [itemListID, setItemListID] = useState("");
+	const [itemListID, setItemListID] = useState("N/A");
 	const [transactionID, setTransactionID] = useState(
 		router.query.transactionID
 	);
@@ -150,33 +146,14 @@ function RenewManager({ currentUser }) {
 					if (renew != null) {
 						setRenewID(renew.renewID);
 						setPTNumber(renew.prevPawnTicketID);
-						setItemListID(renew.itemListID);
+					
 						console.log("PT is " + PTNumber);
 					}
 				});
 		}
 	}, [transactionID, PTNumber]);
 
-	useEffect(() => {
-		if (itemListID) {
-			fetch("/api/redeem/itemList/" + itemListID, {
-				method: "GET",
-				headers: {
-					Accept: "application/json",
-					"Content-Type": "application/json",
-				},
-			})
-				.then((res) => res.json())
-				.then((info) => {
-					// console.log(data)
-					if (info != null) {
-						// console.log(JSON.stringify(info))
-						let list = JSON.stringify(info);
-						setitemList(JSON.parse(list)); //temporary
-					}
-				});
-		}
-	}, [itemListID]);
+
 
 	useEffect(() => {
 		if (PTNumber != "") {
@@ -198,6 +175,27 @@ function RenewManager({ currentUser }) {
 				});
 		}
 	}, [PTNumber]);
+
+  	useEffect(() => {
+      if (itemListID != "N/A") {
+        fetch("/api/redeem/itemList/" + itemListID, {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        })
+          .then((res) => res.json())
+          .then((info) => {
+            // console.log(data)
+            if (info != null) {
+              // console.log(JSON.stringify(info))
+              let list = JSON.stringify(info);
+              setitemList(JSON.parse(list)); //temporary
+            }
+          });
+      }
+    }, [itemListID]);
 
 	// BACKEND TO RETRIEVE CUSTOMER NAME USING USER ID
 	useEffect(() => {

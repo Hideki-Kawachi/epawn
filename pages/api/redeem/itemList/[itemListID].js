@@ -14,7 +14,8 @@ export default async function ItemListID(req, res) {
 
         res.json(itemInfo)
         }
-    else
+    else{
     res.json(null)
+    }//console.log("Invalid query " + req.query.itemListID);
     
 }

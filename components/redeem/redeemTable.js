@@ -59,7 +59,7 @@ function RedeemTable({ role, data }) {
     if (role == "manager") {
       if (rowData.status == "Pending") {
         router.push({
-          pathname: "/renew/manager/[transactionID]",
+          pathname: "/redeem/manager/[transactionID]",
           query: { transactionID: rowData._id },
         });
       }
