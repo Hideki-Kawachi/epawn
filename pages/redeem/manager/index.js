@@ -10,7 +10,7 @@ import RenewTable from "../../../components/renew/renewTable";
 import { withIronSessionSsr } from "iron-session/next";
 import { ironOptions } from "../../../utilities/config";
 import Transaction from "../../../schemas/transaction";
-import Renew from "../../../schemas/renew";
+import Redeem from "../../../schemas/redeem";
 import User from "../../../schemas/user";
 
 export const getServerSideProps = withIronSessionSsr(
@@ -29,7 +29,7 @@ export const getServerSideProps = withIronSessionSsr(
 			await dbConnect();
 
 			let transactionData;
-			let renewData;
+			let redeemData;
 			let customerData = await User.find({ isDisabled: false }).lean();
 
 			transactionData = await Transaction.find({
@@ -41,7 +41,7 @@ export const getServerSideProps = withIronSessionSsr(
 				.sort({ updatedAt: -1 })
 				.lean();
 
-			renewData = await Renew.find({}).lean();
+			redeemData = await Redeem.find({}).lean();
 
 			// console.log("trans data: ", transactionData);
 			//console.log("renew data: ", renewData);
@@ -52,10 +52,11 @@ export const getServerSideProps = withIronSessionSsr(
 					(customer) => customer.userID == transaction.customerID
 				);
 				//looks for PT number of that transaction
-				renewData.forEach((renew) => {
-					if (renew.transactionID == transaction._id) {
-						transaction.ptNumber = renew.prevPawnTicketID;
-					}
+				redeemData.forEach((redeem) => {
+					if (redeem.transactionID == transaction._id) {
+						transaction.ptNumber = redeem.pawnTicketID;
+					console.log(JSON.stringify(redeem))
+          }
 				});
 
 				if (customerInfo) {
