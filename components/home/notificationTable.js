@@ -56,51 +56,74 @@ function NotificationTable({ role, data }) {
 	const router = useRouter();
 
 	function openRow(rowData) {
+		console.log("rowData", rowData, "==", role);
+		// if manager
 		if (role == "manager") {
-			if (rowData.status == "For Appraisal") {
-				router.push({
-					pathname: "pawn/manager/appraisal/[transactionID]",
-					query: { transactionID: rowData._id },
-				});
-			} else if (rowData.status == "For Negotiation") {
-				router.push({
-					pathname: "pawn/manager/negotiation/[transactionID]",
-					query: { transactionID: rowData._id },
-				});
-			} else if (rowData.status == "For Approval") {
-				router.push({
-					pathname: "pawn/manager/approval/[transactionID]",
-					query: { transactionID: rowData._id },
-				});
+			//if pawn
+			console.log("row trans:", rowData.transactionType);
+			if (rowData.transactionType == "Pawn") {
+				if (rowData.status == "For Appraisal") {
+					router.push({
+						pathname: "pawn/manager/appraisal/[transactionID]",
+						query: { transactionID: rowData._id },
+					});
+				} else if (rowData.status == "For Negotiation") {
+					router.push({
+						pathname: "pawn/manager/negotiation/[transactionID]",
+						query: { transactionID: rowData._id },
+					});
+				} else if (rowData.status == "For Approval") {
+					router.push({
+						pathname: "pawn/manager/approval/[transactionID]",
+						query: { transactionID: rowData._id },
+					});
+				}
 			}
+			// if renew
+			else if (rowData.transactionType == "Renew") {
+				if (rowData.status == "Pending") {
+					console.log("pending", rowData);
+					router.push({
+						pathname: "renew/manager/[transactionID]",
+						query: { transactionID: rowData._id },
+					});
+				}
+			}
+
 			// console.log("MANAGER", rowData);
-		} else if (role == "clerk") {
-			if (rowData.status == "Appraised") {
-				router.push({
-					pathname: "pawn/clerk/ongoingTransaction/[transactionID]",
-					query: { transactionID: rowData._id },
-				});
-			} else if (rowData.status == "Rejected") {
-				router.push({
-					pathname: "pawn/clerk/rejected/[transactionID]",
-					query: { transactionID: rowData._id },
-				});
-			} else if (
-				rowData.status == "Approved" &&
-				rowData.transactionType == "Pawn"
-			) {
-				router.push({
-					pathname: "pawn/clerk/approved/[transactionID]",
-					query: { transactionID: rowData._id },
-				});
-			} else if (
-				rowData.status == "Approved" &&
-				rowData.transactionType == "Renew"
-			) {
-				fetch("api/pawn/updateTransactionStatus", {
-					method: "POST",
-					body: JSON.stringify({ transactionID: rowData._id, status: "Done" }),
-				});
+		}
+		// if clerk
+		else if (role == "clerk") {
+			//if pawn
+			if (rowData.transactionType == "Pawn") {
+				if (rowData.status == "Appraised") {
+					router.push({
+						pathname: "pawn/clerk/ongoingTransaction/[transactionID]",
+						query: { transactionID: rowData._id },
+					});
+				} else if (rowData.status == "Rejected") {
+					router.push({
+						pathname: "pawn/clerk/rejected/[transactionID]",
+						query: { transactionID: rowData._id },
+					});
+				} else if (rowData.status == "Approved") {
+					router.push({
+						pathname: "pawn/clerk/approved/[transactionID]",
+						query: { transactionID: rowData._id },
+					});
+				}
+			}
+			//if renew
+			else if (rowData.transactionType == "Renew") {
+				if (rowData.status == "Approved") {
+					fetch("api/pawn/updateTransactionStatus", {
+						method: "POST",
+						body: JSON.stringify({
+							transactionID: rowData._id,
+							status: "Done",
+						}),
+					});
+				}
 			}
 			// console.log("CLERK", rowData);
 		}
