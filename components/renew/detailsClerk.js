@@ -20,7 +20,7 @@ function DetailsCardRenewClerk({
 }) {
 	const [customerModal, setCustomerModal] = useState(false);
 	const [historyModal, setHistoryModal] = useState(false);
-	const [totalAmount, setTotalAmount] = useState(0);
+
 	const [loanAmount, setLoanAmount] = useState(
 		pawnTicket.loanAmount ? pawnTicket.loanAmount : 0
 	);
@@ -42,6 +42,26 @@ function DetailsCardRenewClerk({
 				monthDiff(new Date(pawnTicket.expiryDate), new Date())
 		)
 	);
+	  function convertFloat(number) {
+      if (number === NaN || mode){
+		if(number == loanAmount){
+					return Number(number).toLocaleString("en-US", {
+			minimumFractionDigits: 2,
+			maximumFractionDigits: 2,
+			});
+		}
+		else
+			return "0.00";
+	  } 
+
+      else {
+        return Number(number).toLocaleString("en-US", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+      }
+    }
+
 	const [minPayment, setMinPayment] = useState(
 		interest * 2 + penalties + advInterest
 	);
@@ -277,7 +297,7 @@ function DetailsCardRenewClerk({
 							<div className="pr-10 ml-10 text-right min-w-fit">
 								<br />
 								{/* interest */}
-								<p> Php {interest.toFixed(2)} </p>
+								<p> Php {convertFloat(interest.toFixed(2))} </p>
 								<p>
 									{/*Advance interest */}
 									{advInterest.toFixed(2)}{" "}
@@ -285,12 +305,12 @@ function DetailsCardRenewClerk({
 							</div>
 							<div className="text-right min-w-fit">
 								{/* loanAmount */}
-								<p className="mr-3 font-bold">Php {loanAmount.toFixed(2)}</p>
+								<p className="mr-3 font-bold">Php {convertFloat(loanAmount.toFixed(2))}</p>
 								<br />
 								<br />
-								<p className="mr-3">{(interest + advInterest).toFixed(2)}</p>
-								<p className="mr-3">{penalties.toFixed(2)}</p>
-								<p className="mr-3">{partialPayment.toFixed(2)}</p>
+								<p className="mr-3">{convertFloat((interest + advInterest).toFixed(2))}</p>
+								<p className="mr-3">{convertFloat(penalties.toFixed(2))}</p>
+								<p className="mr-3">{convertFloat(partialPayment.toFixed(2))}</p>
 								<input
 									type="number"
 									className="w-40 px-3 mt-3 mb-1 text-right border rounded-md stroke-gray-500"
@@ -319,7 +339,7 @@ function DetailsCardRenewClerk({
 								)}
 
 								<hr className="my-3" />
-								<p className="mr-3 font-bold">Php {newLoanAmount.toFixed(2)}</p>
+								<p className="mr-3 font-bold">Php {convertFloat(newLoanAmount.toFixed(2))}</p>
 							</div>
 						</div>
 					</div>
