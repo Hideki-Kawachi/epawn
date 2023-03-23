@@ -16,58 +16,50 @@ function DetailsCardRedeemManager({
   newLoan,
   getNewLoan,
   amountToPay,
-  button2,
-  setButton2,
 }) {
   const [customerModal, setCustomerModal] = useState(false);
   const [computationModal, setCompOpen] = useState(false);
   const [cashTendered, setCashTendered] = useState(0);
   const [historyModal, setHistoryModal] = useState(false);
-  const [partial, setPartial] = useState(0);
+  const [loanAmount, setLoanAmount] = useState(
+    pawnTicket.loanAmount ? pawnTicket.loanAmount : 0
+  );
+  const [partialPayment, setPartialPayment] = useState(0);
+  const [advInterest, setAdvInterest] = useState(
+    pawnTicket.loanAmount ? pawnTicket.loanAmount * 0.035 : 0
+  );
+  const [interest, setInterest] = useState(
+    pawnTicket.loanAmount
+      ? pawnTicket.loanAmount *
+          0.035 *
+          monthDiff(new Date(pawnTicket.maturityDate), new Date())
+      : 0
+  );
+  const [penalties, setPenalties] = useState(
+    Number(
+      pawnTicket.loanAmount *
+        0.01 *
+        monthDiff(new Date(pawnTicket.expiryDate), new Date())
+    )
+  );
 
-    function partialPayment(amount, interest) {
-      if (amount == NaN || interest == NaN) {
-        return 0;
-      } else if (Number(amount) - Number(interest) < 0) return 0;
-      else if (Number(amount) - Number(interest) > pawnTicket.loanAmount) return 0;
-      else {
-        //  setPartial(amount - interest);
-        return Number(amount) - Number(interest);
-      }
-    }
-      function getTotalInterest(int, advint) {
-        //console.log("test " + (int + advint));
-        if (int == NaN || advint == NaN) {
-          // setTotalInterest(0);
-          return 0;
-        } else {
-          // setTotalInterest(int + advint);
-        }
-        return int + advint;
-      }
+  	const [newLoanAmount, setNewLoanAmount] = useState(0);
+    const [PT, setPT] = useState();
 
-    function getInterest(loan) {
-      //plan: multiply loan * 0.035 with month diff
-      if (pawnTicket.loanDate == null || pawnTicket.maturityDate == null)
-        return "N/A";
-      else {
-        const date1 = dayjs(pawnTicket.loanDate, "MM/DD/YYYY");
-        const date2 = dayjs(pawnTicket.maturityDate, "MM/DD/YYYY");
-        const diffInMonths = date2.diff(date1, "month");
-        //setInterest(loan * 0.035 * diffInMonths);
-        return loan * 0.035 * diffInMonths;
-      }
+	function monthDiff(dateFrom, dateTo) {
+    let diff =
+      dateTo.getMonth() -
+      dateFrom.getMonth() +
+      12 * (dateTo.getFullYear() - dateFrom.getFullYear());
+    console.log("diff is:", diff);
+    if (diff > 0) {
+      return diff;
+    } else {
+      return 0;
     }
+  }
+   
 
-    function getAdvInterest(newLoan) {
-      if (pawnTicket.loanDate == null || pawnTicket.maturityDate == null)
-        return "N/A";
-      else {
-        //  setAdvInterest(newLoan * 0.035)
-        return newLoan * 0.035;
-      }
-    }
-    
   function getCash(cash){
     setCashTendered(cash)
   }
@@ -87,16 +79,49 @@ function DetailsCardRedeemManager({
     setHistoryModal(true);
   }
 
-    function getNewLoanAmount(loan, partial) {
-      if (loan - partial < 0) return 0;
-      else return Number(loan) - Number(partial);
-    }
+  	useEffect(() => {
+      if (amountToPay > minPayment && loanAmount - amountToPay > 2500) {
+        let amountLeftFromCash = amountToPay - interest - penalties;
+        let partialPayment =
+          (amountLeftFromCash - pawnTicket.loanAmount * 0.035) / 0.965;
+        let newLoanAmount = pawnTicket.loanAmount - partialPayment;
+        let tempAdvInterest = 0;
+        if (newLoanAmount > pawnTicket.loanAmount) {
+          setNewLoanAmount(pawnTicket.loanAmount);
+          setAdvInterest(pawnTicket.loanAmount * 0.035);
+        } else {
+          tempAdvInterest = newLoanAmount * 0.035;
+          setAdvInterest(tempAdvInterest);
+          setNewLoanAmount(newLoanAmount);
+          getNewLoan(newLoanAmount);
+        }
 
+        setPartialPayment(partialPayment < 0 ? 0 : partialPayment);
+      } else {
+        setPartialPayment(0);
+        setAdvInterest(0);
+        setNewLoanAmount(0);
+        setMinPayment(pawnTicket.loanAmount * 0.035 + interest + penalties);
+      }
+      
+    }, [amountToPay]);
 
-    function getFullName(fname, mname, lname) {
-      if (fname == undefined && lname == undefined) return " ";
-      else return fname + " " + mname + " " + lname;
-    }
+    
+	useEffect(() => {
+    setLoanAmount(pawnTicket.loanAmount ? pawnTicket.loanAmount : 0);
+    setPenalties(
+      pawnTicket.loanAmount *
+        0.01 *
+        monthDiff(new Date(pawnTicket.expiryDate), new Date())
+    );
+    setInterest(
+      pawnTicket.loanAmount *
+        0.035 *
+        monthDiff(new Date(pawnTicket.maturityDate), new Date())
+    );
+    console.log("Partial Payment: " + partialPayment);
+  }, [pawnTicket]);
+
 
      function convertFloat(number) {
          return Number(number).toLocaleString("en-US", {
@@ -122,20 +147,6 @@ function DetailsCardRedeemManager({
     return cash-amount;
   }
 
-   useEffect(() => {
-    setNewLoan(
-      getNewLoanAmount(
-        pawnTicket.loanAmount,
-        partialPayment(
-          amountToPay,
-          getTotalInterest(
-            getInterest(pawnTicket.loanAmount),
-            getAdvInterest(getNewLoanAmount(pawnTicket.loanAmount, partial))
-          )
-        )
-      )
-    );
-   });
   return (
     <>
       <div
@@ -288,7 +299,7 @@ function DetailsCardRedeemManager({
                 <p className="font-bold mr-3">
                   Php {convertFloat(pawnTicket.loanAmount)}
                 </p>
-                <p className="mr-3"> {convertFloat(amountToPay)} </p>
+                <p className="mr-3"> {convertFloat(loanAmount.toFixed(2))} </p>
                 <p>
                   <input
                     type="number"
@@ -302,21 +313,7 @@ function DetailsCardRedeemManager({
 
                 <hr className="my-3" />
                 <p className="font-bold mr-3">
-                  Php{" "}
-                  {convertFloat(
-                    getNewLoanAmount(
-                      pawnTicket.loanAmount,
-                      partialPayment(
-                        amountToPay,
-                        getTotalInterest(
-                          getInterest(pawnTicket.loanAmount),
-                          getAdvInterest(
-                            getNewLoanAmount(pawnTicket.loanAmount, partial)
-                          )
-                        )
-                      )
-                    )
-                  )}
+                  Php {convertFloat(newLoanAmount.toFixed(2))}
                 </p>
               </div>
             </div>
