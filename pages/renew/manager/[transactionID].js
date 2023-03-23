@@ -3,7 +3,7 @@ import Header from "../../../components/header";
 import NavBar from "../../../components/navigation/navBar";
 import DetailsCardRenewManager from "../../../components/renew/detailsManager";
 import Modal from "react-modal";
-import Submit from "../../../components/modals/submitRenewal";
+import Submit from "../../../components/modals/submitManagerRenew";
 import Cancel from "../../../components/modals/cancel";
 import ItemCard from "../../../components/itemcard";
 import { withIronSessionSsr } from "iron-session/next";
