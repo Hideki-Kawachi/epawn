@@ -186,8 +186,6 @@ useEffect(() => {
         <div className="m-10 ">
           <span className="font-bold pr-7">PT Number:</span>
           <span>{String(PTNumber) + ""}</span>
-          {console.log("Pt number is " + PTNumber)}
-          <p className="text-sm text-gray-300 pl-[163px]">Format: X-XXXX </p>
 
           <hr className="h-px my-8 bg-gray-500 border-0" />
 

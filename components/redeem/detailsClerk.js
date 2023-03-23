@@ -5,15 +5,35 @@ import CustomerDetails from "../modals/customerDetails";
 import PawnHistory from "../modals/pawnHistory";
 import dayjs from "dayjs";
 
-function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, customer, branch, authData, setAuth, check, getAmount, setCheck}) {
+function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, customer, branch, authData, setAuth, check, getAmount, setCheck, partialPayment}) {
   const [isOriginal, setOriginal] = useState("original");
   const [repModal, setRepModal] = useState(false); 
   const [customerModal, setCustomerModal] = useState(false);
   const [historyModal, setHistoryModal] = useState(false);
-  const [totalAmount, setTotalAmount] = useState(0)
-  const [loanAmount, setLoan] = useState()
-  const [newloanAmount, setNewLoanAmount] = useState(0)
-  const [partial, setPartial] = useState(0)
+  const [totalRedeem, setTotalRedeem] = useState(0)
+  const [amountToPay, setAmountToPay] = useState(0)
+  const [redeemLength, setRedeemLength] = useState(redeem.length)
+  const [loanAmount, setLoanAmount] = useState(0)
+  const [advInterest, setAdvInterest] = useState(
+    pawnTicket.loanAmount ? pawnTicket.loanAmount * 0.035 : 0
+  );
+  
+	const [interest, setInterest] = useState(
+    pawnTicket.loanAmount
+      ? pawnTicket.loanAmount *
+          0.035 *
+          monthDiff(new Date(pawnTicket.maturityDate), new Date())
+      : 0
+  );
+
+  	const [penalties, setPenalties] = useState(
+      Number(
+        pawnTicket.loanAmount *
+          0.01 *
+          monthDiff(new Date(pawnTicket.expiryDate), new Date())
+      )
+    );
+
   const [PT, setPT] = useState()
   function repOpen(){
     setRepModal(true);
@@ -32,10 +52,6 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
     search(pawnticketID)
   }
 
-  function getTotalAmount(redeemTotal, partial){
-    getAmount(redeemTotal - partial);
-    return redeemTotal - partial;
-  }
 
   function amountLoan(amount){
     getAmount(amount)
@@ -53,48 +69,22 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
     }
   }
 
-  function getAdvInterest(newLoan){
-  if (pawnTicket.loanDate == null || pawnTicket.maturityDate == null)
-    return "N/A";
-  else return newLoan * 0.035;
-  }
+	  function convertFloat(number) {
+      if (mode) {
+        if (number == loanAmount) {
+          return Number(number).toLocaleString("en-US", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          });
+        } else return "0.00";
+      } else {
+        return Number(number).toLocaleString("en-US", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+      }
+    }
 
-  function getTotalInterest(int, advint){
-    //console.log("test " + (int + advint));
-    if(int == NaN || advint == NaN)
-      return 0;
-    else
-      return convertFloat(int + advint);
-  }
-
-  function getNewLoanAmount(loan, partial){
-    return Number(loan) - Number(partial)
-  }
-
-  function convertFloat(number) {
-    if (mode)
-      return "0.00";
-    else {
-      return Number(number).toLocaleString("en-US", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      });
-    };
-  }
-
-  function convertDate(date){
-    if (date == null) return "N/A";
-    else {
-      const dt = new Date(date);
-      //console.log(dt);
-      return dayjs(dt).format("MM/DD/YYYY");
-    };
-  }
-
-  function getPartialPayment(loan, amount){
-    return convertFloat()
-  }
-  
   function getTotalRedeem(redeemList){
     var total = 0;
 
@@ -104,29 +94,94 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
 
     return total;
   }
+  
+	function convertDate(date) {
+    if (date == null) return "N/A";
+    else {
+      const dt = new Date(date);
+      //console.log(dt);
+      return dayjs(dt).format("MM/DD/YYYY");
+    }
+  }
 
-  function getFullName(user, fname, mname, lname){
+  function getFullName(fname, mname, lname){
     if(fname == undefined && lname == undefined)
       return " ";
     else  
       return fname + " " + mname + " " + lname;
   }
+  
 
-  useEffect(() =>{
-    if (pawnTicket != null){
-      setPT(pawnTicket)
-      setLoan(Number(pawnTicket.loanAmount))
-      amountLoan(loanAmount)
+  const [newLoanAmount, setNewLoanAmount] = useState(0);
 
+  	function monthDiff(dateFrom, dateTo) {
+      let diff =
+        dateTo.getMonth() -
+        dateFrom.getMonth() +
+        12 * (dateTo.getFullYear() - dateFrom.getFullYear());
+      console.log("diff is:", diff);
+      if (diff > 0) {
+        return diff;
+      } else {
+        return 0;
+      }
     }
-  }, [pawnTicket, loanAmount]
-  )
+  useEffect(() => {
+
+      if((getTotalRedeem(redeem) - partialPayment) > 0){
+        setTotalRedeem(getTotalRedeem(redeem));
+        if(totalRedeem > 0)
+          setAmountToPay(getTotalRedeem(redeem) - partialPayment);
+        else 
+          setAmountToPay(0)
+      }
+  }, [redeem, partialPayment, totalRedeem])
+
+
+	useEffect(() => {
+      if (totalRedeem != NaN) {
+        let newLoan = pawnTicket.loanAmount - amountToPay;
+        let tempAdvInterest = 0;
+
+        if (newLoan > pawnTicket.loanAmount) {
+          setNewLoanAmount(pawnTicket.loanAmount);
+          setAdvInterest(pawnTicket.loanAmount * 0.035);
+        } else {
+          tempAdvInterest = newLoanAmount * 0.035;
+          setAdvInterest(tempAdvInterest);
+          setNewLoanAmount(newLoan);
+        }
+        // if (amountToPay >= newLoanAmount)
+      } else {
+        setAdvInterest(0);
+        setNewLoanAmount(0);
+        // setMinPayment(pawnTicket.loanAmount * 0.035 + interest + penalties);
+      }
+  }, [amountToPay, partialPayment, totalRedeem]);
+
+  	useEffect(() => {
+      setLoanAmount(pawnTicket.loanAmount ? pawnTicket.loanAmount : 0);
+      setPenalties(
+        pawnTicket.loanAmount *
+          0.01 *
+          monthDiff(new Date(pawnTicket.expiryDate), new Date())
+      );
+      setInterest(
+        pawnTicket.loanAmount *
+          0.035 *
+          monthDiff(new Date(pawnTicket.maturityDate), new Date())
+      );
+    }, [pawnTicket, loanAmount]);
+
+  // useEffect(() => {
+  //   if(redeem)
+  // })
 
   useEffect(() => {
-    if(totalAmount != null){
-      getAmount(totalAmount);
+    if (amountToPay != null) {
+      getAmount(amountToPay);
     }
-  },[totalAmount])
+  }, [amountToPay]);
 
   useEffect(() => {
     if (isOriginal == "original") {
@@ -142,7 +197,7 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
     <>
       <div
         id="detailscard"
-        className="drop-shadow-lg flex text-sm font-nunito pr-10"
+        className="drop-shadow-lg flex text-base font-nunito pr-10"
       >
         <Modal isOpen={repModal} ariaHideApp={false} className="modal">
           <AuthorizedRep
@@ -178,7 +233,7 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
                 onChange={(e) => searchPT(e.target.value)}
               />
               <p className="text-sm text-gray-300 pl-[163px]">
-                Format: X-XXXX{" "}
+                Format: X-ZZZZZZ{" "}
               </p>
             </span>
           )}
@@ -215,12 +270,7 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
             </div>
             <div className="text-left ml-5">
               <p className="">
-                {getFullName(
-                  user,
-                  user.firstName,
-                  user.middleName,
-                  user.lastName
-                )}
+                {getFullName(user.firstName, user.middleName, user.lastName)}
               </p>
               <p className="">{customer.contactNumber}</p>
               <p className="max-w-md">
@@ -266,9 +316,9 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
           )}
           {isOriginal == "authorized" && check == false ? (
             <p className="ml-40 text-sm text-red-400 px-5">
-              Missing Authorized <br/><span>Rep. Details</span>
+              Missing Authorized <br />
+              <span>Rep. Details</span>
             </p>
-            
           ) : (
             <></>
           )}
@@ -333,25 +383,19 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
               </div>
               <div className="text-right ml-10 pr-10 min-w-fit">
                 <br />
-                <p> Php {convertFloat(getInterest(loanAmount))} </p>
-                <p>
-                  {" "}
-                  {convertFloat(
-                    getAdvInterest(getNewLoanAmount(loanAmount, partial))
-                  )}{" "}
-                </p>
+                <p> Php {convertFloat(interest.toFixed(2))} </p>
+                <p>{advInterest.toFixed(2)}</p>
               </div>
               <div className="text-right min-w-fit">
-                <p className="font-bold mr-3">Php {convertFloat(loanAmount)}</p>
+                <p className="font-bold mr-3">
+                  Php {convertFloat(loanAmount.toFixed(2))}
+                </p>
                 <br />
                 <br />
                 <p className="mr-3">
-                  {getTotalInterest(
-                    getInterest(loanAmount),
-                    getAdvInterest(getNewLoanAmount(loanAmount, partial))
-                  )}
+                  {convertFloat((interest + advInterest).toFixed(2))}
                 </p>
-                <p className="mr-3">{convertFloat(partial)}</p>
+                <p className="mr-3">{convertFloat(penalties.toFixed(2))}</p>
                 {/* <p>
                   <input
                     type="number"
@@ -359,9 +403,9 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
                   />
                 </p> */}
                 <p className="mr-3">{convertFloat(getTotalRedeem(redeem))}</p>
-                <p className="mr-1.5">(0.00)</p>
+                <p className="mr-1.5">({convertFloat(partialPayment)})</p>
                 <p className="mr-3 font-bold">
-                  {convertFloat(getTotalAmount(getTotalRedeem(redeem), partial))}
+                  {convertFloat(amountToPay)}
                 </p>
                 {/* <input
                     type="number"
@@ -372,7 +416,7 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
 
                 <hr className="my-3" />
                 <p className="font-bold mr-3">
-                  Php {convertFloat(getNewLoanAmount(loanAmount, partial))}
+                  Php {convertFloat(newLoanAmount.toFixed(2))}
                 </p>
               </div>
             </div>

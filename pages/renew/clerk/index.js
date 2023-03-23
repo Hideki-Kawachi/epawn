@@ -131,6 +131,9 @@ function RenewClerk({ currentUser }) {
 					} else {
 						setPTinfo("N/A");
 						setTransactionID("N/A");
+						setUserInfo("N/A");
+						setCusDetails("N/A");
+						setitemList([]);
 						setButton(true);
 					}
 				});
