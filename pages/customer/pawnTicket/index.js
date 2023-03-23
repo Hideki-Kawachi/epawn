@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { withIronSessionSsr } from "iron-session/next";
 import { ironOptions } from "../../../utilities/config";
 import { useRouter } from "next/router";
@@ -39,8 +39,18 @@ export const getServerSideProps = withIronSessionSsr(
 
 function PawnTicketIndex({ currentUser, pawnTicketData }) {
 	const router = useRouter();
+	const [pawnTicketShow, setPawnTicketShow] = useState(pawnTicketData);
+	const [search, setSearch] = useState("");
 
-	console.log("PT DATA:", pawnTicketData);
+	useEffect(() => {
+		let tempList = [];
+		pawnTicketData.forEach((pt) => {
+			if (pt.pawnTicketID.includes(search)) {
+				tempList.push(pt);
+			}
+		});
+		setPawnTicketShow(tempList);
+	}, [search]);
 
 	return (
 		<div className="flex flex-col items-center">
@@ -48,26 +58,21 @@ function PawnTicketIndex({ currentUser, pawnTicketData }) {
 				<CustomerHeader></CustomerHeader>
 				<div className="w-full h-full overflow-y-auto bg-green-50 ">
 					<div className="flex flex-col items-center w-full h-full mt-[3vh] font-nunito text-sm">
-						<div>
-							<h1 className="mb-5 text-base font-bold text-center">
-								My PawnTickets
-							</h1>
+						<h1 className="mb-5 text-base font-bold text-center">
+							My PawnTickets
+						</h1>
+						<div className="flex flex-row w-full gap-2 px-4">
 							<span>Search: </span>
-							<input type="text"></input>
+							<input
+								type="text"
+								className="w-full"
+								onChange={(e) => setSearch(e.target.value)}
+								placeholder="PT Number"
+							></input>
 						</div>
-						<div className="mt-2 ">
-							<span className="text-sm ">Sort By: </span>
-							<select>
-								<option value={"nearest-maturity"}>
-									Nearest Maturity Date
-								</option>
-								<option value={"farthest-maturity"}>
-									Farthest Maturity Date
-								</option>
-							</select>
-						</div>
+
 						<div className="flex flex-col w-full gap-2 p-3 mt-3">
-							{pawnTicketData.map((pt) => (
+							{pawnTicketShow.map((pt) => (
 								<PawnTicketCard
 									key={pt.pawnTicketID}
 									pawnTicketData={pt}

@@ -10,7 +10,7 @@ function LoadingSpinner({ isLoading }) {
 						id="loading-background"
 					>
 						<span
-							className=" top-1/2 left-1/2 fixed z-50 h-[15%] aspect-square"
+							className=" top-1/2 left-1/2 fixed z-50 h-[15%] aspect-square translate-x-[-50%]"
 							id="loading-spinner"
 						></span>
 					</div>

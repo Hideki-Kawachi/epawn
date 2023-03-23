@@ -58,19 +58,22 @@ function SignIn() {
 				} else {
 					console.log("ERROR IS:", data);
 					setError(true);
+					setIsLoading(false);
 				}
 			});
 	}
 
-	useEffect(() => {
-		if (isLoading) setIsLoading(false);
-	}, [error]);
-
 	return (
 		<>
 			<LoadingSpinner isLoading={isLoading}></LoadingSpinner>
-			<div className="flex flex-row w-[100vw] h-[100vh]">
-				<div className="flex items-center justify-center w-full h-full bg-gray-100">
+			<div
+				className="flex flex-row w-[100vw] h-[100vh]"
+				id="login-main-container"
+			>
+				<div
+					className="flex flex-col items-center justify-center w-full h-full bg-gray-100"
+					id="login-image-container"
+				>
 					<div className="relative w-1/2 aspect-[30/18]">
 						<Image
 							src={"/logo_transparent.png"}
@@ -78,10 +81,18 @@ function SignIn() {
 							priority={true}
 						></Image>
 					</div>
+					<span className="text-2xl font-bold font-dosis">ePawn</span>
+					<span className="text-base font-dosis">Treasured to Last</span>
 				</div>
 				<div className="flex flex-col items-center w-full h-full bg-green-100">
-					<div className="w-1/2 text-base font-bold font-nunito">
-						<h1 className="text-2xl font-semibold mt-[20vh] mb-20 font-dosis">
+					<div
+						className="w-1/2 text-base font-bold font-nunito"
+						id="login-input-container"
+					>
+						<h1
+							className="text-2xl font-semibold mt-[20vh] mb-20 font-dosis"
+							id="login-welcome-header"
+						>
 							Welcome to R. Raymundo Pawnshop
 						</h1>
 						<label htmlFor="userID">User ID:</label>
@@ -91,7 +102,7 @@ function SignIn() {
 							className="w-full mb-5 font-semibold"
 							required
 							value={userID}
-							onChange={(e) => setUserID(e.target.value)}
+							onChange={(e) => setUserID(e.target.value.toUpperCase())}
 						></input>
 
 						<label htmlFor="userID">Password:</label>
@@ -103,9 +114,11 @@ function SignIn() {
 							value={password}
 							onChange={(e) => setPassword(e.target.value)}
 						></input>
-						<button className="mt-10 bg-green-300" onClick={() => submitForm()}>
-							Login
-						</button>
+						<div className="flex justify-center mt-10">
+							<button className="bg-green-300" onClick={() => submitForm()}>
+								Login
+							</button>
+						</div>
 					</div>
 				</div>
 			</div>

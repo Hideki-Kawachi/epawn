@@ -6,8 +6,8 @@ function CustomerHeader() {
 			<div className="aspect-[30/18] relative w-1/3">
 				<Image src="/logo_transparent.png" layout="fill"></Image>
 			</div>
-			<span className="text-lg font-bold font-dosis">ePawn</span>
-			<span className="text-sm font-dosis">Treasured to Last</span>
+			<span className="text-2xl font-bold font-dosis">ePawn</span>
+			<span className="text-base font-dosis">Treasured to Last</span>
 		</div>
 	);
 }
