@@ -11,15 +11,13 @@ export default function generatePawnTicketID(latestPT) {
 
 	if (numSec < 999999) {
 		numSec++;
-		if (numSec < 10000) {
+		if (numSec < 10) {
 			latestID = idSections[0] + "-00000" + numSec.toString();
-		} else if (numSec < 1000) {
+		} else if (numSec < 100) {
 			latestID = idSections[0] + "-0000" + numSec.toString();
-		} else if (numSec < 100) {
+		} else if (numSec < 1000) {
 			latestID = idSections[0] + "-000" + numSec.toString();
-		} else if (numSec < 10) {
-			latestID = idSections[0] + "-00" + numSec.toString();
-		} else if (numSec < 100) {
+		} else if (numSec < 10000) {
 			latestID = idSections[0] + "-0" + numSec.toString();
 		} else {
 			latestID = idSections[0] + "-" + numSec.toString();
