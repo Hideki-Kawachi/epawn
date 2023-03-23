@@ -13,15 +13,15 @@ export default async function newManagerRenewal(req, res) {
 
 	let body = JSON.parse(req.body);
 
-	let transac = await Transaction.updateOne(
-		{ _id: body.transactionID },
-		{
-			transactionType: "Renew",
-			status: "Approved",
-			// rejectMessage: "",
-			// amountPaid: body.totalAmount,
-		}
-	);
+	// let transac = await Transaction.updateOne(
+	// 	{ _id: body.transactionID },
+	// 	{
+	// 		transactionType: "Renew",
+	// 		status: "Approved",
+	// 		// rejectMessage: "",
+	// 		// amountPaid: body.totalAmount,
+	// 	}
+	// );
 
 	//console.log("Manager ID is " + managerID);
 
@@ -33,55 +33,63 @@ export default async function newManagerRenewal(req, res) {
 		{ currentPawnTicketID: 1, endingPawnTicketID: 1 }
 	);
 
+	let loanDate = new Date();
+	let newPawnTicketID = pawnTicketInfo.currentPawnTicketID;
+	console.log("BRANCH PT IS:" + newPawnTicketID);
+	let pawnTicketID = await generatePawnTicketID(newPawnTicketID);
+	console.log("GENERATED PT ID IS:", pawnTicketID);
+	let pt = null;
+
 	// check if pawnticket already exists with PT Number
 	let pawnTicketExists = await PawnTicket.find({
 		transactionID: body.transactionID,
-		pawnTicketID: { $exists: true },
-		$expr: { $gt: [{ $strLenCP: "$pawnTicketID" }, 1] },
-	});
+		pawnTicketID: pawnTicketID,
+	}).lean();
 
-	let loanDate = new Date();
-	let newPawnTicketID = pawnTicketInfo.currentPawnTicketID;
-	console.log("New PT is " + newPawnTicketID);
-	let pawnTicketID = await generatePawnTicketID(newPawnTicketID);
-	console.log("PT is " + pawnTicketID);
-	let pt = null;
-	if (pawnTicketExists.length == 0) {
-		pt = await PawnTicket.create({
-			pawnTicketID: pawnTicketID,
-			transactionID: body.transactionID,
-			customerID: body.customerID,
-			itemListID: body.itemListID,
-			loanDate: loanDate,
-			maturityDate: new Date().setDate(loanDate.getDate() + 30),
-			expiryDate: new Date().setDate(loanDate.getDate() + 120),
-			loanAmount: body.newLoanAmount,
-			isInactive: false,
-		});
-	}
+	console.log("pawnTicketExists: ", pawnTicketExists);
 
-	if (pt) {
-		await Branch.findOneAndUpdate(
-			{ branchID: body.branchID },
-			{ currentPawnTicketID: pt.pawnTickedID }
-		);
-	}
+	res.json("ERROR");
 
-	let oldPT = await PawnTicket.updateOne(
-		{ pawnTicketID: body.oldPawnTicket },
-		{ isInactive: true }
-	);
+	// if (pawnTicketExists.length == 0) {
+	// 	pt = await PawnTicket.create({
+	// 		pawnTicketID: pawnTicketID,
+	// 		transactionID: body.transactionID,
+	// 		customerID: body.customerID,
+	// 		itemListID: body.itemListID,
+	// 		loanDate: loanDate,
+	// 		maturityDate: new Date().setDate(loanDate.getDate() + 30),
+	// 		expiryDate: new Date().setDate(loanDate.getDate() + 120),
+	// 		loanAmount: body.newLoanAmount,
+	// 		isInactive: false,
+	// 	});
+	// 	console.log("PT AFTER CREATE IS:", pt);
+	// } else {
+	// 	res.json("error pt already exists");
+	// }
 
-	let renew = await Renew.updateOne(
-		{ renewID: body.renewID },
-		{
-			newPawnTicketID: pawnTicketID,
-		}
-	);
+	// if (pt) {
+	// 	console.log("PT IT HERE IN IF IS:", pt.pawnTickedID);
+	// 	await Branch.findOneAndUpdate(
+	// 		{ branchID: body.branchID },
+	// 		{ currentPawnTicketID: pt.pawnTickedID }
+	// 	);
+	// }
 
-	if (transac && renew && oldPT) {
-		res.json("renew posted successfully");
-	} else {
-		res.json("error");
-	}
+	// let oldPT = await PawnTicket.updateOne(
+	// 	{ pawnTicketID: body.oldPawnTicket },
+	// 	{ isInactive: true }
+	// );
+
+	// let renew = await Renew.updateOne(
+	// 	{ renewID: body.renewID },
+	// 	{
+	// 		newPawnTicketID: pawnTicketID,
+	// 	}
+	// );
+
+	// if (transac && renew && oldPT) {
+	// 	res.json("renew posted successfully");
+	// } else {
+	// 	res.json("error");
+	// }
 }

@@ -36,9 +36,11 @@ function DetailsCardRenewClerk({
 			: 0
 	);
 	const [penalties, setPenalties] = useState(
-		pawnTicket.loanAmount *
-			0.035 *
-			monthDiff(new Date(pawnTicket.expiryDate), new Date())
+		Number(
+			pawnTicket.loanAmount *
+				0.035 *
+				monthDiff(new Date(pawnTicket.expiryDate), new Date())
+		)
 	);
 	const [minPayment, setMinPayment] = useState(
 		interest * 2 + penalties + advInterest
@@ -121,6 +123,16 @@ function DetailsCardRenewClerk({
 
 	useEffect(() => {
 		setLoanAmount(pawnTicket.loanAmount ? pawnTicket.loanAmount : 0);
+		setPenalties(
+			pawnTicket.loanAmount *
+				0.035 *
+				monthDiff(new Date(), new Date(pawnTicket.expiryDate))
+		);
+		setInterest(
+			pawnTicket.loanAmount *
+				0.035 *
+				monthDiff(new Date(), new Date(pawnTicket.maturityDate))
+		);
 	}, [pawnTicket]);
 
 	return (
