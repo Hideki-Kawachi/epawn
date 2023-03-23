@@ -38,7 +38,7 @@ function DetailsCardRenewClerk({
 	const [penalties, setPenalties] = useState(
 		Number(
 			pawnTicket.loanAmount *
-				0.035 *
+				0.01 *
 				monthDiff(new Date(pawnTicket.expiryDate), new Date())
 		)
 	);
@@ -53,6 +53,7 @@ function DetailsCardRenewClerk({
 			dateTo.getMonth() -
 			dateFrom.getMonth() +
 			12 * (dateTo.getFullYear() - dateFrom.getFullYear());
+		console.log("diff is:", diff);
 		if (diff > 0) {
 			return diff;
 		} else {
@@ -125,13 +126,13 @@ function DetailsCardRenewClerk({
 		setLoanAmount(pawnTicket.loanAmount ? pawnTicket.loanAmount : 0);
 		setPenalties(
 			pawnTicket.loanAmount *
-				0.035 *
-				monthDiff(new Date(), new Date(pawnTicket.expiryDate))
+				0.01 *
+				monthDiff(new Date(pawnTicket.expiryDate), new Date())
 		);
 		setInterest(
 			pawnTicket.loanAmount *
 				0.035 *
-				monthDiff(new Date(), new Date(pawnTicket.maturityDate))
+				monthDiff(new Date(pawnTicket.maturityDate), new Date())
 		);
 	}, [pawnTicket]);
 
