@@ -155,30 +155,35 @@ function RenewPawnTicketID({
 	}
 
 	useEffect(() => {
-		if (amountToPay > minPayment) {
-			let amountLeftFromCash = amountToPay - interest - penalties;
-			let partialPayment =
-				(amountLeftFromCash - pawnTicketData.loanAmount * 0.035) / 0.965;
-			let newLoanAmount = pawnTicketData.loanAmount - partialPayment;
-			let tempAdvInterest = 0;
-			if (newLoanAmount > pawnTicketData.loanAmount) {
-				setNewLoanAmount(pawnTicketData.loanAmount);
-				setAdvInterest(pawnTicketData.loanAmount * 0.035);
+		if (!pawnTicketData.isInactive) {
+			if (amountToPay > minPayment) {
+				let amountLeftFromCash = amountToPay - interest - penalties;
+				let partialPayment =
+					(amountLeftFromCash - pawnTicketData.loanAmount * 0.035) / 0.965;
+				let newLoanAmount = pawnTicketData.loanAmount - partialPayment;
+				let tempAdvInterest = newLoanAmount * 0.035;
+				console.log("new:", newLoanAmount);
+				if (newLoanAmount > pawnTicketData.loanAmount) {
+					setNewLoanAmount(pawnTicketData.loanAmount);
+					setAdvInterest(pawnTicketData.loanAmount * 0.035);
+				} else if (newLoanAmount < 2500) {
+					setPartialPayment(0);
+					setAdvInterest(tempAdvInterest);
+					setNewLoanAmount(newLoanAmount);
+					document.getElementById("amount_to_pay_input").style.borderColor =
+						"red";
+				} else {
+					setAdvInterest(tempAdvInterest);
+					setNewLoanAmount(newLoanAmount);
+					setPartialPayment(partialPayment < 0 ? 0 : partialPayment);
+					document.getElementById("amount_to_pay_input").style.borderColor =
+						"black";
+				}
 			} else {
-				tempAdvInterest = newLoanAmount * 0.035;
-				setAdvInterest(tempAdvInterest);
-				setNewLoanAmount(newLoanAmount);
+				document.getElementById("amount_to_pay_input").style.borderColor =
+					"red";
+				setMinPayment(pawnTicketData.loanAmount * 0.035 + interest + penalties);
 			}
-
-			setPartialPayment(partialPayment < 0 ? 0 : partialPayment);
-			document.getElementById("amount_to_pay_input").style.borderColor =
-				"black";
-		} else {
-			document.getElementById("amount_to_pay_input").style.borderColor = "red";
-			setMinPayment(pawnTicketData.loanAmount * 0.035 + interest + penalties);
-		}
-
-		if (amountToPay < minPayment) {
 		}
 	}, [amountToPay]);
 
@@ -193,6 +198,13 @@ function RenewPawnTicketID({
 				<div className="w-full h-full mb-20 overflow-y-auto bg-green-50">
 					<div className="flex flex-col items-center w-full h-full mt-[2vh] p-1">
 						<div className="w-full p-2 text-sm bg-gray-100 border-2 border-gray-300 h-fit font-nunito">
+							{pawnTicketData.isInactive ? (
+								<h1 className="text-base font-bold text-center text-red-500 bg-gray-200">
+									PawnTicket Inactive!
+								</h1>
+							) : (
+								<></>
+							)}
 							<div className="flex flex-row justify-between">
 								<div className="flex flex-col text-end w-fit">
 									<span className="font-semibold">
@@ -240,94 +252,117 @@ function RenewPawnTicketID({
 								</div>
 							</div>
 							<hr className="mt-5"></hr>
-							<h1 className="text-base">Renewal Details</h1>
-							<div className="flex flex-row gap-2">
-								<div className="flex flex-col items-end">
-									<span>
-										<b>New</b> Date Loan Granted:
-									</span>
-									<span>
-										<b>New</b> Maturity Date:
-									</span>
-									<span>
-										<b>New</b> Expiry Date:
-									</span>
-								</div>
-								<div className="flex flex-col items-start">
-									<span>{dayjs(loanDate).format("MMM DD, YYYY")}</span>
-									<span>
-										{dayjs(loanDate).add(1, "M").format("MMM DD, YYYY")}
-									</span>
-									<span>
-										{dayjs(loanDate).add(4, "M").format("MMM DD, YYYY")}
-									</span>
-								</div>
-							</div>
-							<hr className="mt-5"></hr>
-							<h1 className="text-base">Computations</h1>
-							<div className="flex flex-row gap-2">
-								<div className="flex flex-col items-end">
-									<span>Loan Amount:</span>
-									<span>Interest:</span>
-									<span>Adv. Interest:</span>
-									<span>Penalties:</span>
-									<span>Partial Payment:</span>
-									<span>Remaining Balance:</span>
-								</div>
-								<div className="flex flex-col items-end">
-									<span>Php {pawnTicketData.loanAmount.toFixed(2)}</span>
-									<span>Php {interest.toFixed(2)}</span>
-									<span>
-										Php{" "}
-										{advInterest >= 0 ? advInterest.toFixed(2) : "----------"}
-									</span>
-									<span>Php {penalties.toFixed(2)}</span>
-									<span>
-										Php{" "}
-										{partialPayment >= 0
-											? partialPayment.toFixed(2)
-											: "----------"}
-									</span>
-									<span>
-										Php{" "}
-										{newLoanAmount >= 0
-											? newLoanAmount.toFixed(2)
-											: "----------"}
-									</span>
-								</div>
-							</div>
-							<div className="flex flex-col justify-center w-full mt-5 text-center ">
-								<h1>Amount To Pay</h1>
-								<input
-									type="number"
-									value={amountToPay}
-									id="amount_to_pay_input"
-									onChange={(e) => setAmountToPay(parseFloat(e.target.value))}
-								></input>
-								<span>
-									Minimum Payment:{" "}
-									{minPayment >= amountToPay ? (
-										<span className="font-semibold text-red-500">
-											Php {minPayment.toFixed(2)}
-										</span>
+							{pawnTicketData.isInactive ? (
+								<></>
+							) : (
+								<>
+									<h1 className="text-base">Renewal Details</h1>
+									<div className="flex flex-row gap-2">
+										<div className="flex flex-col items-end">
+											<span>
+												<b>New</b> Date Loan Granted:
+											</span>
+											<span>
+												<b>New</b> Maturity Date:
+											</span>
+											<span>
+												<b>New</b> Expiry Date:
+											</span>
+										</div>
+										<div className="flex flex-col items-start">
+											<span>{dayjs(loanDate).format("MMM DD, YYYY")}</span>
+											<span>
+												{dayjs(loanDate).add(1, "M").format("MMM DD, YYYY")}
+											</span>
+											<span>
+												{dayjs(loanDate).add(4, "M").format("MMM DD, YYYY")}
+											</span>
+										</div>
+									</div>
+									<hr className="mt-5"></hr>
+									<h1 className="text-base">Computations</h1>
+									<div className="flex flex-row gap-2 mb-5">
+										<div className="flex flex-col items-end">
+											<span>Loan Amount:</span>
+											<span>Interest:</span>
+											<span>Adv. Interest:</span>
+											<span>Penalties:</span>
+											<span>Partial Payment:</span>
+											<span>Remaining Balance:</span>
+										</div>
+										<div className="flex flex-col items-end">
+											<span>Php {pawnTicketData.loanAmount.toFixed(2)}</span>
+											<span>Php {interest.toFixed(2)}</span>
+											<span>
+												Php{" "}
+												{advInterest >= 0
+													? advInterest.toFixed(2)
+													: "----------"}
+											</span>
+											<span>Php {penalties.toFixed(2)}</span>
+											<span>
+												Php{" "}
+												{partialPayment >= 0
+													? partialPayment.toFixed(2)
+													: "----------"}
+											</span>
+											<span>
+												Php{" "}
+												{newLoanAmount >= 0
+													? newLoanAmount.toFixed(2)
+													: "----------"}
+											</span>
+										</div>
+									</div>
+									{newLoanAmount < 2500 && newLoanAmount != 0 ? (
+										<div className="text-center">
+											<span className="text-sm text-red-500">
+												Remaining balance is below Php 2500.00. Please redeem
+												the PawnTicket or lessen the amount to pay.
+											</span>
+										</div>
 									) : (
-										<>Php {minPayment.toFixed(2)}</>
+										<></>
 									)}
-								</span>
-							</div>
-							<div className="flex flex-col items-center justify-center m-5">
-								<button
-									onClick={() => renewPawnTicket()}
-									className="bg-green-300"
-									disabled={
-										minPayment >= amountToPay ||
-										isNaN(amountToPay) ||
-										amountToPay >= pawnTicketData.loanAmount
-									}
-								>
-									Renew PawnTicket
-								</button>
-							</div>
+									<div className="flex flex-col justify-center w-full text-center ">
+										<h1>Amount To Pay</h1>
+										<input
+											type="number"
+											value={amountToPay}
+											id="amount_to_pay_input"
+											onChange={(e) =>
+												setAmountToPay(parseFloat(e.target.value))
+											}
+										></input>
+										<div className="flex flex-col justify-center gap-2">
+											<span>
+												Minimum Payment:{" "}
+												{minPayment >= amountToPay ? (
+													<span className="font-semibold text-red-500">
+														Php {minPayment.toFixed(2)}
+													</span>
+												) : (
+													<>Php {minPayment.toFixed(2)}</>
+												)}
+											</span>
+										</div>
+									</div>
+									<div className="flex flex-col items-center justify-center m-5">
+										<button
+											onClick={() => renewPawnTicket()}
+											className="bg-green-300"
+											disabled={
+												minPayment >= amountToPay ||
+												isNaN(amountToPay) ||
+												amountToPay >= pawnTicketData.loanAmount ||
+												newLoanAmount < 2500
+											}
+										>
+											Renew PawnTicket
+										</button>
+									</div>
+								</>
+							)}
 						</div>
 					</div>
 				</div>
