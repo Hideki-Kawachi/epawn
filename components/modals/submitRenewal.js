@@ -2,6 +2,7 @@ import React from "react";
 import Close from "../closebutton";
 import ItemCard from "../itemcard";
 import { useRouter } from "next/router";
+
 export const Submit = ({
 	trigger,
 	setTrigger,
