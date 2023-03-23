@@ -100,14 +100,14 @@ function RenewClerk({ currentUser }) {
 	}
 
 	function getNewMaturityDate() {
-		const dt = dayjs(new Date());
-		const nt = dt.add(1, "month");
+		const dt = new Date();
+		const nt = new Date().setDate(dt.getDate() + 120);
 		return dayjs(nt).format("MM/DD/YYYY");
 	}
 
 	function getNewExpiryDate() {
-		const dt = dayjs(new Date());
-		const nt = dt.add(4, "month");
+		const dt = new Date();
+		const nt = new Date().setDate(dt.getDate() + 30);
 		return dayjs(nt).format("MM/DD/YYYY");
 	}
 	useEffect(() => {

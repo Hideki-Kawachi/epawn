@@ -101,14 +101,14 @@ function RenewManager({ currentUser }) {
 	}
 
 	function getNewMaturityDate() {
-		const dt = dayjs(new Date());
-		const nt = dt.add(1, "month");
+		const dt = new Date();
+		const nt = new Date().setDate(dt.getDate() + 120);
 		return dayjs(nt).format("MM/DD/YYYY");
 	}
 
 	function getNewExpiryDate() {
-		const dt = dayjs(new Date());
-		const nt = dt.add(4, "month");
+		const dt = new Date();
+		const nt = new Date().setDate(dt.getDate() + 30);
 		return dayjs(nt).format("MM/DD/YYYY");
 	}
 
@@ -146,14 +146,12 @@ function RenewManager({ currentUser }) {
 					if (renew != null) {
 						setRenewID(renew.renewID);
 						setPTNumber(renew.prevPawnTicketID);
-					
+
 						console.log("PT is " + PTNumber);
 					}
 				});
 		}
 	}, [transactionID, PTNumber]);
-
-
 
 	useEffect(() => {
 		if (PTNumber != "") {
@@ -176,26 +174,26 @@ function RenewManager({ currentUser }) {
 		}
 	}, [PTNumber]);
 
-  	useEffect(() => {
-      if (itemListID != "N/A") {
-        fetch("/api/redeem/itemList/" + itemListID, {
-          method: "GET",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-        })
-          .then((res) => res.json())
-          .then((info) => {
-            // console.log(data)
-            if (info != null) {
-              // console.log(JSON.stringify(info))
-              let list = JSON.stringify(info);
-              setitemList(JSON.parse(list)); //temporary
-            }
-          });
-      }
-    }, [itemListID]);
+	useEffect(() => {
+		if (itemListID != "N/A") {
+			fetch("/api/redeem/itemList/" + itemListID, {
+				method: "GET",
+				headers: {
+					Accept: "application/json",
+					"Content-Type": "application/json",
+				},
+			})
+				.then((res) => res.json())
+				.then((info) => {
+					// console.log(data)
+					if (info != null) {
+						// console.log(JSON.stringify(info))
+						let list = JSON.stringify(info);
+						setitemList(JSON.parse(list)); //temporary
+					}
+				});
+		}
+	}, [itemListID]);
 
 	// BACKEND TO RETRIEVE CUSTOMER NAME USING USER ID
 	useEffect(() => {

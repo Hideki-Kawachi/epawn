@@ -56,7 +56,7 @@ function NotificationTable({ role, data }) {
 	const router = useRouter();
 
 	function openRow(rowData) {
-		console.log("rowData", rowData, "==", role);
+		// console.log("rowData", rowData, "==", role);
 		// if manager
 		if (role == "manager") {
 			//if pawn
