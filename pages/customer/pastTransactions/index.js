@@ -25,19 +25,11 @@ export const getServerSideProps = withIronSessionSsr(
 			let pawnTicketInfo = await PawnTicket.find({
 				customerID: req.session.userData.userID,
 			});
-			let itemList = [];
-			for (const pt of pawnTicketInfo) {
-				let itemInfo = await Item.find({ itemListID: pt.itemListID });
-				if (itemInfo) {
-					itemList = itemList.concat(itemInfo);
-				}
-			}
 			return {
 				props: {
 					currentUser: req.session.userData,
 					transactionData: JSON.parse(JSON.stringify(transactionInfo)),
 					pawnTicketData: JSON.parse(JSON.stringify(pawnTicketInfo)),
-					itemData: JSON.parse(JSON.stringify(itemList)),
 				},
 			};
 		} else {
@@ -58,7 +50,6 @@ function PastTransactions({
 }) {
 	console.log("trans data:", transactionData);
 	console.log("pt data:", pawnTicketData);
-	console.log("item data", itemData);
 	return (
 		<div className="flex flex-col items-center">
 			<div className="fixed flex flex-col items-center w-full h-full border-2 md:w-1/4">
