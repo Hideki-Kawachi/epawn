@@ -47,8 +47,11 @@ function PawnTicketIndex({ currentUser, pawnTicketData }) {
 			<div className="fixed flex flex-col items-center w-full h-full border-2 md:w-1/4">
 				<CustomerHeader></CustomerHeader>
 				<div className="w-full h-full overflow-y-auto bg-green-50 ">
-					<div className="flex flex-col items-center w-full h-full mt-[5vh] font-nunito text-sm">
+					<div className="flex flex-col items-center w-full h-full mt-[3vh] font-nunito text-sm">
 						<div>
+							<h1 className="mb-5 text-base font-bold text-center">
+								My PawnTickets
+							</h1>
 							<span>Search: </span>
 							<input type="text"></input>
 						</div>
