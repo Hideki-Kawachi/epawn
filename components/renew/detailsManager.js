@@ -18,15 +18,17 @@ function DetailsCardRenewManager({
   amountToPay,
   button2,
   setButton2,
+  cashTendered,
+  setCashTendered
 }) {
   const [customerModal, setCustomerModal] = useState(false);
   const [computationModal, setCompOpen] = useState(false);
-  const [cashTendered, setCashTendered] = useState(0);
   const [historyModal, setHistoryModal] = useState(false);
+    const [partialPayment, setPartialPayment] = useState(0);
     const [loanAmount, setLoanAmount] = useState(
       pawnTicket.loanAmount ? pawnTicket.loanAmount : 0
     );
-  const [partialPayment, setPartialPayment] = useState(0);
+
   const [advInterest, setAdvInterest] = useState(
     pawnTicket.loanAmount ? pawnTicket.loanAmount * 0.035 : 0
   );
@@ -50,19 +52,7 @@ function DetailsCardRenewManager({
   	const [newLoanAmount, setNewLoanAmount] = useState(0);
     const [PT, setPT] = useState();
 
-    function monthDiff(dateFrom, dateTo) {
-      let diff =
-        dateTo.getMonth() -
-        dateFrom.getMonth() +
-        12 * (dateTo.getFullYear() - dateFrom.getFullYear());
-      console.log("diff is:", diff);
-      if (diff > 0) {
-        return diff;
-      } else {
-        return 0;
-      }
-    }
-  
+
   function getFullName(fname, mname, lname){
     return fname + " " + mname + " " + lname
   }
@@ -85,8 +75,22 @@ function DetailsCardRenewManager({
     setHistoryModal(true);
   }
 
+      function monthDiff(dateFrom, dateTo) {
+        let diff =
+          dateTo.getMonth() -
+          dateFrom.getMonth() +
+          12 * (dateTo.getFullYear() - dateFrom.getFullYear());
+        console.log("diff is:", diff);
+        if (diff > 0) {
+          return diff;
+        } else {
+          return 0;
+        }
+      }
+  
+
   	useEffect(() => {
-      if (amountToPay > minPayment && loanAmount - amountToPay > 2500) {
+      if (amountToPay) {
         let amountLeftFromCash = amountToPay - interest - penalties;
         let partialPayment =
           (amountLeftFromCash - pawnTicket.loanAmount * 0.035) / 0.965;
@@ -99,7 +103,7 @@ function DetailsCardRenewManager({
           tempAdvInterest = newLoanAmount * 0.035;
           setAdvInterest(tempAdvInterest);
           setNewLoanAmount(newLoanAmount);
-          getNewLoan(newLoanAmount);
+          setNewLoan(newLoanAmount);
         }
 
         setPartialPayment(partialPayment < 0 ? 0 : partialPayment);
@@ -109,7 +113,7 @@ function DetailsCardRenewManager({
         setNewLoanAmount(0);
         setMinPayment(pawnTicket.loanAmount * 0.035 + interest + penalties);
       }
-    }, [amountToPay]);
+    }, [amountToPay,interest, penalties, pawnTicket.loanAmount]);
 
 
     

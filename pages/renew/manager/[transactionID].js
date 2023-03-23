@@ -66,7 +66,6 @@ function RenewManager({ currentUser }) {
 	);
 	const [sendForm, setSendForm] = useState(false);
 	const [button, setButton] = useState(true); //disabled if PT number is invalid
-	const [button2, setButton2] = useState(true); //disabled if No amount Paid or less than total interest
 
 	function submitForm() {
 		setSubmitOpen(true);
@@ -264,7 +263,15 @@ function RenewManager({ currentUser }) {
 			}
 		}
 	}, [sendForm, customerID]);
+	
+	useEffect(()=>{
+		if(cashTendered >= amountToPay){
+			setButton(false)
+		}
+		else
+			setButton(true)
 
+	},[cashTendered, amountToPay])
 	return (
 		<>
 			<NavBar currentUser={currentUser}></NavBar>
@@ -379,6 +386,7 @@ function RenewManager({ currentUser }) {
 						<button
 							className="px-10 mx-2 my-5 text-base text-white bg-green-300"
 							onClick={submitForm}
+							disabled={button}
 						>
 							Submit
 						</button>
