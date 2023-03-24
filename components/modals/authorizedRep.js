@@ -1,67 +1,44 @@
 import Close from "../closebutton";
 import { useState, useEffect } from "react";
 
-function AuthorizedRep({trigger, setTrigger, authData, setAuth, check}){
+function AuthorizedRep({
+  trigger,
+  setTrigger,
+  authRep,
+  setAuthRep,
+  authRepID,
+  setAuthRepID,
+  authStatus,
+  setAuthStatus,
+  authProof,
+  setAuthProof,
+}) {
 
-  const [fname, setfName] = useState("");
-  const [mname, setmName] = useState("");
-  const [lname, setlName] = useState("");
-  const [scanned, setScanned] = useState([]);
-  const [validID, setValidID] = useState([]);
   const [filled, setFilled] = useState(true);
-    function closeModal() {
-      setTrigger(!trigger);
-     // console.log("Auth scanned is now: " + scanned);
-    }
+  const [fName, setfName] = useState("")
+  const [mName, setmName] = useState("")
+  const [lName, setlName] = useState("")
 
-    function authorizeFile(data){
-      setAuth(data)
-    }
+  function closeModal() {
+    setTrigger(!trigger);
+    // console.log("Auth scanned is now: " + scanned);
+  }
 
-    useEffect(() => {
-     
-      if(authData) {
-          setfName(authData[0].fName)
-          setmName(authData[0].mName);
-          setlName(authData[0].lName);
-        //  console.log("Auth scanned is now: " + scanned);
-        //   console.log("Auth Data is now: " + JSON.stringify(authData));
-      }
 
-      else {
-          setfName("");
-          setmName("");
-          setlName("");
-          setScanned([]);
-          setValidID([]);
-      }
-    }, [authData])
-  
-    useEffect(() => {    
+  useEffect(() => {
+    if (fName != "" && lName != "" && authRepID && authProof)
+      setFilled(true);
+    else setFilled(false);
+  }, [fName, lName, authRepID, authProof]);
 
-        if (fname != "" && lname != "" && scanned.length != 0 && validID.length != 0)
-          setFilled(true);
-        else 
-          setFilled(false);
-    }, [fname, lname, scanned, validID])
-
-  function saveButton(){
-    if
-    (filled){
-      const newAuth = [{
-        fName : fname,
-        mName : mname,
-        lName : lname, 
-        scanned : scanned,
-        validID : validID
-      }];
-
-      authorizeFile(newAuth);
+  function saveButton() {
+    if (filled) {
+      setAuthRep([{ fName: fName, mName: mName, lName: lName }]);
+      setAuthStatus(true);
       setTrigger(!trigger);
       setFilled(true);
-    }
-      else 
-      setFilled(false)
+    } else 
+    setFilled(false);
   }
 
   return (
@@ -73,7 +50,7 @@ function AuthorizedRep({trigger, setTrigger, authData, setAuth, check}){
           </div>
 
           <p className="font-nunito text-base text-center">
-            Details of Authorized Representative to <b> redeem PT A-123456</b>
+            Details of Authorized Representative to <b> redeem</b>
           </p>
           <div className="flex flex-row font-nunito text-sm">
             <div className="font-bold text-right mt-5">
@@ -95,19 +72,19 @@ function AuthorizedRep({trigger, setTrigger, authData, setAuth, check}){
               <input
                 type="text"
                 className="block mb-2"
-                value={fname}
+                value={fName}
                 onChange={(e) => setfName(e.target.value)}
               ></input>
               <input
                 type="text"
+                value={mName}
                 className="block mb-2"
-                value={mname}
                 onChange={(e) => setmName(e.target.value)}
               ></input>
               <input
                 type="text"
                 className="block mb-2"
-                value={lname}
+                value={lName}
                 onChange={(e) => setlName(e.target.value)}
               ></input>
               <input
@@ -115,14 +92,14 @@ function AuthorizedRep({trigger, setTrigger, authData, setAuth, check}){
                 accept="image/png, image/jpeg"
                 className="block mb-2"
                 //value={scanned}
-                onChange={(e) => setScanned(e.target.files[0])}
+                onChange={(e) => setAuthRepID(e.target.files[0])}
               ></input>
               <input
                 type="file"
                 accept="image/png, image/jpeg"
                 className="block mb-2"
                 //value={validID}
-                onChange={(e) => setValidID(e.target.files[0])}
+                onChange={(e) => setAuthProof(e.target.files[0])}
               ></input>{" "}
               <p className="text-gray-300">
                 {" "}

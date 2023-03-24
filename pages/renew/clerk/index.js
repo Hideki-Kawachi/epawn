@@ -5,8 +5,6 @@ import DetailsCardClerk from "../../../components/renew/detailsClerk";
 import Modal from "react-modal";
 import Submit from "../../../components/modals/submitRenewal";
 import Cancel from "../../../components/modals/cancel";
-import PawnDetails from "../../../components/modals/pawnDetails";
-import ItemMockData from "./ITEMS_MOCK_DATA";
 import ItemCard from "../../../components/itemcard";
 import { withIronSessionSsr } from "iron-session/next";
 import { ironOptions } from "../../../utilities/config";

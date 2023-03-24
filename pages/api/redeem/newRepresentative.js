@@ -18,6 +18,7 @@ export default async function newRepresentative(req, res) {
     firstName: body.firstName,
     middleName: body.middleName,
     lastName: body.lastName,
+    isDisabled: true,
   });
 
   let representativeInfo = await RepresentativeInfo.create({

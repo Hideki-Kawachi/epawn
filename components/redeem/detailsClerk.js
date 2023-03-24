@@ -5,8 +5,7 @@ import CustomerDetails from "../modals/customerDetails";
 import PawnHistory from "../modals/pawnHistory";
 import dayjs from "dayjs";
 
-function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, customer, branch, authData, setAuth, check, getAmount, setCheck, partialPayment}) {
-  const [isOriginal, setOriginal] = useState("original");
+function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, customer, branch, getAmount, partialPayment, isOriginal, setOriginal, authRep, setAuthRep, authRepID, setAuthRepID, authStatus, setAuthStatus, authProof, setAuthProof}) {
   const [repModal, setRepModal] = useState(false); 
   const [customerModal, setCustomerModal] = useState(false);
   const [historyModal, setHistoryModal] = useState(false);
@@ -17,7 +16,7 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
   const [advInterest, setAdvInterest] = useState(
     pawnTicket.loanAmount ? pawnTicket.loanAmount * 0.035 : 0
   );
-  
+
 	const [interest, setInterest] = useState(
     pawnTicket.loanAmount
       ? pawnTicket.loanAmount *
@@ -39,7 +38,9 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
     setRepModal(true);
    // console.log("Auth Data is" + JSON.stringify(authData))
   }
-
+  function getOriginal(value){
+    setOriginal(value);
+  }
   function customerOpen() {
       setCustomerModal(true);
   }
@@ -185,13 +186,13 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
 
   useEffect(() => {
     if (isOriginal == "original") {
-      setCheck(true)
+      setAuthStatus(true)
     }
-    else if(isOriginal == "authorized" && authData[0].fName == ""){
-      setCheck(false)
+    else if(isOriginal == "authorized" && authRep[0].fName == ""){
+      setAuthStatus(false);
     }
 
-  }, [isOriginal, authData])
+  }, [isOriginal, authRep])
 
   return (
     <>
@@ -203,9 +204,14 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
           <AuthorizedRep
             trigger={repModal}
             setTrigger={setRepModal}
-            authData={authData}
-            setAuth={setAuth}
-            check={check}
+            authRep={authRep}
+            setAuthRep={setAuthRep}
+            authRepID={authRepID}
+            setAuthRepID={setAuthRepID}
+            authStatus={authStatus}
+            setAuthStatus={setAuthStatus}
+            authProof={authProof}
+            setAuthProof={setAuthProof}
           />
         </Modal>
 
@@ -287,7 +293,7 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
               <div className="text-right ml-5 min-w-fit">
                 <select
                   className="px-5"
-                  onChange={(e) => setOriginal(e.target.value)}
+                  onChange={(e) => getOriginal(e.target.value)}
                 >
                   <option key="00" value="original">
                     {" "}
@@ -314,7 +320,7 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
           ) : (
             <></>
           )}
-          {isOriginal == "authorized" && check == false ? (
+          {isOriginal == "authorized" && authStatus == false ? (
             <p className="ml-40 text-sm text-red-400 px-5">
               Missing Authorized <br />
               <span>Rep. Details</span>
@@ -404,9 +410,7 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
                 </p> */}
                 <p className="mr-3">{convertFloat(getTotalRedeem(redeem))}</p>
                 <p className="mr-1.5">({convertFloat(partialPayment)})</p>
-                <p className="mr-3 font-bold">
-                  {convertFloat(amountToPay)}
-                </p>
+                <p className="mr-3 font-bold">{convertFloat(amountToPay)}</p>
                 {/* <input
                     type="number"
                     className="text-right border rounded-md stroke-gray-500 px-3 w-40 mb-1"

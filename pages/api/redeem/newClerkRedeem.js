@@ -22,18 +22,6 @@ export default async function newClerkRedeem(req,res){
     
     let managerID;
 
-    // branchManagers.map(async (branchManager) => {
-    //     let temp = await EmployeeInfo.findOne({
-    //         userID: branchManager.userID,
-    //         branchID: branchInfo.branchID
-    //     });
-
-    //     if (temp){
-    //         managerID = branchManager.userID;
-    //        // console.log("Manager ID is " + managerID);
-    //     }
-    // })
-
     for (const branchManager of branchManagers) {
       let temp = await EmployeeInfo.findOne({
         userID: branchManager.userID,
@@ -82,8 +70,7 @@ export default async function newClerkRedeem(req,res){
 
     let newRedeem = await Redeem.create({
         redeemID: redeemID,
-
-        transactionID: "ObjectId('" + newTransaction._id + "')",
+        transactionID: newTransaction._id,
         pawnTicketID: body.pawnTicketID,
         payment: body.totalAmount,
         redeemerID: body.customerID,
@@ -95,7 +82,7 @@ export default async function newClerkRedeem(req,res){
             { itemID: redeem.itemID },
             {
               isRedeemed: true,
-              transactionID: "ObjectId('" + newRedeem.transactionID + "')",
+              transactionID: newRedeem.transactionID,
               redeemID: redeemID,
             }
           );
@@ -107,6 +94,6 @@ export default async function newClerkRedeem(req,res){
         res.json("redeem posted successfully")
     }
     else{
-        res.json("error")
+        res.json("redeem not successful")
     }
 }

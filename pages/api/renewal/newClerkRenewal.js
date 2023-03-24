@@ -20,18 +20,6 @@ export default async function newClerkRedeem(req, res) {
 
 	let managerID;
 
-	// branchManagers.map(async (branchManager) => {
-	//     let temp = await EmployeeInfo.findOne({
-	//         userID: branchManager.userID,
-	//         branchID: branchInfo.branchID
-	//     });
-
-	//     if (temp){
-	//         managerID = branchManager.userID;
-	//        // console.log("Manager ID is " + managerID);
-	//     }
-	// })
-
 	for (const branchManager of branchManagers) {
 		let temp = await EmployeeInfo.findOne({
 			userID: branchManager.userID,

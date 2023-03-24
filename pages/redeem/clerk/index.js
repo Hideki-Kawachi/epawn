@@ -61,6 +61,7 @@ function RedeemClerk({ currentUser }) {
 	const [customerDetails, setCusDetails] = useState(["N/A"]);
 	const [amountToPay, setAmountToPay] = useState();
 	const [partialPayment, setPartialPayment] = useState(0);
+	const [isOriginal, setOriginal] = useState("original");
 	//Array for Redeem
 	const [redeem, setRedeem] = useState([]);
 	const [redeemArray, setRedeemArray] = useState([]);
@@ -77,9 +78,11 @@ function RedeemClerk({ currentUser }) {
 
 	//Authorized Rep States
 	const [redeemedBy, setRedeemedBy] = useState("");
-	const [authRep, setAuthRep] = useState([
-		{ fName: "", mName: "", lName: "", scanned: "", validID: "" },
-	]);
+	const [authRep, setAuthRep] = useState([{ fName: "", mName: "", lName: ""}]);
+
+	const [authRepID, setAuthRepID] = useState();
+	const [authProof, setAuthProof] = useState();
+
 	const [authStatus, setAuthStatus] = useState(false); //true - valid inputs, false - invalid inputs or redeemed by original customer
 	const [urlValidID, setUrlValidID] = useState("");
 	const [urlAuthorization, setUrlAuthorziation] = useState("");
@@ -115,10 +118,6 @@ function RedeemClerk({ currentUser }) {
 		return total;
 	}
 
-	function submitAuthorizedRep(data) {
-		setAuthRep(JSON.parse(JSON.stringify(data)));
-		setAuthStatus(true);
-	}
 
 	//Manages Add to Redeem Cart
 	function removeItem() {
@@ -331,14 +330,13 @@ function RedeemClerk({ currentUser }) {
 	//useEffect to submit the Redemption Transaction
 
 	function submitForm() {
-		if (sendForm) {
-			console.log(authStatus);
+		setSendForm(true)
 			if (authStatus) {
 				//Adding new entries to User and RepresentativeInfo Schemas
 				//User -> role, fName, lName, mName, password, isDisabled=false
 				//RepresentativeInfo -> proof authorization, validID
 				console.log("YOU ARE CREATING AUTH REP");
-				let publicID = "validID" + "-" + userID + "-" + new Date();
+				let publicID = "validID" + "-" + customerID + "-" + new Date();
 				let folder = "epawn/customerImage";
 				let uploadPreset = "signed_preset";
 				let type = "authenticated";
@@ -357,7 +355,7 @@ function RedeemClerk({ currentUser }) {
 					.then((data) => {
 						const formData1 = new FormData();
 
-						formData1.append("file", authRep[0].validID);
+						formData1.append("file", authRepID);
 						formData1.append("upload_preset", uploadPreset);
 						formData1.append("folder", folder);
 						formData1.append("sign_url", signURL);
@@ -373,11 +371,11 @@ function RedeemClerk({ currentUser }) {
 							.then((res) => res.json())
 							.then((data) => {
 								console.log("DATA IS " + data);
-								setUrlValidID(data.secure.url);
+								setUrlValidID(data.secure_url);
 							});
 					});
 
-				let publicID2 = "AuthRep" + "-" + userID + "-" + new Date();
+				let publicID2 = "AuthRep" + "-" + customerID + "-" + new Date();
 				fetch("/api/signUploadForm", {
 					method: "POST",
 					body: JSON.stringify({
@@ -391,7 +389,7 @@ function RedeemClerk({ currentUser }) {
 					.then((data) => {
 						const formData2 = new FormData();
 
-						formData2.append("file", authRep[0].authorization);
+						formData2.append("file", authProof);
 						formData2.append("upload_preset", uploadPreset);
 						formData2.append("folder", folder);
 						formData2.append("sign_url", signURL);
@@ -407,7 +405,7 @@ function RedeemClerk({ currentUser }) {
 							.then((res) => res.json())
 							.then((data) => {
 								console.log("AuthRep pics Posted data is" + data);
-								setUrlAuthorziation(data.secure.url);
+								setUrlAuthorziation(data.secure_url);
 							});
 					});
 				// let transac = {
@@ -416,36 +414,37 @@ function RedeemClerk({ currentUser }) {
 			}
 			//Adding new entry to Transaction
 		}
-	}
 
 	useEffect(() => {
 		if (sendForm) {
-			if (urlValidID && urlAuthorization) {
+			if(isOriginal == "authorized"){
+				if (urlValidID && urlAuthorization) {
 				if (authStatus) {
 					let newrep = {
-						firstName: authRep[0].firstName,
-						middleName: authRep[0].middleName,
-						lastName: authRep[0].lastName,
-						authorization: urlAuthorization,
-						validID: urlValidID,
+					firstName: authRep[0].fName,
+					middleName: authRep[0].mName,
+					lastName: authRep[0].lName,
+					authorization: urlAuthorization,
+					validID: urlValidID,
 					};
-          console.log(newrep);
+				//	console.log(newrep);
 					fetch("/api/redeem/newRepresentative", {
-						method: "POST",
-						body: JSON.stringify(newrep),
+					method: "POST",
+					body: JSON.stringify(newrep),
 					})
-						.then((res) => res.json())
-						.then((data) => {
-							console.log("END");
-							if (data != "RepInfo not added" && data != null) {
-								console.log("new rep created!");
-								setRedeemedBy(JSON.stringify(data));
-							} else {
-								console.log("error");
-							}
-						});
+					.then((res) => res.json())
+					.then((data) => {
+						console.log("END");
+						if (data != "RepInfo not added" && data != null) {
+						console.log("new rep created!");
+						setRedeemedBy(JSON.stringify(data));
+						} else {
+						console.log("error");
+						}
+					});
 				}
-			} else {
+				}
+     		 }else {
 				setRedeemedBy(customerID);
 			}
 			if (redeemedBy) {
@@ -474,7 +473,7 @@ function RedeemClerk({ currentUser }) {
 					});
 			}
 		}
-	}, [sendForm, urlValidID, urlAuthorization, customerID, redeemedBy]);
+	}, [sendForm, urlValidID, urlAuthorization, redeemedBy]);
 
 	return (
     <>
@@ -527,12 +526,18 @@ function RedeemClerk({ currentUser }) {
             search={searchPawnTicket}
             mode={mode}
             customer={customerDetails}
-            authData={authRep}
-            setAuth={submitAuthorizedRep}
-            check={authStatus}
-            setCheck={setAuthStatus}
+            authRep={authRep}
+			setAuthRep={setAuthRep}
+            authRepID={authRepID}
+            setAuthRepID={setAuthRepID}
+            authStatus={authStatus}
+            setAuthStatus={setAuthStatus}
+			authProof={authProof}
+			setAuthProof={setAuthProof}
             getAmount={setAmountToPay}
             partialPayment={partialPayment}
+            isOriginal={isOriginal}
+            setOriginal={setOriginal}
           />
         </div>
 
