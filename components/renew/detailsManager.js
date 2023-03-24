@@ -306,7 +306,7 @@ useEffect(() => {
                 <p className="font-bold mr-3">
                   Php {convertFloat(loanAmount.toFixed(2))}
                 </p>
-                <p className="mr-3"> {convertFloat(amountToPay)} </p>
+                <p className="mr-3"> {convertFloat(amountToPay.toFixed(2))} </p>
                 <p>
                   <input
                     type="number"
@@ -315,7 +315,9 @@ useEffect(() => {
                   />
                 </p>
                 <p className="mr-3">
-                  {convertFloat(getChange(amountToPay, cashTendered))}
+                  {convertFloat(
+                    getChange(amountToPay, cashTendered).toFixed(2)
+                  )}
                 </p>
 
                 <hr className="my-3" />

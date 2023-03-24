@@ -408,9 +408,15 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
                     className="text-right border rounded-md stroke-gray-500 px-3 w-40 mb-1"
                   />
                 </p> */}
-                <p className="mr-3">{convertFloat(getTotalRedeem(redeem))}</p>
-                <p className="mr-1.5">({convertFloat(partialPayment)})</p>
-                <p className="mr-3 font-bold">{convertFloat(amountToPay)}</p>
+                <p className="mr-3">
+                  {convertFloat(getTotalRedeem(redeem).toFixed(2))}
+                </p>
+                <p className="mr-1.5">
+                  ({convertFloat(partialPayment.toFixed(2))})
+                </p>
+                <p className="mr-3 font-bold">
+                  {convertFloat(amountToPay.toFixed(2))}
+                </p>
                 {/* <input
                     type="number"
                     className="text-right border rounded-md stroke-gray-500 px-3 w-40 mb-1"

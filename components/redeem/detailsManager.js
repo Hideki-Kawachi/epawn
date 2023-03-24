@@ -294,7 +294,7 @@ function DetailsCardRedeemManager({
 
               <div className="ml-10 text-right min-w-fit">
                 <p className="font-bold mr-3">
-                  Php {convertFloat(pawnTicket.loanAmount)}
+                  Php {convertFloat(pawnTicket.loanAmount.toFixed(2))}
                 </p>
                 <p className="mr-3"> {convertFloat(loanAmount.toFixed(2))} </p>
                 <p>
@@ -305,7 +305,9 @@ function DetailsCardRedeemManager({
                   />
                 </p>
                 <p className="mr-3">
-                  {convertFloat(getChange(amountToPay, cashTendered))}
+                  {convertFloat(
+                    getChange(amountToPay, cashTendered).toFixed(2)
+                  )}
                 </p>
 
                 <hr className="my-3" />
