@@ -416,64 +416,67 @@ function RedeemClerk({ currentUser }) {
 		}
 
 	useEffect(() => {
-		if (sendForm) {
-			if(isOriginal == "authorized"){
-				if (urlValidID && urlAuthorization) {
-				if (authStatus) {
-					let newrep = {
-					firstName: authRep[0].fName,
-					middleName: authRep[0].mName,
-					lastName: authRep[0].lName,
-					authorization: urlAuthorization,
-					validID: urlValidID,
-					};
-				//	console.log(newrep);
-					fetch("/api/redeem/newRepresentative", {
-					method: "POST",
-					body: JSON.stringify(newrep),
-					})
-					.then((res) => res.json())
-					.then((data) => {
-						console.log("END");
-						if (data != "RepInfo not added" && data != null) {
-						console.log("new rep created!");
-						setRedeemedBy(JSON.stringify(data));
-						} else {
-						console.log("error");
-						}
-					});
-				}
-				}
-     		 }else {
-				setRedeemedBy(customerID);
-			}
-			if (redeemedBy) {
-				let transac = {
-					customerID: redeemedBy,
-					itemListID: itemListID,
-					redeemArray: redeemArray,
-					clerkID: currentUser.userID,
-					pawnTicketID: PTNumber,
-					branchID: currentUser.branchID,
-					totalAmount: amountToPay,
-				};
-				// console.log("transac is" + JSON.stringify(transac))
-				fetch("/api/redeem/newClerkRedeem", {
-					method: "POST",
-					body: JSON.stringify(transac),
-				})
-					.then((res) => res.json())
-					.then((data) => {
-						console.log("END");
-						if (data == "redeem posted successfully") {
-							router.replace("/");
-						} else {
-							console.log("error");
-						}
-					});
-			}
-		}
-	}, [sendForm, urlValidID, urlAuthorization, redeemedBy]);
+    if (sendForm) {
+      if (isOriginal == "authorized") {
+        if (urlValidID && urlAuthorization) {
+          if (authStatus) {
+            let newrep = {
+              firstName: authRep[0].fName,
+              middleName: authRep[0].mName,
+              lastName: authRep[0].lName,
+              authorization: urlAuthorization,
+              validID: urlValidID,
+            };
+            //	console.log(newrep);
+            fetch("/api/redeem/newRepresentative", {
+              method: "POST",
+              body: JSON.stringify(newrep),
+            })
+              .then((res) => res.json())
+              .then((data) => {
+                console.log("END");
+                if (data != "RepInfo not added" && data != null) {
+                  console.log("new rep created!");
+                  setRedeemedBy(JSON.stringify(data));
+                } else {
+                  console.log("error");
+                }
+              });
+          }
+        }
+      } else {
+        setRedeemedBy(customerID);
+      }
+    }
+  }, [sendForm, urlValidID, urlAuthorization]);
+
+  	useEffect(() => {
+      if (redeemedBy) {
+        let transac = {
+          customerID: redeemedBy,
+          itemListID: itemListID,
+          redeemArray: redeemArray,
+          clerkID: currentUser.userID,
+          pawnTicketID: PTNumber,
+          branchID: currentUser.branchID,
+          totalAmount: amountToPay,
+        };
+        // console.log("transac is" + JSON.stringify(transac))
+        fetch("/api/redeem/newClerkRedeem", {
+          method: "POST",
+          body: JSON.stringify(transac),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            console.log("END");
+            if (data == "redeem posted successfully") {
+              router.replace("/");
+            } else {
+              console.log("error");
+            }
+          });
+      }
+    }, [redeemedBy]);
 
 	return (
     <>
