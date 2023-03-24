@@ -123,9 +123,13 @@ function RenewClerk({ currentUser }) {
 					if (data != null) {
 						setCustomerID(data.customerID);
 						setTransactionID(data.transactionID);
-						setPTinfo(JSON.parse(JSON.stringify(data)));
+						setPTinfo(data);
 						setItemListID(data.itemListID);
-						setButton(false);
+						if (data.isInactive) {
+							setButton(true);
+						} else {
+							setButton(false);
+						}
 					} else {
 						setPTinfo("N/A");
 						setTransactionID("N/A");
@@ -175,8 +179,8 @@ function RenewClerk({ currentUser }) {
 					// console.log(data)
 					if (info != null) {
 						// console.log(JSON.stringify(info))
-						let list = JSON.stringify(info);
-						setitemList(JSON.parse(list)); //temporary
+						// let list = JSON.stringify(info);
+						setitemList(info); //temporary
 					}
 				});
 		}
@@ -197,7 +201,7 @@ function RenewClerk({ currentUser }) {
 					// console.log(data)
 					if (user != null) {
 						// console.log(JSON.stringify(info))
-						setUserInfo(JSON.parse(JSON.stringify(user)));
+						setUserInfo(user);
 					}
 				});
 		}
@@ -217,7 +221,7 @@ function RenewClerk({ currentUser }) {
 				.then((customer) => {
 					// console.log(data)
 					if (customer != null) {
-						setCusDetails(JSON.parse(JSON.stringify(customer)));
+						setCusDetails(customer);
 					}
 				});
 		}

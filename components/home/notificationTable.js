@@ -17,7 +17,6 @@ function NotificationTable({ role, data }) {
 				disableGlobalFilter: true,
 			},
 			{ Header: "Customer Name", accessor: "customerName" },
-			{ Header: "PT Number", accessor: "ptNumber" },
 			{ Header: "Date", accessor: "date", disableGlobalFilter: true },
 			{ Header: "Time", accessor: "time", disableGlobalFilter: true },
 			{ Header: "Status", accessor: "status", disableGlobalFilter: true },

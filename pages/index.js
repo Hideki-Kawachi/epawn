@@ -32,6 +32,7 @@ export const getServerSideProps = withIronSessionSsr(
 			await dbConnect();
 
 			let transactionData;
+			let pawnTicketData;
 			let customerData = await User.find({}).lean();
 
 			if (req.session.userData.role == "clerk") {
@@ -62,6 +63,7 @@ export const getServerSideProps = withIronSessionSsr(
 				let customerInfo = customerData.find(
 					(customer) => customer.userID == transaction.customerID
 				);
+
 				// console.log("CUST INFO:", customerInfo);
 				if (customerInfo) {
 					notifData.push({
@@ -98,7 +100,7 @@ export default function Home({ currentUser, notifData }) {
 
 	useEffect(() => {
 		waitNotif();
-	}, [showData]);
+	}, []);
 
 	async function waitNotif() {
 		let res = await fetch("/api/notifTable", {
@@ -116,11 +118,11 @@ export default function Home({ currentUser, notifData }) {
 			// console.log("2-RESPONSE:", res.statusText);
 			// await waitNotif();
 			await new Promise((resolve) => setTimeout(resolve, 1000));
+			await waitNotif();
 		} else {
 			let notifShow = await res.json();
 			// console.log("NOTIF DATA BACK IS:", notifShow);
 			setShowData(notifShow);
-
 			await waitNotif();
 		}
 	}

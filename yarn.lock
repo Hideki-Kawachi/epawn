@@ -3874,6 +3874,11 @@ to-regex-range@^5.0.1:
   dependencies:
     is-number "^7.0.0"
 
+to-words@^3.5.0:
+  version "3.5.0"
+  resolved "https://registry.npmjs.org/to-words/-/to-words-3.5.0.tgz"
+  integrity sha512-1292jD3ePZGvgmUOrErvWZUwtuDECnRYBmZkD4m2183PDuXZ8p/AgyUFdwEr8skM5vt3pbxKL77wk8gONwVhRQ==
+
 toidentifier@1.0.1:
   version "1.0.1"
   resolved "https://registry.npmjs.org/toidentifier/-/toidentifier-1.0.1.tgz"

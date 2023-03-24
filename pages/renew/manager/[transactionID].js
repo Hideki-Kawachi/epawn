@@ -10,6 +10,8 @@ import { withIronSessionSsr } from "iron-session/next";
 import { useRouter } from "next/router";
 import { ironOptions } from "../../../utilities/config";
 import dayjs from "dayjs";
+import printPawnTicket from "../../../utilities/printPawnTicket";
+import printReceipt from "../../../utilities/printReceipt";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {
@@ -253,31 +255,30 @@ function RenewManager({ currentUser }) {
 				})
 					.then((res) => res.json())
 					.then((data) => {
-						console.log("END");
-						if (data == "renew posted successfully") {
+						console.log("DATA IS:", data);
+						if (data != "error") {
+							printPawnTicket(data.pawnTicketData);
+							printReceipt(data.receiptData);
 							router.replace("/");
 						} else {
 							console.log("error");
 						}
 					});
 			}
+			console.log("send form:");
 		}
 	}, [sendForm, customerID]);
-	
-	useEffect(()=>{
-		if(cashTendered >= amountToPay){
-			setButton(false)
-		}
-		else
-			setButton(true)
 
-	},[cashTendered, amountToPay])
+	useEffect(() => {
+		if (cashTendered >= amountToPay) {
+			setButton(false);
+		} else setButton(true);
+	}, [cashTendered, amountToPay]);
 	return (
 		<>
 			<NavBar currentUser={currentUser}></NavBar>
 			<Header currentUser={currentUser}></Header>
 			{/* First Half */}
-
 			<Modal isOpen={submitModal} ariaHideApp={false} className="modal">
 				<Submit
 					trigger={submitModal}
