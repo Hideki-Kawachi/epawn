@@ -112,6 +112,7 @@ function ProfileEdit({ currentUser, userData, customerData }) {
 				.then((res) => res.json())
 				.then((data) => {
 					console.log("DATA IS:", data);
+					router.reload();
 				});
 		}
 	}

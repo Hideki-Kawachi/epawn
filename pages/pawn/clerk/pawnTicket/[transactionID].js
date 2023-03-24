@@ -180,13 +180,15 @@ function PawnTicketTransactionID({
 		// console.log("ASJDKLAJSDKL:", itemList);
 		if (pawnTicketList.length > 0) {
 			let newItemList = itemList;
+			console.log("item list:", itemList);
 			itemList.forEach((item, index) => {
 				pawnTicketList.forEach((pt) => {
 					pt.itemList.forEach((ptItem) => {
+						console.log("item is:", ptItem);
 						// console.log("PT ITEM:", ptItem.itemID, "-", item.itemID);
 						if (ptItem.itemID == item.itemID) {
-							console.log("PUSH");
-							newItemList.splice(index, 1);
+							console.log("PUSH", ptItem);
+							newItemList.splice(index, index + 1);
 						}
 					});
 				});
