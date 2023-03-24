@@ -131,16 +131,26 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
 
       if((getTotalRedeem(redeem) - partialPayment) > 0){
         setTotalRedeem(getTotalRedeem(redeem));
-        if(totalRedeem > 0)
-          setAmountToPay(getTotalRedeem(redeem) - partialPayment);
-        else 
-          setAmountToPay(0)
+
       }
-  }, [redeem, partialPayment, totalRedeem])
+  }, [redeem, partialPayment])
+
+
+  useEffect(() => {
+    console.log("HII " + totalRedeem);
+        if (totalRedeem > 0){
+          setAmountToPay(
+            parseFloat(
+              getTotalRedeem(redeem) - partialPayment + advInterest + interest
+            )
+          ); 
+        }
+        else setAmountToPay(0);
+  }, [totalRedeem, partialPayment, advInterest, interest])
 
 
 	useEffect(() => {
-      if (totalRedeem != NaN) {
+      if (amountToPay) {
         let newLoan = pawnTicket.loanAmount - amountToPay;
         let tempAdvInterest = 0;
 
@@ -158,7 +168,7 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
         setNewLoanAmount(0);
         // setMinPayment(pawnTicket.loanAmount * 0.035 + interest + penalties);
       }
-  }, [amountToPay, partialPayment, totalRedeem]);
+  }, [amountToPay]);
 
   	useEffect(() => {
       setLoanAmount(pawnTicket.loanAmount ? pawnTicket.loanAmount : 0);
@@ -174,12 +184,10 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
       );
     }, [pawnTicket, loanAmount]);
 
-  // useEffect(() => {
-  //   if(redeem)
-  // })
+useEffect
 
   useEffect(() => {
-    if (amountToPay != null) {
+    if (amountToPay !== NaN) {
       getAmount(amountToPay);
     }
   }, [amountToPay]);
