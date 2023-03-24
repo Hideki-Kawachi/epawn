@@ -5,7 +5,6 @@ import CustomerDetails from "../modals/customerDetails";
 import PawnHistory from "../modals/pawnHistory";
 import dayjs from "dayjs";
 
-<<<<<<< Updated upstream
 function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, customer, branch, getAmount, partialPayment, isOriginal, setOriginal, authRep, setAuthRep, authRepID, setAuthRepID, authStatus, setAuthStatus, authProof, setAuthProof}) {
   const [repModal, setRepModal] = useState(false); 
   const [customerModal, setCustomerModal] = useState(false);
@@ -17,35 +16,6 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
   const [advInterest, setAdvInterest] = useState(
     pawnTicket.loanAmount ? pawnTicket.loanAmount * 0.035 : 0
   );
-=======
-function DetailsCardClerk({
-	redeem,
-	pawnTicket,
-	search,
-	mode,
-	PTNumber,
-	user,
-	customer,
-	branch,
-	authData,
-	setAuth,
-	check,
-	getAmount,
-	setCheck,
-	partialPayment,
-}) {
-	const [isOriginal, setOriginal] = useState("original");
-	const [repModal, setRepModal] = useState(false);
-	const [customerModal, setCustomerModal] = useState(false);
-	const [historyModal, setHistoryModal] = useState(false);
-	const [totalRedeem, setTotalRedeem] = useState(0);
-	const [amountToPay, setAmountToPay] = useState(0);
-	const [redeemLength, setRedeemLength] = useState(redeem.length);
-	const [loanAmount, setLoanAmount] = useState(0);
-	const [advInterest, setAdvInterest] = useState(
-		pawnTicket.loanAmount ? pawnTicket.loanAmount * 0.035 : 0
-	);
->>>>>>> Stashed changes
 
 	const [interest, setInterest] = useState(
 		pawnTicket.loanAmount
@@ -63,7 +33,6 @@ function DetailsCardClerk({
 		)
 	);
 
-<<<<<<< Updated upstream
   const [PT, setPT] = useState()
   function repOpen(){
     setRepModal(true);
@@ -75,17 +44,6 @@ function DetailsCardClerk({
   function customerOpen() {
       setCustomerModal(true);
   }
-=======
-	const [PT, setPT] = useState();
-	function repOpen() {
-		setRepModal(true);
-		// console.log("Auth Data is" + JSON.stringify(authData))
-	}
-
-	function customerOpen() {
-		setCustomerModal(true);
-	}
->>>>>>> Stashed changes
 
 	function historyOpen() {
 		setHistoryModal(true);
@@ -219,7 +177,6 @@ function DetailsCardClerk({
 		}
 	}, [amountToPay]);
 
-<<<<<<< Updated upstream
   useEffect(() => {
     if (isOriginal == "original") {
       setAuthStatus(true)
@@ -250,35 +207,6 @@ function DetailsCardClerk({
             setAuthProof={setAuthProof}
           />
         </Modal>
-=======
-	useEffect(() => {
-		if (isOriginal == "original") {
-			setCheck(true);
-		} else if (isOriginal == "authorized" && authData[0].fName == "") {
-			setCheck(false);
-		}
-	}, [isOriginal, authData]);
-
-	return (
-		<>
-			<div
-				id="detailscard"
-				className="flex pr-10 text-base drop-shadow-lg font-nunito"
-			>
-				<Modal isOpen={repModal} ariaHideApp={false} className="modal">
-					<AuthorizedRep
-						trigger={repModal}
-						setTrigger={setRepModal}
-						authData={authData}
-						setAuth={setAuth}
-						check={check}
-					/>
-				</Modal>
-
-				<Modal isOpen={historyModal} ariaHideApp={false} className="modal">
-					<PawnHistory trigger={historyModal} setTrigger={setHistoryModal} />
-				</Modal>
->>>>>>> Stashed changes
 
 				<Modal isOpen={customerModal} ariaHideApp={false} className="modal">
 					<CustomerDetails
@@ -399,7 +327,6 @@ function DetailsCardClerk({
 					)}
 					<hr className="h-px my-8 bg-gray-500 border-0" />
 
-<<<<<<< Updated upstream
           {/* Customer Details */}
           <p className="font-bold pr-7">
             Customer Details:
@@ -558,87 +485,11 @@ function DetailsCardClerk({
                 </p>
                 <p className="mr-3">{convertFloat(penalties.toFixed(2))}</p>
                 {/* <p>
-=======
-					{/* Pawn Details */}
-					<p className="font-bold pr-7">
-						Pawn Details:
-						<span
-							className="inline-block px-2 ml-3 hover:cursor-pointer"
-							onClick={historyOpen}
-						>
-							<svg
-								width="30 "
-								height="30"
-								viewBox="10 0 30 45"
-								fill="none"
-								xmlns="http://www.w3.org/2000/svg"
-							>
-								<path
-									d="M27.5618 16.3333H24.4993V26.5417L33.2377 31.7275L34.7077 29.2571L27.5618 25.0104V16.3333ZM26.541 6.125C21.6677 6.125 16.9939 8.06093 13.5479 11.5069C10.1019 14.9529 8.16602 19.6266 8.16602 24.5H2.04102L10.126 32.7279L18.3743 24.5H12.2493C12.2493 20.7096 13.7551 17.0745 16.4353 14.3943C19.1155 11.7141 22.7506 10.2083 26.541 10.2083C30.3314 10.2083 33.9665 11.7141 36.6468 14.3943C39.327 17.0745 40.8327 20.7096 40.8327 24.5C40.8327 28.2904 39.327 31.9255 36.6468 34.6057C33.9665 37.2859 30.3314 38.7917 26.541 38.7917C22.6006 38.7917 19.0277 37.1788 16.4552 34.5858L13.556 37.485C15.2536 39.2013 17.2763 40.5619 19.5058 41.4874C21.7354 42.4128 24.127 42.8846 26.541 42.875C31.4144 42.875 36.0881 40.9391 39.5341 37.4931C42.9801 34.0471 44.916 29.3734 44.916 24.5C44.916 19.6266 42.9801 14.9529 39.5341 11.5069C36.0881 8.06093 31.4144 6.125 26.541 6.125Z"
-									fill="black"
-									className="hover:fill-gray-300"
-								/>
-							</svg>
-						</span>
-					</p>
-					<div className="flex">
-						<div className="ml-5 text-right">
-							<p className="">Date Loan Granted:</p>
-							<p className="">Maturity Date:</p>
-							<p className="">Expiry Date:</p>
-							<p className="">Branch:</p>
-						</div>
-						<div className="ml-5 text-left">
-							<p className="">{convertDate(pawnTicket.loanDate)}</p>
-							<p className="">{convertDate(pawnTicket.maturityDate)}</p>
-							<p className="">{convertDate(pawnTicket.expiryDate)}</p>
-							<p className="">{branch}</p>
-						</div>
-					</div>
-				</div>
-				{/* Right Side Side of the Card (Computations) */}
-				<div className="min-w-fit">
-					<div className="p-10 mt-20 bg-gray-100 border-2 rounded-xl ">
-						<p className="font-bold pr-7">Computations</p>
-						<div className="flex pr-10 min-w-fit">
-							<div className="text-right">
-								<p>Loan Amount:</p>
-								<p>Interest (3.5%):</p>
-								<p>Adv. Interest:</p>
-								<p>Total Interest:</p>
-								<p>Penalties (1%):</p>
-								{/* <p>Other Charges:</p> */}
-								<p>Total Items for Redemption:</p>
-								<p>Partial Payments:</p>
-								<p className="font-bold">Total Amount to be Paid:</p>
-								<br />
-								<p>
-									<i>New</i> Loan Amount:
-								</p>
-							</div>
-							<div className="pr-10 ml-10 text-right min-w-fit">
-								<br />
-								<p> Php {convertFloat(interest.toFixed(2))} </p>
-								<p>{advInterest.toFixed(2)}</p>
-							</div>
-							<div className="text-right min-w-fit">
-								<p className="mr-3 font-bold">
-									Php {convertFloat(loanAmount.toFixed(2))}
-								</p>
-								<br />
-								<br />
-								<p className="mr-3">
-									{convertFloat((interest + advInterest).toFixed(2))}
-								</p>
-								<p className="mr-3">{convertFloat(penalties.toFixed(2))}</p>
-								{/* <p>
->>>>>>> Stashed changes
                   <input
                     type="number"
                     className="w-40 px-3 mb-1 text-right border rounded-md stroke-gray-500"
                   />
                 </p> */}
-<<<<<<< Updated upstream
                 <p className="mr-3">
                   {convertFloat(getTotalRedeem(redeem).toFixed(2))}
                 </p>
@@ -649,12 +500,6 @@ function DetailsCardClerk({
                   {convertFloat(amountToPay.toFixed(2))}
                 </p>
                 {/* <input
-=======
-								<p className="mr-3">{convertFloat(getTotalRedeem(redeem))}</p>
-								<p className="mr-1.5">({convertFloat(partialPayment)})</p>
-								<p className="mr-3 font-bold">{convertFloat(amountToPay)}</p>
-								{/* <input
->>>>>>> Stashed changes
                     type="number"
                     className="w-40 px-3 mb-1 text-right border rounded-md stroke-gray-500"
                     onChange={(e) => payAmount(e.target.value)}
