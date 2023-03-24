@@ -193,19 +193,37 @@ function RedeemClerk({ currentUser }) {
 					if (data != null) {
 						setCustomerID(data.customerID);
 						setTransactionID(data.transactionID);
-						setPTinfo(JSON.parse(JSON.stringify(data)));
+						setPTinfo(data);
 						setItemListID(data.itemListID);
 						setButton(false);
-					} else {
-						setPTinfo("N/A");
-						setTransactionID("N/A");
-						setUserInfo("N/A")
-						setCusDetails("N/A");
-						setItemListID("N/A")
-						setitemList([]);
-						setButton(true);
-					}
-				});
+
+						fetch("/api/redeem/partialPayment/" + data.itemListID, {
+						method: "GET",
+						headers: {
+							Accept: "application/json",
+							"Content-Type": "application/json",
+						},
+						})
+						.then((res) => res.json())
+						.then((oldpt) => {
+							console.log("Old PT is: " + JSON.stringify(oldpt));
+							if (oldpt != null) {
+							setPartialPayment(
+								Number(oldpt.loanAmount - data.loanAmount)
+							);
+							console.log("Partial Payment is now: " + partialPayment);
+							} else setPartialPayment(0);
+						});
+								} else {
+									setPTinfo("N/A");
+									setTransactionID("N/A");
+									setUserInfo("N/A")
+									setCusDetails("N/A");
+									setItemListID("N/A")
+									setitemList([]);
+									setButton(true);
+								}
+							});
 		}
 	}, [PTNumber]);
 
@@ -298,27 +316,28 @@ function RedeemClerk({ currentUser }) {
 		}
 	}, [customerID]);
 
-	useEffect(() => {
-		if(itemListID != ""){
-			fetch("/api/redeem/partialPayment/" + itemListID, {
-              method: "GET",
-              headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-              },
-            })
-              .then((res) => res.json())
-              .then((oldpt) => {
-                 console.log("Old PT is: " + JSON.stringify(oldpt));
-                if (oldpt != null) {
-                  setPartialPayment(Number(oldpt.loanAmount - ptInfo.loanAmount));
-				  console.log("Partial Payment is now: " + partialPayment)
-                }
-				else
-				setPartialPayment(0);
-              });
-		}
-	})
+	// useEffect(() => {
+	// 	console.log("Here: " + itemListID);
+	// 	if(itemListID != ""){
+	// 		fetch("/api/redeem/partialPayment/" + itemListID, {
+    //           method: "GET",
+    //           headers: {
+    //             Accept: "application/json",
+    //             "Content-Type": "application/json",
+    //           },
+    //         })
+    //           .then((res) => res.json())
+    //           .then((oldpt) => {
+    //              console.log("Old PT is: " + JSON.stringify(oldpt));
+    //             if (oldpt != null) {
+    //               setPartialPayment(Number(oldpt.loanAmount - ptInfo.loanAmount));
+	// 			  console.log("Partial Payment is now: " + partialPayment)
+    //             }
+	// 			else
+	// 			setPartialPayment(0);
+    //           });
+	// 	}
+	// }, [itemListID, partialPayment, ptInfo])
 
 	// useEffect to change items to be displayed in Select or Submit Modal
 	useEffect(() => {

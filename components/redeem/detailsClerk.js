@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from "react";
 import Modal from "react-modal";
 import AuthorizedRep from "../modals/authorizedRep";
-import CustomerDetails from "../modals/customerDetails";
+import CustomerDetails from "../modals/customerDetails"; 
 import PawnHistory from "../modals/pawnHistory";
 import dayjs from "dayjs";
 
@@ -18,20 +18,20 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
   );
 
 	const [interest, setInterest] = useState(
-		pawnTicket.loanAmount
-			? pawnTicket.loanAmount *
-					0.035 *
-					monthDiff(new Date(pawnTicket.maturityDate), new Date())
-			: 0
-	);
+    pawnTicket.loanAmount
+      ? pawnTicket.loanAmount *
+          0.035 *
+          monthDiff(new Date(pawnTicket.maturityDate), new Date())
+      : 0
+  );
 
-	const [penalties, setPenalties] = useState(
-		Number(
-			pawnTicket.loanAmount *
-				0.01 *
-				monthDiff(new Date(pawnTicket.expiryDate), new Date())
-		)
-	);
+  	const [penalties, setPenalties] = useState(
+      Number(
+        pawnTicket.loanAmount *
+          0.01 *
+          monthDiff(new Date(pawnTicket.expiryDate), new Date())
+      )
+    );
 
   const [PT, setPT] = useState()
   function repOpen(){
@@ -45,137 +45,144 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
       setCustomerModal(true);
   }
 
-	function historyOpen() {
-		setHistoryModal(true);
-	}
+  function historyOpen() {
+    setHistoryModal(true);
+  }
+  
+  function searchPT(pawnticketID){
+    search(pawnticketID)
+  }
 
-	function searchPT(pawnticketID) {
-		search(pawnticketID);
-	}
 
-	function amountLoan(amount) {
-		getAmount(amount);
-	}
+  function amountLoan(amount){
+    getAmount(amount)
+  }
 
-	function getInterest(loan) {
-		//plan: multiply loan * 0.035 with month diff
-		if (pawnTicket.loanDate == null || pawnTicket.maturityDate == null)
-			return "N/A";
-		else {
-			const date1 = dayjs(pawnTicket.loanDate, "MM/DD/YYYY");
-			const date2 = dayjs(pawnTicket.maturityDate, "MM/DD/YYYY");
-			const diffInMonths = date2.diff(date1, "month");
-			return loan * 0.035 * diffInMonths;
-		}
-	}
+  function getInterest(loan){
+    //plan: multiply loan * 0.035 with month diff
+    if (pawnTicket.loanDate == null || pawnTicket.maturityDate == null)
+      return "N/A";
+    else {
+      const date1 = dayjs(pawnTicket.loanDate, "MM/DD/YYYY");
+      const date2 = dayjs(pawnTicket.maturityDate, "MM/DD/YYYY");
+      const diffInMonths = date2.diff(date1, "month");
+      return loan * 0.035 * diffInMonths;
+    }
+  }
 
-	function convertFloat(number) {
-		if (mode) {
-			if (number == loanAmount) {
-				return Number(number).toLocaleString("en-US", {
-					minimumFractionDigits: 2,
-					maximumFractionDigits: 2,
-				});
-			} else return "0.00";
-		} else {
-			return Number(number).toLocaleString("en-US", {
-				minimumFractionDigits: 2,
-				maximumFractionDigits: 2,
-			});
-		}
-	}
+	  function convertFloat(number) {
+      if (mode) {
+        if (number == loanAmount) {
+          return Number(number).toLocaleString("en-US", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          });
+        } else return "0.00";
+      } else {
+        return Number(number).toLocaleString("en-US", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+      }
+    }
 
-	function getTotalRedeem(redeemList) {
-		var total = 0;
+  function getTotalRedeem(redeemList){
+    var total = 0;
 
-		redeemList.forEach((item) => {
-			total += Number(item.price);
-		});
+    redeemList.forEach((item) => {
+       total += Number(item.price)
+    });
 
-		return total;
-	}
-
+    return total;
+  }
+  
 	function convertDate(date) {
-		if (date == null) return "N/A";
-		else {
-			const dt = new Date(date);
-			//console.log(dt);
-			return dayjs(dt).format("MM/DD/YYYY");
-		}
-	}
+    if (date == null) return "N/A";
+    else {
+      const dt = new Date(date);
+      //console.log(dt);
+      return dayjs(dt).format("MM/DD/YYYY");
+    }
+  }
 
-	function getFullName(fname, mname, lname) {
-		if (fname == undefined && lname == undefined) return " ";
-		else return fname + " " + mname + " " + lname;
-	}
+  function getFullName(fname, mname, lname){
+    if(fname == undefined && lname == undefined)
+      return " ";
+    else  
+      return fname + " " + mname + " " + lname;
+  }
+  
 
-	const [newLoanAmount, setNewLoanAmount] = useState(0);
+  const [newLoanAmount, setNewLoanAmount] = useState(0);
 
-	function monthDiff(dateFrom, dateTo) {
-		let diff =
-			dateTo.getMonth() -
-			dateFrom.getMonth() +
-			12 * (dateTo.getFullYear() - dateFrom.getFullYear());
-		console.log("diff is:", diff);
-		if (diff > 0) {
-			return diff;
-		} else {
-			return 0;
-		}
-	}
-	useEffect(() => {
-		if (getTotalRedeem(redeem) - partialPayment > 0) {
-			setTotalRedeem(getTotalRedeem(redeem));
-			if (totalRedeem > 0)
-				setAmountToPay(getTotalRedeem(redeem) - partialPayment);
-			else setAmountToPay(0);
-		}
-	}, [redeem, partialPayment, totalRedeem]);
+  	function monthDiff(dateFrom, dateTo) {
+      let diff =
+        dateTo.getMonth() -
+        dateFrom.getMonth() +
+        12 * (dateTo.getFullYear() - dateFrom.getFullYear());
+      console.log("diff is:", diff);
+      if (diff > 0) {
+        return diff;
+      } else {
+        return 0;
+      }
+    }
+  useEffect(() => {
 
-	useEffect(() => {
-		if (totalRedeem != NaN) {
-			let newLoan = pawnTicket.loanAmount - amountToPay;
-			let tempAdvInterest = 0;
+      if((getTotalRedeem(redeem) - partialPayment) > 0){
+        setTotalRedeem(getTotalRedeem(redeem));
+        if(totalRedeem > 0)
+          setAmountToPay(getTotalRedeem(redeem) - partialPayment);
+        else 
+          setAmountToPay(0)
+      }
+  }, [redeem, partialPayment, totalRedeem])
 
-			if (newLoan > pawnTicket.loanAmount) {
-				setNewLoanAmount(pawnTicket.loanAmount);
-				setAdvInterest(pawnTicket.loanAmount * 0.035);
-			} else {
-				tempAdvInterest = newLoanAmount * 0.035;
-				setAdvInterest(tempAdvInterest);
-				setNewLoanAmount(newLoan);
-			}
-			// if (amountToPay >= newLoanAmount)
-		} else {
-			setAdvInterest(0);
-			setNewLoanAmount(0);
-			// setMinPayment(pawnTicket.loanAmount * 0.035 + interest + penalties);
-		}
-	}, [amountToPay, partialPayment, totalRedeem]);
 
 	useEffect(() => {
-		setLoanAmount(pawnTicket.loanAmount ? pawnTicket.loanAmount : 0);
-		setPenalties(
-			pawnTicket.loanAmount *
-				0.01 *
-				monthDiff(new Date(pawnTicket.expiryDate), new Date())
-		);
-		setInterest(
-			pawnTicket.loanAmount *
-				0.035 *
-				monthDiff(new Date(pawnTicket.maturityDate), new Date())
-		);
-	}, [pawnTicket, loanAmount]);
+      if (totalRedeem != NaN) {
+        let newLoan = pawnTicket.loanAmount - amountToPay;
+        let tempAdvInterest = 0;
 
-	// useEffect(() => {
-	//   if(redeem)
-	// })
+        if (newLoan > pawnTicket.loanAmount) {
+          setNewLoanAmount(pawnTicket.loanAmount);
+          setAdvInterest(pawnTicket.loanAmount * 0.035);
+        } else {
+          tempAdvInterest = newLoanAmount * 0.035;
+          setAdvInterest(tempAdvInterest);
+          setNewLoanAmount(newLoan);
+        }
+        // if (amountToPay >= newLoanAmount)
+      } else {
+        setAdvInterest(0);
+        setNewLoanAmount(0);
+        // setMinPayment(pawnTicket.loanAmount * 0.035 + interest + penalties);
+      }
+  }, [amountToPay, partialPayment, totalRedeem]);
 
-	useEffect(() => {
-		if (amountToPay != null) {
-			getAmount(amountToPay);
-		}
-	}, [amountToPay]);
+  	useEffect(() => {
+      setLoanAmount(pawnTicket.loanAmount ? pawnTicket.loanAmount : 0);
+      setPenalties(
+        pawnTicket.loanAmount *
+          0.01 *
+          monthDiff(new Date(pawnTicket.expiryDate), new Date())
+      );
+      setInterest(
+        pawnTicket.loanAmount *
+          0.035 *
+          monthDiff(new Date(pawnTicket.maturityDate), new Date())
+      );
+    }, [pawnTicket, loanAmount]);
+
+  // useEffect(() => {
+  //   if(redeem)
+  // })
+
+  useEffect(() => {
+    if (amountToPay != null) {
+      getAmount(amountToPay);
+    }
+  }, [amountToPay]);
 
   useEffect(() => {
     if (isOriginal == "original") {
@@ -208,124 +215,35 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
           />
         </Modal>
 
-				<Modal isOpen={customerModal} ariaHideApp={false} className="modal">
-					<CustomerDetails
-						trigger={customerModal}
-						setTrigger={setCustomerModal}
-						customerInfo={customer}
-						userInfo={user}
-					/>
-				</Modal>
-				{/* Left Side of the Card (Details) */}
-				<div className="flex flex-col m-10">
-					{pawnTicket.isInactive ? (
-						<span className="mb-3 font-bold text-center text-red-400 bg-gray-200 font-nunito">
-							PawnTicket is already inactive!
-						</span>
-					) : (
-						<></>
-					)}
-					<div>
-						<span className="font-bold pr-7">PT Number:</span>
-						{mode == false ? (
-							<span>{PTNumber}</span>
-						) : (
-							<span>
-								<input
-									className="px-3 border rounded-md stroke-gray-500"
-									onChange={(e) => searchPT(e.target.value)}
-								/>
-								<p className="text-sm text-gray-300 pl-[163px]">
-									Format: X-ZZZZZZ{" "}
-								</p>
-							</span>
-						)}
-					</div>
+        <Modal isOpen={historyModal} ariaHideApp={false} className="modal">
+          <PawnHistory trigger={historyModal} setTrigger={setHistoryModal} />
+        </Modal>
 
-					{/* Customer Details */}
-					<p className="font-bold pr-7">
-						Customer Details:
-						{/* View Customer Details Button */}
-						<span
-							className="inline-block ml-3 hover:cursor-pointer"
-							onClick={customerOpen}
-						>
-							<svg
-								width="30 "
-								height="30"
-								viewBox="0 -1 40 30"
-								fill="none"
-								xmlns="http://www.w3.org/2000/svg"
-							>
-								<path
-									d="M20.5007 7.6875C11.959 7.6875 4.6644 13.0004 1.70898 20.5C4.6644 27.9996 11.959 33.3125 20.5007 33.3125C29.0423 33.3125 36.3369 27.9996 39.2923 20.5C36.3369 13.0004 29.0423 7.6875 20.5007 7.6875ZM20.5007 29.0417C15.7857 29.0417 11.959 25.215 11.959 20.5C11.959 15.785 15.7857 11.9583 20.5007 11.9583C25.2157 11.9583 29.0423 15.785 29.0423 20.5C29.0423 25.215 25.2157 29.0417 20.5007 29.0417ZM20.5007 15.375C17.6648 15.375 15.3757 17.6642 15.3757 20.5C15.3757 23.3358 17.6648 25.625 20.5007 25.625C23.3365 25.625 25.6257 23.3358 25.6257 20.5C25.6257 17.6642 23.3365 15.375 20.5007 15.375Z"
-									fill="black"
-									className="hover:fill-gray-300"
-								/>
-							</svg>
-						</span>
-					</p>
-					<div className="flex">
-						<div className="ml-5 text-right min-w-fit">
-							<p className="">Full Name:</p>
-							<p className="">Contact Number:</p>
-							<p className="">Address:</p>
-						</div>
-						<div className="ml-5 text-left">
-							<p className="">
-								{getFullName(user.firstName, user.middleName, user.lastName)}
-							</p>
-							<p className="">{customer.contactNumber}</p>
-							<p className="max-w-md">
-								{/* Used to make long address break line */}
-								{customer.presentAddress}
-							</p>
-						</div>
-					</div>
-					{mode == false ? (
-						<div className="flex">
-							<div className="ml-10 text-right min-w-fit">
-								<p className="font-bold">Redeemed by: </p>
-							</div>
-							<div className="ml-5 text-right min-w-fit">
-								<select
-									className="px-5"
-									onChange={(e) => setOriginal(e.target.value)}
-								>
-									<option key="00" value="original">
-										{" "}
-										Original Customer{" "}
-									</option>
-									<option key="01" value="authorized">
-										{" "}
-										Authorized Rep.{" "}
-									</option>
-								</select>
-								{isOriginal == "authorized" ? (
-									<button
-										className="px-5 ml-2 text-sm text-white bg-green-300"
-										onClick={repOpen}
-									>
-										{" "}
-										Add Details{" "}
-									</button>
-								) : (
-									<></>
-								)}
-							</div>
-						</div>
-					) : (
-						<></>
-					)}
-					{isOriginal == "authorized" && check == false ? (
-						<p className="px-5 ml-40 text-sm text-red-400">
-							Missing Authorized <br />
-							<span>Rep. Details</span>
-						</p>
-					) : (
-						<></>
-					)}
-					<hr className="h-px my-8 bg-gray-500 border-0" />
+        <Modal isOpen={customerModal} ariaHideApp={false} className="modal">
+          <CustomerDetails
+            trigger={customerModal}
+            setTrigger={setCustomerModal}
+            customerInfo={customer}
+            userInfo={user}
+          />
+        </Modal>
+        {/* Left Side of the Card (Details) */}
+        <div className="m-10 ">
+          <span className="font-bold pr-7">PT Number:</span>
+          {mode == false ? (
+            <span>{PTNumber}</span>
+          ) : (
+            <span>
+              <input
+                className="border rounded-md stroke-gray-500 px-3"
+                onChange={(e) => searchPT(e.target.value)}
+              />
+              <p className="text-sm text-gray-300 pl-[163px]">
+                Format: X-ZZZZZZ{" "}
+              </p>
+            </span>
+          )}
+          <hr className="h-px my-8 bg-gray-500 border-0" />
 
           {/* Customer Details */}
           <p className="font-bold pr-7">
@@ -487,36 +405,30 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
                 {/* <p>
                   <input
                     type="number"
-                    className="w-40 px-3 mb-1 text-right border rounded-md stroke-gray-500"
+                    className="text-right border rounded-md stroke-gray-500 px-3 w-40 mb-1"
                   />
                 </p> */}
-                <p className="mr-3">
-                  {convertFloat(getTotalRedeem(redeem).toFixed(2))}
-                </p>
-                <p className="mr-1.5">
-                  ({convertFloat(partialPayment.toFixed(2))})
-                </p>
-                <p className="mr-3 font-bold">
-                  {convertFloat(amountToPay.toFixed(2))}
-                </p>
+                <p className="mr-3">{convertFloat(getTotalRedeem(redeem))}</p>
+                <p className="mr-1.5">({convertFloat(partialPayment)})</p>
+                <p className="mr-3 font-bold">{convertFloat(amountToPay)}</p>
                 {/* <input
                     type="number"
-                    className="w-40 px-3 mb-1 text-right border rounded-md stroke-gray-500"
+                    className="text-right border rounded-md stroke-gray-500 px-3 w-40 mb-1"
                     onChange={(e) => payAmount(e.target.value)}
                     disabled={mode}
                   /> */}
 
-								<hr className="my-3" />
-								<p className="mr-3 font-bold">
-									Php {convertFloat(newLoanAmount.toFixed(2))}
-								</p>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</>
-	);
+                <hr className="my-3" />
+                <p className="font-bold mr-3">
+                  Php {convertFloat(newLoanAmount.toFixed(2))}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
 }
 
 export default DetailsCardClerk;

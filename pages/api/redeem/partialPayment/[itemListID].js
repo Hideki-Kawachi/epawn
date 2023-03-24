@@ -9,8 +9,8 @@ export default async function ItemListID(req, res) {
       itemListID: req.query.itemListID,
     })
       .sort({ loanDate: 1 })
-      .exec();
-
+      .lean();
+    console.log("Pawn info is" + pawnInfo)
     if (pawnInfo == null) {
       console.log("Can't find original PT");
     } else {
