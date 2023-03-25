@@ -1,20 +1,20 @@
 import Head from "next/head";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import ClerkHome from "../components/home/clerkHome";
-import Header from "../components/header";
-import ManagerHome from "../components/home/managerHome";
-import NavBar from "../components/navigation/navBar";
-import dbConnect from "../utilities/dbConnect";
+import ClerkHome from "../../components/home/clerkHome";
+import Header from "../../components/header";
+import ManagerHome from "../../components/home/managerHome";
+import NavBar from "../../components/navigation/navBar";
+import dbConnect from "../../utilities/dbConnect";
 import mongoose from "mongoose";
-import NotifTable from "./api/notifTable";
+import NotifTable from "../api/notifTable";
 import { withIronSessionSsr } from "iron-session/next";
-import { ironOptions } from "../utilities/config";
-import Transaction from "../schemas/transaction";
-import EmployeeInfo from "../schemas/employeeInfo";
-import Branch from "../schemas/branch";
-import LoadingSpinner from "../components/loadingSpinner";
-import User from "../schemas/user";
+import { ironOptions } from "../../utilities/config";
+import Transaction from "../../schemas/transaction";
+import EmployeeInfo from "../../schemas/employeeInfo";
+import Branch from "../../schemas/branch";
+import LoadingSpinner from "../../components/loadingSpinner";
+import User from "../../schemas/user";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {
@@ -90,49 +90,14 @@ export const getServerSideProps = withIronSessionSsr(
 	ironOptions
 );
 
-export default function Home({ currentUser, notifData }) {
+export default function Reports({ currentUser, notifData }) {
 	const [showData, setShowData] = useState(notifData);
-
-	const roleShow = {
-		manager: <ManagerHome notifData={showData}></ManagerHome>,
-		clerk: <ClerkHome notifData={showData}></ClerkHome>,
-	};
-
-	useEffect(() => {
-		waitNotif();
-	}, []);
-
-	async function waitNotif() {
-		let res = await fetch("/api/notifTable", {
-			method: "GET",
-			headers: {
-				userID: currentUser.userID,
-				branchID: currentUser.branchID,
-				role: currentUser.role,
-			},
-		});
-
-		if (res.status == 502) {
-			await waitNotif();
-		} else if (res.status != 200) {
-			// console.log("2-RESPONSE:", res.statusText);
-			// await waitNotif();
-			await new Promise((resolve) => setTimeout(resolve, 1000));
-			await waitNotif();
-		} else {
-			let notifShow = await res.json();
-			// console.log("NOTIF DATA BACK IS:", notifShow);
-			setShowData(notifShow);
-			await waitNotif();
-		}
-	}
 
 	return (
 		<div>
 			<NavBar currentUser={currentUser}></NavBar>
 			<Header currentUser={currentUser}></Header>
-			{roleShow[currentUser.role]}
-			{/* <button onClick={() => buttonClick()}>HELLO WORLD</button> */}
+			<span>REPORTS</span>
 		</div>
 	);
 }

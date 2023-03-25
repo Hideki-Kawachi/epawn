@@ -11,6 +11,12 @@ export default function Document() {
 					href="https://fonts.googleapis.com/css2?family=Dosis:wght@200;400;600;800&family=Nunito:wght@200;400;600;800&display=swap"
 					rel="stylesheet"
 				/>
+				<title>E-Pawn</title>
+				<meta
+					name="description"
+					content="R. Raymundo Pawnshop Information System"
+				/>
+				<link rel="icon" href="/favicon.png" />
 			</Head>
 			<body>
 				<Main />
