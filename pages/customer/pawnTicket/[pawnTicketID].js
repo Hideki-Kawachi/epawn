@@ -195,8 +195,8 @@ function RenewPawnTicketID({
 		<div className="flex flex-col items-center">
 			<div className="fixed flex flex-col items-center w-full h-full border-2 md:w-1/4 ">
 				<CustomerHeader></CustomerHeader>
-				<div className="w-full h-full mb-20 overflow-y-auto bg-green-50">
-					<div className="flex flex-col items-center w-full h-full mt-[2vh] p-1">
+				<div className="w-full h-full overflow-y-auto bg-green-50">
+					<div className="flex flex-col items-center w-full h-full p-1 mt-2">
 						<div className="w-full p-2 text-sm bg-gray-100 border-2 border-gray-300 h-fit font-nunito">
 							{pawnTicketData.isInactive ? (
 								<h1 className="text-base font-bold text-center text-red-500 bg-gray-200">
@@ -350,7 +350,7 @@ function RenewPawnTicketID({
 									<div className="flex flex-col items-center justify-center m-5">
 										<button
 											onClick={() => renewPawnTicket()}
-											className="bg-green-300"
+											className="mb-[15vh] bg-green-300"
 											disabled={
 												minPayment >= amountToPay ||
 												isNaN(amountToPay) ||

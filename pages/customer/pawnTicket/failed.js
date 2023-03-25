@@ -65,7 +65,7 @@ function Failed({ currentUser }) {
 						<p>Your payment was not accepted, please try again later.</p>
 					</div>
 					<button
-						className="absolute text-base bg-green-300 top-3/4"
+						className="mt-20 text-base bg-green-300"
 						onClick={() => router.replace("/customer")}
 					>
 						Done
