@@ -11,6 +11,8 @@ import { ironOptions } from "../../../utilities/config";
 import { useRouter } from "next/router";
 import dayjs from "dayjs";
 import DetailsCardRedeemManager from "../../../components/redeem/detailsManager";
+import RejectRedeemManager from "../../../components/modals/rejectRedeemManager";
+
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {
 		if (!req.session.userData) {
@@ -42,6 +44,7 @@ function RedeemManager({ currentUser }) {
 	const [cancelModal, setCancelOpen] = useState(false); //Cancel
 	const [customerModal, setCustomerOpen] = useState(false); //View Customer Details
 	const [historyModal, setHistoryOpen] = useState(false); //Pawn History
+	const [rejectModal, setRejectModal] = useState(false); //reject redeem
 
 	//Item List Array
 	const [itemList, setitemList] = useState([]);
@@ -49,6 +52,9 @@ function RedeemManager({ currentUser }) {
 	const [redeemList, setRedeemList] = useState([]);
 
 	//Pawn Ticket Details
+	const router = useRouter();
+	const [transactionID, setTransactionID] = useState(router.query.transactionID);
+
 	const [PTNumber, setPTNumber] = useState(""); //test A-123456
 	const [ptInfo, setPTinfo] = useState([]);
 	const [branch, setBranch] = useState("N/A");
@@ -59,17 +65,14 @@ function RedeemManager({ currentUser }) {
 	const [redeemID, setRedeemID] = useState("N/A");
 	const [userInfo, setUserInfo] = useState([]);
 	const [cashTendered, setCashTendered] = useState(0);
-	const router = useRouter();
-
+	const [redeemerInfo, setRedeemerInfo] = useState([])
+	const [redeemerID, setRedeemerID] = useState("")
+	const [isOriginal, setOriginal] = useState(true) //if redeemed by original true, if authrep false
 	//Item List Backend States
 	const [itemListID, setItemListID] = useState("N/A");
-	const [transactionID, setTransactionID] = useState(
-		router.query.transactionID
-	);
+
 
 	const [sendForm, setSendForm] = useState(false);
-	const [button, setButton] = useState(true); //disabled if PT number is invalid
-	const [button2, setButton2] = useState(true); //disabled if No amount Paid or less than total interest
 
 	function submitForm() {
 		setSubmitOpen(true);
@@ -79,6 +82,9 @@ function RedeemManager({ currentUser }) {
 		setCancelOpen(true);
 	}
 
+	function rejectForm(){
+		setRejectModal(true);
+	}
 	function cancelContentShow() {
 		return (
 			<>
@@ -131,7 +137,7 @@ function RedeemManager({ currentUser }) {
 					if (transaction != null) {
 						setCustomerID(transaction.customerID);
 						setBranch(transaction.branchID);
-						setAmountToPay(transaction.amountPaid);
+					
 					}
 				});
 		}
@@ -149,8 +155,10 @@ function RedeemManager({ currentUser }) {
 					if (redeem != null) {
 						setRedeemID(redeem.redeemID);
 						setPTNumber(redeem.pawnTicketID);
-						// console.log(JSON.stringify(redeem))
-						console.log("PT is " + PTNumber);
+						setRedeemerID(redeem.redeemerID)
+						setAmountToPay(redeem.payment);
+					// console.log(JSON.stringify("Eyo what is this " + redeem.redeemID));
+					// console.log("PT is " + redeem.pawnTicketID);
 					}
 				});
 		}
@@ -170,10 +178,10 @@ function RedeemManager({ currentUser }) {
 					// console.log(data)
 					if (data != null) {
 						setCustomerID(data.customerID);
-						setPTinfo(JSON.parse(JSON.stringify(data)));
+						setPTinfo(data);
 						setItemListID(data.itemListID);
-						console.log("PT data is " + JSON.stringify(data));
-						console.log("Item id is " + data.itemListID);
+						console.log("PT loan is " + JSON.stringify(data.loanAmount));
+					//	console.log("Item id is " + data.itemListID);
 					}
 				});
 		}
@@ -195,7 +203,7 @@ function RedeemManager({ currentUser }) {
 						// console.log(JSON.stringify(info))
 						let list = JSON.stringify(info);
 						setitemList(JSON.parse(list)); //temporary
-						console.log("Item list is " + list);
+				//		console.log("Item list is " + list);
 					}
 				});
 		}
@@ -223,11 +231,34 @@ function RedeemManager({ currentUser }) {
 					// console.log(data)
 					if (user != null) {
 						// console.log(JSON.stringify(info))
-						setUserInfo(JSON.parse(JSON.stringify(user)));
+						setUserInfo(user);
+						if(user.userID == redeemerID){
+							setRedeemerInfo(user);
+						//	setOriginal(true);
+						} 
+						else {
+							console.log("Redeemer is authorized")
+							if(redeemerID != null){
+							fetch("/api/users/" + customerID, {
+							method: "GET",
+							headers: {
+								Accept: "application/json",
+								"Content-Type": "application/json",
+							},
+							})
+							.then((res) => res.json())
+							.then((info) => {
+								if (info != null) {
+								setRedeemerInfo(info);
+							//	setOriginal(false);
+								}
+							});
+						}
+						}
 					}
 				});
 		}
-	}, [customerID]);
+	}, [customerID, redeemerID]);
 
 	// BACKEND TO RETRIEVE CUSTOMER DETAILS WITH USERID
 	useEffect(() => {
@@ -243,118 +274,135 @@ function RedeemManager({ currentUser }) {
 				.then((customer) => {
 					// console.log(data)
 					if (customer != null) {
-						setCusDetails(JSON.parse(JSON.stringify(customer)));
+						setCusDetails(customer);
 					}
 				});
 		}
 	}, [customerID]);
 
 	return (
-		<>
-			<NavBar currentUser={currentUser}></NavBar>
-			<Header currentUser={currentUser}></Header>
-			{/* First Half */}
+    <>
+      <NavBar currentUser={currentUser}></NavBar>
+      <Header currentUser={currentUser}></Header>
+      {/* First Half */}
 
-			<Modal isOpen={submitModal} ariaHideApp={false} className="modal">
-				<Submit trigger={submitModal} setTrigger={setSubmitOpen} />
-			</Modal>
+      <Modal isOpen={submitModal} ariaHideApp={false} className="modal">
+        <Submit trigger={submitModal} setTrigger={setSubmitOpen} />
+      </Modal>
 
-			<Modal isOpen={cancelModal} ariaHideApp={false} className="modal">
-				<Cancel
-					trigger={cancelModal}
-					setTrigger={setCancelOpen}
-					content={cancelContentShow()}
-				/>
-			</Modal>
+      <Modal isOpen={cancelModal} ariaHideApp={false} className="modal">
+        <Cancel
+          trigger={cancelModal}
+          setTrigger={setCancelOpen}
+          content={cancelContentShow()}
+        />
+      </Modal>
 
-			<div id="main-content-area" className="flex-col">
-				<p className="mb-5 text-xl font-semibold text-green-500 underline font-dosis">
-					Redeem
-				</p>
-				<div className="flex">
-					<DetailsCardRedeemManager
-						branch={branch}
-						pawnTicket={ptInfo}
-						PTNumber={PTNumber}
-						user={userInfo}
-						customer={customerDetails}
-						amountToPay={amountToPay}
-						cashTendered={cashTendered}
-						setCashTendered={setCashTendered}
-						newLoan={newLoan}
-						getNewLoan={setNewLoan}
-					/>
-				</div>
+	  <Modal isOpen={rejectModal} ariaHideApp={false} className="modal">
+		<RejectRedeemManager
+		 trigger={rejectModal}
+		 setTrigger={setRejectModal}
+		/>
+	  </Modal>
+	
+      <div id="main-content-area" className="flex-col">
+        <p className="mb-5 text-xl font-semibold text-green-500 underline font-dosis">
+          Redeem
+        </p>
+        <div className="flex">
+          <DetailsCardRedeemManager
+            pawnTicket={ptInfo}
+            branch={branch}
+            PTNumber={PTNumber}
+            user={userInfo}
+            customer={customerDetails}
+            redeemer={redeemerInfo}
+            amountToPay={amountToPay}
+            cashTendered={cashTendered}
+            setCashTendered={setCashTendered}
+            newLoan={newLoan}
+            getNewLoan={setNewLoan}
+            isOriginal={isOriginal}
+          />
+        </div>
 
-				{/* Second Half */}
+        {/* Second Half */}
 
-				<div className="flex">
-					{/* Remaining Items  */}
+        <div className="flex">
+          {/* Remaining Items  */}
 
-					<div className="mt-20">
-						<p className="ml-10 text-base font-bold font-nunito">
-							Remaining Items:{" "}
-						</p>
-						{/* plan: CheckItem is ItemCard w/ Check*/}
+          <div className="mt-20">
+            <p className="ml-10 text-base font-bold font-nunito">
+              Remaining Items:{" "}
+            </p>
+            {/* plan: CheckItem is ItemCard w/ Check*/}
 
-						{remainList.length > 0 ? (
-							<>
-								<div className="p-5 mx-10 w-[720px] h-96  overflow-y-scroll bg-white border-2">
-									{remainList.map((item) => (
-										<div className="flex flex-row" key={item.itemID}>
-											<ItemCard key={item.itemID} itemDetails={item}></ItemCard>
-										</div>
-									))}
-								</div>
-							</>
-						) : (
-							<div className="p-5 mx-10 w-[720px] h-[450px]  overflow-y-scroll bg-white border-2">
-								<div className="mt-32 ">
-									<p className="text-xl font-bold text-center text-gray-300 font-nunito">
-										{" "}
-										No items displayed.
-									</p>
-									<p className="text-sm text-center text-gray-300 font-nunito">
-										{" "}
-										All items will be redeemed.
-									</p>
-								</div>
-							</div>
-						)}
-					</div>
-					{/*Items for Redemption */}
-					<div className="mt-20 ">
-						<p className="ml-10 text-base font-bold font-nunito">
-							Items for Redemption:{" "}
-						</p>
-						<div className="bg-white p-5 mx-10 w-[720px] h-[450px] overflow-y-scroll border-2">
-							{redeemList.map((item) => (
-								<ItemCard key={item.itemID} itemDetails={item}></ItemCard>
-							))}
-						</div>
-					</div>
-				</div>
-				<div className="mt-5 flex flex-row ml-[1180px]">
-					<div>
-						<button
-							className="px-10 mx-2 my-5 text-base text-white bg-red-300"
-							onClick={cancelForm}
-						>
-							Cancel
-						</button>
-					</div>
-					<div>
-						<button
-							className="px-10 mx-2 my-5 text-base text-white bg-green-300"
-							onClick={submitForm}
-						>
-							Submit
-						</button>
-					</div>
-				</div>
-			</div>
-		</>
-	);
+            {remainList.length > 0 ? (
+              <>
+                <div className="p-5 mx-10 w-[720px] h-96  overflow-y-scroll bg-white border-2">
+                  {remainList.map((item) => (
+                    <div className="flex flex-row" key={item.itemID}>
+                      <ItemCard key={item.itemID} itemDetails={item}></ItemCard>
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <div className="p-5 mx-10 w-[720px] h-[450px]  overflow-y-scroll bg-white border-2">
+                <div className="mt-32 ">
+                  <p className="text-xl font-bold text-center text-gray-300 font-nunito">
+                    {" "}
+                    No items displayed.
+                  </p>
+                  <p className="text-sm text-center text-gray-300 font-nunito">
+                    {" "}
+                    All items will be redeemed.
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+          {/*Items for Redemption */}
+          <div className="mt-20 ">
+            <p className="ml-10 text-base font-bold font-nunito">
+              Items for Redemption:{" "}
+            </p>
+            <div className="bg-white p-5 mx-10 w-[720px] h-[450px] overflow-y-scroll border-2">
+              {redeemList.map((item) => (
+                <ItemCard key={item.itemID} itemDetails={item}></ItemCard>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className="mt-5 flex flex-row ml-[1180px]">
+          <div>
+            <button
+              className="px-10 mx-2 my-5 text-base text-white bg-red-300"
+              onClick={cancelForm}
+            >
+              Cancel
+            </button>
+          </div>
+          <div>
+            <button
+              className="px-10 mx-2 my-5 text-base text-white bg-red-500"
+              onClick={rejectForm}
+            >
+              Reject
+            </button>
+          </div>
+          <div>
+            <button
+              className="px-10 mx-2 my-5 text-base text-white bg-green-300"
+              onClick={submitForm}
+            >
+              Submit
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
+  );
 }
 
 export default RedeemManager;

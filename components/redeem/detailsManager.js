@@ -5,17 +5,8 @@ import ViewComputation from "../modals/viewComputations";
 import PawnHistory from "../modals/pawnHistory";
 import dayjs from "dayjs";
 
-function DetailsCardRedeemManager({
-  pawnTicket,
-  search,
-  mode,
-  PTNumber,
-  customer,
-  user,
-  branch,
-  newLoan,
-  getNewLoan,
-  amountToPay,
+function DetailsCardRedeemManager({ pawnTicket, PTNumber, customer, user, branch, getNewLoan,
+  amountToPay, redeemer, isOriginal
 }) {
   const [customerModal, setCustomerModal] = useState(false);
   const [computationModal, setCompOpen] = useState(false);
@@ -24,29 +15,35 @@ function DetailsCardRedeemManager({
   const [loanAmount, setLoanAmount] = useState(
     pawnTicket.loanAmount ? pawnTicket.loanAmount : 0
   );
+
+  //    pawnTicket.loanAmount ? pawnTicket.loanAmount : 0
   const [partialPayment, setPartialPayment] = useState(0);
   const [advInterest, setAdvInterest] = useState(
-    pawnTicket.loanAmount ? pawnTicket.loanAmount * 0.035 : 0
+    loanAmount ? loanAmount * 0.035 : 0
   );
   const [interest, setInterest] = useState(
-    pawnTicket.loanAmount
-      ? pawnTicket.loanAmount *
+    loanAmount
+      ? loanAmount *
           0.035 *
           monthDiff(new Date(pawnTicket.maturityDate), new Date())
       : 0
   );
   const [penalties, setPenalties] = useState(
     Number(
-      pawnTicket.loanAmount *
+      loanAmount *
         0.01 *
         monthDiff(new Date(pawnTicket.expiryDate), new Date())
     )
   );
+  
+    	const [minPayment, setMinPayment] = useState(
+        interest * 2 + penalties + advInterest
+      );
 
-  	const [newLoanAmount, setNewLoanAmount] = useState(0);
-    const [PT, setPT] = useState();
+  const [newLoanAmount, setNewLoanAmount] = useState(0);
+  const [PT, setPT] = useState();
 
-	function monthDiff(dateFrom, dateTo) {
+  function monthDiff(dateFrom, dateTo) {
     let diff =
       dateTo.getMonth() -
       dateFrom.getMonth() +
@@ -58,10 +55,9 @@ function DetailsCardRedeemManager({
       return 0;
     }
   }
-   
 
-  function getCash(cash){
-    setCashTendered(cash)
+  function getCash(cash) {
+    setCashTendered(cash);
   }
   function compOpen() {
     setCompOpen(true);
@@ -71,64 +67,61 @@ function DetailsCardRedeemManager({
     setCustomerModal(true);
   }
 
-  function setNewLoan(number){
-    getNewLoan(number)
+  function setNewLoan(number) {
+    getNewLoan(number);
   }
 
   function historyOpen() {
     setHistoryModal(true);
   }
 
-  	useEffect(() => {
-      if (amountToPay > minPayment && loanAmount - amountToPay > 2500) {
-        let amountLeftFromCash = amountToPay - interest - penalties;
-        let partialPayment =
-          (amountLeftFromCash - pawnTicket.loanAmount * 0.035) / 0.965;
-        let newLoanAmount = pawnTicket.loanAmount - partialPayment;
-        let tempAdvInterest = 0;
-        if (newLoanAmount > pawnTicket.loanAmount) {
-          setNewLoanAmount(pawnTicket.loanAmount);
-          setAdvInterest(pawnTicket.loanAmount * 0.035);
-        } else {
-          tempAdvInterest = newLoanAmount * 0.035;
-          setAdvInterest(tempAdvInterest);
-          setNewLoanAmount(newLoanAmount);
-          getNewLoan(newLoanAmount);
-        }
-
-        setPartialPayment(partialPayment < 0 ? 0 : partialPayment);
+  useEffect(() => {
+    if (amountToPay > minPayment && loanAmount - amountToPay > 2500) {
+      let amountLeftFromCash = amountToPay - interest - penalties;
+      let partialPayment =
+        (amountLeftFromCash - loanAmount * 0.035) / 0.965;
+      let newLoanAmount = loanAmount - partialPayment;
+      let tempAdvInterest = 0;
+      if (newLoanAmount > loanAmount) {
+        setNewLoanAmount(loanAmount);
+        setAdvInterest(loanAmount * 0.035);
       } else {
-        setPartialPayment(0);
-        setAdvInterest(0);
-        setNewLoanAmount(0);
-        setMinPayment(pawnTicket.loanAmount * 0.035 + interest + penalties);
+        tempAdvInterest = newLoanAmount * 0.035;
+        setAdvInterest(tempAdvInterest);
+        setNewLoanAmount(newLoanAmount);
+        getNewLoan(newLoanAmount);
       }
-      
-    }, [amountToPay]);
 
-    
-	useEffect(() => {
+      setPartialPayment(partialPayment < 0 ? 0 : partialPayment);
+    } else {
+      setPartialPayment(0);
+      setAdvInterest(0);
+      setNewLoanAmount(0);
+      setMinPayment(loanAmount * 0.035 + interest + penalties);
+    }
+  }, [amountToPay]);
+
+  useEffect(() => {
     setLoanAmount(pawnTicket.loanAmount ? pawnTicket.loanAmount : 0);
     setPenalties(
-      pawnTicket.loanAmount *
+      loanAmount *
         0.01 *
         monthDiff(new Date(pawnTicket.expiryDate), new Date())
     );
     setInterest(
-      pawnTicket.loanAmount *
+      loanAmount *
         0.035 *
         monthDiff(new Date(pawnTicket.maturityDate), new Date())
     );
     console.log("Partial Payment: " + partialPayment);
   }, [pawnTicket]);
 
-
-     function convertFloat(number) {
-         return Number(number).toLocaleString("en-US", {
-           minimumFractionDigits: 2,
-           maximumFractionDigits: 2,
-         });
-     }
+  function convertFloat(number) {
+    return Number(number).toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  }
   function convertDate(date) {
     if (date == null) return "N/A";
     else {
@@ -138,13 +131,15 @@ function DetailsCardRedeemManager({
     }
   }
 
-  function getChange(amount, cash){
-    if (amount == NaN || cash == NaN )
-    return 0
-    else if ((cash-amount) < 0)
-    return 0
-    else
-    return cash-amount;
+  function getChange(amount, cash) {
+    if (amount == NaN || cash == NaN) return 0;
+    else if (cash - amount < 0) return 0;
+    else return cash - amount;
+  }
+
+  function getFullName(fname, mname, lname) {
+    if (fname == undefined && lname == undefined) return " ";
+    else return fname + " " + mname + " " + lname;
   }
 
   return (
@@ -207,6 +202,7 @@ function DetailsCardRedeemManager({
               <p className="">Full Name:</p>
               <p className="">Contact Number:</p>
               <p className="">Address:</p>
+              <p className="">Redeemed by:</p>
             </div>
             <div className="text-left ml-5">
               {getFullName(user.firstName, user.middleName, user.lastName)}
@@ -215,6 +211,24 @@ function DetailsCardRedeemManager({
                 {/* Used to make long address break line */}
                 {customer.presentAddress}
               </p>
+              <span>
+                {getFullName(
+                  redeemer.firstName,
+                  redeemer.middleName,
+                  redeemer.lastName
+                )}
+              </span>
+              {isOriginal == false ? (
+                <button
+                  className="bg-green-300 ml-2 text-sm text-white px-5"
+                 // onClick={repOpen}
+                >
+                  {" "}
+                  View Details{" "}
+                </button>
+              ) : (
+                <></>
+              )}
             </div>
           </div>
 
@@ -294,9 +308,9 @@ function DetailsCardRedeemManager({
 
               <div className="ml-10 text-right min-w-fit">
                 <p className="font-bold mr-3">
-                  Php {convertFloat(pawnTicket.loanAmount.toFixed(2))}
+                  Php {convertFloat(loanAmount.toFixed(2))}
                 </p>
-                <p className="mr-3"> {convertFloat(loanAmount.toFixed(2))} </p>
+                <p className="mr-3"> {convertFloat(amountToPay.toFixed(2))} </p>
                 <p>
                   <input
                     type="number"

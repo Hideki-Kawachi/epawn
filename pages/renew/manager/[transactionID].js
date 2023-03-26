@@ -168,7 +168,7 @@ function RenewManager({ currentUser }) {
 					// console.log(data)
 					if (data != null) {
 						setCustomerID(data.customerID);
-						setPTinfo(JSON.parse(JSON.stringify(data)));
+						setPTinfo(data);
 						setItemListID(data.itemListID);
 					}
 				});
@@ -211,7 +211,7 @@ function RenewManager({ currentUser }) {
 					// console.log(data)
 					if (user != null) {
 						// console.log(JSON.stringify(info))
-						setUserInfo(JSON.parse(JSON.stringify(user)));
+						setUserInfo(user);
 					}
 				});
 		}

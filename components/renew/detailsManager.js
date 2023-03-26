@@ -49,6 +49,7 @@ function DetailsCardRenewManager({
 	const [minPayment, setMinPayment] = useState(
 		interest * 2 + penalties + advInterest
 	);
+	
 	const [newLoanAmount, setNewLoanAmount] = useState(0);
 	const [PT, setPT] = useState();
 
