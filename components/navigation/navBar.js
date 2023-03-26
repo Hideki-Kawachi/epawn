@@ -5,7 +5,7 @@ import PawnNav from "./pawnNav";
 
 function NavBar({ currentUser }) {
 	const [url, setURL] = useState("none");
-	const [pawnHover, setPawnHover] = useState(true);
+	const [pawnHover, setPawnHover] = useState(false);
 
 	useEffect(() => {
 		//console.log(window.location.pathname);
