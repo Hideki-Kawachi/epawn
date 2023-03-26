@@ -68,22 +68,37 @@ background-color: #FEFBF8;
 
 
 #nav-pawn{
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
     padding: 0px 1rem 0px 1rem;
     box-shadow: none;
     border-radius: 0px;
-    display: flex;
-    flex-direction: column;
     align-items: center;
     cursor: default;
+
+    #nav-pawn-sub{
+        a:hover{
+            padding: 0px;
+            margin:0px;
+            text-decoration: underline;
+            text-decoration-color: theme('colors.green.300');
+            color: theme('colors.green.300');
+            border: 0px;
+
+            h1{
+                color: theme('colors.green.300');
+                font-size: theme('fontSize.sm');
+                font-family: theme('fontFamily.nunito');
+            }
+        }
+    }
 
         &:hover{
             padding: 0px 1rem 0px 0.75rem;
             border-left: 0.25rem theme('colors.green.300') solid;
             animation: none;
-
             color: theme('colors.green.300');
 
             h1{

@@ -5,7 +5,7 @@ import PawnNav from "./pawnNav";
 
 function NavBar({ currentUser }) {
 	const [url, setURL] = useState("none");
-	const [pawnHover, setPawnHover] = useState(false);
+	const [pawnHover, setPawnHover] = useState(true);
 
 	useEffect(() => {
 		//console.log(window.location.pathname);
@@ -29,7 +29,7 @@ function NavBar({ currentUser }) {
 
 	return (
 		<>
-			<nav className="fixed z-40 h-full overflow-y-scroll bg-blue-500 w-fit pb-[20vh]">
+			<nav className="fixed z-40 h-full bg-blue-500 w-[9rem] pb-[20vh] overflow-x-visible overflow-y-scroll">
 				<div>
 					<div className="relative mx-2 aspect-[30/18] mt-5 mb-5">
 						<Image src={"/logo_transparent.png"} layout="fill"></Image>

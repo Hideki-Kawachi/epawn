@@ -4,7 +4,10 @@ import React from "react";
 function PawnNav({ role }) {
 	const roleShow = {
 		clerk: (
-			<div className="absolute flex flex-col gap-2 bg-blue-500 left-[100%] text-[white] p-3 font-nunito text-sm w-max">
+			<div
+				className="relative flex flex-col gap-2 bg-blue-500 text-[white] font-nunito text-[0.9rem]"
+				id="nav-pawn-sub"
+			>
 				<Link href={"/pawn/clerk/newCustomer"}>
 					<a className="w-fit">New Customer</a>
 				</Link>
@@ -17,15 +20,18 @@ function PawnNav({ role }) {
 			</div>
 		),
 		manager: (
-			<div className="absolute flex flex-col gap-2 bg-blue-500 left-[100%] text-[white] p-3 font-nunito text-sm w-max">
+			<div
+				className="relative flex flex-col gap-2 bg-blue-500 text-[white] font-nunito text-[0.9rem]"
+				id="nav-pawn-sub"
+			>
 				<Link href={"/pawn/manager/appraisal"}>
-					<a className="w-fit">For Appraisal</a>
+					<a className="p-0 m-0 w-fit">For Appraisal</a>
 				</Link>
 				<Link href={"/pawn/manager/negotiation"}>
-					<a className="w-fit">For Negotiation</a>
+					<a className="p-0 m-0 w-fit">For Negotiation</a>
 				</Link>
 				<Link href={"/pawn/manager/approval"}>
-					<a className="w-fit">For Approval</a>
+					<a className="p-0 m-0 w-fit">For Approval</a>
 				</Link>
 			</div>
 		),
