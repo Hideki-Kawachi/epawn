@@ -1,3 +1,4 @@
+import Head from "next/head";
 import { Router } from "next/router";
 import React, { useEffect, useState } from "react";
 import LoadingSpinner from "../components/loadingSpinner";
@@ -26,6 +27,13 @@ function MyApp({ Component, pageProps }) {
 
 	return (
 		<>
+			<Head>
+				<title>E-Pawn</title>
+				<meta
+					name="description"
+					content="R. Raymundo Pawnshop Information System"
+				/>
+			</Head>
 			<LoadingSpinner isLoading={isLoading}></LoadingSpinner>
 			<Component {...pageProps} />
 		</>

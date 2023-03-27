@@ -1,20 +1,19 @@
-import Head from "next/head";
-import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import ClerkHome from "../../components/home/clerkHome";
 import Header from "../../components/header";
-import ManagerHome from "../../components/home/managerHome";
 import NavBar from "../../components/navigation/navBar";
 import dbConnect from "../../utilities/dbConnect";
-import mongoose from "mongoose";
-import NotifTable from "../api/notifTable";
+import mongoose, { set } from "mongoose";
 import { withIronSessionSsr } from "iron-session/next";
 import { ironOptions } from "../../utilities/config";
 import Transaction from "../../schemas/transaction";
-import EmployeeInfo from "../../schemas/employeeInfo";
 import Branch from "../../schemas/branch";
-import LoadingSpinner from "../../components/loadingSpinner";
-import User from "../../schemas/user";
+import CashflowTable from "../../components/cashflow/cashflowTable";
+import CashflowSummary from "../../components/cashflow/cashflowSummary";
+import Modal from "react-modal";
+import BeginningBalance from "../../components/modals/beginningBalance";
+import EndingBalance from "../../components/modals/endingBalance";
+import AdditionalFunds from "../../components/modals/additionalFunds";
+import WithdrawFunds from "../../components/modals/withdrawFunds";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {
@@ -32,49 +31,44 @@ export const getServerSideProps = withIronSessionSsr(
 			await dbConnect();
 
 			let transactionData;
-			let pawnTicketData;
-			let customerData = await User.find({}).lean();
+			let branchData = await Branch.find({}).lean();
 
-			if (req.session.userData.role == "clerk") {
+			if (req.session.userData.role == "manager") {
 				transactionData = await Transaction.find({
 					branchID: req.session.userData.branchID,
-					clerkID: req.session.userData.userID,
-					status: { $ne: "Done" },
+					status: "Done",
 				})
 					.sort({ updatedAt: -1 })
 					.lean();
-			} else if (
-				req.session.userData.role == "manager" ||
-				req.session.userData.role == "admin"
-			) {
+			} else if (req.session.userData.role == "admin") {
 				transactionData = await Transaction.find({
 					branchID: req.session.userData.branchID,
 					managerID: req.session.userData.userID,
-					status: { $ne: "Done" },
+					status: "Done",
 				})
 					.sort({ updatedAt: -1 })
 					.lean();
 			}
 
-			// console.log("trans data:", transactionData);
-
-			let notifData = [];
+			let cashflowData = [];
 			transactionData.forEach((transaction) => {
-				let customerInfo = customerData.find(
-					(customer) => customer.userID == transaction.customerID
-				);
-
-				// console.log("CUST INFO:", customerInfo);
-				if (customerInfo) {
-					notifData.push({
-						_id: transaction._id,
-						customerName: customerInfo.firstName + " " + customerInfo.lastName,
+				if (transaction.amountPaid > 0) {
+					cashflowData.push({
+						transactionType: transaction.transactionType,
+						cashIn: transaction.amountPaid.toFixed(2),
 						date: transaction.updatedAt
 							.toDateString()
 							.substring(4, transaction.creationDate.length),
 						time: transaction.updatedAt.toLocaleTimeString("en-GB"),
+					});
+				} else {
+					cashflowData.push({
 						transactionType: transaction.transactionType,
-						status: transaction.status,
+						cashOut: Math.abs(transaction.amountPaid).toFixed(2),
+						date: transaction.updatedAt
+							.toDateString()
+							.substring(4, transaction.creationDate.length),
+						time: transaction.updatedAt.toLocaleTimeString("en-GB"),
 					});
 				}
 			});
@@ -82,7 +76,8 @@ export const getServerSideProps = withIronSessionSsr(
 			return {
 				props: {
 					currentUser: req.session.userData,
-					notifData: JSON.parse(JSON.stringify(notifData)),
+					notifData: JSON.parse(JSON.stringify(cashflowData)),
+					branchData: JSON.parse(JSON.stringify(branchData)),
 				},
 			};
 		}
@@ -90,14 +85,81 @@ export const getServerSideProps = withIronSessionSsr(
 	ironOptions
 );
 
-export default function Cashflow({ currentUser, notifData }) {
+export default function Cashflow({ currentUser, notifData, branchData }) {
 	const [showData, setShowData] = useState(notifData);
+	const [begShow, setBegShow] = useState(false);
+	const [endShow, setEndShow] = useState(false);
+	const [addShow, setAddShow] = useState(false);
+	const [withdrawShow, setWithdrawShow] = useState(false);
 
 	return (
 		<div>
 			<NavBar currentUser={currentUser}></NavBar>
 			<Header currentUser={currentUser}></Header>
-			<span>CASHFLOW</span>
+			<Modal isOpen={begShow} ariaHideApp={false} className="modal">
+				<BeginningBalance
+					showModal={setBegShow}
+					branches={branchData}
+					currentUser={currentUser}
+				></BeginningBalance>
+			</Modal>
+			<Modal isOpen={endShow} ariaHideApp={false} className="modal">
+				<EndingBalance
+					showModal={setEndShow}
+					branches={branchData}
+					currentUser={currentUser}
+				></EndingBalance>
+			</Modal>
+			<Modal isOpen={addShow} ariaHideApp={false} className="modal">
+				<AdditionalFunds
+					showModal={setAddShow}
+					branches={branchData}
+					currentUser={currentUser}
+				></AdditionalFunds>
+			</Modal>
+			<Modal isOpen={withdrawShow} ariaHideApp={false} className="modal">
+				<WithdrawFunds
+					showModal={setWithdrawShow}
+					branches={branchData}
+					currentUser={currentUser}
+				></WithdrawFunds>
+			</Modal>
+			<div id="main-content-area">
+				<div className="flex flex-row w-full h-full gap-5 mt-10">
+					<div className="flex flex-col w-3/4 gap-5">
+						<CashflowTable data={notifData}></CashflowTable>
+						<CashflowSummary></CashflowSummary>
+					</div>
+					<div className="flex flex-col items-center w-1/4 gap-5 p-5 bg-white border-2 border-gray-500 rounded font-nunito">
+						<h1 className="text-lg font-semibold">Functions</h1>
+						<button
+							className="text-base bg-green-300"
+							onClick={() => setBegShow(true)}
+						>
+							Beginning balance
+						</button>
+						<button
+							className="text-base bg-green-300"
+							onClick={() => setEndShow(true)}
+						>
+							Ending Balance
+						</button>
+						<button
+							className="text-base bg-green-300"
+							onClick={() => setAddShow(true)}
+						>
+							Additional Funds
+						</button>
+
+						<button
+							className="text-base bg-green-300"
+							onClick={() => setWithdrawShow(true)}
+						>
+							Withdraw Funds
+						</button>
+					</div>
+				</div>
+			</div>
 		</div>
 	);
 }
