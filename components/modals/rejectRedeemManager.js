@@ -23,6 +23,7 @@ function RejectRedeemManager({ trigger, setTrigger, transactionID }) {
     //     console.log("reject data is:", data);
     //     router.replace("/");
     //   });
+    console.log("hello")
   }
   return (
     <>
