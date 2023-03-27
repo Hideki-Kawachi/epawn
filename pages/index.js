@@ -13,11 +13,37 @@ import { ironOptions } from "../utilities/config";
 import Transaction from "../schemas/transaction";
 import EmployeeInfo from "../schemas/employeeInfo";
 import Branch from "../schemas/branch";
+import Item from "../schemas/item";
 import LoadingSpinner from "../components/loadingSpinner";
 import User from "../schemas/user";
+import PawnTicket from "../schemas/pawnTicket";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {
+		//FOR UPDATING ITEMS THAT ARE EXPIRED AND WILL BE FOR AUCTION
+		await dbConnect();
+		let today = new Date();
+		let yesterday = new Date(today);
+		yesterday.setDate(yesterday.getDate() - 1);
+		await PawnTicket.updateMany(
+			{
+				expiryDate: { $lt: today },
+				isInactive: false,
+			},
+			{ isInactive: true }
+		);
+		let expiredPT = await PawnTicket.find(
+			{ expiryDate: { $gt: yesterday, $lte: today } },
+			{ itemListID: 1 }
+		);
+
+		for (const pt of expiredPT) {
+			await Item.updateMany(
+				{ itemListID: pt.itemListID, isRedeemed: false },
+				{ forAuction: true }
+			);
+		}
+
 		if (!req.session.userData) {
 			return {
 				redirect: { destination: "/signIn", permanent: true },
@@ -29,10 +55,7 @@ export const getServerSideProps = withIronSessionSsr(
 				props: {},
 			};
 		} else {
-			await dbConnect();
-
 			let transactionData;
-			let pawnTicketData;
 			let customerData = await User.find({}).lean();
 
 			if (req.session.userData.role == "clerk") {

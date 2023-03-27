@@ -8,6 +8,7 @@ import { ironOptions } from "../../utilities/config";
 import Transaction from "../../schemas/transaction";
 import Branch from "../../schemas/branch";
 import Cashflow from "../../schemas/cashflow";
+import PawnTicket from "../../schemas/cashflow";
 import CashflowTable from "../../components/cashflow/cashflowTable";
 import CashflowSummary from "../../components/cashflow/cashflowSummary";
 import Modal from "react-modal";
@@ -19,6 +20,12 @@ import dayjs from "dayjs";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {
+		await dbConnect();
+		let expiredPT = await PawnTicket.find({
+			expiryDate: { $gt: new Date() },
+			isInactive: false,
+		});
+
 		if (!req.session.userData) {
 			return {
 				redirect: { destination: "/signIn", permanent: true },
@@ -30,8 +37,6 @@ export const getServerSideProps = withIronSessionSsr(
 				props: {},
 			};
 		} else {
-			await dbConnect();
-
 			let transactionData;
 			let cashflowInfo;
 			let branchData = await Branch.find({}).lean();
