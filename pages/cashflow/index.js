@@ -7,6 +7,7 @@ import { withIronSessionSsr } from "iron-session/next";
 import { ironOptions } from "../../utilities/config";
 import Transaction from "../../schemas/transaction";
 import Branch from "../../schemas/branch";
+import Cashflow from "../../schemas/cashflow";
 import CashflowTable from "../../components/cashflow/cashflowTable";
 import CashflowSummary from "../../components/cashflow/cashflowSummary";
 import Modal from "react-modal";
@@ -14,6 +15,7 @@ import BeginningBalance from "../../components/modals/beginningBalance";
 import EndingBalance from "../../components/modals/endingBalance";
 import AdditionalFunds from "../../components/modals/additionalFunds";
 import WithdrawFunds from "../../components/modals/withdrawFunds";
+import dayjs from "dayjs";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {
@@ -31,6 +33,7 @@ export const getServerSideProps = withIronSessionSsr(
 			await dbConnect();
 
 			let transactionData;
+			let cashflowInfo;
 			let branchData = await Branch.find({}).lean();
 
 			if (req.session.userData.role == "manager") {
@@ -40,17 +43,42 @@ export const getServerSideProps = withIronSessionSsr(
 				})
 					.sort({ updatedAt: -1 })
 					.lean();
+
+				cashflowInfo = await Cashflow.findOne({
+					branchID: req.session.userData.branchID,
+					date: dayjs(new Date()).format("YYYY-MM-DD"),
+				});
 			} else if (req.session.userData.role == "admin") {
 				transactionData = await Transaction.find({
-					branchID: req.session.userData.branchID,
-					managerID: req.session.userData.userID,
 					status: "Done",
 				})
 					.sort({ updatedAt: -1 })
 					.lean();
+
+				cashflowInfo = await Cashflow.find({
+					date: dayjs(new Date()).format("YYYY-MM-DD"),
+				});
 			}
 
 			let cashflowData = [];
+			let beginningBalance = null;
+			let pawnTotal = 0;
+			let redeemTotal = 0;
+			let renewTotal = 0;
+			let additionalFunds = 0;
+			let withdrawals = 0;
+			let currentBalance = 0;
+
+			if (cashflowInfo) {
+				if (cashflowInfo.length > 1) {
+					cashflowInfo.forEach((cashflow) => {
+						beginningBalance += cashflow.beginningBalance;
+					});
+				} else {
+					beginningBalance = cashflowInfo.beginningBalance;
+				}
+			}
+
 			transactionData.forEach((transaction) => {
 				if (transaction.amountPaid > 0) {
 					cashflowData.push({
@@ -71,13 +99,39 @@ export const getServerSideProps = withIronSessionSsr(
 						time: transaction.updatedAt.toLocaleTimeString("en-GB"),
 					});
 				}
+				if (transaction.transactionType == "Pawn") {
+					pawnTotal += Math.abs(transaction.amountPaid);
+				} else if (transaction.transactionType == "Redeem") {
+					redeemTotal += transaction.amountPaid;
+				} else if (transaction.transactionType.includes("Renew")) {
+					renewTotal += transaction.amountPaid;
+				} else if (transaction.transactionType == "Add. Funds") {
+					additionalFunds += transaction.amountPaid;
+				} else if (transaction.transactionType == "Withdraw") {
+					withdrawals += Math.abs(transaction.amountPaid);
+				}
+
+				if (transaction.transasctionType != "Ending Balance") {
+					currentBalance += transaction.amountPaid;
+				}
 			});
+
+			let cashflowSummary = {
+				beginningBalance: beginningBalance,
+				pawn: pawnTotal,
+				redeem: redeemTotal,
+				renew: renewTotal,
+				additionalFunds: additionalFunds,
+				withdraw: withdrawals,
+				currentBalance: currentBalance,
+			};
 
 			return {
 				props: {
 					currentUser: req.session.userData,
 					notifData: JSON.parse(JSON.stringify(cashflowData)),
 					branchData: JSON.parse(JSON.stringify(branchData)),
+					cashflowSummary: JSON.parse(JSON.stringify(cashflowSummary)),
 				},
 			};
 		}
@@ -85,9 +139,17 @@ export const getServerSideProps = withIronSessionSsr(
 	ironOptions
 );
 
-export default function Cashflow({ currentUser, notifData, branchData }) {
+export default function CashflowIndex({
+	currentUser,
+	notifData,
+	branchData,
+	cashflowSummary,
+}) {
+	const currentDate = dayjs(new Date()).format("YYYY-MM-DD");
 	const [showData, setShowData] = useState(notifData);
-	const [begShow, setBegShow] = useState(false);
+	const [begShow, setBegShow] = useState(
+		cashflowSummary.beginningBalance ? false : true
+	);
 	const [endShow, setEndShow] = useState(false);
 	const [addShow, setAddShow] = useState(false);
 	const [withdrawShow, setWithdrawShow] = useState(false);
@@ -101,6 +163,8 @@ export default function Cashflow({ currentUser, notifData, branchData }) {
 					showModal={setBegShow}
 					branches={branchData}
 					currentUser={currentUser}
+					isNeeded={cashflowSummary.beginningBalance ? false : true}
+					date={currentDate}
 				></BeginningBalance>
 			</Modal>
 			<Modal isOpen={endShow} ariaHideApp={false} className="modal">
@@ -108,6 +172,8 @@ export default function Cashflow({ currentUser, notifData, branchData }) {
 					showModal={setEndShow}
 					branches={branchData}
 					currentUser={currentUser}
+					balance={cashflowSummary.currentBalance}
+					date={currentDate}
 				></EndingBalance>
 			</Modal>
 			<Modal isOpen={addShow} ariaHideApp={false} className="modal">
@@ -128,7 +194,9 @@ export default function Cashflow({ currentUser, notifData, branchData }) {
 				<div className="flex flex-row w-full h-full gap-5 mt-10">
 					<div className="flex flex-col w-3/4 gap-5">
 						<CashflowTable data={notifData}></CashflowTable>
-						<CashflowSummary></CashflowSummary>
+						<CashflowSummary
+							cashflowSummary={cashflowSummary}
+						></CashflowSummary>
 					</div>
 					<div className="flex flex-col items-center w-1/4 gap-5 p-5 bg-white border-2 border-gray-500 rounded font-nunito">
 						<h1 className="text-lg font-semibold">Functions</h1>

@@ -1,13 +1,35 @@
+import { useRouter } from "next/router";
 import React, { useState } from "react";
 import Close from "../closebutton";
 
-function BeginningBalance({ showModal, branches, currentUser }) {
+function BeginningBalance({
+	showModal,
+	branches,
+	currentUser,
+	isNeeded,
+	date,
+}) {
 	const [selectedBranch, setSelectedBranch] = useState(currentUser.branchID);
 	const [amount, setAmount] = useState(0);
+	const router = useRouter();
 
 	function submitForm() {
 		console.log("submit form");
 		showModal(false);
+		fetch("/api/cashflow/setBeginningBalance", {
+			method: "POST",
+			body: JSON.stringify({
+				branchID: selectedBranch,
+				amount: amount,
+				date: date,
+				managerID: currentUser.userID,
+			}),
+		})
+			.then((res) => res.json())
+			.then((data) => {
+				console.log("DATA IS:", data);
+				router.reload();
+			});
 	}
 
 	return (
@@ -17,6 +39,13 @@ function BeginningBalance({ showModal, branches, currentUser }) {
 					<Close />
 				</div>
 				<h1 className="text-base font-bold">Set Beginning Balance</h1>
+				{isNeeded ? (
+					<span className="mt-5 text-sm font-semibold text-red-500">
+						Please set the beginning balance of the day.
+					</span>
+				) : (
+					<></>
+				)}
 				<div className="flex flex-row gap-2 mt-5">
 					<div className="flex flex-col items-end gap-3">
 						<span>Branch Selected: </span>

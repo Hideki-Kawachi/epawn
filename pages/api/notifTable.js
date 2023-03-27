@@ -22,15 +22,15 @@ export default async function NotifTable(req, res) {
 				status: { $ne: "Done" },
 			}).lean();
 		}
-
 		console.log("transac data:", transactionData);
+
+		let notifData = [];
 		if (transactionData) {
 			if (transactionData[0].updatedAt) {
 				transactionData.sort((a, b) => {
 					return new Date(a.updatedAt) > new Date(b.updatedAt);
 				});
 
-				let notifData = [];
 				transactionData.forEach((transaction) => {
 					let customerInfo = customerData.find(
 						(customer) => customer.userID == transaction.customerID

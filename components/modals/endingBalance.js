@@ -1,13 +1,29 @@
+import { useRouter } from "next/router";
 import React, { useState } from "react";
 import Close from "../closebutton";
 
-function EndingBalance({ showModal, branches, currentUser }) {
+function EndingBalance({ showModal, branches, currentUser, balance, date }) {
 	const [selectedBranch, setSelectedBranch] = useState(currentUser.branchID);
-	const [amount, setAmount] = useState(0);
+	const [amount, setAmount] = useState(balance);
+	const router = useRouter();
 
 	function submitForm() {
 		console.log("submit form");
 		showModal(false);
+		fetch("/api/cashflow/setEndingBalance", {
+			method: "POST",
+			body: JSON.stringify({
+				amount: amount,
+				branchID: selectedBranch,
+				managerID: currentUser.userID,
+				date: date,
+			}),
+		})
+			.then((res) => res.json())
+			.then((data) => {
+				console.log("data is:", data);
+				router.reload();
+			});
 	}
 
 	return (

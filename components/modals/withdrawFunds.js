@@ -1,13 +1,28 @@
+import { useRouter } from "next/router";
 import React, { useState } from "react";
 import Close from "../closebutton";
 
 function WithdrawFunds({ showModal, branches, currentUser }) {
 	const [selectedBranch, setSelectedBranch] = useState(currentUser.branchID);
 	const [amount, setAmount] = useState(0);
+	const router = useRouter();
 
 	function submitForm() {
 		console.log("submit form");
 		showModal(false);
+		fetch("/api/cashflow/setWithdrawFunds", {
+			method: "POST",
+			body: JSON.stringify({
+				branchID: selectedBranch,
+				managerID: currentUser.userID,
+				amount: amount,
+			}),
+		})
+			.then((res) => res.json())
+			.then((data) => {
+				console.log("DATA IS:", data);
+				router.reload();
+			});
 	}
 
 	return (

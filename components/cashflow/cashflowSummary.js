@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import React from "react";
 
-function CashflowSummary() {
+function CashflowSummary({ cashflowSummary }) {
 	return (
 		<div className="flex flex-col items-center justify-center p-5 bg-white border-2 border-gray-500 rounded font-nunito">
 			<h1 className="text-lg font-semibold">
@@ -22,13 +22,30 @@ function CashflowSummary() {
 					<span>Current Balance: </span>
 				</div>
 				<div className="flex flex-col gap-1 text-end">
-					<span>Php 142.00</span>
-					<span>Php {}</span>
-					<span>Php 14232.00</span>
-					<span>Php {}</span>
-					<span>Php {}</span>
-					<span>Php {}</span>
-					<span>Php {}</span>
+					<span className="text-green-300">
+						Php{" "}
+						{cashflowSummary.beginningBalance
+							? cashflowSummary.beginningBalance.toFixed(2)
+							: "0.00"}
+					</span>
+					<span className="text-red-500">
+						(Php {cashflowSummary.pawn.toFixed(2)})
+					</span>
+					<span className="text-green-300">
+						Php {cashflowSummary.redeem.toFixed(2)}
+					</span>
+					<span className="text-green-300">
+						Php {cashflowSummary.renew.toFixed(2)}
+					</span>
+					<span className="text-green-300">
+						Php {cashflowSummary.additionalFunds.toFixed(2)}
+					</span>
+					<span className="text-red-500">
+						(Php {cashflowSummary.withdraw.toFixed(2)})
+					</span>
+					<span className="font-semibold">
+						Php {cashflowSummary.currentBalance.toFixed(2)}
+					</span>
 				</div>
 			</div>
 		</div>
