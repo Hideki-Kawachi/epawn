@@ -48,7 +48,7 @@ export default async function NotifTable(req, res) {
 					});
 				});
 			} else {
-				await changeStream.close;
+				await changeStream.close();
 			}
 		} else {
 			await changeStream.close();
