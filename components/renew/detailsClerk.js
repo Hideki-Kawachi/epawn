@@ -62,7 +62,6 @@ function DetailsCardRenewClerk({
 		interest * 2 + penalties + advInterest
 	);
 	const [newLoanAmount, setNewLoanAmount] = useState(0);
-	const [PT, setPT] = useState();
 
 	function monthDiff(dateFrom, dateTo) {
 		let diff =

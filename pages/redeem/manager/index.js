@@ -30,7 +30,7 @@ export const getServerSideProps = withIronSessionSsr(
 
 			let transactionData;
 			let redeemData;
-			let customerData = await User.find({ isDisabled: false }).lean();
+			let customerData = await User.find().lean();
 
 			transactionData = await Transaction.find({
 				branchID: req.session.userData.branchID,
