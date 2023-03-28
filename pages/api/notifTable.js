@@ -14,22 +14,26 @@ export default async function NotifTable(req, res) {
 				branchID: userInfo.branchid,
 				clerkID: userInfo.userid,
 				status: { $ne: "Done" },
-			}).lean();
+			})
+				.sort({ updatedAt: -1 })
+				.lean();
 		} else if (userInfo.role == "manager") {
 			transactionData = await Transaction.find({
 				branchID: userInfo.branchid,
 				managerID: userInfo.userid,
 				status: { $ne: "Done" },
-			}).lean();
+			})
+				.sort({ updatedAt: -1 })
+				.lean();
 		}
 		console.log("transac data:", transactionData);
 
 		let notifData = [];
 		if (transactionData) {
 			if (transactionData[0].updatedAt) {
-				transactionData.sort((a, b) => {
-					return new Date(a.updatedAt) > new Date(b.updatedAt);
-				});
+				// transactionData.sort((a, b) => {
+				// 	return new Date(a.updatedAt) > new Date(b.updatedAt);
+				// });
 
 				transactionData.forEach((transaction) => {
 					let customerInfo = customerData.find(
@@ -49,9 +53,11 @@ export default async function NotifTable(req, res) {
 				});
 			} else {
 				await changeStream.close();
+				res.json(notifData);
 			}
 		} else {
 			await changeStream.close();
+			res.json(notifData);
 		}
 
 		await changeStream.close();
