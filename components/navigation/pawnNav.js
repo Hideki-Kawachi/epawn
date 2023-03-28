@@ -9,13 +9,15 @@ function PawnNav({ role }) {
 				id="nav-pawn-sub"
 			>
 				<Link href={"/pawn/clerk/newCustomer"}>
-					<a className="w-fit">New Customer</a>
+					<a className="p-0 m-0 w-fit">New Customer</a>
 				</Link>
+				<hr></hr>
 				<Link href={"/pawn/clerk/returningCustomer"}>
-					<a className="w-fit">Returning Customer</a>
+					<a className="p-0 m-0 w-fit">Returning Customer</a>
 				</Link>
+				<hr></hr>
 				<Link href={"/pawn/clerk/ongoingTransaction/"}>
-					<a className="w-fit">Ongoing Transactions</a>
+					<a className="p-0 m-0 w-fit">Ongoing Transactions</a>
 				</Link>
 			</div>
 		),
@@ -27,9 +29,11 @@ function PawnNav({ role }) {
 				<Link href={"/pawn/manager/appraisal"}>
 					<a className="p-0 m-0 w-fit">For Appraisal</a>
 				</Link>
+				<hr></hr>
 				<Link href={"/pawn/manager/negotiation"}>
 					<a className="p-0 m-0 w-fit">For Negotiation</a>
 				</Link>
+				<hr></hr>
 				<Link href={"/pawn/manager/approval"}>
 					<a className="p-0 m-0 w-fit">For Approval</a>
 				</Link>
