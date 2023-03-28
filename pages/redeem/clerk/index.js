@@ -456,7 +456,7 @@ function RedeemClerk({ currentUser }) {
                 console.log("END");
                 if (data != "RepInfo not added" && data != null) {
                   console.log("new rep created!");
-                  setRedeemedBy(JSON.stringify(data));
+                  setRedeemedBy(data);
                 } else {
                   console.log("error");
                 }

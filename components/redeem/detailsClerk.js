@@ -127,11 +127,10 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
         return 0;
       }
     }
-  useEffect(() => {
 
+  useEffect(() => {
       if((getTotalRedeem(redeem) - partialPayment) > 0){
         setTotalRedeem(getTotalRedeem(redeem));
-
       }
   }, [redeem, partialPayment])
 
@@ -168,7 +167,7 @@ function DetailsCardClerk({redeem, pawnTicket, search, mode, PTNumber, user, cus
         setNewLoanAmount(0);
         // setMinPayment(pawnTicket.loanAmount * 0.035 + interest + penalties);
       }
-  }, [amountToPay]);
+  }, [amountToPay, newLoanAmount]);
 
   	useEffect(() => {
       setLoanAmount(pawnTicket.loanAmount ? pawnTicket.loanAmount : 0);
