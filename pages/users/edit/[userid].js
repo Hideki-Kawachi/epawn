@@ -11,7 +11,7 @@ import MockUsers from "../../../components/users/User_MOCK_DATA.json";
 import User from "../../../schemas/user";
 
 export const getServerSideProps = withIronSessionSsr(
-	async function getServerSideProps({req}) {
+	async function getServerSideProps({ req }) {
 		if (!req.session.userData) {
 			return {
 				redirect: { destination: "/signIn", permanent: true },
@@ -21,9 +21,8 @@ export const getServerSideProps = withIronSessionSsr(
 			req.session.userData.role == "admin" ||
 			req.session.userData.role == "manager"
 		) {
-
 			return {
-				props: { currentUser: req.session.userData},
+				props: { currentUser: req.session.userData },
 			};
 		} else if (req.session.userData.role == "customer") {
 			return {
@@ -40,7 +39,6 @@ export const getServerSideProps = withIronSessionSsr(
 	ironOptions
 );
 
-
 function Edit({ currentUser, foundUser }) {
 	const router = useRouter();
 	const userid = router.query.userid;
@@ -52,19 +50,11 @@ function Edit({ currentUser, foundUser }) {
 			<NavBar currentUser={currentUser}></NavBar>
 			<Header currentUser={currentUser}></Header>
 
-			<div id="main-content-area">		
-
-					<div className="relative w-full m-10 bg-white h-70">
-
-						<UserEdit 
-							key = {userid}
-							foundID = {userid}
-						/>
-
-					</div>
-
+			<div id="main-content-area">
+				<div className="relative w-full m-10 bg-white h-70">
+					<UserEdit key={userid} foundID={userid} />
+				</div>
 			</div>
-
 		</>
 	);
 }

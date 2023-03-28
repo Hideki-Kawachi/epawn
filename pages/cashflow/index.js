@@ -148,7 +148,9 @@ export default function CashflowIndex({
 	const currentDate = dayjs(new Date()).format("YYYY-MM-DD");
 	const [showData, setShowData] = useState(notifData);
 	const [begShow, setBegShow] = useState(
-		cashflowSummary.beginningBalance ? false : true
+		cashflowSummary.beginningBalance || currentUser.role == "admin"
+			? false
+			: true
 	);
 	const [endShow, setEndShow] = useState(false);
 	const [addShow, setAddShow] = useState(false);

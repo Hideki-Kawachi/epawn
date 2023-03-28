@@ -55,8 +55,8 @@ export const getServerSideProps = withIronSessionSsr(
 				redeemData.forEach((redeem) => {
 					if (redeem.transactionID == transaction._id) {
 						transaction.ptNumber = redeem.pawnTicketID;
-				//	console.log(JSON.stringify(redeem))
-          }
+						//	console.log(JSON.stringify(redeem))
+					}
 				});
 
 				if (customerInfo) {

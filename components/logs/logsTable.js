@@ -8,19 +8,46 @@ import {
 	useTable,
 } from "react-table";
 
-function RedeemTable({ role, data }) {
+function LogsTable({ data, branchData }) {
 	const columns = React.useMemo(
 		() => [
+			{
+				Header: "PT Number",
+				accessor: "pawnTicketID",
+			},
 			{
 				Header: "Transaction",
 				accessor: "transactionType",
 				disableGlobalFilter: true,
 			},
-			{ Header: "PT Number", accessor: "ptNumber" },
 			{ Header: "Customer Name", accessor: "customerName" },
+			{
+				Header: "Branch",
+				accessor: "branchName",
+				disableGlobalFilter: true,
+			},
+			{
+				Header: "Cash In",
+				accessor: "cashIn",
+				disableGlobalFilter: true,
+			},
+			{
+				Header: "Cash Out",
+				accessor: "cashOut",
+				disableGlobalFilter: true,
+			},
+			{
+				Header: "Clerk",
+				accessor: "clerkName",
+				disableGlobalFilter: true,
+			},
+			{
+				Header: "Manager",
+				accessor: "managerName",
+				disableGlobalFilter: true,
+			},
 			{ Header: "Date", accessor: "date", disableGlobalFilter: true },
 			{ Header: "Time", accessor: "time", disableGlobalFilter: true },
-			{ Header: "Type", accessor: "status", disableGlobalFilter: true },
 		],
 		[]
 	);
@@ -53,74 +80,64 @@ function RedeemTable({ role, data }) {
 		usePagination
 	);
 
-	const router = useRouter();
-
 	function openRow(rowData) {
-		if (role == "manager") {
-			if (rowData.status == "Pending") {
-				router.push({
-					pathname: "/redeem/manager/[transactionID]",
-					query: { transactionID: rowData._id },
-				});
-			}
-			// console.log("MANAGER", rowData);
-		}
+		console.log("ROW DATA IS:", rowData);
 	}
 
 	return (
 		<>
-			<div className="flex items-center justify-center w-3/4 gap-2 my-5 text-base font-nunito">
+			<div className="flex items-center self-start w-2/3 gap-2 my-5 text-sm font-nunito">
 				<span className="text-base">Search: </span>
 				<input
-					className="w-96 mr-[670px]"
+					className="flex-grow"
 					onChange={(e) => {
 						setGlobalFilter(e.target.value);
 					}}
 					placeholder={"PT Number or Customer Name"}
 				/>
-				{/* <select
-          className="h-fit"
-          onChange={(e) => setFilter("transactionType", e.target.value)}
-          defaultValue={""}
-        >
-          <option value={""}>All</option>
-          <option value={"Pawn"}>Pawn</option>
-          <option value={"Renew"}>Renew</option>
-          <option value={"Redeem"}>Redeem</option>
-        </select> */}
+				<span className="ml-5">Transaction: </span>
+				<select
+					className="h-fit"
+					onChange={(e) => setFilter("transactionType", e.target.value)}
+					defaultValue={""}
+				>
+					<option value={""}>All</option>
+					<option value={"Pawn"}>Pawn</option>
+					<option value={"Renew"}>Renew</option>
+					<option value={"Redeem"}>Redeem</option>
+				</select>
+				<span className="ml-5">Branch: </span>
+				<select
+					className="h-fit"
+					onChange={(e) => setFilter("branchName", e.target.value)}
+					defaultValue={""}
+				>
+					<option value={""}>All</option>
+					{branchData.map((branch) => (
+						<option key={branch.branchName} value={branch.branchName}>
+							{branch.branchName}
+						</option>
+					))}
+				</select>
 			</div>
-			<table {...getTableProps()} className="w-3/4 text-base">
+			<table {...getTableProps()} className="w-full text-sm">
 				<thead>
 					{headerGroups.map((headerGroup) => (
 						<tr {...headerGroup.getHeaderGroupProps()}>
 							{headerGroup.headers.map((column) => {
-								if (
-									column.Header !== "Transaction" &&
-									column.Header.toString() !== "Status"
-								) {
-									return (
-										<th
-											{...column.getHeaderProps(column.getSortByToggleProps())}
-											className="border-4 border-gray-500 border-solid"
-										>
-											{column.render("Header")}
-											<span className="ml-2 text-base">
-												{column.isSorted
-													? column.isSortedDesc
-														? "↑"
-														: "↓"
-													: "-"}
-											</span>
-										</th>
-									);
-								}
-
 								return (
 									<th
-										{...column.getHeaderProps()}
+										{...column.getHeaderProps(column.getSortByToggleProps())}
 										className="border-4 border-gray-500 border-solid"
 									>
 										{column.render("Header")}
+										<span className="ml-2 text-base">
+											{column.isSorted
+												? column.isSortedDesc
+													? "↑"
+													: "↓"
+												: "-"}
+										</span>
 									</th>
 								);
 							})}
@@ -175,4 +192,4 @@ function RedeemTable({ role, data }) {
 	);
 }
 
-export default RedeemTable;
+export default LogsTable;

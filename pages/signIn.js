@@ -15,6 +15,11 @@ export const getServerSideProps = withIronSessionSsr(
 				redirect: { destination: "/customer", permanent: true },
 				props: {},
 			};
+		} else if (req.session.userData.role == "admin") {
+			return {
+				redirect: { destination: "/cashflow", permanent: true },
+				props: {},
+			};
 		} else {
 			return {
 				redirect: { destination: "/", permanent: true },

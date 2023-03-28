@@ -54,6 +54,11 @@ export const getServerSideProps = withIronSessionSsr(
 				redirect: { destination: "/customer", permanent: true },
 				props: {},
 			};
+		} else if (req.session.userData.role == "admin") {
+			return {
+				redirect: { destination: "/cashflow", permanent: true },
+				props: {},
+			};
 		} else {
 			let transactionData;
 			let customerData = await User.find({}).lean();
@@ -66,10 +71,7 @@ export const getServerSideProps = withIronSessionSsr(
 				})
 					.sort({ updatedAt: -1 })
 					.lean();
-			} else if (
-				req.session.userData.role == "manager" ||
-				req.session.userData.role == "admin"
-			) {
+			} else if (req.session.userData.role == "manager") {
 				transactionData = await Transaction.find({
 					branchID: req.session.userData.branchID,
 					managerID: req.session.userData.userID,
@@ -94,7 +96,7 @@ export const getServerSideProps = withIronSessionSsr(
 						customerName: customerInfo.firstName + " " + customerInfo.lastName,
 						date: transaction.updatedAt
 							.toDateString()
-							.substring(4, transaction.creationDate.length),
+							.substring(4, transaction.updatedAt.length),
 						time: transaction.updatedAt.toLocaleTimeString("en-GB"),
 						transactionType: transaction.transactionType,
 						status: transaction.status,
