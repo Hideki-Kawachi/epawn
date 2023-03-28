@@ -65,7 +65,7 @@ function RedeemClerk({ currentUser }) {
 	//Array for Redeem
 	const [redeem, setRedeem] = useState([]);
 	const [redeemArray, setRedeemArray] = useState([]);
-	const [deleteIndex, setDeleteIndex] = useState();
+	const [deleteIndex, setDeleteIndex] = useState(0);
 	const [deleteItem, setDeleteItem] = useState([]);
 	const [checkedBoxes, setCheckedBoxes] = useState([]);
 	const [forSubmit, setSubmit] = useState([]);
@@ -114,15 +114,19 @@ function RedeemClerk({ currentUser }) {
 		redeemList.forEach((item) => {
 			total += Number(item.price);
 		});
-
 		return total;
 	}
 
 	//Manages Add to Redeem Cart
 	function removeItem() {
-		redeemArray.splice(deleteIndex, 1);
+		let tempRedeemArray = redeemArray.filter((item, index) => {
+			return index != deleteIndex;
+		});
 		itemList.splice(0, 0, deleteItem);
+		// console.log("remove item", tempRedeemArray);
+		setRedeemArray(tempRedeemArray);
 	}
+
 	const handleCheckboxChange = (event, itemDetails) => {
 		const checked = event.target.checked;
 		const newCheckedBoxes = [...checkedBoxes];
