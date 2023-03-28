@@ -3,6 +3,7 @@ import Item from "../../../schemas/item";
 import ItemList from "../../../schemas/itemList";
 import PriceHistory from "../../../schemas/priceHistory";
 import Transaction from "../../../schemas/transaction";
+import CustomerInfo from "../../../schemas/customerInfo";
 import User from "../../../schemas/user";
 import dbConnect from "../../../utilities/dbConnect";
 
@@ -18,7 +19,10 @@ export default async function RemovePawnTransaction(req, res) {
 	);
 	let itemRes = await Item.deleteMany({ itemListID: itemListID });
 	let itemListRes = await ItemList.deleteOne({ itemListID: itemListID });
-	let userRes = await User.deleteOne({ userID: customerID });
+	let isReturning = await CustomerInfo.exists({ userID: customerID });
+	if (!isReturning) {
+		let userRes = await User.deleteOne({ userID: customerID });
+	}
 	let priceHistoryRes = await PriceHistory.deleteMany({
 		transactionID: transactionID,
 	});
