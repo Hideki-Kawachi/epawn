@@ -2,8 +2,7 @@ import Close from "../closebutton";
 import dayjs from "dayjs";
 import React, { useState, useEffect } from "react";
 
-function ViewComputation({ trigger, setTrigger, pawnTicket, amountToPay}) {
-  const [partialPayment, setPartialPayment] = useState(0);
+function ViewComputation({ trigger, setTrigger, pawnTicket, amountToPay, partialPayment}) {
   	const [loanAmount, setLoanAmount] = useState(
       pawnTicket.loanAmount ? pawnTicket.loanAmount : 0
     );
@@ -49,11 +48,8 @@ function ViewComputation({ trigger, setTrigger, pawnTicket, amountToPay}) {
     }
 
 useEffect(() => {
-  if (amountToPay > minPayment && loanAmount - amountToPay > 2500) {
-    let amountLeftFromCash = amountToPay - interest - penalties;
-    let partialPayment =
-      (amountLeftFromCash - pawnTicket.loanAmount * 0.035) / 0.965;
-    let newLoanAmount = pawnTicket.loanAmount - partialPayment;
+  if (amountToPay) {
+    let newLoanAmount = pawnTicket.loanAmount - amountToPay;
     let tempAdvInterest = 0;
     if (newLoanAmount > pawnTicket.loanAmount) {
       setNewLoanAmount(pawnTicket.loanAmount);
@@ -64,12 +60,9 @@ useEffect(() => {
       setNewLoanAmount(newLoanAmount);
     }
 
-    setPartialPayment(partialPayment < 0 ? 0 : partialPayment);
   } else {
-    setPartialPayment(0);
     setAdvInterest(0);
     setNewLoanAmount(0);
-    setMinPayment(pawnTicket.loanAmount * 0.035 + interest + penalties);
   }
 }, [amountToPay]);
 
@@ -94,6 +87,11 @@ useEffect(() => {
          maximumFractionDigits: 2,
        });
    }
+       function getTotalRedeem() {
+         var total = 0;
+
+         return total;
+       }
 
   return (
     <>
@@ -114,8 +112,9 @@ useEffect(() => {
               <p>Total Interest:</p>
               <p>Penalties (1%):</p>
               {/* <p>Total Items for Redemption:</p> */}
+              {/* <p>Total Items for Redemption</p> */}
               <p>Partial Payments:</p>
-              <p>Amount Paid:</p>
+              <p>Total Amount to be Paid:</p>
               <br />
               <p>
                 <i>New</i> Loan Amount:
@@ -137,7 +136,10 @@ useEffect(() => {
                 {convertFloat((interest + advInterest).toFixed(2))}
               </p>
               <p className="mr-3">{convertFloat(penalties.toFixed(2))}</p>
-              <p className="mr-0.5">
+              <p className="mr-3">
+                {/* {convertFloat(getTotalRedeem())} */}
+              </p>
+              <p className="mr-1.5">
                 ({convertFloat(partialPayment.toFixed(2))})
               </p>
               <p className="mr-3">{convertFloat(amountToPay)}</p>
