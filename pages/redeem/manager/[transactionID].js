@@ -70,7 +70,7 @@ function RedeemManager({ currentUser }) {
 	const [isOriginal, setOriginal] = useState(true) //if redeemed by original true, if authrep false
 	//Item List Backend States
 	const [itemListID, setItemListID] = useState("N/A");
-
+	
 
 	const [sendForm, setSendForm] = useState(false);
 
@@ -302,6 +302,7 @@ function RedeemManager({ currentUser }) {
 		<RejectRedeemManager
 		 trigger={rejectModal}
 		 setTrigger={setRejectModal}
+		 transactionID={transactionID}
 		/>
 	  </Modal>
 	

@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import React, { useState } from "react";
 import Close from "../closebutton";
 
-function RejectRedeemManager({ trigger, setTrigger, transactionID }) {
+function RejectRedeemManager({ trigger, setTrigger, transactionID}) {
   const [rejectionMessage, setRejectionMessage] = useState("");
   const router = useRouter();
 
@@ -11,20 +11,21 @@ function RejectRedeemManager({ trigger, setTrigger, transactionID }) {
   }
 
   function submitReject() {
-    // fetch("/api/pawn/rejectPawn", {
-    //   method: "POST",
-    //   body: JSON.stringify({
-    //     transactionID: transactionID,
-    //     rejectionMessage: rejectionMessage,
-    //   }),
-    // })
-    //   .then((res) => res.json())
-    //   .then((data) => {
-    //     console.log("reject data is:", data);
-    //     router.replace("/");
-    //   });
-    console.log("hello")
+    fetch("/api/redeem/rejectRedeem", {
+      method: "POST",
+      body: JSON.stringify({
+        transactionID: transactionID,
+        rejectionMessage: rejectionMessage,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("reject data is:", data);
+        router.replace("/");
+      });
+
   }
+
   return (
     <>
       <div id="modal-content-area">

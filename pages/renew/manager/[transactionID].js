@@ -247,6 +247,7 @@ function RenewManager({ currentUser }) {
 					newLoanAmount: newLoan,
 					oldPawnTicket: PTNumber,
 					branchID: branch,
+					clerkID: currentUser.userID,
 				};
 				// console.log("transac is" + JSON.stringify(transac))
 				fetch("/api/renewal/newManagerRenewal", {
