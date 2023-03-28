@@ -42,9 +42,8 @@ function RedeemManager({ currentUser }) {
 	// Modals
 	const [submitModal, setSubmitOpen] = useState(false); //Submit
 	const [cancelModal, setCancelOpen] = useState(false); //Cancel
-	const [customerModal, setCustomerOpen] = useState(false); //View Customer Details
-	const [historyModal, setHistoryOpen] = useState(false); //Pawn History
 	const [rejectModal, setRejectModal] = useState(false); //reject redeem
+	const [partialPayment, setPartialPayment] = useState(0);
 
 	//Item List Array
 	const [itemList, setitemList] = useState([]);
@@ -182,8 +181,26 @@ useEffect(() => {
 						setCustomerID(data.customerID);
 						setPTinfo(data);
 						setItemListID(data.itemListID);
-						console.log("PT loan is " + JSON.stringify(data.loanAmount));
-					//	console.log("Item id is " + data.itemListID);
+
+						fetch("/api/redeem/partialPayment/" + data.itemListID, {
+                          method: "GET",
+                          headers: {
+                            Accept: "application/json",
+                            "Content-Type": "application/json",
+                          },
+                        })
+                          .then((res) => res.json())
+                          .then((oldpt) => {
+                         //   console.log("Old PT is: " + JSON.stringify(oldpt));
+                            if (oldpt != null) {
+                              setPartialPayment(
+                                Number(oldpt.loanAmount - data.loanAmount)
+                              );
+                              console.log(
+                                "Partial Payment is now: " + partialPayment
+                              );
+                            } else setPartialPayment(0);
+                          });
 					}
 				});
 		}
@@ -213,7 +230,7 @@ useEffect(() => {
 
 	useEffect(() => {
 		if (itemList) {
-			setRemainList(itemList.filter((item) => item.redeemID === ""));
+			setRemainList(itemList.filter((item) => item.redeemID != redeemID));
 			setRedeemList(itemList.filter((item) => item.redeemID === redeemID));
 		}
 	}, [itemList, redeemID]);
@@ -262,6 +279,7 @@ useEffect(() => {
                       });
                   }
 	}, [redeemerID]);
+
 	// BACKEND TO RETRIEVE CUSTOMER DETAILS WITH USERID
 	useEffect(() => {
 		if (customerID != "N/A") {
@@ -323,9 +341,9 @@ useEffect(() => {
             amountToPay={amountToPay}
             cashTendered={cashTendered}
             setCashTendered={setCashTendered}
-            newLoan={newLoan}
             getNewLoan={setNewLoan}
             isOriginal={isOriginal}
+			partialPayment = {partialPayment}
           />
         </div>
 

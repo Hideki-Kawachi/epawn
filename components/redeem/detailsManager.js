@@ -1,12 +1,12 @@
 import React, {useState, useEffect} from "react";
 import Modal from "react-modal";
 import CustomerDetails from "../modals/customerDetails";
-import ViewComputation from "../modals/viewComputations";
+import ViewComputation from "../modals/viewComputationsRedeem";
 import PawnHistory from "../modals/pawnHistory";
 import dayjs from "dayjs";
 import AuthorizedRepDetails from "../modals/authorizedRepDetails";
 function DetailsCardRedeemManager({ pawnTicket, PTNumber, customer, user, branch, getNewLoan,
-  amountToPay, redeemer, isOriginal
+  amountToPay, redeemer, isOriginal, partialPayment,
 }) {
   const [customerModal, setCustomerModal] = useState(false);
   const [computationModal, setCompOpen] = useState(false);
@@ -19,7 +19,7 @@ function DetailsCardRedeemManager({ pawnTicket, PTNumber, customer, user, branch
   const [authRep, setAuthRep] = useState();
 
   //    pawnTicket.loanAmount ? pawnTicket.loanAmount : 0
-  const [partialPayment, setPartialPayment] = useState(0);
+
   const [advInterest, setAdvInterest] = useState(
     loanAmount ? loanAmount * 0.035 : 0
   );
@@ -37,13 +37,8 @@ function DetailsCardRedeemManager({ pawnTicket, PTNumber, customer, user, branch
         monthDiff(new Date(pawnTicket.expiryDate), new Date())
     )
   );
-  
-    	const [minPayment, setMinPayment] = useState(
-        interest * 2 + penalties + advInterest
-      );
 
   const [newLoanAmount, setNewLoanAmount] = useState(0);
-  const [PT, setPT] = useState();
 
   function monthDiff(dateFrom, dateTo) {
     let diff =
@@ -80,12 +75,10 @@ function DetailsCardRedeemManager({ pawnTicket, PTNumber, customer, user, branch
     setHistoryModal(true);
   }
 
+
   useEffect(() => {
-    if (amountToPay > minPayment && loanAmount - amountToPay > 2500) {
-      let amountLeftFromCash = amountToPay - interest - penalties;
-      let partialPayment =
-        (amountLeftFromCash - loanAmount * 0.035) / 0.965;
-      let newLoanAmount = loanAmount - partialPayment;
+    if (amountToPay) {
+      let newLoanAmount = loanAmount - amountToPay;
       let tempAdvInterest = 0;
       if (newLoanAmount > loanAmount) {
         setNewLoanAmount(loanAmount);
@@ -97,14 +90,11 @@ function DetailsCardRedeemManager({ pawnTicket, PTNumber, customer, user, branch
         getNewLoan(newLoanAmount);
       }
 
-      setPartialPayment(partialPayment < 0 ? 0 : partialPayment);
     } else {
-      setPartialPayment(0);
       setAdvInterest(0);
       setNewLoanAmount(0);
-      setMinPayment(loanAmount * 0.035 + interest + penalties);
     }
-  }, [amountToPay]);
+  }, [amountToPay, loanAmount]);
 
   useEffect(() => {
     setLoanAmount(pawnTicket.loanAmount ? pawnTicket.loanAmount : 0);
@@ -183,6 +173,7 @@ function DetailsCardRedeemManager({ pawnTicket, PTNumber, customer, user, branch
             setTrigger={setCompOpen}
             pawnTicket={pawnTicket}
             amountToPay={amountToPay}
+            partialPayment={partialPayment}
           />
         </Modal>
         <Modal isOpen={customerModal} ariaHideApp={false} className="modal">
