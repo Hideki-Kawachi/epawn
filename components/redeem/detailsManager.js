@@ -4,7 +4,7 @@ import CustomerDetails from "../modals/customerDetails";
 import ViewComputation from "../modals/viewComputations";
 import PawnHistory from "../modals/pawnHistory";
 import dayjs from "dayjs";
-
+import AuthorizedRepDetails from "../modals/authorizedRepDetails";
 function DetailsCardRedeemManager({ pawnTicket, PTNumber, customer, user, branch, getNewLoan,
   amountToPay, redeemer, isOriginal
 }) {
@@ -12,9 +12,11 @@ function DetailsCardRedeemManager({ pawnTicket, PTNumber, customer, user, branch
   const [computationModal, setCompOpen] = useState(false);
   const [cashTendered, setCashTendered] = useState(0);
   const [historyModal, setHistoryModal] = useState(false);
+  const [authRepModal, setAuthModal] = useState(false);
   const [loanAmount, setLoanAmount] = useState(
     pawnTicket.loanAmount ? pawnTicket.loanAmount : 0
   );
+  const [authRep, setAuthRep] = useState();
 
   //    pawnTicket.loanAmount ? pawnTicket.loanAmount : 0
   const [partialPayment, setPartialPayment] = useState(0);
@@ -70,6 +72,9 @@ function DetailsCardRedeemManager({ pawnTicket, PTNumber, customer, user, branch
   function setNewLoan(number) {
     getNewLoan(number);
   }
+  function viewDetails(){
+    setAuthModal(true)
+  }
 
   function historyOpen() {
     setHistoryModal(true);
@@ -116,6 +121,26 @@ function DetailsCardRedeemManager({ pawnTicket, PTNumber, customer, user, branch
     console.log("Partial Payment: " + partialPayment);
   }, [pawnTicket]);
 
+  useEffect(() => {
+    if (redeemer) {
+      fetch("/api/redeem/authRep/" + redeemer.userID, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((info) => {
+          if (info != null) {
+            //console.
+            setAuthRep(info);
+          }
+        });
+    }
+  }, [redeemer]);
+
+  
   function convertFloat(number) {
     return Number(number).toLocaleString("en-US", {
       minimumFractionDigits: 2,
@@ -166,6 +191,14 @@ function DetailsCardRedeemManager({ pawnTicket, PTNumber, customer, user, branch
             setTrigger={setCustomerModal}
             customerInfo={customer}
             userInfo={user}
+          />
+        </Modal>
+        <Modal isOpen={authRepModal} ariaHideApp={false} className="modal">
+          <AuthorizedRepDetails
+            trigger={authRepModal}
+            setTrigger={setAuthModal}
+            redeemer={redeemer}
+            authRep={authRep}
           />
         </Modal>
         {/* Left Side of the Card (Details) */}
@@ -221,7 +254,7 @@ function DetailsCardRedeemManager({ pawnTicket, PTNumber, customer, user, branch
               {isOriginal == false ? (
                 <button
                   className="bg-green-300 ml-2 text-sm text-white px-5"
-                 // onClick={repOpen}
+                  onClick={viewDetails}
                 >
                   {" "}
                   View Details{" "}
