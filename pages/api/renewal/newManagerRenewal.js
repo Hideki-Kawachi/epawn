@@ -17,19 +17,17 @@ export default async function newManagerRenewal(req, res) {
 	//console.log("LOL")
 
 	let body = JSON.parse(req.body);
-	let type = " ";
+	let type = "";
 
-	if(transac.clerkID){
-		type = "Approved"
+	if (body.transactionType == "Renew(Online)") {
+		type = "Done";
+	} else {
+		type = "Approved";
 	}
-	else{
-		type = "Done"
-	}
-	
+
 	let transac = await Transaction.findOneAndUpdate(
 		{ _id: body.transactionID },
 		{
-			transactionType: "Renew",
 			status: type,
 			// rejectMessage: "",
 			// amountPaid: body.totalAmount,

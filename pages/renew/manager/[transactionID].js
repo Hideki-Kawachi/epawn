@@ -12,15 +12,31 @@ import { ironOptions } from "../../../utilities/config";
 import dayjs from "dayjs";
 import printPawnTicket from "../../../utilities/printPawnTicket";
 import printReceipt from "../../../utilities/printReceipt";
+import dbConnect from "../../../utilities/dbConnect";
+import Transaction from "../../../schemas/transaction";
+import mongoose from "mongoose";
 
 export const getServerSideProps = withIronSessionSsr(
-	async function getServerSideProps({ req }) {
+	async function getServerSideProps({ req, query }) {
 		if (!req.session.userData) {
 			return {
 				redirect: { destination: "/signIn", permanent: true },
 				props: {},
 			};
-		} else if (req.session.userData.role == "manager") {
+		} else if (req.session.userData.role == "manager" && query.transactionID) {
+			if (query.transactionID.length >= 24) {
+				await dbConnect();
+				let transactionInfo = await Transaction.findById(
+					new mongoose.Types.ObjectId(query.transactionID)
+				);
+				return {
+					props: {
+						currentUser: req.session.userData,
+						transactionData: JSON.parse(JSON.stringify(transactionInfo)),
+					},
+				};
+			}
+
 			return {
 				props: { currentUser: req.session.userData },
 			};
@@ -38,7 +54,7 @@ export const getServerSideProps = withIronSessionSsr(
 	ironOptions
 );
 
-function RenewManager({ currentUser }) {
+function RenewManager({ currentUser, transactionData }) {
 	// Modals
 	const [submitModal, setSubmitOpen] = useState(false); //Submit
 	const [cancelModal, setCancelOpen] = useState(false); //Cancel
@@ -68,6 +84,8 @@ function RenewManager({ currentUser }) {
 	);
 	const [sendForm, setSendForm] = useState(false);
 	const [button, setButton] = useState(true); //disabled if PT number is invalid
+
+	console.log("transa:", transactionData);
 
 	function submitForm() {
 		setSubmitOpen(true);
@@ -247,7 +265,8 @@ function RenewManager({ currentUser }) {
 					newLoanAmount: newLoan,
 					oldPawnTicket: PTNumber,
 					branchID: branch,
-					clerkID: currentUser.userID,
+					clerkID: transactionData.clerkID,
+					transactionType: transactionData.transactionType,
 				};
 				// console.log("transac is" + JSON.stringify(transac))
 				fetch("/api/renewal/newManagerRenewal", {
