@@ -78,8 +78,7 @@ function DetailsCardRedeemManager({ pawnTicket, PTNumber, customer, user, branch
 
   useEffect(() => {
     if (amountToPay) {
-      let amountLeftFromCash = amountToPay - interest - penalties;
-      let newLoanAmount = loanAmount - partialPayment;
+      let newLoanAmount = loanAmount - amountToPay;
       let tempAdvInterest = 0;
       if (newLoanAmount > loanAmount) {
         setNewLoanAmount(loanAmount);
@@ -95,7 +94,7 @@ function DetailsCardRedeemManager({ pawnTicket, PTNumber, customer, user, branch
       setAdvInterest(0);
       setNewLoanAmount(0);
     }
-  }, [amountToPay]);
+  }, [amountToPay, loanAmount]);
 
   useEffect(() => {
     setLoanAmount(pawnTicket.loanAmount ? pawnTicket.loanAmount : 0);
