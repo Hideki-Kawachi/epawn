@@ -20,12 +20,6 @@ import dayjs from "dayjs";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {
-		await dbConnect();
-		let expiredPT = await PawnTicket.find({
-			expiryDate: { $gt: new Date() },
-			isInactive: false,
-		});
-
 		if (!req.session.userData) {
 			return {
 				redirect: { destination: "/signIn", permanent: true },
@@ -37,6 +31,7 @@ export const getServerSideProps = withIronSessionSsr(
 				props: {},
 			};
 		} else {
+			await dbConnect();
 			let transactionData;
 			let cashflowInfo;
 			let branchData = await Branch.find({}).lean();

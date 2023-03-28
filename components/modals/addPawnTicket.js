@@ -34,7 +34,7 @@ function AddPawnTicket({
 				}
 			});
 			setPawnTicketList(newList);
-			console.log("NEW PAWN TICKET LIST IS:", newList);
+			// console.log("NEW PAWN TICKET LIST IS:", newList);
 			// console.log("SELECTED ITEM IS:", selectedItems);
 		}
 		closeModal();

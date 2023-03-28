@@ -165,11 +165,21 @@ function PawnTicketTransactionID({
 	function deletePawnTicket(pawnTicketID) {
 		let newPawnTicketList = [];
 		let newItemList = [];
+		let goAdjust = false;
 		pawnTicketList.forEach((pt) => {
-			if (pt.pawnTicketID != pawnTicketID) {
-				newPawnTicketList.push(pt);
-			} else {
+			if (pt.pawnTicketID == pawnTicketID) {
+				goAdjust = true;
 				newItemList = pt.itemList;
+			} else {
+				if (goAdjust) {
+					newPawnTicketList.push({
+						pawnTicketID: pt.pawnTicketID - 1,
+						itemList: pt.itemList,
+					});
+				} else {
+					console.log("push");
+					newPawnTicketList.push(pt);
+				}
 			}
 		});
 		setItemList((itemList) => [...itemList, ...newItemList]);
@@ -180,14 +190,14 @@ function PawnTicketTransactionID({
 		// console.log("ASJDKLAJSDKL:", itemList);
 		if (pawnTicketList.length > 0) {
 			let newItemList = itemList;
-			console.log("item list:", itemList);
-			itemList.forEach((item, index) => {
-				pawnTicketList.forEach((pt) => {
-					pt.itemList.forEach((ptItem) => {
-						console.log("item is:", ptItem);
-						// console.log("PT ITEM:", ptItem.itemID, "-", item.itemID);
+			// console.log("item list:", itemList);
+
+			pawnTicketList.forEach((pt) => {
+				pt.itemList.forEach((ptItem) => {
+					itemList.forEach((item, index) => {
+						// console.log("item is:", ptItem);
 						if (ptItem.itemID == item.itemID) {
-							console.log("PUSH", ptItem);
+							// console.log("PUSH", ptItem);
 							newItemList.splice(index, index + 1);
 						}
 					});

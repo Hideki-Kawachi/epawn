@@ -78,14 +78,17 @@ background-color: #FEFBF8;
     align-items: center;
     cursor: default;
 
+
     #nav-pawn-sub{
+        hr{
+            border: 1px solid theme('colors.gray.200');
+        }
         a:hover{
-            padding: 0px;
-            margin:0px;
             text-decoration: underline;
             text-decoration-color: theme('colors.green.300');
             color: theme('colors.green.300');
-            border: 0px;
+            border: none;
+            padding: 0px;
 
             h1{
                 color: theme('colors.green.300');
