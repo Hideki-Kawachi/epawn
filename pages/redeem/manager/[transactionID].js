@@ -135,34 +135,36 @@ function RedeemManager({ currentUser }) {
 					//console.log("Trans is now " + JSON.stringify(transaction._id))
 					//  console.log("TransactionID is " + transactionID)
 					if (transaction != null) {
-						setCustomerID(transaction.customerID);
 						setBranch(transaction.branchID);
-					
 					}
 				});
 		}
-		if (transactionID != "N/A") {
-			fetch("/api/redeem/manager/" + transactionID, {
-				method: "GET",
-				headers: {
-					Accept: "application/json",
-					"Content-Type": "application/json",
-				},
-			})
-				.then((res) => res.json())
-				.then((redeem) => {
-					// console.log(data)
-					if (redeem != null) {
-						setRedeemID(redeem.redeemID);
-						setPTNumber(redeem.pawnTicketID);
-						setRedeemerID(redeem.redeemerID)
-						setAmountToPay(redeem.payment);
-					// console.log(JSON.stringify("Eyo what is this " + redeem.redeemID));
-					// console.log("PT is " + redeem.pawnTicketID);
-					}
-				});
-		}
-	}, [transactionID, PTNumber]);
+
+	},[transactionID]);
+
+useEffect(() => {
+    if (transactionID != "N/A") {
+      fetch("/api/redeem/manager/" + transactionID, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((redeem) => {
+          // console.log(data)
+          if (redeem != null) {
+            setRedeemID(redeem.redeemID);
+            setPTNumber(redeem.pawnTicketID);
+            setRedeemerID(redeem.redeemerID);
+            setAmountToPay(redeem.payment);
+            // console.log(JSON.stringify("Eyo what is this " + redeem.redeemID));
+            // console.log("PT is " + redeem.pawnTicketID);
+          }
+        });
+    }
+  },[transactionID]);
 
 	useEffect(() => {
 		if (PTNumber != "") {
@@ -230,36 +232,36 @@ function RedeemManager({ currentUser }) {
 				.then((user) => {
 					// console.log(data)
 					if (user != null) {
-						// console.log(JSON.stringify(info))
 						setUserInfo(user);
-						if(user.userID == redeemerID){
+							if (user.userID == redeemerID) {
 							setRedeemerInfo(user);
-						//	setOriginal(true);
-						} 
-						else {
-							console.log("Redeemer is authorized")
-							if(redeemerID != null){
-							fetch("/api/users/" + customerID, {
-							method: "GET",
-							headers: {
-								Accept: "application/json",
-								"Content-Type": "application/json",
-							},
-							})
-							.then((res) => res.json())
-							.then((info) => {
-								if (info != null) {
-								setRedeemerInfo(info);
-							//	setOriginal(false);
-								}
-							});
-						}
-						}
+							setOriginal(true);
+						} else {
+					console.log("Redeemer is original");
+					}
 					}
 				});
 		}
 	}, [customerID, redeemerID]);
 
+	useEffect(() => {
+                  if (redeemerInfo) {
+                    fetch("/api/users/" + redeemerID, {
+                      method: "GET",
+                      headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                      },
+                    })
+                      .then((res) => res.json())
+                      .then((info) => {
+                        if (info != null) {
+                          setRedeemerInfo(info);
+                          setOriginal(false);
+                        }
+                      });
+                  }
+	}, [redeemerID]);
 	// BACKEND TO RETRIEVE CUSTOMER DETAILS WITH USERID
 	useEffect(() => {
 		if (customerID != "N/A") {
