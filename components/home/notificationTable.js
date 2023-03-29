@@ -59,7 +59,7 @@ function NotificationTable({ role, data }) {
 		// if manager
 		if (role == "manager") {
 			//if pawn
-			console.log("row trans:", rowData.transactionType);
+		//	console.log("row trans:", rowData.transactionType);
 			if (rowData.transactionType == "Pawn") {
 				if (rowData.status == "For Appraisal") {
 					router.push({
@@ -81,7 +81,7 @@ function NotificationTable({ role, data }) {
 			// if renew
 			else if (rowData.transactionType == "Renew") {
 				if (rowData.status == "Pending") {
-					console.log("pending", rowData);
+				//	console.log("pending", rowData);
 					router.push({
 						pathname: "renew/manager/[transactionID]",
 						query: { transactionID: rowData._id },
