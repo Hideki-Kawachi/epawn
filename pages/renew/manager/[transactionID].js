@@ -252,7 +252,7 @@ function RenewManager({ currentUser, transactionData }) {
 				});
 		}
 	}, [customerID]);
-
+	//SUBMIT FORM
 	useEffect(() => {
 		if (sendForm) {
 			if (customerID) {
@@ -407,7 +407,7 @@ function RenewManager({ currentUser, transactionData }) {
 							onClick={submitForm}
 							disabled={button}
 						>
-							Submit
+							Approve
 						</button>
 					</div>
 				</div>

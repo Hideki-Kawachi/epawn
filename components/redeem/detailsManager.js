@@ -64,9 +64,6 @@ function DetailsCardRedeemManager({ pawnTicket, PTNumber, customer, user, branch
     setCustomerModal(true);
   }
 
-  function setNewLoan(number) {
-    getNewLoan(number);
-  }
   function viewDetails(){
     setAuthModal(true)
   }

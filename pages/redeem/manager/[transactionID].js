@@ -12,33 +12,48 @@ import { useRouter } from "next/router";
 import dayjs from "dayjs";
 import DetailsCardRedeemManager from "../../../components/redeem/detailsManager";
 import RejectRedeemManager from "../../../components/modals/rejectRedeemManager";
+import dbConnect from "../../../utilities/dbConnect";
+import Transaction from "../../../schemas/transaction";
+import mongoose from "mongoose";
 
 export const getServerSideProps = withIronSessionSsr(
-	async function getServerSideProps({ req }) {
+	async function getServerSideProps({ req, query }) {
 		if (!req.session.userData) {
 			return {
 				redirect: { destination: "/signIn", permanent: true },
 				props: {},
 			};
-		} else if (req.session.userData.role == "manager") {
-			return {
-				props: { currentUser: req.session.userData },
-			};
-		} else if (req.session.userData.role == "customer") {
-			return {
-				redirect: { destination: "/customer", permanent: true },
-				props: {},
-			};
-		} else {
-			return {
-				redirect: { destination: "/" },
-			};
-		}
+		} else if (req.session.userData.role == "manager" && query.transactionID) {
+      if (query.transactionID.length >= 24) {
+        await dbConnect();
+        let transactionInfo = await Transaction.findById(
+          new mongoose.Types.ObjectId(query.transactionID)
+        );
+        return {
+          props: {
+            currentUser: req.session.userData,
+            transactionData: JSON.parse(JSON.stringify(transactionInfo)),
+          },
+        };
+      }
+      return {
+        props: { currentUser: req.session.userData },
+      };
+    } else if (req.session.userData.role == "customer") {
+      return {
+        redirect: { destination: "/customer", permanent: true },
+        props: {},
+      };
+    } else {
+      return {
+        redirect: { destination: "/" },
+      };
+    }
 	},
 	ironOptions
 );
 
-function RedeemManager({ currentUser }) {
+function RedeemManager({ currentUser, transactionData }) {
 	// Modals
 	const [submitModal, setSubmitOpen] = useState(false); //Submit
 	const [cancelModal, setCancelOpen] = useState(false); //Cancel
@@ -299,6 +314,43 @@ useEffect(() => {
 		}
 	}, [customerID]);
 
+	//APPROVE
+		useEffect(() => {
+      if (sendForm) {
+        if (customerID) {
+          let transac = {
+            transactionID: router.query.transactionID,
+            customerID: customerID,
+            itemListID: itemListID,
+            newLoanAmount: newLoan,
+            oldPawnTicket: PTNumber,
+			redeemID: redeemID,
+            branchID: branch,
+            clerkID: transactionData.clerkID,
+            transactionType: transactionData.transactionType,
+			totalAmount: amountToPay,
+			redeemArray: redeemList,
+          };
+          // console.log("transac is" + JSON.stringify(transac))
+          fetch("/api/redeem/newManagerRedeem", {
+            method: "POST",
+            body: JSON.stringify(transac),
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              console.log("DATA IS:", data);
+              if (data != "error") {
+               // printPawnTicket(data.pawnTicketData);
+            //    printReceipt(data.receiptData);
+                router.replace("/");
+              } else {
+                console.log("error in updating items");
+              }
+            });
+        }
+        console.log("send form:");
+      }
+    }, [sendForm, customerID]);
 	return (
     <>
       <NavBar currentUser={currentUser}></NavBar>
@@ -306,7 +358,16 @@ useEffect(() => {
       {/* First Half */}
 
       <Modal isOpen={submitModal} ariaHideApp={false} className="modal">
-        <Submit trigger={submitModal} setTrigger={setSubmitOpen} />
+        <Submit
+          trigger={submitModal}
+          setTrigger={setSubmitOpen}
+          PTnumber={PTNumber}
+          itemList={redeemList}
+          setSendForm={setSendForm}
+          sendForm={sendForm}
+          submitForm={submitForm}
+          amountToPay={amountToPay}
+        />
       </Modal>
 
       <Modal isOpen={cancelModal} ariaHideApp={false} className="modal">
@@ -317,17 +378,17 @@ useEffect(() => {
         />
       </Modal>
 
-	  <Modal isOpen={rejectModal} ariaHideApp={false} className="modal">
-		<RejectRedeemManager
-		 trigger={rejectModal}
-		 setTrigger={setRejectModal}
-		 transactionID={transactionID}
-		 itemList={redeemList}
-		 redeemer={redeemerInfo}
-		 isOriginal={isOriginal}
-		/>
-	  </Modal>
-	
+      <Modal isOpen={rejectModal} ariaHideApp={false} className="modal">
+        <RejectRedeemManager
+          trigger={rejectModal}
+          setTrigger={setRejectModal}
+          transactionID={transactionID}
+          itemList={redeemList}
+          redeemer={redeemerInfo}
+          isOriginal={isOriginal}
+        />
+      </Modal>
+
       <div id="main-content-area" className="flex-col">
         <p className="mb-5 text-xl font-semibold text-green-500 underline font-dosis">
           Redeem
@@ -341,11 +402,12 @@ useEffect(() => {
             customer={customerDetails}
             redeemer={redeemerInfo}
             amountToPay={amountToPay}
+			setAmountToPay={setAmountToPay}
             cashTendered={cashTendered}
             setCashTendered={setCashTendered}
             getNewLoan={setNewLoan}
             isOriginal={isOriginal}
-			partialPayment = {partialPayment}
+            partialPayment={partialPayment}
           />
         </div>
 
@@ -419,7 +481,7 @@ useEffect(() => {
               className="px-10 mx-2 my-5 text-base text-white bg-green-300"
               onClick={submitForm}
             >
-              Submit
+              Approve
             </button>
           </div>
         </div>

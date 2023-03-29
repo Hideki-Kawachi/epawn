@@ -15,6 +15,7 @@ export const Submit = ({trigger, setTrigger, mode, PTnumber, itemList, changeMod
 
     function goForm(){
       submitForm();  
+      setSendForm(true);
     }
   function convertFloat(number) {
     if (mode) return "0.00";
