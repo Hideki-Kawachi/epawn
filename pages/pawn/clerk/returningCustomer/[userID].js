@@ -222,9 +222,13 @@ function ReturningCustomerUserID({ currentUser, userData }) {
 				></AskPrice>
 			</Modal>
 			<div id="main-content-area">
-				<div className="font-semibold text-center font-dosis">
-					<h1 className="text-2xl underline">PAWN</h1>
-					<span className="text-lg">Returning Customer</span>
+				<div className="text-center">
+					<p className="text-xl font-semibold text-green-500 underline font-dosis">
+						Pawn
+					</p>
+					<p className="mb-5 text-lg text-green-500 font-dosis">
+						Returning Customer
+					</p>
 				</div>
 				<form className="flex gap-40 mt-[5vh] text-base font-nunito">
 					<div className="flex flex-row gap-5 w-[30vw] justify-end">

@@ -93,9 +93,13 @@ function OngoingTransaction({ currentUser, transactionData }) {
 			<Header currentUser={currentUser}></Header>
 			<LoadingSpinner isLoading={loading}></LoadingSpinner>
 			<div id="main-content-area">
-				<div className="font-semibold text-center font-dosis">
-					<h1 className="text-2xl underline">PAWN</h1>
-					<span className="text-lg">Ongoing Transactions</span>
+				<div className="text-center">
+					<p className="text-xl font-semibold text-green-500 underline font-dosis">
+						Pawn
+					</p>
+					<p className="mb-5 text-lg text-green-500 font-dosis">
+						Ongoing Transactions
+					</p>
 				</div>
 				<OngoingTable data={transactionData} role={currentUser.role} />
 			</div>

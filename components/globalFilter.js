@@ -8,7 +8,7 @@ function GlobalFilter({ setGlobalFilter, placeHolder }) {
 	}, [value]);
 
 	return (
-		<div className="flex items-center w-1/3 gap-5 m-5 text-base">
+		<div className="flex items-center w-1/2 gap-5 m-5 text-base">
 			<span className="text-base">Search: </span>
 			<input
 				className="w-full"

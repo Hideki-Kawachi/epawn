@@ -63,9 +63,13 @@ function ReturningCustomer({ currentUser, returnCustomerData }) {
 			<Header currentUser={currentUser}></Header>
 			<LoadingSpinner isLoading={loading}></LoadingSpinner>
 			<div id="main-content-area">
-				<div className="font-semibold text-center font-dosis">
-					<h1 className="text-2xl underline">PAWN</h1>
-					<span className="text-lg">Returning Customer</span>
+				<div className="text-center">
+					<p className="text-xl font-semibold text-green-500 underline font-dosis">
+						Pawn
+					</p>
+					<p className="mb-5 text-lg text-green-500 font-dosis">
+						Returning Customer
+					</p>
 				</div>
 				<ReturnTable
 					columns={columns}

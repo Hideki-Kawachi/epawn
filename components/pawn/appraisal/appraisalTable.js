@@ -44,10 +44,12 @@ function AppraisalTable({ columns, data }) {
 
 	return (
 		<>
-			<GlobalFilter
-				setGlobalFilter={setGlobalFilter}
-				placeHolder={"Customer Name"}
-			></GlobalFilter>
+			<div className="w-3/4">
+				<GlobalFilter
+					setGlobalFilter={setGlobalFilter}
+					placeHolder={"Customer Name"}
+				></GlobalFilter>
+			</div>
 			<table {...getTableProps()} className="w-3/4 text-base">
 				<thead>
 					{headerGroups.map((headerGroup) => (

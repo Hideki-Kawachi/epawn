@@ -122,8 +122,11 @@ function RejectedTransactionID({
 			<NavBar currentUser={currentUser}></NavBar>
 			<Header currentUser={currentUser}></Header>
 			<div id="main-content-area">
-				<div className="font-semibold text-center font-dosis">
-					<h1 className="text-2xl underline">PAWN</h1>
+				<div className="text-center">
+					<p className="text-xl font-semibold text-green-500 underline font-dosis">
+						Pawn
+					</p>
+					<p className="mb-5 text-lg text-green-500 font-dosis">Rejected</p>
 				</div>
 				<div className="flex flex-row w-3/4 gap-5 mt-10 text-base">
 					<div className="flex flex-col justify-start w-full p-5 bg-white">

@@ -291,8 +291,13 @@ function OngoingTransactionTransactionID({
 						setLoading={setLoading}
 					/>
 				</Modal>
-				<div className="font-semibold text-center font-dosis">
-					<h1 className="text-2xl underline">PAWN</h1>
+				<div className="text-center">
+					<p className="text-xl font-semibold text-green-500 underline font-dosis">
+						Pawn
+					</p>
+					<p className="mb-5 text-lg text-green-500 font-dosis">
+						Ongoing Transactions
+					</p>
 				</div>
 				<div className="flex flex-row w-full gap-10">
 					<span className="w-full text-base font-bold text-center font-nunito">

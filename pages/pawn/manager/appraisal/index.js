@@ -23,8 +23,10 @@ export const getServerSideProps = withIronSessionSsr(
 				branchID: req.session.userData.branchID,
 				status: "For Appraisal",
 			}).lean();
-			let customerData = await User.find({ isDisabled: false }).lean();
-			let priceHistory = await PriceHistory.find({}).lean();
+			let customerData = await User.find({ role: "customer" }).lean();
+			let priceHistory = await PriceHistory.find({})
+				.sort({ updatedAt: -1 })
+				.lean();
 			let tableData = [];
 			console.log("for appraisal:", priceHistory);
 			forAppraisal.forEach((transaction) => {
@@ -81,6 +83,10 @@ function Appraisal({ currentUser, tableData }) {
 			<NavBar currentUser={currentUser}></NavBar>
 			<Header currentUser={currentUser}></Header>
 			<div id="main-content-area">
+				<p className="text-xl font-semibold text-green-500 underline font-dosis">
+					Pawn
+				</p>
+				<p className="mb-5 text-lg text-green-500 font-dosis">For Appraisal</p>
 				<AppraisalTable columns={columns} data={tableData}></AppraisalTable>
 			</div>
 		</>
