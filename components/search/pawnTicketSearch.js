@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import {
 	useFilters,
@@ -130,8 +131,13 @@ function PawnTicketSearch({
 		usePagination
 	);
 
+	const router = useRouter();
+
 	function openRow(rowData) {
-		console.log("ROW DATA IS:", rowData);
+		router.push({
+			pathname: "search/[pawnTicketID]",
+			query: { pawnTicketID: rowData.pawnTicketID },
+		});
 	}
 
 	return (
