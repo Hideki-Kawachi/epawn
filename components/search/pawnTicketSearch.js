@@ -67,8 +67,8 @@ function PawnTicketSearch({
 			tempData.push({
 				pawnTicketID: pt.pawnTicketID,
 				customerName: customerName,
-				loanAmount: pt.loanAmount.toFixed(2),
-				clerkName: clerkName,
+				loanAmount: pt.loanAmount?.toFixed(2),
+				clerkName: clerkName ? clerkName : "--------------",
 				managerName: managerName,
 				loanDate: dayjs(new Date(pt.loanDate)).format("MMM DD, YYYY"),
 			});
