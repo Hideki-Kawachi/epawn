@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import React, { useState } from "react";
 import Modal from "react-modal";
 import Header from "../../components/header";
+import ItemCard from "../../components/itemcard";
 import CustomerDetails from "../../components/modals/customerDetails";
 import NavBar from "../../components/navigation/navBar";
 import Branch from "../../schemas/branch";
@@ -124,12 +125,21 @@ function SearchPawnTicketID({
 				/>
 			</Modal>
 			<div id="main-content-area">
-				<div className="flex justify-between w-3/4 h-full p-5 border-2 border-gray-500 bg-green-50 font-nunito">
+				<div className="flex justify-between m-w-[3/4] w-fit h-full gap-5 p-5 border-2 border-gray-500 bg-green-50 font-nunito">
 					<div>
-						<span className="text-base font-bold">
-							PT Number: {pawnTicketData.pawnTicketID}
-						</span>
-						<hr className="w-1/3 mt-5 border-gray-500"></hr>
+						<div className="flex flex-col">
+							{pawnTicketData.isInactive ? (
+								<span className="mb-3 text-base font-bold text-center text-red-400 bg-gray-200 font-nunito">
+									PawnTicket is already inactive!
+								</span>
+							) : (
+								<></>
+							)}{" "}
+							<span className="text-base font-bold">
+								PT Number: {pawnTicketData.pawnTicketID}
+							</span>
+						</div>
+						<hr className="w-full mt-5 border-gray-500"></hr>
 						<div className="mt-5">
 							<span className="text-base font-bold">Customer Details:</span>
 							<span
@@ -169,7 +179,7 @@ function SearchPawnTicketID({
 								<span>{customerInfoData.presentAddress}</span>
 							</div>
 						</div>
-						<hr className="w-1/3 mt-5 border-gray-500"></hr>
+						<hr className="w-full mt-5 border-gray-500"></hr>
 						<div className="mt-5">
 							<span className="text-base font-bold">Pawn Details:</span>
 						</div>
@@ -194,11 +204,19 @@ function SearchPawnTicketID({
 							</div>
 						</div>
 					</div>
-					<div className="flex flex-col text-base bg-blue-100">
+					<div className="flex flex-col text-base w-fit">
 						<span>
 							<b>Loan Amount:</b> Php {pawnTicketData.loanAmount.toFixed(2)}
 						</span>
-						<span>asd{itemData.itemID}</span>
+						<hr className="w-full mt-5 border-gray-500"></hr>
+						<span className="mt-5 font-bold">Item List:</span>
+						<div className="max-h-[55vh] overflow-y-scroll bg-gray-100 rounded">
+							<ItemCard itemDetails={itemData}></ItemCard>
+							<ItemCard itemDetails={itemData}></ItemCard>
+							<ItemCard itemDetails={itemData}></ItemCard>
+							<ItemCard itemDetails={itemData}></ItemCard>
+							<ItemCard itemDetails={itemData}></ItemCard>
+						</div>
 					</div>
 				</div>
 			</div>
