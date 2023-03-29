@@ -33,23 +33,34 @@ export const getServerSideProps = withIronSessionSsr(
 			let pawnTicketInfo = await PawnTicket.findOne({
 				pawnTicketID: query.pawnTicketID,
 			});
-			let allItemList = await Item.find({
-				itemListID: pawnTicketInfo.itemListID,
-			}).lean();
-
-			let redeemedItemList = await Redeem.find({
-				pawnTicketID: query.pawnTicketID,
-			}).lean();
-
-			let itemList = [];
-
-			// for (const item of allItemList) {
-			// 	if(item.)
-			// }
 
 			let transactionInfo = await Transaction.findById(
 				new mongoose.Types.ObjectId(pawnTicketInfo.transactionID)
 			);
+
+			let transactionDate = new Date(transactionInfo.createdAt);
+
+			let itemList = await Item.find({
+				itemListID: pawnTicketInfo.itemListID,
+			}).lean();
+
+			let itemsAlreadyRedeemed = await Item.find({
+				itemListID: pawnTicketInfo.itemListID,
+				isRedeemed: true,
+				updatedAt: { $lte: transactionDate },
+			}).lean();
+
+			let currentItemList = itemList;
+			let itemIndex = 0;
+			for (const item of itemList) {
+				for (const redeemedItem of itemsAlreadyRedeemed) {
+					if (redeemedItem.itemID == item.itemID) {
+						currentItemList.splice(itemIndex, 1);
+					}
+				}
+				itemIndex++;
+			}
+
 			let branchInfo = await Branch.findOne({
 				branchID: transactionInfo.branchID,
 			});
@@ -74,7 +85,7 @@ export const getServerSideProps = withIronSessionSsr(
 						pawnTicketData: JSON.parse(JSON.stringify(pawnTicketInfo)),
 						branchData: JSON.parse(JSON.stringify(branchInfo)),
 						transactionData: JSON.parse(JSON.stringify(transactionInfo)),
-						itemData: JSON.parse(JSON.stringify(itemList)),
+						itemData: JSON.parse(JSON.stringify(currentItemList)),
 						customerData: JSON.parse(JSON.stringify(customerInfo)),
 						clerkData: JSON.parse(JSON.stringify(clerkInfo)),
 						managerData: JSON.parse(JSON.stringify(managerInfo)),
