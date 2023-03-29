@@ -51,17 +51,17 @@ export default async function newClerkRedeem(req,res){
     console.log("Manager ID is " + managerID);
 
 
-    body.redeemArray.map(async (redeem) => { 
-        let result = await Item.updateOne(
-            {itemID: redeem.itemID},
-            {
-            isRedeemed: true
-            }
-        );
+    // body.redeemArray.map(async (redeem) => { 
+    //     let result = await Item.updateOne(
+    //         {itemID: redeem.itemID},
+    //         {
+    //         isRedeemed: true
+    //         }
+    //     );
 
-        if (result.modifiedCount != 0)
-            console.log("Updated the thing")
-    })
+    //     if (result.modifiedCount != 0)
+    //         console.log("Updated the thing")
+    // })
 
 
     //console.log(JSON.stringify(newTransaction))
@@ -81,8 +81,6 @@ export default async function newClerkRedeem(req,res){
           let result = await Item.updateOne(
             { itemID: redeem.itemID },
             {
-              isRedeemed: true,
-              transactionID: newRedeem.transactionID,
               redeemID: redeemID,
             }
           );

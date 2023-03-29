@@ -58,8 +58,6 @@ function RenewManager({ currentUser, transactionData }) {
 	// Modals
 	const [submitModal, setSubmitOpen] = useState(false); //Submit
 	const [cancelModal, setCancelOpen] = useState(false); //Cancel
-	const [customerModal, setCustomerOpen] = useState(false); //View Customer Details
-	const [historyModal, setHistoryOpen] = useState(false); //Pawn History
 
 	//Item List Array
 	const [itemList, setitemList] = useState([]);

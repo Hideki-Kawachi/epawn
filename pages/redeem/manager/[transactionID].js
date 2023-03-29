@@ -196,9 +196,9 @@ useEffect(() => {
                               setPartialPayment(
                                 Number(oldpt.loanAmount - data.loanAmount)
                               );
-                              console.log(
-                                "Partial Payment is now: " + partialPayment
-                              );
+                            //   console.log(
+                            //     "Partial Payment is now: " + partialPayment
+                            //   );
                             } else setPartialPayment(0);
                           });
 					}
@@ -222,7 +222,6 @@ useEffect(() => {
 						// console.log(JSON.stringify(info))
 						let list = JSON.stringify(info);
 						setitemList(JSON.parse(list)); //temporary
-				//		console.log("Item list is " + list);
 					}
 				});
 		}
@@ -230,7 +229,7 @@ useEffect(() => {
 
 	useEffect(() => {
 		if (itemList) {
-			setRemainList(itemList.filter((item) => item.redeemID != redeemID));
+			setRemainList(itemList.filter((item) => item.redeemID != redeemID && item.isRedeemed == false));
 			setRedeemList(itemList.filter((item) => item.redeemID === redeemID));
 		}
 	}, [itemList, redeemID]);
@@ -247,14 +246,14 @@ useEffect(() => {
 			})
 				.then((res) => res.json())
 				.then((user) => {
-					// console.log(data)
+
 					if (user != null) {
 						setUserInfo(user);
 							if (user.userID == redeemerID) {
 							setRedeemerInfo(user);
 							setOriginal(true);
 						} else {
-					console.log("Redeemer is original");
+				//	console.log("Redeemer is original");
 					}
 					}
 				});
@@ -323,6 +322,9 @@ useEffect(() => {
 		 trigger={rejectModal}
 		 setTrigger={setRejectModal}
 		 transactionID={transactionID}
+		 itemList={redeemList}
+		 redeemer={redeemerInfo}
+		 isOriginal={isOriginal}
 		/>
 	  </Modal>
 	

@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import React, { useState } from "react";
 import Close from "../closebutton";
 
-function RejectRedeemManager({ trigger, setTrigger, transactionID}) {
+function RejectRedeemManager({ trigger, setTrigger, transactionID, itemList}) {
   const [rejectionMessage, setRejectionMessage] = useState("");
   const router = useRouter();
 
@@ -15,6 +15,7 @@ function RejectRedeemManager({ trigger, setTrigger, transactionID}) {
       method: "POST",
       body: JSON.stringify({
         transactionID: transactionID,
+        itemList: itemList,
         rejectionMessage: rejectionMessage,
       }),
     })
