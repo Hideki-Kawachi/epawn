@@ -212,7 +212,7 @@ export const getServerSideProps = withIronSessionSsr(
 					props: {
 						currentUser: req.session.userData,
 						tableData: JSON.parse(JSON.stringify(tableData)),
-						branchData: JSON.parse(JSON.stringify(branchInfo)),
+						branchData: JSON.parse(JSON.stringify([branchInfo])),
 					},
 				};
 			} else {
