@@ -30,35 +30,55 @@ export const getServerSideProps = withIronSessionSsr(
 			(req.session.userData.role == "clerk" && query.pawnTicketID.length == 8)
 		) {
 			await dbConnect();
-			let pawnTicketInfo = await PawnTicket.findOne({
+			let currPawnTicketInfo = await PawnTicket.findOne({
 				pawnTicketID: query.pawnTicketID,
 			});
 
+			let pastPawnTicketInfo = await PawnTicket.find({
+				itemListID: currPawnTicketInfo.itemListID,
+				createdAt: { $lt: currPawnTicketInfo.loanDate },
+			})
+				.sort({ loanDate: -1 })
+				.lean();
+			// console.log("past: ", pastPawnTicketInfo);
+			let redeemedItems = [];
+			for (const pastPT of pastPawnTicketInfo) {
+				let tempRedeem = await Redeem.findOne({
+					pawnTicketID: pastPT.pawnTicketID,
+				});
+				console.log("temp:", tempRedeem);
+				if (tempRedeem) {
+					let tempItemsRedeemed = await Item.find({
+						redeemID: tempRedeem.redeemID,
+						isRedeemed: true,
+					}).lean();
+					console.log("item found:", tempItemsRedeemed);
+					for (const item of tempItemsRedeemed) {
+						redeemedItems.push(item);
+					}
+				}
+			}
+
 			let transactionInfo = await Transaction.findById(
-				new mongoose.Types.ObjectId(pawnTicketInfo.transactionID)
+				new mongoose.Types.ObjectId(currPawnTicketInfo.transactionID)
 			);
 
-			let transactionDate = new Date(transactionInfo.createdAt);
-
 			let itemList = await Item.find({
-				itemListID: pawnTicketInfo.itemListID,
-			}).lean();
-
-			let itemsAlreadyRedeemed = await Item.find({
-				itemListID: pawnTicketInfo.itemListID,
-				isRedeemed: true,
-				updatedAt: { $lte: transactionDate },
+				itemListID: currPawnTicketInfo.itemListID,
 			}).lean();
 
 			let currentItemList = itemList;
-			let itemIndex = 0;
-			for (const item of itemList) {
-				for (const redeemedItem of itemsAlreadyRedeemed) {
-					if (redeemedItem.itemID == item.itemID) {
-						currentItemList.splice(itemIndex, 1);
+
+			if (redeemedItems) {
+				let itemIndex = 0;
+				for (const item of itemList) {
+					for (const redeemedItem of redeemedItems) {
+						if (redeemedItem.itemID == item.itemID) {
+							currentItemList.splice(itemIndex, 1);
+						}
 					}
+					itemIndex++;
 				}
-				itemIndex++;
 			}
 
 			let branchInfo = await Branch.findOne({
@@ -78,11 +98,11 @@ export const getServerSideProps = withIronSessionSsr(
 			let managerInfo = await User.findOne({
 				userID: transactionInfo.managerID,
 			});
-			if (pawnTicketInfo) {
+			if (currPawnTicketInfo) {
 				return {
 					props: {
 						currentUser: req.session.userData,
-						pawnTicketData: JSON.parse(JSON.stringify(pawnTicketInfo)),
+						currPawnTicketData: JSON.parse(JSON.stringify(currPawnTicketInfo)),
 						branchData: JSON.parse(JSON.stringify(branchInfo)),
 						transactionData: JSON.parse(JSON.stringify(transactionInfo)),
 						itemData: JSON.parse(JSON.stringify(currentItemList)),
@@ -110,7 +130,7 @@ export const getServerSideProps = withIronSessionSsr(
 
 function SearchPawnTicketID({
 	currentUser,
-	pawnTicketData,
+	currPawnTicketData,
 	branchData,
 	transactionData,
 	itemData,
@@ -120,8 +140,6 @@ function SearchPawnTicketID({
 	customerInfoData,
 }) {
 	const [showCustomer, setShowCustomer] = useState(false);
-
-	console.log("item data:", itemData);
 
 	return (
 		<>
@@ -139,7 +157,7 @@ function SearchPawnTicketID({
 				<div className="flex justify-between m-w-[3/4] w-fit h-full gap-5 p-5 border-2 border-gray-500 bg-green-50 font-nunito">
 					<div>
 						<div className="flex flex-col">
-							{pawnTicketData.isInactive ? (
+							{currPawnTicketData.isInactive ? (
 								<span className="mb-3 text-base font-bold text-center text-red-400 bg-gray-200 font-nunito">
 									PawnTicket is already inactive!
 								</span>
@@ -147,7 +165,7 @@ function SearchPawnTicketID({
 								<></>
 							)}{" "}
 							<span className="text-base font-bold">
-								PT Number: {pawnTicketData.pawnTicketID}
+								PT Number: {currPawnTicketData.pawnTicketID}
 							</span>
 						</div>
 						<hr className="w-full mt-5 border-gray-500"></hr>
@@ -200,33 +218,53 @@ function SearchPawnTicketID({
 								<span>Maturity Date:</span>
 								<span>Expiry Date:</span>
 								<span>Branch:</span>
+								<span>Clerk:</span>
+								<span>Manager:</span>
 							</div>
 							<div className="flex flex-col max-w-[50%] whitespace-pre-wrap">
 								<span>
-									{dayjs(pawnTicketData.loanDate).format("MMM DD, YYYY")}
+									{dayjs(currPawnTicketData.loanDate).format("MMM DD, YYYY")}
 								</span>
 								<span>
-									{dayjs(pawnTicketData.maturityDate).format("MMM DD, YYYY")}
+									{dayjs(currPawnTicketData.maturityDate).format(
+										"MMM DD, YYYY"
+									)}
 								</span>
 								<span>
-									{dayjs(pawnTicketData.expiryDate).format("MMM DD, YYYY")}
+									{dayjs(currPawnTicketData.expiryDate).format("MMM DD, YYYY")}
 								</span>
 								<span>{branchData.branchName}</span>
+								{clerkData ? (
+									<span>
+										{clerkData.firstName +
+											(clerkData.middleName.length > 0
+												? clerkData.middleName.charAt(0) + " ."
+												: " ") +
+											clerkData.lastName}
+									</span>
+								) : (
+									<span>--------------</span>
+								)}
+								<span>
+									{managerData.firstName +
+										(managerData.middleName.length > 0
+											? managerData.middleName.charAt(0) + " ."
+											: " ") +
+										managerData.lastName}
+								</span>
 							</div>
 						</div>
 					</div>
 					<div className="flex flex-col text-base w-fit">
 						<span>
-							<b>Loan Amount:</b> Php {pawnTicketData.loanAmount.toFixed(2)}
+							<b>Loan Amount:</b> Php {currPawnTicketData.loanAmount.toFixed(2)}
 						</span>
 						<hr className="w-full mt-5 border-gray-500"></hr>
 						<span className="mt-5 font-bold">Item List:</span>
 						<div className="max-h-[55vh] overflow-y-scroll bg-gray-100 rounded">
-							<ItemCard itemDetails={itemData}></ItemCard>
-							<ItemCard itemDetails={itemData}></ItemCard>
-							<ItemCard itemDetails={itemData}></ItemCard>
-							<ItemCard itemDetails={itemData}></ItemCard>
-							<ItemCard itemDetails={itemData}></ItemCard>
+							{itemData.map((item) => (
+								<ItemCard key={item.itemID} itemDetails={item}></ItemCard>
+							))}
 						</div>
 					</div>
 				</div>

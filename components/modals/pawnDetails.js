@@ -139,10 +139,24 @@ function PawnDetails({ trigger, setTrigger, itemDetails }) {
 					<div className="ml-[615px] " onClick={closeModal}>
 						<Close />
 					</div>
-					<div>
+					<div className="flex flex-col items-center justify-center p-2">
 						<p className="mb-5 text-lg font-bold text-center font-dosis">
 							Item Details
 						</p>
+						{itemDetails.isRedeemed ? (
+							<span className="p-2 text-base font-bold text-red-500 bg-gray-200 font-nunito w-fit">
+								Item Already Redeemed
+							</span>
+						) : (
+							<></>
+						)}
+						{itemDetails.forAuction ? (
+							<span className="p-2 text-base font-bold text-green-500 bg-green-50 font-nunito w-fit">
+								Item For Auction
+							</span>
+						) : (
+							<></>
+						)}
 					</div>
 					<div className="flex flex-row items-end text-sm font-nunito">
 						<div className="font-bold text-right">
@@ -155,7 +169,7 @@ function PawnDetails({ trigger, setTrigger, itemDetails }) {
 							<p>{itemDetails.itemName}</p>
 							<p>{itemDetails.itemType} </p>
 							<p>{itemDetails.itemID}</p>
-							<p>Php {itemDetails.price}</p>
+							<p>Php {itemDetails.price.toFixed(2)}</p>
 						</div>
 						<div className="relative object-contain w-1/3 left-1/4 aspect-square ">
 							<Image
