@@ -13,7 +13,7 @@ function NavigationFooter({ currentUser }) {
 			});
 	}
 	return (
-		<div className="fixed bottom-0 flex flex-row justify-between w-full bg-green-500 h-[10vh] md:w-1/4 px-11">
+		<div className="fixed bottom-0 flex flex-row justify-between w-full bg-green-500 h-[10vh] md:w-1/4 px-11 ">
 			<div
 				className="h-full pt-3 pb-8 text-center cursor-pointer w-fit"
 				onClick={() => router.push("/customer/")}

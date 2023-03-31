@@ -66,7 +66,7 @@ function InboxCard({ pawnTicketData, transactionData }) {
 
 	return (
 		<div
-			className="flex justify-between w-full p-2 leading-tight bg-gray-100 border-2 border-gray-300 rounded-md shadow h-fit"
+			className="flex justify-between w-full p-2 leading-tight bg-gray-100 border-2 border-gray-300 rounded-md shadow cursor-pointer h-fit"
 			onClick={() =>
 				router.push({
 					pathname: "/customer/pawnTicket/[pawnTicketID]",

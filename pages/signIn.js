@@ -119,6 +119,13 @@ function SignIn() {
 							value={password}
 							onChange={(e) => setPassword(e.target.value)}
 						></input>
+						{error ? (
+							<span className="relative text-red-500 top-3 left-2">
+								Login Failed
+							</span>
+						) : (
+							<></>
+						)}
 						<div className="flex justify-center mt-10">
 							<button className="bg-green-300" onClick={() => submitForm()}>
 								Login
