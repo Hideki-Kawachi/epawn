@@ -122,7 +122,14 @@ function Search({
 				transactionData={transactionData}
 			></PawnTicketSearch>
 		),
-		Customer: <CustomerSearch></CustomerSearch>,
+		Customer: (
+			<CustomerSearch
+				userData={userData}
+				transactionData={transactionData}
+				pawnTicketData={pawnTicketData}
+				itemData={itemData}
+			></CustomerSearch>
+		),
 		Items: <ItemSearch></ItemSearch>,
 	};
 

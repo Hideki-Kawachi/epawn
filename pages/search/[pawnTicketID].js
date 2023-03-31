@@ -46,13 +46,13 @@ export const getServerSideProps = withIronSessionSsr(
 				let tempRedeem = await Redeem.findOne({
 					pawnTicketID: pastPT.pawnTicketID,
 				});
-				console.log("temp:", tempRedeem);
+				// console.log("temp:", tempRedeem);
 				if (tempRedeem) {
 					let tempItemsRedeemed = await Item.find({
 						redeemID: tempRedeem.redeemID,
 						isRedeemed: true,
 					}).lean();
-					console.log("item found:", tempItemsRedeemed);
+					// console.log("item found:", tempItemsRedeemed);
 					for (const item of tempItemsRedeemed) {
 						redeemedItems.push(item);
 					}
@@ -98,6 +98,9 @@ export const getServerSideProps = withIronSessionSsr(
 			let managerInfo = await User.findOne({
 				userID: transactionInfo.managerID,
 			});
+
+			console.log("customer Info:", currPawnTicketInfo.transactionID);
+
 			if (currPawnTicketInfo) {
 				return {
 					props: {
@@ -199,6 +202,7 @@ function SearchPawnTicketID({
 							<div className="flex flex-col max-w-[50%] whitespace-pre-wrap">
 								<span>
 									{customerData.firstName +
+										" " +
 										(customerData.middleName.length > 0
 											? customerData.middleName.charAt(0) + " ."
 											: " ") +
@@ -237,6 +241,7 @@ function SearchPawnTicketID({
 								{clerkData ? (
 									<span>
 										{clerkData.firstName +
+											" " +
 											(clerkData.middleName.length > 0
 												? clerkData.middleName.charAt(0) + " ."
 												: " ") +
@@ -247,6 +252,7 @@ function SearchPawnTicketID({
 								)}
 								<span>
 									{managerData.firstName +
+										" " +
 										(managerData.middleName.length > 0
 											? managerData.middleName.charAt(0) + " ."
 											: " ") +
