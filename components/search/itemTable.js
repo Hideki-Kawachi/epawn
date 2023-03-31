@@ -1,6 +1,5 @@
-import dayjs from "dayjs";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
 	useFilters,
 	useGlobalFilter,
@@ -9,58 +8,7 @@ import {
 	useTable,
 } from "react-table";
 
-import itemCategory from "../../utilities/dropdownValues/itemCategory.json";
-import itemType from "../../utilities/dropdownValues/itemType.json";
-
-function ItemSearch({ pawnTicketData, userData, itemData }) {
-	const [data, setData] = useState([{}]);
-
-	useEffect(() => {
-		let tempData = [];
-
-		for (const item of itemData) {
-			let index = 0;
-			let customerName = "";
-			let status = "";
-
-			if (item.isRedeemed) {
-				status = "Redeemed";
-			} else if (item.forAuction) {
-				status = "For Auction";
-			} else {
-				status = "Pawned";
-			}
-
-			while (!customerName && index != pawnTicketData.length) {
-				if (pawnTicketData[index].itemListID == item.itemListID) {
-					let currUser = userData.filter((user) => {
-						return user.userID == pawnTicketData[index].customerID;
-					});
-					if (currUser) {
-						customerName =
-							currUser[0].firstName +
-							" " +
-							(currUser[0].middleName > 0
-								? currUser[0].middleName.charAt(0) + ". "
-								: " ") +
-							currUser[0].lastName;
-						tempData.push({
-							itemID: item.itemID,
-							itemName: item.itemName,
-							itemCategory: item.itemCategory,
-							itemType: item.itemType,
-							price: item.price.toFixed(2),
-							customerName: customerName,
-							status: status,
-						});
-					}
-				}
-				index++;
-			}
-		}
-		setData(tempData);
-	}, [userData, pawnTicketData, itemData]);
-
+function ItemTable({ data }) {
 	const columns = React.useMemo(
 		() => [
 			{
@@ -85,11 +33,6 @@ function ItemSearch({ pawnTicketData, userData, itemData }) {
 			{
 				Header: "Appraisal Price",
 				accessor: "price",
-				disableGlobalFilter: true,
-			},
-			{
-				Header: "Customer Name",
-				accessor: "customerName",
 				disableGlobalFilter: true,
 			},
 			{ Header: "Status", accessor: "status", disableGlobalFilter: true },
@@ -129,48 +72,22 @@ function ItemSearch({ pawnTicketData, userData, itemData }) {
 
 	function openRow(rowData) {
 		router.push({
-			pathname: "/search/item/[itemID]",
-			query: { itemID: rowData.itemID },
+			pathname: "/search/pawnTicket/[pawnTicketID]",
+			query: { pawnTicketID: rowData.pawnTicketID },
 		});
 	}
 
 	return (
-		<div>
-			<div className="flex w-1/2 gap-2 my-5 text-sm font-nunito">
-				<span className="text-sm">Search: </span>
+		<div className="p-5 bg-white border-2 border-gray-500 rounded">
+			<div className="flex w-full gap-2 my-5 text-base font-nunito">
+				<span className="text-base">Search: </span>
 				<input
 					className="flex-grow"
 					onChange={(e) => {
 						setGlobalFilter(e.target.value);
 					}}
-					placeholder={"Item ID"}
+					placeholder={"PT Number"}
 				/>
-				<span className="ml-5">Category: </span>
-				<select
-					className="h-fit"
-					onChange={(e) => setFilter("itemCategory", e.target.value)}
-					defaultValue={""}
-				>
-					<option value={""}>All</option>
-					{itemCategory.map((category) => (
-						<option key={category.itemCategory} value={category.itemCategory}>
-							{category.itemCategory}
-						</option>
-					))}
-				</select>
-				<span className="ml-5">Type: </span>
-				<select
-					className="h-fit"
-					onChange={(e) => setFilter("itemType", e.target.value)}
-					defaultValue={""}
-				>
-					<option value={""}>All</option>
-					{itemType.map((type) => (
-						<option key={type.itemType} value={type.itemType}>
-							{type.itemType}
-						</option>
-					))}
-				</select>
 				<span className="ml-5">Status: </span>
 				<select
 					className="h-fit"
@@ -178,12 +95,11 @@ function ItemSearch({ pawnTicketData, userData, itemData }) {
 					defaultValue={""}
 				>
 					<option value={""}>All</option>
-					<option value={"Pawned"}>Pawned</option>
-					<option value={"Redeemed"}>Redeemed</option>
-					<option value={"For Auction"}>For Auction</option>
+					<option value={"Active"}>Active</option>
+					<option value={"Inactive"}>Inactive</option>
 				</select>
 			</div>
-			<table {...getTableProps()} className="w-full text-sm">
+			<table {...getTableProps()} className="w-full text-base">
 				<thead>
 					{headerGroups.map((headerGroup) => (
 						<tr {...headerGroup.getHeaderGroupProps()}>
@@ -269,4 +185,4 @@ function ItemSearch({ pawnTicketData, userData, itemData }) {
 	);
 }
 
-export default ItemSearch;
+export default ItemTable;

@@ -113,14 +113,9 @@ function NegotiationTransactionID({
 		setItemList(newList);
 	}
 
-	useEffect(() => {
-		console.log("DELETE LIST:", deleteList);
-	}, [deleteList]);
-
 	function selectItem(id) {
-		console.log("ITEM LIST FROM SELECT IS:", itemList);
+		// console.log("SELECT LIST:", itemList);
 		setItemShow(itemList.find((item) => item.itemID == id));
-		// console.log("Select Item is:", itemList);
 	}
 
 	function setItemDetails(updatedItem) {
@@ -135,9 +130,8 @@ function NegotiationTransactionID({
 	}
 
 	useEffect(() => {
-		// console.log("USE EFFECT:", itemList);
 		let sum = 0;
-		itemList.forEach((item) => {
+		itemList.map((item) => {
 			sum += item.price;
 		});
 		setAppraisalPrice(sum);
@@ -206,6 +200,9 @@ function NegotiationTransactionID({
 						trigger={rejectShow}
 						setTrigger={setRejectShow}
 						transactionID={transactionData._id}
+						itemList={undefined}
+						redeemer={undefined}
+						isOriginal={undefined}
 					/>
 				</Modal>
 				<div className="font-semibold text-center font-dosis">

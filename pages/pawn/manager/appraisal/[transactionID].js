@@ -175,6 +175,9 @@ function AppraisalTransactionID({
 						trigger={rejectShow}
 						setTrigger={setRejectShow}
 						transactionID={transactionData._id}
+						itemList={undefined}
+						redeemer={undefined}
+						isOriginal={undefined}
 					/>
 				</Modal>
 				<div className="font-semibold text-center font-dosis">

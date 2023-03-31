@@ -28,6 +28,55 @@ function ItemCategoryDetails({ itemCategory, itemDetails, setItemDetails }) {
 	const [carat, setCarat] = useState(caratSetting());
 	const [shape, setShape] = useState(shapeSetting());
 
+	useEffect(() => {
+		setWeight(itemDetails.weight > 0 ? itemDetails.weight.toString() : "0");
+		setQuantity(itemDetails.quantity ? itemDetails.quantity : 0);
+		setColor(colorSetting());
+		setPurity(puritySetting());
+		setBrand(itemDetails.brand ? itemDetails.brand : "");
+		setModel(itemDetails.model ? itemDetails.model : "");
+		setDescription(itemDetails.description ? itemDetails.description : "");
+		setClarity(claritySetting());
+		setCarat(caratSetting());
+		setShape(shapeSetting());
+	}, [itemDetails]);
+
+	function colorSetting() {
+		if (itemDetails.itemCategory.length > 0) {
+			if (itemDetails.itemCategory == "Gold") {
+				return GoldColorValues.some(
+					(value) => value.goldColor == itemDetails.color
+				)
+					? itemDetails.color
+					: "Rose";
+			} else if (itemDetails.itemCategory == "Diamond") {
+				return DiamondColorValues.some(
+					(value) => value.diamondColor == itemDetails.color
+				)
+					? itemDetails.color
+					: "Colorless";
+			} else {
+				return "";
+			}
+		} else {
+			if (itemCategory == "Gold") {
+				return GoldColorValues.some(
+					(value) => value.goldColor == itemDetails.color
+				)
+					? itemDetails.color
+					: "Rose";
+			} else if (itemCategory == "Diamond") {
+				return DiamondColorValues.some(
+					(value) => value.diamondColor == itemDetails.color
+				)
+					? itemDetails.color
+					: "Colorless";
+			} else {
+				return "";
+			}
+		}
+	}
+
 	function shapeSetting() {
 		if (itemDetails.itemCategory.length > 0) {
 			if (itemDetails.itemCategory == "Diamond") {
@@ -76,44 +125,18 @@ function ItemCategoryDetails({ itemCategory, itemDetails, setItemDetails }) {
 		}
 	}
 
-	function colorSetting() {
-		if (itemDetails.itemCategory.length > 0) {
-			if (itemDetails.itemCategory == "Gold") {
-				return GoldColorValues.includes({ goldColor: itemDetails.color })
-					? itemDetails.color
-					: "Rose";
-			} else if (itemDetails.itemCategory == "Diamond") {
-				return DiamondColorValues.includes({ diamondColor: itemDetails.color })
-					? itemDetails.color
-					: "Colorless";
-			} else {
-				return "";
-			}
-		} else {
-			if (itemCategory == "Gold") {
-				return GoldColorValues.includes({ goldColor: itemDetails.color })
-					? itemDetails.color
-					: "Rose";
-			} else if (itemCategory == "Diamond") {
-				return DiamondColorValues.includes({ diamondColor: itemDetails.color })
-					? itemDetails.color
-					: "Colorless";
-			} else {
-				return "";
-			}
-		}
-	}
-
 	function puritySetting() {
 		if (itemDetails.itemCategory.length > 0) {
 			if (itemDetails.itemCategory == "Platinum") {
-				return PlatinumPurityValues.includes({
-					platinumPurity: itemDetails.purity,
-				})
+				return PlatinumPurityValues.some(
+					(value) => value.platinumPurity == itemDetails.purity
+				)
 					? itemDetails.purity
 					: "999";
 			} else if (itemDetails.itemCategory == "Gold") {
-				return GoldPurityValues.includes({ goldPurity: itemDetails.purity })
+				return GoldPurityValues.some(
+					(value) => value.goldPurity == itemDetails.purity
+				)
 					? itemDetails.purity
 					: "24K";
 			} else {
@@ -121,13 +144,15 @@ function ItemCategoryDetails({ itemCategory, itemDetails, setItemDetails }) {
 			}
 		} else {
 			if (itemCategory == "Platinum") {
-				return PlatinumPurityValues.includes({
-					platinumPurity: itemDetails.purity,
-				})
+				return PlatinumPurityValues.some(
+					(value) => value.platinumPurity == itemDetails.purity
+				)
 					? itemDetails.purity
 					: "999";
 			} else if (itemCategory == "Gold") {
-				return GoldPurityValues.includes({ goldPurity: itemDetails.purity })
+				return GoldPurityValues.some(
+					(value) => value.goldPurity == itemDetails.purity
+				)
 					? itemDetails.purity
 					: "24K";
 			} else {
@@ -135,19 +160,6 @@ function ItemCategoryDetails({ itemCategory, itemDetails, setItemDetails }) {
 			}
 		}
 	}
-
-	useEffect(() => {
-		setWeight(itemDetails.weight > 0 ? itemDetails.weight.toString() : "0");
-		setQuantity(itemDetails.quantity ? itemDetails.quantity : 0);
-		setColor(colorSetting());
-		setPurity(puritySetting());
-		setBrand(itemDetails.brand ? itemDetails.brand : "");
-		setModel(itemDetails.model ? itemDetails.model : "");
-		setDescription(itemDetails.description ? itemDetails.description : "");
-		setClarity(claritySetting());
-		setCarat(caratSetting());
-		setShape(shapeSetting());
-	}, [itemDetails]);
 
 	useEffect(() => {
 		let NewItemDetails;
@@ -326,19 +338,7 @@ function ItemCategoryDetails({ itemCategory, itemDetails, setItemDetails }) {
 		}
 
 		setItemDetails(NewItemDetails);
-		// console.log("new item details:", NewItemDetails);
-	}, [
-		weight,
-		quantity,
-		color,
-		purity,
-		brand,
-		model,
-		description,
-		clarity,
-		carat,
-		shape,
-	]);
+	}, [itemCategory, color, purity, carat, shape, clarity]);
 
 	function weightInsert(value) {
 		if (isNaN(parseFloat(weight)) && isNaN(value)) {

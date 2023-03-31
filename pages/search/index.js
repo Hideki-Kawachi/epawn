@@ -44,7 +44,7 @@ export const getServerSideProps = withIronSessionSsr(
 				}
 			).lean();
 
-			let itemInfo = await Item.find({}).lean();
+			let itemInfo = await Item.find({}).sort({ itemID: -1 }).lean();
 
 			let branchInfo = await Branch.find({}).lean();
 
@@ -83,11 +83,11 @@ function Search({
 }) {
 	const [showTab, setShowTab] = useState("PawnTicket");
 
-	console.log("PT DATA:", pawnTicketData);
-	console.log("USER DATA:", userData);
-	console.log("ITEM DATA:", itemData);
-	console.log("BRANCH DATA:", branchData);
-	console.log("TRANSACTION DATA:", transactionData);
+	// console.log("PT DATA:", pawnTicketData);
+	// console.log("USER DATA:", userData);
+	// console.log("ITEM DATA:", itemData);
+	// console.log("BRANCH DATA:", branchData);
+	// console.log("TRANSACTION DATA:", transactionData);
 
 	useEffect(() => {
 		if (showTab == "PawnTicket") {
@@ -129,7 +129,13 @@ function Search({
 				itemData={itemData}
 			></CustomerSearch>
 		),
-		Items: <ItemSearch></ItemSearch>,
+		Items: (
+			<ItemSearch
+				pawnTicketData={pawnTicketData}
+				userData={userData}
+				itemData={itemData}
+			></ItemSearch>
+		),
 	};
 
 	return (

@@ -99,7 +99,7 @@ function RenewClerk({ currentUser }) {
 
 	function getNewMaturityDate() {
 		const dt = new Date();
-		const nt = new Date().setDate(dt.getDate() + 120);
+		const nt = new Date().setDate(dt.getDate() + 90);
 		return dayjs(nt).format("MM/DD/YYYY");
 	}
 

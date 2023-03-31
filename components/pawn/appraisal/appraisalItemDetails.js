@@ -12,42 +12,44 @@ function AppraisalItemsDetails({ itemDetails, setItemDetails }) {
 	const [itemCategory, setItemCategory] = useState("");
 	const [price, setPrice] = useState(0);
 
-	function convertPrice(value) {
-		let newString = "";
+	// function convertPrice(value) {
+	// 	let newString = "";
 
-		if (isDigit(value.charAt(value.length - 1))) {
-			if (value.includes(",")) {
-				let subValues = value.split(",");
+	// 	if (isDigit(value.charAt(value.length - 1))) {
+	// 		if (value.includes(",")) {
+	// 			let subValues = value.split(",");
 
-				subValues.forEach((subValue) => {
-					newString += subValue;
-				});
-			} else {
-				newString = value;
-			}
-			setPrice(parseInt(newString));
-		} else if (price < 9) {
-			setPrice(0);
-		}
-	}
-
-	function isDigit(value) {
-		return /^-?\d+$/.test(value);
-	}
+	// 			subValues.forEach((subValue) => {
+	// 				newString += subValue;
+	// 			});
+	// 		} else {
+	// 			newString = value;
+	// 		}
+	// 		setPrice(parseInt(newString));
+	// 	} else if (price < 9) {
+	// 		setPrice(0);
+	// 	}
+	// }
 
 	useEffect(() => {
 		if (itemDetails) {
-			console.log("Appraisal Item Details is:", itemDetails.itemCategory);
-			if (itemDetails.itemCategory.length == 0) {
-				setItemCategory("Gold");
-			} else {
-				setItemCategory(itemDetails.itemCategory);
+			if (
+				itemDetails.price != price ||
+				itemDetails.itemName != itemName ||
+				itemDetails.itemType != itemType ||
+				itemDetails.itemCategory != itemCategory
+			) {
+				// console.log("Appraisal Item Details is:", itemDetails.itemCategory);
+				if (itemDetails.itemCategory.length == 0) {
+					setItemCategory("Gold");
+				} else {
+					setItemCategory(itemDetails.itemCategory);
+				}
+				setItemName(itemDetails.itemName);
+				setItemType(itemDetails.itemType);
+				setPrice(itemDetails.price);
 			}
-			setItemName(itemDetails.itemName);
-			setItemType(itemDetails.itemType);
-			setPrice(itemDetails.price);
 		}
-		// console.log("item Details are:", itemDetails);
 	}, [itemDetails]);
 
 	useEffect(() => {
@@ -58,15 +60,9 @@ function AppraisalItemsDetails({ itemDetails, setItemDetails }) {
 				price: parseFloat(price),
 				itemCategory: itemCategory,
 			});
-			// console.log("SET", itemDetails);
-			// console.log("WRONG", itemName, itemType, price);
 			setItemDetails(updatedItem);
 		}
 	}, [itemName, price, itemType, itemCategory]);
-
-	// useEffect(()=>{
-	// 	setItemDetails({})
-	// },[itemCategory])
 
 	return (
 		<>
