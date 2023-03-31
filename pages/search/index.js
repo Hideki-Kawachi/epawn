@@ -143,6 +143,9 @@ function Search({
 			<NavBar currentUser={currentUser}></NavBar>
 			<Header currentUser={currentUser}></Header>
 			<div id="main-content-area">
+				<p className="text-xl font-semibold text-green-500 underline font-dosis">
+					Search
+				</p>
 				<div className="w-full h-full">
 					<div className="flex flex-row gap-4 text-base font-semibold text-green-500">
 						<div
