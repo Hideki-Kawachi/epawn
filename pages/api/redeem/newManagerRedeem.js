@@ -53,7 +53,7 @@ export default async function newManagerRenewal(req, res) {
 			itemListID: body.itemListID,
 			loanDate: loanDate,
 			maturityDate: new Date().setDate(loanDate.getDate() + 30),
-			expiryDate: new Date().setDate(loanDate.getDate() + 90),
+			expiryDate: new Date().setDate(loanDate.getDate() + 120),
 			loanAmount: body.newLoanAmount,
 			isInactive: false,
 		});
