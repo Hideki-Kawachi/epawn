@@ -34,14 +34,13 @@ export const getServerSideProps = withIronSessionSsr(
 			let transactionInfo = await Transaction.find({}).lean();
 
 			let userInfo = await User.find(
-				{},
+				{ isDisabled: false },
 				{
 					userID: 1,
 					role: 1,
 					firstName: 1,
 					middleName: 1,
 					lastName: 1,
-					isDisabled: 1,
 				}
 			).lean();
 

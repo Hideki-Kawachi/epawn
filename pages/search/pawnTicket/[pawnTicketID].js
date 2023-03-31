@@ -3,19 +3,19 @@ import { withIronSessionSsr } from "iron-session/next";
 import mongoose from "mongoose";
 import React, { useState } from "react";
 import Modal from "react-modal";
-import Header from "../../components/header";
-import ItemCard from "../../components/itemcard";
-import CustomerDetails from "../../components/modals/customerDetails";
-import NavBar from "../../components/navigation/navBar";
-import Branch from "../../schemas/branch";
-import CustomerInfo from "../../schemas/customerInfo";
-import Item from "../../schemas/item";
-import Redeem from "../../schemas/redeem";
-import PawnTicket from "../../schemas/pawnTicket";
-import Transaction from "../../schemas/transaction";
-import User from "../../schemas/user";
-import { ironOptions } from "../../utilities/config";
-import dbConnect from "../../utilities/dbConnect";
+import Header from "../../../components/header";
+import ItemCard from "../../../components/itemcard";
+import CustomerDetails from "../../../components/modals/customerDetails";
+import NavBar from "../../../components/navigation/navBar";
+import Branch from "../../../schemas/branch";
+import CustomerInfo from "../../../schemas/customerInfo";
+import Item from "../../../schemas/item";
+import Redeem from "../../../schemas/redeem";
+import PawnTicket from "../../../schemas/pawnTicket";
+import Transaction from "../../../schemas/transaction";
+import User from "../../../schemas/user";
+import { ironOptions } from "../../../utilities/config";
+import dbConnect from "../../../utilities/dbConnect";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req, query }) {

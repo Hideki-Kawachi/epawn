@@ -135,7 +135,7 @@ function PawnTicketSearch({
 
 	function openRow(rowData) {
 		router.push({
-			pathname: "search/[pawnTicketID]",
+			pathname: "search/pawnTicket/[pawnTicketID]",
 			query: { pawnTicketID: rowData.pawnTicketID },
 		});
 	}

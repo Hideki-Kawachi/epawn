@@ -26,17 +26,17 @@ function CustomerSearch({
 			},
 			{ Header: "Customer Name", accessor: "customerName" },
 			{
-				Header: "Total Current Amount of Loan",
+				Header: "Current Amount of Loan",
 				accessor: "totalLoanAmount",
 				disableGlobalFilter: true,
 			},
 			{
-				Header: "Total Transactions",
-				accessor: "totalTransactions",
+				Header: "Ongoing PawnTickets",
+				accessor: "ongoingPawnTicket",
 				disableGlobalFilter: true,
 			},
 			{
-				Header: "Total Current Pawned Items",
+				Header: "Current Pawned Items",
 				accessor: "totalPawnedItems",
 				disableGlobalFilter: true,
 			},
@@ -50,6 +50,7 @@ function CustomerSearch({
 		console.log("pt:", pawnTicketData);
 		console.log("trans:", transactionData);
 		console.log("item:", itemData);
+
 		for (const user of userData) {
 			if (user.role == "customer") {
 				let customerName =
@@ -59,16 +60,10 @@ function CustomerSearch({
 						? user.middleName.charAt(0) + ". "
 						: " ") +
 					user.lastName;
-				let totalTransactions = 0;
+				let ongoingPawnTicket = 0;
 				let totalPawnedItems = 0;
 				let totalLoanAmount = 0;
 				let itemListIDs = [];
-
-				transactionData.forEach((transaction) => {
-					if (transaction.customerID == user.userID) {
-						totalTransactions++;
-					}
-				});
 
 				pawnTicketData.forEach((pt) => {
 					if (pt.customerID == user.userID && !pt.isInactive) {
@@ -91,15 +86,17 @@ function CustomerSearch({
 					totalPawnedItems += currentItemList.length;
 				});
 
-				tempData.push({
-					userID: user.userID,
-					customerName: customerName,
-					totalLoanAmount: totalLoanAmount
-						? totalLoanAmount.toFixed(2)
-						: "0.00",
-					totalTransactions: totalTransactions,
-					totalPawnedItems: totalPawnedItems,
-				});
+				if (customerName) {
+					tempData.push({
+						userID: user.userID,
+						customerName: customerName,
+						totalLoanAmount: totalLoanAmount
+							? totalLoanAmount.toFixed(2)
+							: "0.00",
+						ongoingPawnTicket: itemListIDs.length,
+						totalPawnedItems: totalPawnedItems,
+					});
+				}
 			}
 		}
 		setData(tempData);
@@ -136,9 +133,10 @@ function CustomerSearch({
 	const router = useRouter();
 
 	function openRow(rowData) {
+		console.log("row:", rowData);
 		router.push({
-			pathname: "search/[pawnTicketID]",
-			query: { pawnTicketID: rowData.pawnTicketID },
+			pathname: "search/customer/[customerID]",
+			query: { customerID: rowData.userID },
 		});
 	}
 
@@ -151,7 +149,7 @@ function CustomerSearch({
 					onChange={(e) => {
 						setGlobalFilter(e.target.value);
 					}}
-					placeholder={"PT Number or Customer Name"}
+					placeholder={"Customer ID or Name"}
 				/>
 			</div>
 			<table {...getTableProps()} className="w-full text-sm">
