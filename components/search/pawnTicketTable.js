@@ -75,10 +75,18 @@ function PawnTicketTable({ data }) {
 	return (
 		<div className="p-5 bg-white border-2 border-gray-500 rounded">
 			<div className="flex w-full gap-2 my-5 text-base font-nunito">
+				<span className="text-base">Search: </span>
+				<input
+					className="flex-grow"
+					onChange={(e) => {
+						setGlobalFilter(e.target.value);
+					}}
+					placeholder={"PT Number"}
+				/>
 				<span className="ml-5">Status: </span>
 				<select
 					className="h-fit"
-					onChange={(e) => setFilter("isInactive", e.target.value)}
+					onChange={(e) => setFilter("status", e.target.value)}
 					defaultValue={""}
 				>
 					<option value={""}>All</option>
