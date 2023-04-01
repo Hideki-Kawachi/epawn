@@ -17,6 +17,8 @@ import Item from "../schemas/item";
 import LoadingSpinner from "../components/loadingSpinner";
 import User from "../schemas/user";
 import PawnTicket from "../schemas/pawnTicket";
+import Cashflow from "../schemas/cashflow";
+import dayjs from "dayjs";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {
@@ -103,11 +105,59 @@ export const getServerSideProps = withIronSessionSsr(
 					});
 				}
 			});
+			let morning = new Date().setHours(0, 0, 0, 0);
+			let night = new Date().setHours(23, 59, 59, 59);
+			let cashflowTransac = await Transaction.find({
+				branchID: req.session.userData.branchID,
+				createdAt: { $gte: new Date(morning), $lte: new Date(night) },
+				status: { $in: ["Done", "Approved"] },
+			}).lean();
+
+			let balance = 0;
+			let cashIn = 0;
+			let cashOut = 0;
+
+			let currCashflow = await Cashflow.findOne({
+				branchID: req.session.userData.branchID,
+				date: dayjs().format("YYYY-MM-DD"),
+			});
+
+			if (currCashflow) {
+				balance = currCashflow.beginningBalance;
+			}
+
+			for (const cashflow of cashflowTransac) {
+				if (
+					cashflow.transactionType == "Pawn" ||
+					cashflow.transactionType == "Withdraw"
+				) {
+					cashOut += Math.abs(cashflow.amountPaid);
+					balance + cashflow.amountPaid;
+				} else if (
+					cashflow.transactionType == "Redeem" ||
+					cashflow.transactionType == "Beginning Balance" ||
+					cashflow.transactionType.contains("Renew") ||
+					cashflow.transactionType == "Add. Funds"
+				) {
+					cashIn += cashflow.amountPaid;
+					balance + cashflow.amountPaid;
+				}
+			}
+
+			console.log("DATE IS:", new Date(morning), "--", new Date(night));
+			console.log("cashflow:", cashflowTransac);
+
+			let cashflowSummary = {
+				balance: balance,
+				cashIn: cashIn,
+				cashOut: cashOut,
+			};
 
 			return {
 				props: {
 					currentUser: req.session.userData,
 					notifData: JSON.parse(JSON.stringify(notifData)),
+					cashflowSummary: JSON.parse(JSON.stringify(cashflowSummary)),
 				},
 			};
 		}
@@ -115,11 +165,16 @@ export const getServerSideProps = withIronSessionSsr(
 	ironOptions
 );
 
-export default function Home({ currentUser, notifData }) {
+export default function Home({ currentUser, notifData, cashflowSummary }) {
 	const [showData, setShowData] = useState(notifData);
 
 	const roleShow = {
-		manager: <ManagerHome notifData={showData}></ManagerHome>,
+		manager: (
+			<ManagerHome
+				notifData={showData}
+				cashflowSummary={cashflowSummary}
+			></ManagerHome>
+		),
 		clerk: <ClerkHome notifData={showData}></ClerkHome>,
 	};
 
@@ -128,26 +183,30 @@ export default function Home({ currentUser, notifData }) {
 	}, []);
 
 	async function waitNotif() {
-		let res = await fetch("/api/notifTable", {
-			method: "GET",
-			headers: {
-				userID: currentUser.userID,
-				branchID: currentUser.branchID,
-				role: currentUser.role,
-			},
-		});
+		try {
+			let res = await fetch("/api/notifTable", {
+				method: "GET",
+				headers: {
+					userID: currentUser.userID,
+					branchID: currentUser.branchID,
+					role: currentUser.role,
+				},
+			});
 
-		if (res.status == 502) {
-			await waitNotif();
-		} else if (res.status != 200) {
-			// console.log("2-RESPONSE:", res.statusText);
-			// await waitNotif();
-			await new Promise((resolve) => setTimeout(resolve, 1000));
-			await waitNotif();
-		} else {
-			let notifShow = await res.json();
-			// console.log("NOTIF DATA BACK IS:", notifShow);
-			setShowData(notifShow);
+			if (res.status == 502) {
+				await waitNotif();
+			} else if (res.status != 200) {
+				// console.log("2-RESPONSE:", res.statusText);
+				// await waitNotif();
+				await new Promise((resolve) => setTimeout(resolve, 1000));
+				await waitNotif();
+			} else {
+				let notifShow = await res.json();
+				// console.log("NOTIF DATA BACK IS:", notifShow);
+				setShowData(notifShow);
+				await waitNotif();
+			}
+		} catch {
 			await waitNotif();
 		}
 	}

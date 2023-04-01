@@ -36,10 +36,14 @@ export const getServerSideProps = withIronSessionSsr(
 			let cashflowInfo;
 			let branchData = await Branch.find({}).lean();
 
+			let morning = new Date().setHours(0, 0, 0, 0);
+			let night = new Date().setHours(23, 59, 59, 59);
+
 			if (req.session.userData.role == "manager") {
 				transactionData = await Transaction.find({
 					branchID: req.session.userData.branchID,
-					status: "Done",
+					createdAt: { $gte: new Date(morning), $lte: new Date(night) },
+					status: { $in: ["Done", "Approved"] },
 				})
 					.sort({ updatedAt: -1 })
 					.lean();
@@ -50,7 +54,8 @@ export const getServerSideProps = withIronSessionSsr(
 				});
 			} else if (req.session.userData.role == "admin") {
 				transactionData = await Transaction.find({
-					status: "Done",
+					createdAt: { $gte: new Date(morning), $lte: new Date(night) },
+					status: { $in: ["Done", "Approved"] },
 				})
 					.sort({ updatedAt: -1 })
 					.lean();

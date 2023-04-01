@@ -59,7 +59,7 @@ function NotificationTable({ role, data }) {
 		// if manager
 		if (role == "manager") {
 			//if pawn
-		//	console.log("row trans:", rowData.transactionType);
+			//	console.log("row trans:", rowData.transactionType);
 			if (rowData.transactionType == "Pawn") {
 				if (rowData.status == "For Appraisal") {
 					router.push({
@@ -81,7 +81,7 @@ function NotificationTable({ role, data }) {
 			// if renew
 			else if (rowData.transactionType == "Renew") {
 				if (rowData.status == "Pending") {
-				//	console.log("pending", rowData);
+					//	console.log("pending", rowData);
 					router.push({
 						pathname: "renew/manager/[transactionID]",
 						query: { transactionID: rowData._id },
@@ -129,8 +129,8 @@ function NotificationTable({ role, data }) {
 	}
 
 	return (
-		<>
-			<div className="flex items-center justify-center w-3/4 gap-2 my-5 text-base font-nunito">
+		<div className="flex flex-col w-full p-10 bg-white border-2 h-fit">
+			<div className="flex items-center justify-center w-full gap-2 my-5 text-base font-nunito">
 				<span className="text-base">Search: </span>
 				<input
 					className="flex-grow"
@@ -165,7 +165,7 @@ function NotificationTable({ role, data }) {
 					<option value={"Approved"}>Approved</option>
 				</select>
 			</div>
-			<table {...getTableProps()} className="w-3/4 text-base">
+			<table {...getTableProps()} className="w-full text-base">
 				<thead>
 					{headerGroups.map((headerGroup) => (
 						<tr {...headerGroup.getHeaderGroupProps()}>
@@ -247,7 +247,7 @@ function NotificationTable({ role, data }) {
 					{">>"}
 				</button>{" "}
 			</div>
-		</>
+		</div>
 	);
 }
 
