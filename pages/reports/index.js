@@ -26,7 +26,7 @@ export const getServerSideProps = withIronSessionSsr(
 		) {
 			await dbConnect();
 
-			let pawnTicketInfo = await PawnTicket.find({})
+			let pawnTicketInfo = await PawnTicket.find({ status: "Done" })
 				.sort({ loanDate: -1 })
 				.lean();
 

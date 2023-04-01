@@ -8,6 +8,7 @@ import {
 	useSortBy,
 	useTable,
 } from "react-table";
+import { utils, writeFile, writeFileXLSX, writeXLSX } from "xlsx";
 
 function PawnTicketReport({
 	pawnTicketData,
@@ -17,12 +18,32 @@ function PawnTicketReport({
 	transactionData,
 }) {
 	const [data, setData] = useState([{}]);
-	const [startDate, setStartDate] = useState(new Date());
-	const [endDate, setEndDate] = useState(new Date());
+	const [startDate, setStartDate] = useState();
+	const [endDate, setEndDate] = useState();
 
 	useEffect(() => {
+		getData();
+	}, [userData, pawnTicketData, itemData, branchData, transactionData]);
+
+	useEffect(() => {
+		if (startDate && endDate) {
+			let tempData = data.filter((pt) => {
+				console.log("pt is:", new Date(pt.loanDate));
+				console.log("start is:", new Date(startDate));
+				return (
+					new Date(pt.loanDate) >= new Date(startDate) &&
+					new Date(pt.loanDate) <= new Date(endDate)
+				);
+			});
+			console.log("temp:", tempData);
+			setData(tempData);
+		} else if (!startDate && !endDate) {
+			getData();
+		}
+	}, [startDate, endDate]);
+
+	function getData() {
 		let tempData = [];
-		console.log("pt:", pawnTicketData);
 		for (const pt of pawnTicketData) {
 			let customerName;
 			let currTransaction = transactionData.find((transac) => {
@@ -39,21 +60,18 @@ function PawnTicketReport({
 				status = "Inactive";
 			}
 
-			console.log("customer name:", customerName);
 			tempData.push({
 				pawnTicketID: pt.pawnTicketID,
 				branchName: currBranch.branchName,
 				status: status,
-				loanAmount: pt.loanAmount?.toFixed(2),
-				expiryDate: dayjs(new Date(pt.expiryDate)).format("MMM DD, YYYY"),
-				maturityDate: dayjs(new Date(pt.maturityDate)).format("MMM DD, YYYY"),
 				loanDate: dayjs(new Date(pt.loanDate)).format("MMM DD, YYYY"),
+				maturityDate: dayjs(new Date(pt.maturityDate)).format("MMM DD, YYYY"),
+				expiryDate: dayjs(new Date(pt.expiryDate)).format("MMM DD, YYYY"),
+				loanAmount: pt.loanAmount?.toFixed(2),
 			});
 		}
 		setData(tempData);
-	}, [userData, pawnTicketData, itemData, branchData, transactionData]);
-
-	useEffect(() => {}, [startDate, endDate]);
+	}
 
 	const columns = React.useMemo(
 		() => [
@@ -120,30 +138,58 @@ function PawnTicketReport({
 		usePagination
 	);
 
-	const router = useRouter();
+	function printReport() {
+		let header = [
+			[
+				"PT Number",
+				"Branch",
+				"Status",
+				"Loan Date",
+				"Maturity Date",
+				"Expiry Date",
+				"Amount of Loan",
+			],
+		];
+		const workSheet = utils.json_to_sheet([]);
+		const workBook = utils.book_new();
+		const columnSizes = [
+			{ wch: 10 },
+			{ wch: 20 },
+			{ wch: 15 },
+			{ wch: 15 },
+			{ wch: 15 },
+			{ wch: 15 },
+			{ wch: 15 },
+		];
 
-	// function openRow(rowData) {
-	// 	router.push({
-	// 		pathname: "search/pawnTicket/[pawnTicketID]",
-	// 		query: { pawnTicketID: rowData.pawnTicketID },
-	// 	});
-	// }
+		workSheet["!cols"] = columnSizes;
+		utils.sheet_add_aoa(workSheet, header);
+		utils.sheet_add_json(workSheet, data, { origin: "A2", skipHeader: true });
+		utils.book_append_sheet(workBook, workSheet, "PT_Report");
+		writeFileXLSX(
+			workBook,
+			"PT_Report(" + dayjs().format("MM-DD-YYYY") + ").xlsx",
+			{
+				bookType: "xlsx",
+			}
+		);
+	}
 
 	return (
 		<>
-			<div className="flex items-center self-start w-2/3 gap-2 my-5 text-sm font-nunito">
+			<div className="flex items-center self-start w-full gap-2 my-5 text-sm font-nunito whitespace-nowrap ">
 				<span className="ml-5">Starting Date: </span>
 				<input
 					type="date"
 					onChange={(e) => {
-						setStartDate(new Date(e.target.value));
+						setStartDate(e.target.value);
 					}}
 				></input>
-				<span className="ml-5">Starting Date: </span>
+				<span className="ml-5">Ending Date: </span>
 				<input
 					type="date"
 					onChange={(e) => {
-						setEndDate(new Date(e.target.value));
+						setEndDate(e.target.value);
 					}}
 				></input>
 				<span className="ml-5">Branch: </span>
@@ -169,6 +215,12 @@ function PawnTicketReport({
 					<option value={"Active"}>Active</option>
 					<option value={"Inactive"}>Inactive</option>
 				</select>
+				<button
+					className="relative ml-auto text-sm bg-green-300"
+					onClick={() => printReport()}
+				>
+					Generate Report
+				</button>
 			</div>
 			<table {...getTableProps()} className="w-full text-sm">
 				<thead>

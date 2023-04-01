@@ -21,7 +21,8 @@
     "react-modal": "^3.16.1",
     "react-table": "^7.8.0",
     "sass": "^1.58.0",
-    "to-words": "^3.5.0"
+    "to-words": "^3.5.0",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.19.2/xlsx-0.19.2.tgz"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.13",
