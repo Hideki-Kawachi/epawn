@@ -144,8 +144,8 @@ export const getServerSideProps = withIronSessionSsr(
 				}
 			}
 
-			console.log("DATE IS:", new Date(morning), "--", new Date(night));
-			console.log("cashflow:", cashflowTransac);
+			// console.log("DATE IS:", new Date(morning), "--", new Date(night));
+			// console.log("cashflow:", cashflowTransac);
 
 			let cashflowSummary = {
 				balance: balance,

@@ -314,7 +314,7 @@ function NavBar({ currentUser }) {
 						{currentUser.role == "manager" || currentUser.role == "admin" ? (
 							<>
 								<Link href={"/reports"}>
-									<a id="nav-branch" className="nav-button">
+									<a id="nav-reports" className="nav-button">
 										<svg
 											width="50"
 											height="50"
@@ -334,7 +334,7 @@ function NavBar({ currentUser }) {
 									</a>
 								</Link>
 								<Link href={"/cashflow"}>
-									<a id="nav-branch" className="nav-button">
+									<a id="nav-cashflow" className="nav-button">
 										<svg
 											width="50"
 											height="50"
@@ -355,7 +355,7 @@ function NavBar({ currentUser }) {
 									</a>
 								</Link>
 								<Link href={"/logs"}>
-									<a id="nav-branch" className="nav-button">
+									<a id="nav-logs" className="nav-button">
 										<svg
 											width="50"
 											height="50"
@@ -391,7 +391,7 @@ function NavBar({ currentUser }) {
 									</a>
 								</Link>
 								<Link href={"/editbranch"}>
-									<a id="nav-branch" className="nav-button">
+									<a id="nav-editbranch" className="nav-button">
 										<svg
 											width="56"
 											height="64"

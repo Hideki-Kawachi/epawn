@@ -1,20 +1,17 @@
-import Head from "next/head";
-import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import ClerkHome from "../../components/home/clerkHome";
 import Header from "../../components/header";
-import ManagerHome from "../../components/home/managerHome";
 import NavBar from "../../components/navigation/navBar";
-import dbConnect from "../../utilities/dbConnect";
-import mongoose from "mongoose";
-import NotifTable from "../api/notifTable";
 import { withIronSessionSsr } from "iron-session/next";
 import { ironOptions } from "../../utilities/config";
-import Transaction from "../../schemas/transaction";
-import EmployeeInfo from "../../schemas/employeeInfo";
-import Branch from "../../schemas/branch";
-import LoadingSpinner from "../../components/loadingSpinner";
+import dbConnect from "../../utilities/dbConnect";
+import PawnTicket from "../../schemas/pawnTicket";
 import User from "../../schemas/user";
+import Item from "../../schemas/item";
+import Branch from "../../schemas/branch";
+import CustomerSearch from "../../components/search/customerSearch";
+import ItemSearch from "../../components/search/itemSearch";
+import Transaction from "../../schemas/transaction";
+import PawnTicketReport from "../../components/reports/pawnticketReport";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {
@@ -23,81 +20,162 @@ export const getServerSideProps = withIronSessionSsr(
 				redirect: { destination: "/signIn", permanent: true },
 				props: {},
 			};
+		} else if (
+			req.session.userData.role == "admin" ||
+			req.session.userData.role == "manager"
+		) {
+			await dbConnect();
+
+			let pawnTicketInfo = await PawnTicket.find({})
+				.sort({ loanDate: -1 })
+				.lean();
+
+			let transactionInfo = await Transaction.find({}).lean();
+
+			let userInfo = await User.find(
+				{ isDisabled: false },
+				{
+					userID: 1,
+					role: 1,
+					firstName: 1,
+					middleName: 1,
+					lastName: 1,
+				}
+			).lean();
+
+			let itemInfo = await Item.find({}).sort({ itemID: -1 }).lean();
+
+			let branchInfo = await Branch.find({}).lean();
+
+			return {
+				props: {
+					currentUser: req.session.userData,
+					transactionData: JSON.parse(JSON.stringify(transactionInfo)),
+					pawnTicketData: JSON.parse(JSON.stringify(pawnTicketInfo)),
+					userData: JSON.parse(JSON.stringify(userInfo)),
+					itemData: JSON.parse(JSON.stringify(itemInfo)),
+					branchData: JSON.parse(JSON.stringify(branchInfo)),
+				},
+			};
 		} else if (req.session.userData.role == "customer") {
 			return {
 				redirect: { destination: "/customer", permanent: true },
 				props: {},
 			};
 		} else {
-			await dbConnect();
-
-			let transactionData;
-			let pawnTicketData;
-			let customerData = await User.find({}).lean();
-
-			if (req.session.userData.role == "clerk") {
-				transactionData = await Transaction.find({
-					branchID: req.session.userData.branchID,
-					clerkID: req.session.userData.userID,
-					status: { $ne: "Done" },
-				})
-					.sort({ updatedAt: -1 })
-					.lean();
-			} else if (
-				req.session.userData.role == "manager" ||
-				req.session.userData.role == "admin"
-			) {
-				transactionData = await Transaction.find({
-					branchID: req.session.userData.branchID,
-					managerID: req.session.userData.userID,
-					status: { $ne: "Done" },
-				})
-					.sort({ updatedAt: -1 })
-					.lean();
-			}
-
-			// console.log("trans data:", transactionData);
-
-			let notifData = [];
-			transactionData.forEach((transaction) => {
-				let customerInfo = customerData.find(
-					(customer) => customer.userID == transaction.customerID
-				);
-
-				// console.log("CUST INFO:", customerInfo);
-				if (customerInfo) {
-					notifData.push({
-						_id: transaction._id,
-						customerName: customerInfo.firstName + " " + customerInfo.lastName,
-						date: transaction.updatedAt
-							.toDateString()
-							.substring(4, transaction.creationDate.length),
-						time: transaction.updatedAt.toLocaleTimeString("en-GB"),
-						transactionType: transaction.transactionType,
-						status: transaction.status,
-					});
-				}
-			});
-
 			return {
-				props: {
-					currentUser: req.session.userData,
-					notifData: JSON.parse(JSON.stringify(notifData)),
-				},
+				redirect: { destination: "/signIn", permanent: true },
+				props: {},
 			};
 		}
 	},
 	ironOptions
 );
 
-export default function Reports({ currentUser, notifData }) {
-	const [showData, setShowData] = useState(notifData);
+function Reports({
+	currentUser,
+	pawnTicketData,
+	userData,
+	itemData,
+	branchData,
+	transactionData,
+}) {
+	const [showTab, setShowTab] = useState("PawnTicket");
+
+	// console.log("PT DATA:", pawnTicketData);
+	// console.log("USER DATA:", userData);
+	// console.log("ITEM DATA:", itemData);
+	// console.log("BRANCH DATA:", branchData);
+	// console.log("TRANSACTION DATA:", transactionData);
+
+	useEffect(() => {
+		if (showTab == "PawnTicket") {
+			document.getElementById("PawnTicket-Tab").style.backgroundColor = "white";
+			document.getElementById("Cashflow-Tab").style.backgroundColor =
+				"rgb(205 204 202 / var(--tw-bg-opacity))";
+			document.getElementById("Items-Tab").style.backgroundColor =
+				"rgb(205 204 202 / var(--tw-bg-opacity))";
+		} else if (showTab == "Cashflow") {
+			document.getElementById("PawnTicket-Tab").style.backgroundColor =
+				"rgb(205 204 202 / var(--tw-bg-opacity))";
+			document.getElementById("Cashflow-Tab").style.backgroundColor = "white";
+			document.getElementById("Items-Tab").style.backgroundColor =
+				"rgb(205 204 202 / var(--tw-bg-opacity))";
+		} else if (showTab == "Items") {
+			document.getElementById("PawnTicket-Tab").style.backgroundColor =
+				"rgb(205 204 202 / var(--tw-bg-opacity))";
+			document.getElementById("Cashflow-Tab").style.backgroundColor =
+				"rgb(205 204 202 / var(--tw-bg-opacity))";
+			document.getElementById("Items-Tab").style.backgroundColor = "white";
+		}
+	}, [showTab]);
+
+	const displayTab = {
+		PawnTicket: (
+			<PawnTicketReport
+				pawnTicketData={pawnTicketData}
+				userData={userData}
+				itemData={itemData}
+				branchData={branchData}
+				transactionData={transactionData}
+			></PawnTicketReport>
+		),
+		Cashflow: (
+			<CustomerSearch
+				userData={userData}
+				transactionData={transactionData}
+				pawnTicketData={pawnTicketData}
+				itemData={itemData}
+			></CustomerSearch>
+		),
+		Items: (
+			<ItemSearch
+				pawnTicketData={pawnTicketData}
+				userData={userData}
+				itemData={itemData}
+			></ItemSearch>
+		),
+	};
 
 	return (
-		<div>
+		<>
 			<NavBar currentUser={currentUser}></NavBar>
 			<Header currentUser={currentUser}></Header>
-			<span>REPORTS</span>
-		</div>
+			<div id="main-content-area">
+				<p className="text-xl font-semibold text-green-500 underline font-dosis">
+					Reports
+				</p>
+				<div className="w-full h-full">
+					<div className="flex flex-row gap-4 text-base font-semibold text-green-500">
+						<div
+							id="PawnTicket-Tab"
+							className="p-3 bg-gray-200 border-2 rounded cursor-pointer w-fit"
+							onClick={() => setShowTab("PawnTicket")}
+						>
+							PawnTicket
+						</div>
+						<div
+							id="Cashflow-Tab"
+							className="p-3 bg-gray-200 border-2 rounded cursor-pointer w-fit"
+							onClick={() => setShowTab("Cashflow")}
+						>
+							Cashflow
+						</div>
+						<div
+							id="Items-Tab"
+							className="p-3 bg-gray-200 border-2 rounded cursor-pointer w-fit"
+							onClick={() => setShowTab("Items")}
+						>
+							Items
+						</div>
+					</div>
+				</div>
+				<div className="w-full h-full bg-white border-2 mt-[-5px] p-5">
+					{displayTab[showTab]}
+				</div>
+			</div>
+		</>
 	);
 }
+
+export default Reports;
