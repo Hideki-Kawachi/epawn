@@ -53,17 +53,17 @@ function OngoingTable({ role, data }) {
 		if (role == "manager") {
 			if (rowData.status == "For Appraisal") {
 				router.push({
-					pathname: "pawn/manager/appraisal/[transactionID]",
+					pathname: "/pawn/manager/appraisal/[transactionID]",
 					query: { transactionID: rowData._id },
 				});
 			} else if (rowData.status == "For Negotiation") {
 				router.push({
-					pathname: "pawn/manager/negotiation/[transactionID]",
+					pathname: "/pawn/manager/negotiation/[transactionID]",
 					query: { transactionID: rowData._id },
 				});
 			} else if (rowData.status == "For Approval") {
 				router.push({
-					pathname: "pawn/manager/approval/[transactionID]",
+					pathname: "/pawn/manager/approval/[transactionID]",
 					query: { transactionID: rowData._id },
 				});
 			}
@@ -71,17 +71,17 @@ function OngoingTable({ role, data }) {
 		} else if (role == "clerk") {
 			if (rowData.status == "Appraised") {
 				router.push({
-					pathname: "pawn/clerk/ongoingTransaction/[transactionID]",
+					pathname: "/pawn/clerk/ongoingTransaction/[transactionID]",
 					query: { transactionID: rowData._id },
 				});
 			} else if (rowData.status == "Rejected") {
 				router.push({
-					pathname: "pawn/clerk/rejected/[transactionID]",
+					pathname: "/pawn/clerk/rejected/[transactionID]",
 					query: { transactionID: rowData._id },
 				});
 			} else if (rowData.status == "Approved") {
 				router.push({
-					pathname: "pawn/clerk/approved/[transactionID]",
+					pathname: "/pawn/clerk/approved/[transactionID]",
 					query: { transactionID: rowData._id },
 				});
 				// fetch("/api/pawn/updateTransactionStatus", {

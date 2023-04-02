@@ -54,7 +54,6 @@ export default async function newManagerRedeem(req, res) {
 	let customerInfo = await CustomerInfo.findOne({ userID: body.customerID });
   let userInfo = await User.findOne({ userID: body.customerID });
   console.log("transac:", transac);
-  console.log("updaterRedeem:", updateRedeem);
   console.log("oldPT:", oldPT);
   console.log("userInfo:", userInfo);
   if (transac && oldPT) {
