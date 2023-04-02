@@ -499,7 +499,7 @@ function RedeemClerk({ currentUser }) {
 				clerkID: currentUser.userID,
 				pawnTicketID: PTNumber,
 				branchID: currentUser.branchID,
-				totalAmount: amountToPay,
+				totalAmount: parseFloat(amountToPay.toFixed(2)),
 			};
 			// console.log("transac is" + JSON.stringify(transac))
 			fetch("/api/redeem/newClerkRedeem", {

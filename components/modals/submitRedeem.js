@@ -2,7 +2,7 @@ import React from "react";
 import Close from "../closebutton";
 import ItemCard from "../itemcard";
 import { useRouter } from "next/router";
-export const Submit = ({trigger, setTrigger, mode, PTnumber, itemList, changeMode, setSendForm, sendForm, submitForm}) => {
+export const Submit = ({trigger, setTrigger, mode, PTnumber, itemList, changeMode, setSendForm, sendForm}) => {
     const router = useRouter();
     function closeModal(){
         setTrigger(!trigger);
@@ -14,7 +14,6 @@ export const Submit = ({trigger, setTrigger, mode, PTnumber, itemList, changeMod
     }
 
     function goForm(){
-      submitForm();  
       setSendForm(true);
     }
   function convertFloat(number) {

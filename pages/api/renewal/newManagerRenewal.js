@@ -29,8 +29,6 @@ export default async function newManagerRenewal(req, res) {
 		{ _id: body.transactionID },
 		{
 			status: type,
-			// rejectMessage: "",
-			// amountPaid: body.totalAmount,
 		}
 	);
 

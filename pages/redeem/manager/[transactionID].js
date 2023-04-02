@@ -12,6 +12,8 @@ import { useRouter } from "next/router";
 import dayjs from "dayjs";
 import DetailsCardRedeemManager from "../../../components/redeem/detailsManager";
 import RejectRedeemManager from "../../../components/modals/rejectRedeemManager";
+import printPawnTicket from "../../../utilities/printPawnTicket";
+import printReceipt from "../../../utilities/printReceipt";
 import dbConnect from "../../../utilities/dbConnect";
 import Transaction from "../../../schemas/transaction";
 import mongoose from "mongoose";
@@ -341,8 +343,9 @@ function RedeemManager({ currentUser, transactionData }) {
 					.then((data) => {
 						console.log("DATA IS:", data);
 						if (data != "error") {
-							// printPawnTicket(data.pawnTicketData);
-							//    printReceipt(data.receiptData);
+							if(newLoan == 0)
+								printPawnTicket(data.pawnTicketData);
+							printReceipt(data.receiptData);
 							router.replace("/");
 						} else {
 							console.log("error in updating items");
@@ -366,7 +369,6 @@ function RedeemManager({ currentUser, transactionData }) {
 					itemList={redeemList}
 					setSendForm={setSendForm}
 					sendForm={sendForm}
-					submitForm={submitForm}
 					amountToPay={amountToPay}
 				/>
 			</Modal>
