@@ -320,7 +320,6 @@ function RedeemManager({ currentUser, transactionData }) {
 	//APPROVE
 	useEffect(() => {
 		if (sendForm) {
-			if (customerID) {
 				let transac = {
 					transactionID: router.query.transactionID,
 					customerID: customerID,
@@ -334,27 +333,44 @@ function RedeemManager({ currentUser, transactionData }) {
 					totalAmount: amountToPay,
 					redeemArray: redeemList,
 				};
-				// console.log("transac is" + JSON.stringify(transac))
+				if (newLoan > 0) {
+          // console.log("transac is" + JSON.stringify(transac))
 				fetch("/api/redeem/newManagerRedeem", {
 					method: "POST",
 					body: JSON.stringify(transac),
 				})
 					.then((res) => res.json())
 					.then((data) => {
-						console.log("DATA IS:", data);
-						if (data != "error") {
-							if(newLoan == 0)
-								printPawnTicket(data.pawnTicketData);
-							printReceipt(data.receiptData);
-							router.replace("/");
-						} else {
-							console.log("error in updating items");
-						}
+					console.log("DATA IS:", data);
+					if (data != "error") {
+						printPawnTicket(data.pawnTicketData);
+						printReceipt(data.receiptData);
+						router.replace("/");
+					} else {
+						console.log("error in updating items");
+					}
 					});
-			}
-			console.log("send form:");
+       			} 
+				else {
+				fetch("/api/redeem/newManagerRedeemNoPT", {
+					method: "POST",
+					body: JSON.stringify(transac),
+				})
+					.then((res) => res.json())
+					.then((data) => {
+					console.log("DATA IS:", data);
+					if (data != "error") {
+						printReceipt(data.receiptData);
+						router.replace("/");
+					} else {
+						console.log("error in updating items");
+					}
+					});
+        		}
 		}
-	}, [sendForm, customerID]);
+
+	}, [sendForm]);
+
 	return (
 		<>
 			<NavBar currentUser={currentUser}></NavBar>

@@ -136,7 +136,8 @@ export const getServerSideProps = withIronSessionSsr(
 				} else if (
 					cashflow.transactionType == "Redeem" ||
 					cashflow.transactionType == "Beginning Balance" ||
-					cashflow.transactionType.contains("Renew") ||
+					cashflow.transactionType == "Renew" ||
+					cashflow.transactionType == "Renew(Online)" ||
 					cashflow.transactionType == "Add. Funds"
 				) {
 					cashIn += cashflow.amountPaid;

@@ -75,13 +75,6 @@ export default async function newManagerRedeem(req, res) {
 		{ isInactive: true }
 	);
 
-	let updateRedeem = await Redeem.findOneAndUpdate(
-		{ transactionID: body.transactionID },
-		{
-			newPawnTicketID: pawnTicketID,
-		}
-	);
-
 	body.redeemArray.map(async (redeem) => {
 		let result = await Item.updateOne(
 			{ itemID: redeem.itemID },
@@ -104,7 +97,7 @@ export default async function newManagerRedeem(req, res) {
   console.log("oldPT:", oldPT);
   console.log("newPT:", newPT);
   console.log("userInfo:", userInfo);
-  if (transac && updateRedeem && oldPT && newPT) {
+  if (transac && oldPT && newPT) {
     const toWords = new ToWords({
       localeCode: "en-IN",
       converterOptions: {
