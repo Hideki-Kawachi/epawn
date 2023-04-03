@@ -2731,6 +2731,11 @@ jsonfile@^4.0.0:
   optionalDependencies:
     graceful-fs "^4.1.6"
 
+jspdf-autotable@^3.5.28:
+  version "3.5.28"
+  resolved "https://registry.npmjs.org/jspdf-autotable/-/jspdf-autotable-3.5.28.tgz"
+  integrity sha512-eNYt5mUxCGa1Y0bmOhGXU+Va/P2jNkgOgUPGIpZp2rbZUauU34s0q3S59Jps5zi2u90nQy7DmD/D+sdesJLIEA==
+
 jspdf@^2.5.1:
   version "2.5.1"
   resolved "https://registry.npmjs.org/jspdf/-/jspdf-2.5.1.tgz"

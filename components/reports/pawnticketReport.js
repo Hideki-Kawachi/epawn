@@ -9,6 +9,7 @@ import {
 	useTable,
 } from "react-table";
 import { utils, writeFile, writeFileXLSX, writeXLSX } from "xlsx";
+import printReportPTData from "../../utilities/printReportPTData";
 
 function PawnTicketReport({
 	pawnTicketData,
@@ -141,40 +142,49 @@ function PawnTicketReport({
 	);
 
 	function printReport() {
-		let header = [
-			[
-				"PT Number",
-				"Branch",
-				"Status",
-				"Loan Date",
-				"Maturity Date",
-				"Expiry Date",
-				"Amount of Loan",
-			],
-		];
-		const workSheet = utils.json_to_sheet([]);
-		const workBook = utils.book_new();
-		const columnSizes = [
-			{ wch: 10 },
-			{ wch: 20 },
-			{ wch: 15 },
-			{ wch: 15 },
-			{ wch: 15 },
-			{ wch: 15 },
-			{ wch: 15 },
-		];
 
-		workSheet["!cols"] = columnSizes;
-		utils.sheet_add_aoa(workSheet, header);
-		utils.sheet_add_json(workSheet, data, { origin: "A2", skipHeader: true });
-		utils.book_append_sheet(workBook, workSheet, "PT_Report");
-		writeFileXLSX(
-			workBook,
-			"PT_Report(" + dayjs().format("MM-DD-YYYY") + ").xlsx",
-			{
-				bookType: "xlsx",
-			}
-		);
+		// data.PawnTicketReport.
+
+		// data.pawnTicketID
+		// data.branch
+
+		printReportPTData(data)
+
+
+		// let header = [
+		// 	[
+		// 		"PT Number",
+		// 		"Branch",
+		// 		"Status",
+		// 		"Loan Date",
+		// 		"Maturity Date",
+		// 		"Expiry Date",
+		// 		"Amount of Loan",
+		// 	],
+		// ];
+		// const workSheet = utils.json_to_sheet([]);
+		// const workBook = utils.book_new();
+		// const columnSizes = [
+		// 	{ wch: 10 },
+		// 	{ wch: 20 },
+		// 	{ wch: 15 },
+		// 	{ wch: 15 },
+		// 	{ wch: 15 },
+		// 	{ wch: 15 },
+		// 	{ wch: 15 },
+		// ];
+
+		// workSheet["!cols"] = columnSizes;
+		// utils.sheet_add_aoa(workSheet, header);
+		// utils.sheet_add_json(workSheet, data, { origin: "A2", skipHeader: true });
+		// utils.book_append_sheet(workBook, workSheet, "PT_Report");
+		// writeFileXLSX(
+		// 	workBook,
+		// 	"PT_Report(" + dayjs().format("MM-DD-YYYY") + ").xlsx",
+		// 	{
+		// 		bookType: "xlsx",
+		// 	}
+		// );
 	}
 
 	return (
