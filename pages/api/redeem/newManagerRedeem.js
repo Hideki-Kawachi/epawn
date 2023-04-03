@@ -69,7 +69,6 @@ export default async function newManagerRedeem(req, res) {
 		);
 	}
 
-
 	let oldPT = await PawnTicket.findOneAndUpdate(
 		{ pawnTicketID: body.oldPawnTicket },
 		{ isInactive: true }
@@ -81,127 +80,126 @@ export default async function newManagerRedeem(req, res) {
 			{
 				redeemID: body.redeemID,
 				isRedeemed: true,
-        updatedAt: new Date()
+				updatedAt: new Date(),
 			}
 		);
 		if (result.modifiedCount != 0) console.log("Updated the item");
 		else res.json("error");
 	});
 
-  let newLoanAmount = Number(body.newLoanAmount.toFixed(2));
+	let newLoanAmount = Number(body.newLoanAmount.toFixed(2));
 
 	let customerInfo = await CustomerInfo.findOne({ userID: body.customerID });
-  let userInfo = await User.findOne({ userID: body.customerID });
-  console.log("transac:", transac);
-  console.log("updaterRedeem:", updateRedeem);
-  console.log("oldPT:", oldPT);
-  console.log("newPT:", newPT);
-  console.log("userInfo:", userInfo);
-  if (transac && oldPT && newPT) {
-    const toWords = new ToWords({
-      localeCode: "en-IN",
-      converterOptions: {
-        currency: true,
-        ignoreDecimal: false,
-        ignoreZeroCurrency: false,
-        doNotAddOnly: false,
-        currencyOptions: {
-          // can be used to override defaults for the selected locale
-          name: "Peso",
-          plural: "Pesos",
-          symbol: "₱",
-          fractionalUnit: {
-            name: "Cent",
-            plural: "Cents",
-            symbol: "",
-          },
-        },
-      },
-    });
+	let userInfo = await User.findOne({ userID: body.customerID });
+	console.log("transac:", transac);
+	console.log("updaterRedeem:", updateRedeem);
+	console.log("oldPT:", oldPT);
+	console.log("newPT:", newPT);
+	console.log("userInfo:", userInfo);
+	if (transac && oldPT && newPT) {
+		const toWords = new ToWords({
+			localeCode: "en-US",
+			converterOptions: {
+				currency: true,
+				ignoreDecimal: false,
+				ignoreZeroCurrency: true,
+				doNotAddOnly: false,
+				currencyOptions: {
+					// can be used to override defaults for the selected locale
+					name: "Peso",
+					plural: "Pesos",
+					symbol: "₱",
+					fractionalUnit: {
+						name: "Cent",
+						plural: "Cents",
+						symbol: "",
+					},
+				},
+			},
+		});
 
-    let sumWords = toWords.convert(transac.amountPaid, {
-      currency: true,
-      ignoreZeroCurrency: true,
-    });
-    let customerName = String(
-      userInfo.firstName + " " + userInfo.middleName + " " + userInfo.lastName
-    );
-    let advInterest = newLoanAmount * 0.035;
-    let interest =
-      oldPT.loanAmount *
-      0.035 *
-      monthDiff(new Date(oldPT.maturityDate), new Date());
-    let penalties =
-      oldPT.loanAmount *
-      0.01 *
-      monthDiff(new Date(oldPT.expiryDate), new Date());
-    let totalInterest = advInterest + interest + penalties;
-    let receiptData = []
+		let sumWords = toWords.convert(transac.amountPaid, {
+			currency: true,
+			ignoreZeroCurrency: true,
+		});
+		let customerName = String(
+			userInfo.firstName + " " + userInfo.middleName + " " + userInfo.lastName
+		);
+		let advInterest = newLoanAmount * 0.035;
+		let interest =
+			oldPT.loanAmount *
+			0.035 *
+			monthDiff(new Date(oldPT.maturityDate), new Date());
+		let penalties =
+			oldPT.loanAmount *
+			0.01 *
+			monthDiff(new Date(oldPT.expiryDate), new Date());
+		let totalInterest = advInterest + interest + penalties;
+		let receiptData = [];
 
-     receiptData = {
-        date: dayjs(new Date()).format("MMM DD, YYYY"),
-        customerName: customerName,
-        address: customerInfo.presentAddress,
-        pawnTicketID: newPT.pawnTicketID,
-        principal: (transac.amountPaid - totalInterest).toFixed(2),
-        interest: totalInterest.toFixed(2),
-        total: transac.amountPaid.toFixed(2),
-        totalWords: sumWords,
-      };
-    
-    let pawnTicketPrint = [];
+		receiptData = {
+			date: dayjs(new Date()).format("MMM DD, YYYY"),
+			customerName: customerName,
+			address: customerInfo.presentAddress,
+			pawnTicketID: newPT.pawnTicketID,
+			principal: (transac.amountPaid - totalInterest).toFixed(2),
+			interest: totalInterest.toFixed(2),
+			total: transac.amountPaid.toFixed(2),
+			totalWords: sumWords,
+		};
 
-    let itemList = await Item.find({
-      itemListID: newPT.itemListID,
-      isRedeemed: false,
-    }).lean();
-    let itemDescription = "";
-    let appraisalVal = 0;
-    itemList.forEach((item, index) => {
-      let tempString = "";
-      if (index != itemList.length - 1) {
-        tempString = item.itemName + " " + item.weight + " grams, ";
-      } else {
-        tempString = item.itemName + " " + item.weight + " grams";
-      }
-      appraisalVal += item.price;
-      itemDescription = itemDescription.concat(tempString);
-    });
+		let pawnTicketPrint = [];
 
-    pawnTicketPrint.push({
-      pawnTicketID: newPT.pawnTicketID,
-      customerName: customerName,
-      address: customerInfo.presentAddress,
-      appraisalValue: appraisalVal.toFixed(2),
-      loanDate: dayjs(newPT.loanDate).format("MMMM DD,YYYY"),
-      maturityDate: dayjs(newPT.maturityDate).format("MMMM DD,YYYY"),
-      expiryDate: dayjs(newPT.expiryDate).format("MMMM DD,YYYY"),
-      itemDescription: itemDescription,
-      loanAmount: newPT.loanAmount.toFixed(2),
-      interest: advInterest.toFixed(2),
-      netProceeds: (newPT.loanAmount - advInterest).toFixed(2),
-      clerkID: transac.clerkID,
-    });
+		let itemList = await Item.find({
+			itemListID: newPT.itemListID,
+			isRedeemed: false,
+		}).lean();
+		let itemDescription = "";
+		let appraisalVal = 0;
+		itemList.forEach((item, index) => {
+			let tempString = "";
+			if (index != itemList.length - 1) {
+				tempString = item.itemName + " " + item.weight + " grams, ";
+			} else {
+				tempString = item.itemName + " " + item.weight + " grams";
+			}
+			appraisalVal += item.price;
+			itemDescription = itemDescription.concat(tempString);
+		});
 
-  
-    res.json({
-      receiptData: receiptData,
-      pawnTicketData: pawnTicketPrint,
-    });
-  } else {
-    res.json("error");
-  }
+		pawnTicketPrint.push({
+			pawnTicketID: newPT.pawnTicketID,
+			customerName: customerName,
+			address: customerInfo.presentAddress,
+			appraisalValue: appraisalVal.toFixed(2),
+			loanDate: dayjs(newPT.loanDate).format("MMMM DD,YYYY"),
+			maturityDate: dayjs(newPT.maturityDate).format("MMMM DD,YYYY"),
+			expiryDate: dayjs(newPT.expiryDate).format("MMMM DD,YYYY"),
+			itemDescription: itemDescription,
+			loanAmount: newPT.loanAmount.toFixed(2),
+			interest: advInterest.toFixed(2),
+			netProceeds: (newPT.loanAmount - advInterest).toFixed(2),
+			clerkID: transac.clerkID,
+		});
+
+		res.json({
+			receiptData: receiptData,
+			pawnTicketData: pawnTicketPrint,
+		});
+	} else {
+		res.json("error");
+	}
 }
 
 function monthDiff(dateFrom, dateTo) {
-  let diff =
-    dateTo.getMonth() -
-    dateFrom.getMonth() +
-    12 * (dateTo.getFullYear() - dateFrom.getFullYear());
-  console.log("diff is:", diff);
-  if (diff > 0) {
-    return diff;
-  } else {
-    return 0;
-  }
+	let diff =
+		dateTo.getMonth() -
+		dateFrom.getMonth() +
+		12 * (dateTo.getFullYear() - dateFrom.getFullYear());
+	console.log("diff is:", diff);
+	if (diff > 0) {
+		return diff;
+	} else {
+		return 0;
+	}
 }

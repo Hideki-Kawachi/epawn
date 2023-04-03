@@ -102,11 +102,11 @@ export default async function newManagerRenewal(req, res) {
 	console.log("userInfo:", userInfo);
 	if (transac && newRenew && oldPT && newPT) {
 		const toWords = new ToWords({
-			localeCode: "en-IN",
+			localeCode: "en-US",
 			converterOptions: {
 				currency: true,
 				ignoreDecimal: false,
-				ignoreZeroCurrency: false,
+				ignoreZeroCurrency: true,
 				doNotAddOnly: false,
 				currencyOptions: {
 					// can be used to override defaults for the selected locale
