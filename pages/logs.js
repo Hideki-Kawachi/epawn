@@ -54,7 +54,7 @@ export const getServerSideProps = withIronSessionSsr(
 						!customerName ||
 						!clerkName ||
 						!managerName ||
-						index == userInfo.length + 1
+						index == userInfo.length
 					) {
 						let currUser = userInfo[index];
 
