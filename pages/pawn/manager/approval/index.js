@@ -86,7 +86,11 @@ function Approval({ currentUser, tableData }) {
 					Pawn
 				</p>
 				<p className="mb-5 text-lg text-green-500 font-dosis">For Approval</p>
-				<AppraisalTable columns={columns} data={tableData}></AppraisalTable>
+				<AppraisalTable
+					columns={columns}
+					data={tableData}
+					screen={"approval"}
+				></AppraisalTable>
 			</div>
 		</>
 	);

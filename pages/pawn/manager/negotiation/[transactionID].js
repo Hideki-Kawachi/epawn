@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Header from "../../../../components/header";
 import NavBar from "../../../../components/navigation/navBar";
-import AppraisalTable from "../../../../components/pawn/appraisal/appraisalTable";
-import Data from "../../../../components/tempData/appraisalTable.json";
 import { withIronSessionSsr } from "iron-session/next";
 import { ironOptions } from "../../../../utilities/config";
 import { Router, useRouter } from "next/router";

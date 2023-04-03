@@ -69,6 +69,7 @@ function OngoingTable({ role, data }) {
 			}
 			// console.log("MANAGER", rowData);
 		} else if (role == "clerk") {
+			console.log("row:", rowData);
 			if (rowData.status == "Appraised") {
 				router.push({
 					pathname: "/pawn/clerk/ongoingTransaction/[transactionID]",
@@ -84,11 +85,6 @@ function OngoingTable({ role, data }) {
 					pathname: "/pawn/clerk/approved/[transactionID]",
 					query: { transactionID: rowData._id },
 				});
-				// fetch("/api/pawn/updateTransactionStatus", {
-				// 	method: "POST",
-				// 	body: JSON.stringify({ transactionID: rowData._id, status: "Done" }),
-				// });
-				// router.reload();
 			}
 			// console.log("CLERK", rowData);
 		}

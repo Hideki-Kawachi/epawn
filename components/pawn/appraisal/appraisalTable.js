@@ -8,7 +8,7 @@ import {
 } from "react-table";
 import GlobalFilter from "../../globalFilter";
 
-function AppraisalTable({ columns, data }) {
+function AppraisalTable({ columns, data, screen }) {
 	const {
 		getTableProps,
 		getTableBodyProps,
@@ -37,7 +37,7 @@ function AppraisalTable({ columns, data }) {
 
 	function openRow(rowData) {
 		router.push({
-			pathname: "/pawn/manager/appraisal/[transactionID]",
+			pathname: `/pawn/manager/${screen}/[transactionID]`,
 			query: { transactionID: rowData.transactionID },
 		});
 	}

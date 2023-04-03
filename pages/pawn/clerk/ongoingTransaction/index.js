@@ -56,20 +56,23 @@ export const getServerSideProps = withIronSessionSsr(
 
 			let notifData = [];
 			transactionData.forEach((transaction) => {
-				let customerInfo = customerData.find(
-					(customer) => customer.userID == transaction.customerID
-				);
-				if (customerInfo) {
-					notifData.push({
-						_id: transaction._id,
-						customerName: customerInfo.firstName + " " + customerInfo.lastName,
-						date: transaction.updatedAt
-							.toDateString()
-							.substring(4, transaction.creationDate.length),
-						time: transaction.updatedAt.toLocaleTimeString("en-GB"),
-						transactionType: transaction.transactionType,
-						status: transaction.status,
-					});
+				if (!transaction.status.includes("For")) {
+					let customerInfo = customerData.find(
+						(customer) => customer.userID == transaction.customerID
+					);
+					if (customerInfo) {
+						notifData.push({
+							_id: transaction._id,
+							customerName:
+								customerInfo.firstName + " " + customerInfo.lastName,
+							date: transaction.updatedAt
+								.toDateString()
+								.substring(4, transaction.creationDate.length),
+							time: transaction.updatedAt.toLocaleTimeString("en-GB"),
+							transactionType: transaction.transactionType,
+							status: transaction.status,
+						});
+					}
 				}
 			});
 
