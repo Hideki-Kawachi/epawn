@@ -143,11 +143,6 @@ function PawnTicketReport({
 
 	function printReport() {
 
-		// data.PawnTicketReport.
-
-		// data.pawnTicketID
-		// data.branch
-
 		printReportPTData(data)
 
 
