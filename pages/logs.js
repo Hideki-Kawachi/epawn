@@ -89,26 +89,41 @@ export const getServerSideProps = withIronSessionSsr(
 					let cashIn = 0;
 					let cashOut = 0;
 
-					if (transaction.amountPaid > 0) {
+					if (transaction.amountPaid > 0 && pawnTicket.length == 1) {
 						cashIn = transaction.amountPaid;
+						tableData.push({
+							pawnTicketID: pawnTicket[0].pawnTicketID,
+							transactionType: transaction.transactionType,
+							customerName: customerName,
+							branchName: branchData[0].branchName,
+							cashIn: cashIn.toFixed(2),
+							cashOut: cashOut.toFixed(2),
+							clerkName: clerkName,
+							managerName: managerName,
+							date: transaction.updatedAt
+								.toDateString()
+								.substring(4, transaction.updatedAt.length),
+							time: transaction.updatedAt.toLocaleTimeString("en-GB"),
+						});
 					} else {
-						cashOut = Math.abs(transaction.amountPaid);
+						for (const pawnPT of pawnTicket) {
+							cashOut = Math.abs(pawnPT.loanAmount * 0.0965);
+							tableData.push({
+								pawnTicketID: pawnPT.pawnTicketID,
+								transactionType: transaction.transactionType,
+								customerName: customerName,
+								branchName: branchData[0].branchName,
+								cashIn: cashIn.toFixed(2),
+								cashOut: cashOut.toFixed(2),
+								clerkName: clerkName,
+								managerName: managerName,
+								date: transaction.updatedAt
+									.toDateString()
+									.substring(4, transaction.updatedAt.length),
+								time: transaction.updatedAt.toLocaleTimeString("en-GB"),
+							});
+						}
 					}
-
-					tableData.push({
-						pawnTicketID: pawnTicket[0].pawnTicketID,
-						transactionType: transaction.transactionType,
-						customerName: customerName,
-						branchName: branchData[0].branchName,
-						cashIn: cashIn.toFixed(2),
-						cashOut: cashOut.toFixed(2),
-						clerkName: clerkName,
-						managerName: managerName,
-						date: transaction.updatedAt
-							.toDateString()
-							.substring(4, transaction.updatedAt.length),
-						time: transaction.updatedAt.toLocaleTimeString("en-GB"),
-					});
 				}
 				return {
 					props: {
@@ -184,26 +199,41 @@ export const getServerSideProps = withIronSessionSsr(
 					let cashIn = 0;
 					let cashOut = 0;
 
-					if (transaction.amountPaid > 0) {
+					if (transaction.amountPaid > 0 && pawnTicket.length == 1) {
 						cashIn = transaction.amountPaid;
+						tableData.push({
+							pawnTicketID: pawnTicket[0].pawnTicketID,
+							transactionType: transaction.transactionType,
+							customerName: customerName,
+							branchName: branchInfo.branchName,
+							cashIn: cashIn.toFixed(2),
+							cashOut: cashOut.toFixed(2),
+							clerkName: clerkName,
+							managerName: managerName,
+							date: transaction.updatedAt
+								.toDateString()
+								.substring(4, transaction.updatedAt.length),
+							time: transaction.updatedAt.toLocaleTimeString("en-GB"),
+						});
 					} else {
-						cashOut = Math.abs(transaction.amountPaid);
+						for (const pawnPT of pawnTicket) {
+							cashOut = Math.abs(pawnPT.loanAmount * 0.0965);
+							tableData.push({
+								pawnTicketID: pawnPT.pawnTicketID,
+								transactionType: transaction.transactionType,
+								customerName: customerName,
+								branchName: branchInfo.branchName,
+								cashIn: cashIn.toFixed(2),
+								cashOut: cashOut.toFixed(2),
+								clerkName: clerkName,
+								managerName: managerName,
+								date: transaction.updatedAt
+									.toDateString()
+									.substring(4, transaction.updatedAt.length),
+								time: transaction.updatedAt.toLocaleTimeString("en-GB"),
+							});
+						}
 					}
-
-					tableData.push({
-						pawnTicketID: pawnTicket[0].pawnTicketID,
-						transactionType: transaction.transactionType,
-						customerName: customerName,
-						branchName: branchInfo.branchName,
-						cashIn: cashIn.toFixed(2),
-						cashOut: cashOut.toFixed(2),
-						clerkName: clerkName,
-						managerName: managerName,
-						date: transaction.updatedAt
-							.toDateString()
-							.substring(4, transaction.updatedAt.length),
-						time: transaction.updatedAt.toLocaleTimeString("en-GB"),
-					});
 				}
 
 				return {

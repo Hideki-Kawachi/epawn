@@ -45,10 +45,12 @@ function PawnTicketReport({
 	function getData() {
 		let tempData = [];
 		for (const pt of pawnTicketData) {
-			let customerName;
 			let currTransaction = transactionData.find((transac) => {
-				return transac._id == pt.transactionID;
+				console.log("transac:", transac._id, "--", pt.transactionID);
+				return transac._id.toString() == pt.transactionID;
 			});
+
+			console.log("curr:", currTransaction);
 
 			let currBranch = branchData.find((branch) => {
 				return branch.branchID == currTransaction.branchID;

@@ -26,11 +26,23 @@ export const getServerSideProps = withIronSessionSsr(
 		) {
 			await dbConnect();
 
-			let pawnTicketInfo = await PawnTicket.find({ status: "Done" })
+			let pawnTicketInfo = await PawnTicket.find({ pawnTicketID: { $ne: "" } })
 				.sort({ loanDate: -1 })
 				.lean();
 
-			let transactionInfo = await Transaction.find({}).lean();
+			let tempTransacInfo = await Transaction.find({
+				status: { $in: ["Done", "Approved"] },
+			}).lean();
+
+			let transactionInfo = [];
+			for (const transac of tempTransacInfo) {
+				let isFound = pawnTicketInfo.some((pt) => {
+					return pt.transactionID == transac._id.toString();
+				});
+				if (isFound) {
+					transactionInfo.push(transac);
+				}
+			}
 
 			let userInfo = await User.find(
 				{ isDisabled: false },
