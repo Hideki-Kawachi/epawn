@@ -28,11 +28,19 @@ function PawnTicketReport({
 
 	useEffect(() => {
 		if (startDate && endDate) {
+			console.log(
+				"start is:",
+				new Date(new Date(startDate).setHours(0, 0, 0, 0))
+			);
+			console.log(
+				"end is:",
+				new Date(new Date(endDate).setHours(23, 59, 59, 59))
+			);
 			let tempData = data.filter((pt) => {
-				console.log("pt is:", new Date(pt.loanDate));
-				console.log("start is:", new Date(startDate));
+				let start = new Date(startDate).setHours(0, 0, 0, 0);
+				let end = new Date(endDate).setHours(23, 59, 59, 59);
 				return (
-					new Date(pt.loanDate) >= new Date(startDate) &&
+					new Date(pt.loanDate) >= new Date(start) &&
 					new Date(pt.loanDate) <= new Date(endDate)
 				);
 			});
@@ -47,11 +55,11 @@ function PawnTicketReport({
 		let tempData = [];
 		for (const pt of pawnTicketData) {
 			let currTransaction = transactionData.find((transac) => {
-				console.log("transac:", transac._id, "--", pt.transactionID);
+				// console.log("transac:", transac._id, "--", pt.transactionID);
 				return transac._id.toString() == pt.transactionID;
 			});
 
-			console.log("curr:", currTransaction);
+			// console.log("curr:", currTransaction);
 
 			let currBranch = branchData.find((branch) => {
 				return branch.branchID == currTransaction.branchID;
@@ -142,9 +150,7 @@ function PawnTicketReport({
 	);
 
 	function printReport() {
-
-		printReportPTData(data, startDate, endDate)
-
+		printReportPTData(data, startDate, endDate);
 
 		// let header = [
 		// 	[

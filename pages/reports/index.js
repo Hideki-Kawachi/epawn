@@ -27,7 +27,7 @@ export const getServerSideProps = withIronSessionSsr(
 			await dbConnect();
 
 			let pawnTicketInfo = await PawnTicket.find({ pawnTicketID: { $ne: "" } })
-				.sort({ loanDate: -1 })
+				.sort({ loanDate: 1 })
 				.lean();
 
 			let tempTransacInfo = await Transaction.find({
@@ -55,7 +55,7 @@ export const getServerSideProps = withIronSessionSsr(
 				}
 			).lean();
 
-			let itemInfo = await Item.find({}).sort({ itemID: -1 }).lean();
+			let itemInfo = await Item.find({}).sort({ itemID: 1 }).lean();
 
 			let branchInfo = await Branch.find({}).lean();
 
