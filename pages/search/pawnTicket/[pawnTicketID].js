@@ -36,7 +36,7 @@ export const getServerSideProps = withIronSessionSsr(
 
 			let pastPawnTicketInfo = await PawnTicket.find({
 				itemListID: currPawnTicketInfo.itemListID,
-				createdAt: { $lt: currPawnTicketInfo.loanDate },
+				loanDate: { $lt: currPawnTicketInfo.loanDate },
 			})
 				.sort({ loanDate: -1 })
 				.lean();
@@ -99,7 +99,7 @@ export const getServerSideProps = withIronSessionSsr(
 				userID: transactionInfo.managerID,
 			});
 
-			console.log("customer Info:", currPawnTicketInfo.transactionID);
+			// console.log("customer Info:", currPawnTicketInfo.transactionID);
 
 			if (currPawnTicketInfo) {
 				return {
