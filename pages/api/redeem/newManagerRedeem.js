@@ -1,9 +1,6 @@
 import dbConnect from "../../../utilities/dbConnect";
 import Transaction from "../../../schemas/transaction";
 import User from "../../../schemas/user";
-import EmployeeInfo from "../../../schemas/employeeInfo";
-import Redeem from "../../../schemas/redeem";
-import generateRenewalID from "../../../utilities/generateRenewalID";
 import PawnTicket from "../../../schemas/pawnTicket";
 import generatePawnTicketID from "../../../utilities/generatePawnTicketID";
 import Branch from "../../../schemas/branch";
@@ -21,7 +18,7 @@ export default async function newManagerRedeem(req, res) {
 		{ _id: body.transactionID },
 		{
 			amountPaid: body.totalAmount,
-			status: "Approved",
+			status: "Done",
 		}
 	);
 
@@ -92,7 +89,6 @@ export default async function newManagerRedeem(req, res) {
 	let customerInfo = await CustomerInfo.findOne({ userID: body.customerID });
 	let userInfo = await User.findOne({ userID: body.customerID });
 	console.log("transac:", transac);
-	console.log("updaterRedeem:", updateRedeem);
 	console.log("oldPT:", oldPT);
 	console.log("newPT:", newPT);
 	console.log("userInfo:", userInfo);
@@ -196,7 +192,7 @@ function monthDiff(dateFrom, dateTo) {
 		dateTo.getMonth() -
 		dateFrom.getMonth() +
 		12 * (dateTo.getFullYear() - dateFrom.getFullYear());
-	console.log("diff is:", diff);
+	//console.log("diff is:", diff);
 	if (diff > 0) {
 		return diff;
 	} else {
