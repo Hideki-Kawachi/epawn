@@ -17,6 +17,7 @@ function DetailsCardRenewClerk({
 	amountToPay,
 	button2,
 	setButton2,
+	pawnHistory
 }) {
 	const [customerModal, setCustomerModal] = useState(false);
 	const [historyModal, setHistoryModal] = useState(false);
@@ -149,8 +150,10 @@ function DetailsCardRenewClerk({
 				0.035 *
 				monthDiff(new Date(pawnTicket.maturityDate), new Date())
 		);
+
 	}, [pawnTicket]);
 
+	
 	return (
 		<>
 			<div
@@ -158,7 +161,8 @@ function DetailsCardRenewClerk({
 				className="flex pr-10 text-base drop-shadow-lg font-nunito"
 			>
 				<Modal isOpen={historyModal} ariaHideApp={false} className="modal">
-					<PawnHistory trigger={historyModal} setTrigger={setHistoryModal} />
+					<PawnHistory trigger={historyModal} setTrigger={setHistoryModal} pawnTicketID={PTNumber} pawnHistory={pawnHistory
+					} />
 				</Modal>
 				<Modal isOpen={customerModal} ariaHideApp={false} className="modal">
 					<CustomerDetails
@@ -202,7 +206,7 @@ function DetailsCardRenewClerk({
 						{/* View Customer Details Button */}
 						<span
 							className="inline-block ml-3 hover:cursor-pointer"
-							onClick={customerOpen}
+							onClick={mode ? null : customerOpen}
 						>
 							<svg
 								width="30 "
@@ -249,7 +253,7 @@ function DetailsCardRenewClerk({
 						Pawn Details:
 						<span
 							className="inline-block ml-3 hover:cursor-pointer"
-							onClick={historyOpen}
+							onClick={mode ? null : historyOpen}
 						>
 							<svg
 								width="30 "

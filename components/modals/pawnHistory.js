@@ -72,7 +72,7 @@ function PawnHistory({ trigger, setTrigger, pawnHistory, pawnTicketID }) {
 					</div>
 					<div>
 						<p className="mb-5 text-lg font-bold text-center font-dosis">
-							Pawn History of {pawnTicketID}
+							Pawn History of <span className = "font-nunito"> {pawnTicketID} </span>
 						</p>
 					</div>
 					<div>

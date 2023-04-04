@@ -44,7 +44,7 @@ function RenewClerk({ currentUser }) {
 	const [historyModal, setHistoryOpen] = useState(false); //Pawn History
 	const [mode, setMode] = useState(true); //how the layout behaves, true if no PT, select if PT is false
 	//Item List Array
-	const [itemList, setitemList] = useState(["N/A"]);
+	const [itemList, setitemList] = useState([]);
 
 	//Pawn Ticket Details
 	const [PTNumber, setPTNumber] = useState(""); //test A-123456
@@ -55,7 +55,7 @@ function RenewClerk({ currentUser }) {
 	const [customerDetails, setCusDetails] = useState(["N/A"]);
 	const [amountToPay, setAmountToPay] = useState(0);
 	const [newLoan, setNewLoan] = useState(0);
-
+	const [pawnHistory, setPawnHistory] = useState();
 	//Item List Backend States
 	const [itemListID, setItemListID] = useState("");
 	const [transactionID, setTransactionID] = useState("");
@@ -183,6 +183,24 @@ function RenewClerk({ currentUser }) {
 						setitemList(info); //temporary
 					}
 				});
+			fetch("/api/clerkPawnHistory/" + itemListID, {
+				method: "GET",
+				headers: {
+					Accept: "application/json",
+					"Content-Type": "application/json",
+				},
+			})
+				.then((res) => res.json())
+				.then((history) => {
+					if(history != "error"){
+						console.log("Pawn history found: " + history)
+						setPawnHistory(history)
+					}
+					else{
+					setPawnHistory([])
+					console.log("Pawn history NOT found")
+					}
+				})
 		}
 	}, [itemListID]);
 
@@ -203,6 +221,7 @@ function RenewClerk({ currentUser }) {
 						// console.log(JSON.stringify(info))
 						setUserInfo(user);
 					}
+
 				});
 		}
 	}, [customerID]);
@@ -304,6 +323,7 @@ function RenewClerk({ currentUser }) {
 							amountToPay={amountToPay}
 							button2={button2}
 							setButton2={setButton2}
+							pawnHistory={pawnHistory}
 						/>
 					</div>
 				</div>

@@ -104,7 +104,7 @@ useEffect(() => {
           </div>
 
           <p className="font-nunito text-base text-center mb-5">
-            <b> COMPUTATIONS </b>
+            <b> Computations </b>
           </p>
           <div className="flex min-w-fit pr-10 text-sm">
             <div className="text-right">

@@ -39,7 +39,7 @@ function CustomerDetails({ trigger, setTrigger, customerInfo, userInfo }) {
 								Customer Info{" "}
 							</p>
 						</div>
-						<div className="ml-32 mt-[69px] font-dosis text-sm">
+						<div className="ml-60 mt-[69px] font-dosis text-sm">
 							<a
 								className="block font-semibold text-right text-green-500 hover:underline hover:text-green-400 hover:cursor-pointer"
 								target="_blank"
