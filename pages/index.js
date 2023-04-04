@@ -132,7 +132,8 @@ export const getServerSideProps = withIronSessionSsr(
 					cashflow.transactionType == "Withdraw"
 				) {
 					cashOut += Math.abs(cashflow.amountPaid);
-					balance + cashflow.amountPaid;
+					//amount paid is negative
+					balance += cashflow.amountPaid;
 				} else if (
 					cashflow.transactionType == "Redeem" ||
 					cashflow.transactionType == "Beginning Balance" ||
@@ -141,7 +142,7 @@ export const getServerSideProps = withIronSessionSsr(
 					cashflow.transactionType == "Add. Funds"
 				) {
 					cashIn += cashflow.amountPaid;
-					balance + cashflow.amountPaid;
+					balance += cashflow.amountPaid;
 				}
 			}
 
