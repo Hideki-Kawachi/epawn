@@ -6,6 +6,10 @@ import { useGridLayout } from "react-table/dist/react-table.development";
 //add to 
 export default function printReportPTData(ptData, startDate, endDate) { 
         
+        ptData = ptData.reverse()
+
+        console.log(ptData)
+
         // Define the pt data for the table
         let tempData = [];
 
