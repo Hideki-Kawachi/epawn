@@ -152,17 +152,19 @@ function ApprovedTransactionID({
 		setLoading(true);
 
 		// generate pass
-		fetch("/api/users/customers/newCustomerPass", {
+		fetch("/api/pawn/customerPass", {
 			method: "POST",
 			body: userData.userID,
 		})
 			.then((res) => res.json())
 			.then((data) => {
 				console.log("DATA IS:", data);
-				printCustomerDetails({
-					userID: userData.userID,
-					password: data,
-				});
+				if (data) {
+					printCustomerDetails({
+						userID: userData.userID,
+						password: data,
+					});
+				}
 
 				//update transaction
 				fetch("/api/pawn/updateTransactionStatus", {
