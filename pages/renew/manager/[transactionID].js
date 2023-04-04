@@ -5,6 +5,8 @@ import DetailsCardRenewManager from "../../../components/renew/detailsManager";
 import Modal from "react-modal";
 import Submit from "../../../components/modals/submitManagerRenew";
 import Cancel from "../../../components/modals/cancel";
+import Branch from "../../../schemas/branch";
+import PawnTicket from "../../../schemas/pawnTicket";
 import ItemCard from "../../../components/itemcard";
 import { withIronSessionSsr } from "iron-session/next";
 import { useRouter } from "next/router";
@@ -29,10 +31,58 @@ export const getServerSideProps = withIronSessionSsr(
 				let transactionInfo = await Transaction.findById(
 					new mongoose.Types.ObjectId(query.transactionID)
 				);
+				let br = await Branch.findOne({
+					branchID : transactionInfo.branchID
+				})
+
+				let pawnTicketData = await PawnTicket.find({
+					itemListID : transactionInfo.itemListID
+				}).sort({loanDate: -1})
+
+				let pawnHistory = []
+				
+				for (let ticket of pawnTicketData){
+					let transaction = await Transaction.findOne({ 
+						_id: ticket.transactionID,
+						status : "Done" || "Approved",
+						})
+					
+						let branch = await Branch.findOne({
+							branchID : transaction.branchID
+						})	
+						
+						let amountPaid = 0
+						if (transaction.amountPaid > 0 ){
+							amountPaid = transaction.amountPaid
+						}
+						else 
+							amountPaid = 0
+
+					if (branch && transaction){
+						pawnHistory.push({
+							pawnTicketID: ticket.pawnTicketID,
+							transactionType: transaction.transactionType,
+							branchID : branch.branchName,
+							loanDate: dayjs(ticket.loanDate).format('MM/DD/YYYY'),
+						
+							amountPaid : "Php " + amountPaid.toLocaleString("en-US", {
+								minimumFractionDigits: 2,
+								maximumFractionDigits: 2,
+							  }),
+							loanAmount : "Php " + ticket.loanAmount.toLocaleString("en-US", {
+								minimumFractionDigits: 2,
+								maximumFractionDigits: 2,
+							  })
+						})
+					}
+
+				}
 				return {
 					props: {
 						currentUser: req.session.userData,
 						transactionData: JSON.parse(JSON.stringify(transactionInfo)),
+						pawnHistory: JSON.parse(JSON.stringify(pawnHistory)),
+						branchData: JSON.parse(JSON.stringify(br))
 					},
 				};
 			}
@@ -54,7 +104,7 @@ export const getServerSideProps = withIronSessionSsr(
 	ironOptions
 );
 
-function RenewManager({ currentUser, transactionData }) {
+function RenewManager({ currentUser, transactionData,  pawnHistory, branchData }) {
 	// Modals
 	const [submitModal, setSubmitOpen] = useState(false); //Submit
 	const [cancelModal, setCancelOpen] = useState(false); //Cancel
@@ -328,7 +378,8 @@ function RenewManager({ currentUser, transactionData }) {
 
 				<div className="flex">
 					<DetailsCardRenewManager
-						branch={branch}
+						branch={branchData.branchName}
+						pawnHistory={pawnHistory}
 						pawnTicket={ptInfo}
 						PTNumber={PTNumber}
 						user={userInfo}

@@ -20,6 +20,7 @@ function DetailsCardRenewManager({
 	setButton2,
 	cashTendered,
 	setCashTendered,
+	pawnHistory
 }) {
 	const [customerModal, setCustomerModal] = useState(false);
 	const [computationModal, setCompOpen] = useState(false);
@@ -155,7 +156,7 @@ function DetailsCardRenewManager({
 				className="flex pr-10 text-base drop-shadow-lg font-nunito"
 			>
 				<Modal isOpen={historyModal} ariaHideApp={false} className="modal">
-					<PawnHistory trigger={historyModal} setTrigger={setHistoryModal} />
+					<PawnHistory trigger={historyModal} setTrigger={setHistoryModal} pawnHistory={pawnHistory} pawnTicketID={PTNumber}/>
 				</Modal>
 
 				<Modal isOpen={computationModal} ariaHideApp={false} className="modal">
