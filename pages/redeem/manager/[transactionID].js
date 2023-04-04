@@ -18,7 +18,8 @@ import dbConnect from "../../../utilities/dbConnect";
 import Transaction from "../../../schemas/transaction";
 import mongoose from "mongoose";
 import PawnTicket from "../../../schemas/pawnTicket";
-import Branch from "../../../schemas/branch"
+import Branch from "../../../schemas/branch";
+
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req, query }) {
 		if (!req.session.userData) {
@@ -30,67 +31,76 @@ export const getServerSideProps = withIronSessionSsr(
 			if (query.transactionID.length >= 24) {
 				await dbConnect();
 				let transactionInfo = await Transaction.findById(
-					new mongoose.Types.ObjectId(query.transactionID)
+					new mongoose.Types.ObjectId(query.transactionID.toString())
 				);
-				console.log("transaction is " + transactionInfo)
-				
-				
-				let br = await Branch.findOne({
-					branchID : transactionInfo.branchID
-				})
 
-				let pawnTicketData = await PawnTicket.find({
-					itemListID : transactionInfo.itemListID
-				}).sort({loanDate: -1})
+				if (transactionInfo) {
+					let br = await Branch.findOne({
+						branchID: transactionInfo.branchID,
+					});
 
-				let pawnHistory = []
-				
-				for (let ticket of pawnTicketData){
-					let transaction = await Transaction.findOne({ 
-						_id: ticket.transactionID,
-						status : "Done" || "Approved",
-						})
-					
+					let pawnTicketData = await PawnTicket.find({
+						itemListID: transactionInfo.itemListID,
+					})
+						.sort({ loanDate: -1 })
+						.lean();
+
+					let pawnHistory = [];
+					for (let ticket of pawnTicketData) {
+						console.log("ticket", ticket.transactionID.toString());
+						let transaction = await Transaction.findOne({
+							_id: new mongoose.Types.ObjectId(ticket.transactionID.toString()),
+							status: { $in: ["Done", "Approved"] },
+						});
+
+						console.log("transaction:", transaction);
+
 						let branch = await Branch.findOne({
-							branchID : transaction.branchID
-						})	
-						let amountPaid = 0
-						if (transaction.amountPaid > 0 ){
-							amountPaid = transaction.amountPaid
-						}
-						else 
-							amountPaid = 0
+							branchID: transaction.branchID,
+						});
+						let amountPaid = 0;
+						if (transaction.amountPaid > 0) {
+							amountPaid = transaction.amountPaid;
+						} else amountPaid = 0;
 
-					if (branch && transaction){
-						pawnHistory.push({
-							pawnTicketID: ticket.pawnTicketID,
-							transactionType: transaction.transactionType,
-							branchID : branch.branchName,
-							loanDate: dayjs(ticket.loanDate).format('MM/DD/YYYY'),
-						
-							amountPaid : "Php " + amountPaid.toLocaleString("en-US", {
-								minimumFractionDigits: 2,
-								maximumFractionDigits: 2,
-							  }),
-							loanAmount : "Php " + ticket.loanAmount.toLocaleString("en-US", {
-								minimumFractionDigits: 2,
-								maximumFractionDigits: 2,
-							  })
-						})
+						if (branch && transaction) {
+							pawnHistory.push({
+								pawnTicketID: ticket.pawnTicketID,
+								transactionType: transaction.transactionType,
+								branchID: branch.branchName,
+								loanDate: dayjs(ticket.loanDate).format("MM/DD/YYYY"),
+
+								amountPaid:
+									"Php " +
+									amountPaid.toLocaleString("en-US", {
+										minimumFractionDigits: 2,
+										maximumFractionDigits: 2,
+									}),
+								loanAmount:
+									"Php " +
+									ticket.loanAmount.toLocaleString("en-US", {
+										minimumFractionDigits: 2,
+										maximumFractionDigits: 2,
+									}),
+							});
+						}
 					}
 
-				}
+					//console.log("Pawn History is: " +  pawnHistory);
 
-				//console.log("Pawn History is: " +  pawnHistory);
-		
-				return {
-					props: {
-						currentUser: req.session.userData,
-						transactionData: JSON.parse(JSON.stringify(transactionInfo)),
-						pawnHistory: JSON.parse(JSON.stringify(pawnHistory)),
-						branchData: JSON.parse(JSON.stringify(br))
-					},
-				};
+					return {
+						props: {
+							currentUser: req.session.userData,
+							transactionData: JSON.parse(JSON.stringify(transactionInfo)),
+							pawnHistory: JSON.parse(JSON.stringify(pawnHistory)),
+							branchData: JSON.parse(JSON.stringify(br)),
+						},
+					};
+				} else {
+					return {
+						redirect: { destination: "/" },
+					};
+				}
 			}
 			return {
 				props: { currentUser: req.session.userData },
@@ -109,7 +119,12 @@ export const getServerSideProps = withIronSessionSsr(
 	ironOptions
 );
 
-function RedeemManager({ currentUser, transactionData, pawnHistory, branchData }) {
+function RedeemManager({
+	currentUser,
+	transactionData,
+	pawnHistory,
+	branchData,
+}) {
 	// Modals
 	const [submitModal, setSubmitOpen] = useState(false); //Submit
 	const [cancelModal, setCancelOpen] = useState(false); //Cancel
@@ -152,8 +167,8 @@ function RedeemManager({ currentUser, transactionData, pawnHistory, branchData }
 	function cancelForm() {
 		setCancelOpen(true);
 	}
-	function submitForm(){
-		setSendForm(true)
+	function submitForm() {
+		setSendForm(true);
 	}
 	function rejectForm() {
 		setRejectModal(true);
@@ -170,8 +185,8 @@ function RedeemManager({ currentUser, transactionData, pawnHistory, branchData }
 
 	function convertFloat(number) {
 		return Number(number).toLocaleString("en-US", {
-		  minimumFractionDigits: 2,
-		  maximumFractionDigits: 2,
+			minimumFractionDigits: 2,
+			maximumFractionDigits: 2,
 		});
 	}
 	function cancelContentShow() {
@@ -183,7 +198,6 @@ function RedeemManager({ currentUser, transactionData, pawnHistory, branchData }
 			</>
 		);
 	}
-	
 
 	// function getNewLoanDate() {
 	// 	const dt = new Date();
@@ -384,55 +398,53 @@ function RedeemManager({ currentUser, transactionData, pawnHistory, branchData }
 	//APPROVE
 	useEffect(() => {
 		if (sendForm) {
-				let transac = {
-					transactionID: router.query.transactionID,
-					customerID: customerID,
-					itemListID: itemListID,
-					newLoanAmount: newLoan,
-					oldPawnTicket: PTNumber,
-					redeemID: redeemID,
-					branchID: branch,
-					clerkID: transactionData.clerkID,
-					transactionType: transactionData.transactionType,
-					totalAmount: amountToPay,
-					redeemArray: redeemList,
-				};
-				if (newLoan > 0) {
-          // console.log("transac is" + JSON.stringify(transac))
+			let transac = {
+				transactionID: router.query.transactionID,
+				customerID: customerID,
+				itemListID: itemListID,
+				newLoanAmount: newLoan,
+				oldPawnTicket: PTNumber,
+				redeemID: redeemID,
+				branchID: branch,
+				clerkID: transactionData.clerkID,
+				transactionType: transactionData.transactionType,
+				totalAmount: amountToPay,
+				redeemArray: redeemList,
+			};
+			if (newLoan > 0) {
+				// console.log("transac is" + JSON.stringify(transac))
 				fetch("/api/redeem/newManagerRedeem", {
 					method: "POST",
 					body: JSON.stringify(transac),
 				})
 					.then((res) => res.json())
 					.then((data) => {
-					console.log("DATA IS:", data);
-					if (data != "error") {
-						printPawnTicket(data.pawnTicketData);
-						printReceipt(data.receiptData);
-						router.replace("/");
-					} else {
-						console.log("error in updating items");
-					}
+						console.log("DATA IS:", data);
+						if (data != "error") {
+							printPawnTicket(data.pawnTicketData);
+							printReceipt(data.receiptData);
+							router.replace("/");
+						} else {
+							console.log("error in updating items");
+						}
 					});
-       			} 
-				else {
+			} else {
 				fetch("/api/redeem/newManagerRedeemNoPT", {
 					method: "POST",
 					body: JSON.stringify(transac),
 				})
 					.then((res) => res.json())
 					.then((data) => {
-					console.log("DATA IS:", data);
-					if (data != "error") {
-						printReceipt(data.receiptData);
-						router.replace("/");
-					} else {
-						console.log("error in updating items");
-					}
+						console.log("DATA IS:", data);
+						if (data != "error") {
+							printReceipt(data.receiptData);
+							router.replace("/");
+						} else {
+							console.log("error in updating items");
+						}
 					});
-        		}
+			}
 		}
-
 	}, [sendForm]);
 
 	return (
