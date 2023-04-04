@@ -180,7 +180,7 @@ function AppraisalTransactionID({
 						setTrigger={setRejectShow}
 						transactionID={transactionData._id}
 						itemList={undefined}
-						redeemer={undefined}
+						redeemer={customerData.userID}
 						isOriginal={undefined}
 					/>
 				</Modal>
