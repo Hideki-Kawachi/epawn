@@ -389,12 +389,11 @@ function RedeemClerk({ currentUser }) {
 	//useEffect to submit the Redemption Transaction
 
 	function submitForm() {
-		setSendForm(true);
 		if (authStatus) {
 			//Adding new entries to User and RepresentativeInfo Schemas
 			//User -> role, fName, lName, mName, password, isDisabled=false
 			//RepresentativeInfo -> proof authorization, validID
-			// console.log("YOU ARE CREATING AUTH REP");
+			console.log("YOU ARE CREATING AUTH REP");
 			let publicID = "validID" + "-" + customerID + "-" + new Date();
 			let folder = "epawn/customerImage";
 			let uploadPreset = "signed_preset";
@@ -471,6 +470,7 @@ function RedeemClerk({ currentUser }) {
 			//   redeemArray : redeemArray,
 			// }
 		}
+		setSendForm(true);
 		//Adding new entry to Transaction
 	}
 

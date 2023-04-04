@@ -2,7 +2,7 @@ import React from "react";
 import Close from "../closebutton";
 import ItemCard from "../itemcard";
 import { useRouter } from "next/router";
-export const Submit = ({trigger, setTrigger, mode, PTnumber, itemList, changeMode, setSendForm, sendForm}) => {
+export const Submit = ({trigger, setTrigger, mode, PTnumber, itemList, changeMode, setSendForm, sendForm, submitForm}) => {
     const router = useRouter();
     function closeModal(){
         setTrigger(!trigger);
@@ -79,7 +79,7 @@ export const Submit = ({trigger, setTrigger, mode, PTnumber, itemList, changeMod
             Select
           </button>
           ):(
-            <button className="bg-green-300 text-base px-24 mt-5 mx-5" onClick={goForm}>
+            <button className="bg-green-300 text-base px-24 mt-5 mx-5" onClick={submitForm}>
             Submit
           </button>
           )}
