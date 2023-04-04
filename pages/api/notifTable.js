@@ -39,7 +39,7 @@ export default async function NotifTable(req, res) {
 					let customerInfo = customerData.find(
 						(customer) => customer.userID == transaction.customerID
 					);
-					console.log("CUST INFO:", customerInfo);
+					// console.log("CUST INFO:", customerInfo);
 					notifData.push({
 						_id: transaction._id,
 						customerName: customerInfo.firstName + " " + customerInfo.lastName,

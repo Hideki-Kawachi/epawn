@@ -65,7 +65,7 @@ function PawnTicketReport({
 				return branch.branchID == currTransaction.branchID;
 			});
 
-			let status = "Active";
+			let status = "Ongoing";
 
 			if (pt.isInactive) {
 				status = "Inactive";
@@ -225,7 +225,7 @@ function PawnTicketReport({
 					defaultValue={""}
 				>
 					<option value={""}>All</option>
-					<option value={"Active"}>Active</option>
+					<option value={"Ongoing"}>Ongoing</option>
 					<option value={"Inactive"}>Inactive</option>
 				</select>
 				<button
