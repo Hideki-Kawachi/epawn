@@ -21,33 +21,6 @@ export default function printReportPTData(ptData) {
 
         );
 
-        ptData.forEach((row) => 
-        tempData.push([
-            row.pawnTicketID,
-            row.branchName,
-            row.status,
-            row.loanDate,
-            row.maturityDate,
-            row.expiryDate,
-            row.loanAmount
-        ])
-
-);
-
-ptData.forEach((row) => 
-tempData.push([
-    row.pawnTicketID,
-    row.branchName,
-    row.status,
-    row.loanDate,
-    row.maturityDate,
-    row.expiryDate,
-    row.loanAmount
-])
-
-);
-
-
 
         // Set up the document
         const doc = new jsPDF({
@@ -59,38 +32,43 @@ tempData.push([
         // Define the header function
         const header = (data) => {
             doc.setFontSize(10);
-            doc.setTextColor(0, 128, 0); // Change the text color to green
             doc.setFont('bold');
-            const headerText = "My Document Header";
+            doc.setText
+            const headerText = "R. Raymundo Pawnshop Co Inc";
             const headerWidth = doc.getTextWidth(headerText);
             doc.text(doc.internal.pageSize.width / 2 - headerWidth / 2, 0.3, headerText);
+
+            
+            doc.setFontSize(10);
+            doc.setFont('bold');
+            const headerText2 = "3411 New Panaderos St. Sta. Ana Manila";
+            const headerWidth2 = doc.getTextWidth(headerText2);
+            doc.text(headerText2, doc.internal.pageSize.width / 2 - headerWidth2 / 2, 0.5);
+
+            doc.setFontSize(10);
+            // doc.setTextColor(0, 128, 0); // Change the text color to green
+            doc.setFont('bold');
+            const headerText3 = "R. Raymundo Pawnshop Co Inc";
+            const headerWidth3 = doc.getTextWidth(headerText3);
+            doc.text(headerText3, doc.internal.pageSize.width / 2 - headerWidth3 / 2, 0.7);
             
             // Add additional content to the header
             doc.setFontSize(12);
             doc.setFont('normal');
-            const headerText2 = 'Created on: ' + new Date().toLocaleDateString()
-            const headerWidth2 = doc.getTextWidth(headerText2);
-            doc.text(doc.internal.pageSize.width / 2 - headerWidth2 / 2, 0.5, headerText);
-
-            doc.setFontSize(10);
-            doc.setTextColor(0, 128, 0); // Change the text color to green
-            doc.setFont('bold');
-            doc.text('My Document', data.settings.margin.left, 0.7);
-
-            doc.setFontSize(10);
-            doc.setTextColor(0, 128, 0); // Change the text color to green
-            doc.setFont('bold');
-            doc.text('My Document', data.settings.margin.left, 0.9);
+            const headerText4 = ptData[0].loanDate + ""
+            const headerWidth4 = doc.getTextWidth(headerText4);
+            doc.text(headerText4, doc.internal.pageSize.width / 2 - headerWidth4 / 2, 0.9);
         };
 
         // Define the footer function
         const footer = (data) => {
-            const pageCount = doc.internal.getNumberOfPages();
+            // const pageCount = doc.internal.getNumberOfPages();
             doc.setFontSize(12);
             doc.setTextColor(40);
-            const footerText = "Page " + data.pageNumber + " of " + pageCount;
+            const footerText = "Page " + data.pageNumber // + " of " + pageCount;
             const footerWidth = doc.getTextWidth(footerText);
-            doc.text(`Page ${data.pageNumber} of ${pageCount}`, doc.internal.pageSize.width - data.settings.margin.right - footerWidth, doc.internal.pageSize.height - 0.5);
+            doc.text(`Page ${data.pageNumber}`, doc.internal.pageSize.width - data.settings.margin.right - footerWidth, doc.internal.pageSize.height - 0.5);
+            // doc.text(`Page ${data.pageNumber} of ${pageCount}`, doc.internal.pageSize.width - data.settings.margin.right - footerWidth, doc.internal.pageSize.height - 0.5);
         };
 
         // // Define the header data for the table
