@@ -139,29 +139,33 @@ function AppraisalTransactionID({
 		// console.log("item list:", itemList);
 		// console.log("price:", appraisalPrice);
 		setLoading(true);
-		if (deleteList.length > 0) {
-			fetch("/api/pawn/removeItem", {
+		if (appraisalPrice > 0) {
+			if (deleteList.length > 0) {
+				fetch("/api/pawn/removeItem", {
+					method: "POST",
+					body: JSON.stringify(deleteList),
+				});
+			}
+			fetch("/api/pawn/itemAppraisal", {
 				method: "POST",
-				body: JSON.stringify(deleteList),
-			});
+				body: JSON.stringify({
+					itemList: itemList,
+					appraisalPrice: appraisalPrice,
+					transactionID: transactionData._id,
+				}),
+			})
+				.then((res) => res.json())
+				.then((data) => {
+					console.log("DATA IS:", data);
+					if (data == "success") {
+						router.replace("/");
+					} else {
+						router.reload();
+					}
+				});
+		} else {
+			setRejectShow(true);
 		}
-		fetch("/api/pawn/itemAppraisal", {
-			method: "POST",
-			body: JSON.stringify({
-				itemList: itemList,
-				appraisalPrice: appraisalPrice,
-				transactionID: transactionData._id,
-			}),
-		})
-			.then((res) => res.json())
-			.then((data) => {
-				console.log("DATA IS:", data);
-				if (data == "success") {
-					router.replace("/");
-				} else {
-					router.reload();
-				}
-			});
 	}
 
 	return (

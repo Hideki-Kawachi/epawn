@@ -140,8 +140,6 @@ function NegotiationTransactionID({
 	}
 
 	function submitForm() {
-		console.log("SUBMIT FORM");
-
 		setLoading(true);
 		fetch("/api/pawn/updateItem", {
 			method: "POST",

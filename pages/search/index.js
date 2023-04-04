@@ -54,7 +54,9 @@ export const getServerSideProps = withIronSessionSsr(
 					middleName: 1,
 					lastName: 1,
 				}
-			).lean();
+			)
+				.sort({ userID: -1 })
+				.lean();
 
 			let itemInfo = await Item.find({}).sort({ itemID: -1 }).lean();
 
