@@ -62,6 +62,7 @@ function RedeemClerk({ currentUser }) {
 	const [amountToPay, setAmountToPay] = useState();
 	const [partialPayment, setPartialPayment] = useState(0);
 	const [isOriginal, setOriginal] = useState("original");
+	const [pawnHistory, setPawnHistory] = useState();
 	//Array for Redeem
 	const [redeem, setRedeem] = useState([]);
 	const [redeemArray, setRedeemArray] = useState([]);
@@ -278,6 +279,24 @@ function RedeemClerk({ currentUser }) {
 						// setitemList(JSON.parse(data));
 					}
 				});
+				fetch("/api/clerkPawnHistory/" + itemListID, {
+					method: "GET",
+					headers: {
+						Accept: "application/json",
+						"Content-Type": "application/json",
+					},
+				})
+					.then((res) => res.json())
+					.then((history) => {
+						if(history != "error"){
+							console.log("Pawn history found: " + history)
+							setPawnHistory(history)
+						}
+						else{
+						setPawnHistory([])
+						console.log("Pawn history NOT found")
+						}
+					})
 		}
 	}, [itemListID]);
 
@@ -581,6 +600,7 @@ function RedeemClerk({ currentUser }) {
 						partialPayment={partialPayment}
 						isOriginal={isOriginal}
 						setOriginal={setOriginal}
+						pawnHistory={pawnHistory}
 					/>
 				</div>
 

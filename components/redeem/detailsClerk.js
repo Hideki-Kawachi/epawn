@@ -26,6 +26,7 @@ function DetailsCardClerk({
 	setAuthStatus,
 	authProof,
 	setAuthProof,
+	pawnHistory
 }) {
 	const [repModal, setRepModal] = useState(false);
 	const [customerModal, setCustomerModal] = useState(false);
@@ -234,7 +235,7 @@ function DetailsCardClerk({
 				</Modal>
 
 				<Modal isOpen={historyModal} ariaHideApp={false} className="modal">
-					<PawnHistory trigger={historyModal} setTrigger={setHistoryModal} />
+					<PawnHistory trigger={historyModal} setTrigger={setHistoryModal} pawnTicketID = {PTNumber} pawnHistory = {pawnHistory}/>
 				</Modal>
 
 				<Modal isOpen={customerModal} ariaHideApp={false} className="modal">
@@ -278,7 +279,7 @@ function DetailsCardClerk({
 						{/* View Customer Details Button */}
 						<span
 							className="inline-block ml-3 hover:cursor-pointer"
-							onClick={customerOpen}
+							onClick={mode ? null : customerOpen}
 						>
 							<svg
 								width="30 "
@@ -362,7 +363,7 @@ function DetailsCardClerk({
 						Pawn Details:
 						<span
 							className="inline-block px-2 ml-3 hover:cursor-pointer"
-							onClick={historyOpen}
+							onClick={mode ? null : historyOpen}
 						>
 							<svg
 								width="30 "
