@@ -22,7 +22,7 @@ export default async function newManagerRedeem(req, res) {
 		{ _id: body.transactionID },
 		{
 			amountPaid: body.totalAmount,
-			status: "Approved",
+			status: "Done",
 		}
 	);
 

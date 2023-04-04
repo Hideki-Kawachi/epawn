@@ -145,14 +145,16 @@ function RedeemManager({ currentUser, transactionData, pawnHistory, branchData }
 
 	const [sendForm, setSendForm] = useState(false);
 
-	function submitForm() {
+	function approveForm() {
 		setSubmitOpen(true);
 	}
 
 	function cancelForm() {
 		setCancelOpen(true);
 	}
-
+	function submitForm(){
+		setSendForm(true)
+	}
 	function rejectForm() {
 		setRejectModal(true);
 	}
@@ -448,6 +450,7 @@ function RedeemManager({ currentUser, transactionData, pawnHistory, branchData }
 					setSendForm={setSendForm}
 					sendForm={sendForm}
 					amountToPay={amountToPay}
+					submitForm={submitForm}
 				/>
 			</Modal>
 
@@ -561,7 +564,7 @@ function RedeemManager({ currentUser, transactionData, pawnHistory, branchData }
 					<div>
 						<button
 							className="px-10 mx-2 my-5 text-base text-white bg-green-300"
-							onClick={submitForm}
+							onClick={approveForm}
 						>
 							Approve
 						</button>
