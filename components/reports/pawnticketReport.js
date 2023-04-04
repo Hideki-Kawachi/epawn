@@ -143,7 +143,7 @@ function PawnTicketReport({
 
 	function printReport() {
 
-		printReportPTData(data)
+		printReportPTData(data, startDate, endDate)
 
 
 		// let header = [
