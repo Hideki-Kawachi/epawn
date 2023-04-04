@@ -17,7 +17,8 @@ import printReceipt from "../../../utilities/printReceipt";
 import dbConnect from "../../../utilities/dbConnect";
 import Transaction from "../../../schemas/transaction";
 import mongoose from "mongoose";
-
+import PawnTicket from "../../../schemas/pawnTicket";
+import Branch from "../../../schemas/branch"
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req, query }) {
 		if (!req.session.userData) {
@@ -31,10 +32,63 @@ export const getServerSideProps = withIronSessionSsr(
 				let transactionInfo = await Transaction.findById(
 					new mongoose.Types.ObjectId(query.transactionID)
 				);
+				console.log("transaction is " + transactionInfo)
+				
+				
+				let br = await Branch.findOne({
+					branchID : transactionInfo.branchID
+				})
+
+				let pawnTicketData = await PawnTicket.find({
+					itemListID : transactionInfo.itemListID
+				}).sort({loanDate: -1})
+
+				let pawnHistory = []
+				
+				for (let ticket of pawnTicketData){
+					let transaction = await Transaction.findOne({ 
+						_id: ticket.transactionID,
+						status : "Done" || "Approved",
+						})
+					
+						let branch = await Branch.findOne({
+							branchID : transaction.branchID
+						})	
+						let amountPaid = 0
+						if (transaction.amountPaid > 0 ){
+							amountPaid = transaction.amountPaid
+						}
+						else 
+							amountPaid = 0
+
+					if (branch && transaction){
+						pawnHistory.push({
+							pawnTicketID: ticket.pawnTicketID,
+							transactionType: transaction.transactionType,
+							branchID : branch.branchName,
+							loanDate: dayjs(ticket.loanDate).format('MM/DD/YYYY'),
+						
+							amountPaid : "Php " + amountPaid.toLocaleString("en-US", {
+								minimumFractionDigits: 2,
+								maximumFractionDigits: 2,
+							  }),
+							loanAmount : "Php " + ticket.loanAmount.toLocaleString("en-US", {
+								minimumFractionDigits: 2,
+								maximumFractionDigits: 2,
+							  })
+						})
+					}
+
+				}
+
+				//console.log("Pawn History is: " +  pawnHistory);
+		
 				return {
 					props: {
 						currentUser: req.session.userData,
 						transactionData: JSON.parse(JSON.stringify(transactionInfo)),
+						pawnHistory: JSON.parse(JSON.stringify(pawnHistory)),
+						branchData: JSON.parse(JSON.stringify(br))
 					},
 				};
 			}
@@ -55,7 +109,7 @@ export const getServerSideProps = withIronSessionSsr(
 	ironOptions
 );
 
-function RedeemManager({ currentUser, transactionData }) {
+function RedeemManager({ currentUser, transactionData, pawnHistory, branchData }) {
 	// Modals
 	const [submitModal, setSubmitOpen] = useState(false); //Submit
 	const [cancelModal, setCancelOpen] = useState(false); //Cancel
@@ -111,6 +165,13 @@ function RedeemManager({ currentUser, transactionData }) {
 			</>
 		);
 	}
+
+	function convertFloat(number) {
+		return Number(number).toLocaleString("en-US", {
+		  minimumFractionDigits: 2,
+		  maximumFractionDigits: 2,
+		});
+	}
 	function cancelContentShow() {
 		return (
 			<>
@@ -120,6 +181,7 @@ function RedeemManager({ currentUser, transactionData }) {
 			</>
 		);
 	}
+	
 
 	// function getNewLoanDate() {
 	// 	const dt = new Date();
@@ -415,7 +477,8 @@ function RedeemManager({ currentUser, transactionData }) {
 				<div className="flex">
 					<DetailsCardRedeemManager
 						pawnTicket={ptInfo}
-						branch={branch}
+						pawnHistory={pawnHistory}
+						branch={branchData.branchName}
 						PTNumber={PTNumber}
 						user={userInfo}
 						customer={customerDetails}

@@ -7,27 +7,28 @@ import {
 	useGlobalFilter,
 	usePagination,
 } from "react-table";
+import { isObjectIdOrHexString } from "mongoose";
 
-function PawnHistory({ trigger, setTrigger }) {
-	const data = React.useMemo(() => pawnhistoryMock, []);
+function PawnHistory({ trigger, setTrigger, pawnHistory, pawnTicketID }) {
+	const data = React.useMemo(() => pawnHistory, []);
 	const columns = React.useMemo(
 		() => [
-			{ Header: "PT Number", accessor: "PT Number" },
+			{ Header: "PT Number", accessor: "pawnTicketID" },
 			{
 				Header: "Transaction",
-				accessor: "Transaction Type",
+				accessor: "transactionType",
 				disableGlobalFilter: true,
 			},
-			{ Header: "Branch", accessor: "Branch", disableGlobalFilter: true },
-			{ Header: "Date", accessor: "Date", disableGlobalFilter: true },
+			{ Header: "Branch", accessor: "branchID", disableGlobalFilter: true },
+			{ Header: "Date", accessor: "loanDate", disableGlobalFilter: true },
 			{
 				Header: "Amount Paid",
-				accessor: "Amount Paid",
+				accessor: "amountPaid",
 				disableGlobalFilter: true,
 			},
 			{
 				Header: "Loan Amount",
-				accessor: "Loan Amount",
+				accessor: "loanAmount",
 				disableGlobalFilter: true,
 			},
 		],
@@ -60,6 +61,8 @@ function PawnHistory({ trigger, setTrigger }) {
 		usePagination
 	);
 
+	const isDataEmpty = pawnHistory.length === 0
+
 	return (
 		<>
 			<div id="modal-content-area">
@@ -69,10 +72,11 @@ function PawnHistory({ trigger, setTrigger }) {
 					</div>
 					<div>
 						<p className="mb-5 text-lg font-bold text-center font-dosis">
-							Pawn History of A-XXXX
+							Pawn History of {pawnTicketID}
 						</p>
 					</div>
 					<div>
+						{ !isDataEmpty ? ( 
 						<table
 							className="table-auto text-sm font-nunito text-center w-[950px] h-80 divide-y divide-gray-200 border border-separate rounded-t-xl bg-green-300"
 							{...getTableProps()}
@@ -127,6 +131,14 @@ function PawnHistory({ trigger, setTrigger }) {
 								})}
 							</tbody>
 						</table>
+						) : (
+						<div>
+							<div className = "font-nunito text-gray-400 text-lg text-center font-bold pt-20 pb-32">
+									
+									No past transactions
+							</div>
+						</div>		
+						)}
 					</div>
 				</div>
 			</div>

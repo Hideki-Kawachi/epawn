@@ -6,7 +6,7 @@ import PawnHistory from "../modals/pawnHistory";
 import dayjs from "dayjs";
 import AuthorizedRepDetails from "../modals/authorizedRepDetails";
 function DetailsCardRedeemManager({ pawnTicket, PTNumber, customer, user, branch, getNewLoan,
-  amountToPay, redeemer, isOriginal, partialPayment,
+  amountToPay, redeemer, isOriginal, partialPayment, pawnHistory
 }) {
   const [customerModal, setCustomerModal] = useState(false);
   const [computationModal, setCompOpen] = useState(false);
@@ -161,7 +161,7 @@ function DetailsCardRedeemManager({ pawnTicket, PTNumber, customer, user, branch
         className="drop-shadow-lg flex text-base font-nunito pr-10"
       >
         <Modal isOpen={historyModal} ariaHideApp={false} className="modal">
-          <PawnHistory trigger={historyModal} setTrigger={setHistoryModal} />
+          <PawnHistory trigger={historyModal} setTrigger={setHistoryModal} pawnHistory = {pawnHistory} pawnTicketID = {PTNumber}/>
         </Modal>
 
         <Modal isOpen={computationModal} ariaHideApp={false} className="modal">
