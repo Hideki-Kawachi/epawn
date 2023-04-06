@@ -57,6 +57,8 @@ function ItemCategoryReport({
 		//Get all items
 		let tempIDList = [];
 
+        let itemCatList = [];
+
 		for (const pt of pawnTicketData) {
 			let currTransaction = transactionData.find((transac) => {
 				// console.log("transac:", transac._id, "--", pt.transactionID);
@@ -69,32 +71,35 @@ function ItemCategoryReport({
 				// return pt.branchID
 			});
 
-			for (const item of itemData)
-			{
+			for (const item of itemData){
 				if (item.itemListID == pt.itemListID)  {
 
 					//If item does not exist in the ID List, extract the items and push it into tempData
 					if ( !(tempIDList.includes(item.itemID)) ) {
-						tempData.push({
-							itemID: item.itemID,
-							branchName: currBranch.branchName,
-							loanDate: dayjs(new Date(pt.loanDate)).format("MMM DD, YYYY"),
-							itemType: item.itemType,
-							itemCategory: item.itemCategory,
-							itemDesc: item.description,
-							loanAmount: pt.loanAmount?.toFixed(2)
-						});
+
+                        if ( !(itemCatList.some(obj => obj.itemCategory === item.itemCategory) ) ) {
+                            itemCatList.push({
+                                itemCategory: item.itemCategory, 
+                                loanAmount: pt.loanAmount.toFixed(2)
+                            })
+
+                        } else {
+							let index = itemCatList.findIndex(obj => obj.itemCategory == item.itemCategory)
+							let newVal = parseFloat(itemCatList[index].loanAmount) + pt.loanAmount
+							itemCatList[index].loanAmount = newVal.toFixed(2)
+                        }
 
 						tempIDList.push(item.itemID);
 					}
-
 				}
-
-				// console.log(tempIDList)
 			}
 		}
-		setData(tempData);
+
+		// itemTypeList = itemTypeList.map(obj => obj.loanAmount.toFixed(2));
+
+		setData(itemCatList);
 	}
+
 
 	const columns = React.useMemo(
 		() => [

@@ -71,53 +71,32 @@ function ItemTypeReport({
 				// return pt.branchID
 			});
 
-			for (const item of itemData)
-			{
+			for (const item of itemData) {
 				if (item.itemListID == pt.itemListID)  {
 
 					//If item does not exist in the ID List, extract the items and push it into tempData
 					if ( !(tempIDList.includes(item.itemID)) ) {
 
-                        // let exists = itemTypeList.some(obj => obj.name === item.itemType);
-
                         if ( !(itemTypeList.some(obj => obj.itemType === item.itemType) ) ) {
-
-                            
-                            console.log("hi")
-
                             itemTypeList.push({
                                 itemType: item.itemType, 
-                                loanAmount: 0
+                                loanAmount: pt.loanAmount.toFixed(2)
                             })
 
                         } else {
-                            console.log("hello")
-                            // tempData[itemTypeList.indexOf(item.itemType)].loanAmount += pt.loanAmount?.toFixed(2) 
-
-                            
+							let index = itemTypeList.findIndex(obj => obj.itemType == item.itemType)
+							let newVal = parseFloat(itemTypeList[index].loanAmount) + pt.loanAmount
+							itemTypeList[index].loanAmount = newVal.toFixed(2)
                         }
-                        
-                        console.log(itemTypeList)
-
-						// tempData.push({
-						// 	itemID: item.itemID,
-						// 	branchName: currBranch.branchName,
-						// 	loanDate: dayjs(new Date(pt.loanDate)).format("MMM DD, YYYY"),
-						// 	itemType: item.itemType,
-						// 	itemCategory: item.itemCategory,
-						// 	itemDesc: item.description,
-						// 	loanAmount: pt.loanAmount?.toFixed(2)
-						// });
 
 						tempIDList.push(item.itemID);
 					}
-
 				}
 
-				// console.log(tempIDList)
 			}
 		}
-		setData(tempIDList);
+
+		setData(itemTypeList);
 	}
 
 	const columns = React.useMemo(
