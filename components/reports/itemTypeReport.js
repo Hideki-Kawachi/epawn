@@ -78,7 +78,9 @@ function ItemTypeReport({
 					//If item does not exist in the ID List, extract the items and push it into tempData
 					if ( !(tempIDList.includes(item.itemID)) ) {
 
-                        if ( !(itemTypeList.findIndex((itemName) => itemName.itemType === item.itemType) ) ) {
+                        // let exists = itemTypeList.some(obj => obj.name === item.itemType);
+
+                        if ( !(itemTypeList.some(obj => obj.itemType === item.itemType) ) ) {
 
                             
                             console.log("hi")
@@ -87,13 +89,15 @@ function ItemTypeReport({
                                 itemType: item.itemType, 
                                 loanAmount: 0
                             })
+
                         } else {
-                            // console.log("hello")
+                            console.log("hello")
                             // tempData[itemTypeList.indexOf(item.itemType)].loanAmount += pt.loanAmount?.toFixed(2) 
 
                             
                         }
-
+                        
+                        console.log(itemTypeList)
 
 						// tempData.push({
 						// 	itemID: item.itemID,
