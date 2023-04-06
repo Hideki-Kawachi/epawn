@@ -11,7 +11,7 @@ import {
 import { utils, writeFile, writeFileXLSX, writeXLSX } from "xlsx";
 import printReportPTData from "../../utilities/printReportPTData";
 
-function ItemTicketReport({
+function ItemReport({
 	pawnTicketData,
 	userData,
 	itemData,
@@ -299,4 +299,4 @@ function ItemTicketReport({
 	);
 }
 
-export default ItemTicketReport;
+export default ItemReport;

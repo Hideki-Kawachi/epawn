@@ -12,7 +12,7 @@ import CustomerSearch from "../../components/search/customerSearch";
 import ItemSearch from "../../components/search/itemSearch";
 import Transaction from "../../schemas/transaction";
 import PawnTicketReport from "../../components/reports/pawnticketReport";
-import ItemTicketReport from "../../components/reports/itemTicketReport";
+import ItemReport from "../../components/reports/itemReport";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {
@@ -147,14 +147,14 @@ function Reports({
 			// 	userData={userData}
 			// 	itemData={itemData}
 			// ></ItemSearch>
-			<ItemTicketReport
+			<ItemReport
 				pawnTicketData={pawnTicketData}
 				userData={userData}
 				itemData={itemData}
 				branchData={branchData}
 				transactionData={transactionData}
 			>
-			</ItemTicketReport>
+			</ItemReport>
 		),
 	};
 
