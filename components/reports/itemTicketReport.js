@@ -53,6 +53,10 @@ function ItemTicketReport({
 
 	function getData() {
 		let tempData = [];
+
+		//Get all items
+		let tempIDList = [];
+
 		for (const pt of pawnTicketData) {
 			let currTransaction = transactionData.find((transac) => {
 				// console.log("transac:", transac._id, "--", pt.transactionID);
@@ -65,21 +69,27 @@ function ItemTicketReport({
 				// return pt.branchID
 			});
 
-
 			for (const item of itemData)
 			{
 				if (item.itemListID == pt.itemListID)  {
-					tempData.push({
-						itemID: item.itemID,
-						branchName: currBranch.branchName,
-						loanDate: dayjs(new Date(pt.loanDate)).format("MMM DD, YYYY"),
-						itemType: item.itemType,
-						itemCategory: item.itemCategory,
-						itemDesc: item.description,
-						loanAmount: pt.loanAmount?.toFixed(2)
-					});
+
+					if ( !(tempIDList.includes(item.itemID)) ) {
+						tempData.push({
+							itemID: item.itemID,
+							branchName: currBranch.branchName,
+							loanDate: dayjs(new Date(pt.loanDate)).format("MMM DD, YYYY"),
+							itemType: item.itemType,
+							itemCategory: item.itemCategory,
+							itemDesc: item.description,
+							loanAmount: pt.loanAmount?.toFixed(2)
+						});
+
+						tempIDList.push(item.itemID);
+					}
 
 				}
+
+				console.log(tempIDList)
 			}
 
 			// console.log("curr:", currTransaction);
