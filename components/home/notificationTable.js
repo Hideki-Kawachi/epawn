@@ -101,37 +101,45 @@ function NotificationTable({ role, data }) {
 		else if (role == "clerk") {
 			//if pawn
 			if (rowData.transactionType == "Pawn") {
-				if (rowData.status == "Appraised") {
-					router.push({
-						pathname: "/pawn/clerk/ongoingTransaction/[transactionID]",
-						query: { transactionID: rowData._id },
-					});
-				} else if (rowData.status == "Rejected") {
-					router.push({
-						pathname: "/pawn/clerk/rejected/[transactionID]",
-						query: { transactionID: rowData._id },
-					});
-				} else if (rowData.status == "Approved") {
-					router.push({
-						pathname: "/pawn/clerk/approved/[transactionID]",
-						query: { transactionID: rowData._id },
-					});
-				}
-			}
-			//if renew
-			else if (rowData.transactionType == "Renew") {
-				if (rowData.status == "Approved") {
-					fetch("api/pawn/updateTransactionStatus", {
-						method: "POST",
-						body: JSON.stringify({
-							transactionID: rowData._id,
-							status: "Done",
-						}),
-					});
-				}
-			}
-			// console.log("CLERK", rowData);
+        if (rowData.status == "Appraised") {
+          router.push({
+            pathname: "/pawn/clerk/ongoingTransaction/[transactionID]",
+            query: { transactionID: rowData._id },
+          });
+        } else if (rowData.status == "Rejected") {
+          router.push({
+            pathname: "/pawn/clerk/rejected/[transactionID]",
+            query: { transactionID: rowData._id },
+          });
+        } else if (rowData.status == "Approved") {
+          router.push({
+            pathname: "/pawn/clerk/approved/[transactionID]",
+            query: { transactionID: rowData._id },
+          });
+        }
+      }
+      //if renew
+      else if (rowData.transactionType == "Renew") {
+        if (rowData.status == "Approved") {
+          fetch("api/pawn/updateTransactionStatus", {
+            method: "POST",
+            body: JSON.stringify({
+              transactionID: rowData._id,
+              status: "Done",
+            }),
+          });
+        }
+      } 
+	  else if (rowData.transactionType == "Redeem") {
+		if (rowData.status == "Rejected") {
+          router.push({
+            pathname: "/redeem/clerk/[rejectTransID]",
+            query: { rejectTransID: rowData._id },
+          });
 		}
+        }
+			// console.log("CLERK", rowData);
+	}
 	}
 
 	return (

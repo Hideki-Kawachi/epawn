@@ -199,23 +199,6 @@ function RedeemManager({
 		);
 	}
 
-	// function getNewLoanDate() {
-	// 	const dt = new Date();
-	// 	return dayjs(dt).format("MM/DD/YYYY");
-	// }
-
-	// function getNewMaturityDate() {
-	// 	const dt = new Date();
-	// 	const nt = new Date().setDate(dt.getDate() + 120);
-	// 	return dayjs(nt).format("MM/DD/YYYY");
-	// }
-
-	// function getNewExpiryDate() {
-	// 	const dt = new Date();
-	// 	const nt = new Date().setDate(dt.getDate() + 30);
-	// 	return dayjs(nt).format("MM/DD/YYYY");
-	// }
-
 	useEffect(() => {
 		if (transactionID != "N/A") {
 			fetch("/api/redeem/" + transactionID, {
@@ -408,7 +391,7 @@ function RedeemManager({
 				branchID: branch,
 				clerkID: transactionData.clerkID,
 				transactionType: transactionData.transactionType,
-				totalAmount: amountToPay,
+				totalAmount: redeem.payment,
 				redeemArray: redeemList,
 			};
 			if (newLoan > 0) {

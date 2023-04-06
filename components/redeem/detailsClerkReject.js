@@ -18,33 +18,35 @@ function DetailsCardClerkReject({
 	partialPayment,
 	transaction
 }) {
-	const [repModal, setRepModal] = useState(false);
-	const [customerModal, setCustomerModal] = useState(false);
-	const [historyModal, setHistoryModal] = useState(false);
-	const [totalRedeem, setTotalRedeem] = useState(0);
-	const [amountToPay, setAmountToPay] = useState(0);
-	const [loanAmount, setLoanAmount] = useState(0);
-	const [advInterest, setAdvInterest] = useState(
-		pawnTicket.loanAmount ? pawnTicket.loanAmount * 0.035 : 0
-	);
+  const [customerModal, setCustomerModal] = useState(false);
+  const [computationModal, setCompOpen] = useState(false);
+  const [cashTendered, setCashTendered] = useState(0);
+  const [historyModal, setHistoryModal] = useState(false);
+  const [authRepModal, setAuthModal] = useState(false);
+  const [loanAmount, setLoanAmount] = useState(
+    pawnTicket.loanAmount ? pawnTicket.loanAmount : 0
+  );
+  const [authRep, setAuthRep] = useState();
 
-	const [interest, setInterest] = useState(
-		pawnTicket.loanAmount
-			? pawnTicket.loanAmount *
-					0.035 *
-					monthDiff(new Date(pawnTicket.maturityDate), new Date())
-			: 0
-	);
+  //    pawnTicket.loanAmount ? pawnTicket.loanAmount : 0
 
-	const [penalties, setPenalties] = useState(
-		Number(
-			pawnTicket.loanAmount *
-				0.01 *
-				monthDiff(new Date(pawnTicket.expiryDate), new Date())
-		)
-	);
+  const [advInterest, setAdvInterest] = useState(
+    loanAmount ? loanAmount * 0.035 : 0
+  );
+  const [interest, setInterest] = useState(
+    loanAmount
+      ? loanAmount *
+          0.035 *
+          monthDiff(new Date(pawnTicket.maturityDate), new Date())
+      : 0
+  );
+  const [penalties, setPenalties] = useState(
+    Number(
+      loanAmount * 0.01 * monthDiff(new Date(pawnTicket.expiryDate), new Date())
+    )
+  );
 
-	const [PT, setPT] = useState();
+  const [newLoanAmount, setNewLoanAmount] = useState(0);
 	function repOpen() {
 		setRepModal(true);
 		// console.log("Auth Data is" + JSON.stringify(authData))
@@ -120,7 +122,6 @@ function DetailsCardClerkReject({
 		else return fname + " " + mname + " " + lname;
 	}
 
-	const [newLoanAmount, setNewLoanAmount] = useState(0);
 
 	function monthDiff(dateFrom, dateTo) {
 		let diff =
@@ -135,74 +136,8 @@ function DetailsCardClerkReject({
 		}
 	}
 
-	// SET TOTAL ITEMS FOR REDEMPTION PRICE WHEN REDEEM ITEM LIST IS UPDATED
-	useEffect(() => {
-		// console.log("updated redeem");
-		if (redeem.length == 0) {
-			setTotalRedeem(0);
-		} else if (getTotalRedeem(redeem) - partialPayment > 0) {
-			setTotalRedeem(getTotalRedeem(redeem));
-		}
-	}, [redeem]);
 
-	// SET AMOUNT TO PAY WHEN TOTAL REDEEM OR INTEREST GETS UPDATED
-	useEffect(() => {
-		if (totalRedeem > 0) {
-			setAmountToPay(
-				getTotalRedeem(redeem) - partialPayment + advInterest + interest
-			);
-		} else setAmountToPay(0);
-	}, [totalRedeem, advInterest]);
-
-	useEffect(() => {
-		// console.log("amount to pay use effect");
-		if (amountToPay > 0) {
-			let newLoan = pawnTicket.loanAmount - amountToPay;
-			let tempAdvInterest = 0;
-			// console.log("entering");
-
-			if (newLoan > pawnTicket.loanAmount) {
-				setNewLoanAmount(pawnTicket.loanAmount);
-				setAdvInterest(pawnTicket.loanAmount * 0.035);
-			} else {
-				tempAdvInterest = newLoan * 0.035;
-				setAdvInterest(tempAdvInterest);
-				setNewLoanAmount(newLoan);
-			}
-			// if (amountToPay >= newLoanAmount)
-		} else {
-			setAdvInterest(0);
-			setNewLoanAmount(0);
-			// setMinPayment(pawnTicket.loanAmount * 0.035 + interest + penalties);
-		}
-	}, [amountToPay]);
-
-	useEffect(() => {
-		setLoanAmount(pawnTicket.loanAmount ? pawnTicket.loanAmount : 0);
-		setPenalties(
-			pawnTicket.loanAmount *
-				0.01 *
-				monthDiff(new Date(pawnTicket.expiryDate), new Date())
-		);
-		setInterest(
-			pawnTicket.loanAmount *
-				0.035 *
-				monthDiff(new Date(pawnTicket.maturityDate), new Date())
-		);
-	}, [pawnTicket, loanAmount]);
-
-	useEffect(() => {
-		getAmount(amountToPay);
-	}, [amountToPay]);
-
-	useEffect(() => {
-		if (isOriginal == "original") {
-			setAuthStatus(true);
-		} else if (isOriginal == "authorized" && authRep[0].fName == "") {
-			setAuthStatus(false);
-		}
-	}, [isOriginal, authRep]);
-
+	
 	return (
 		<>
 			<div
