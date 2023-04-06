@@ -10,10 +10,8 @@ import {
 } from "react-table";
 import { utils, writeFile, writeFileXLSX, writeXLSX } from "xlsx";
 import printReportPTData from "../../utilities/printReportPTData";
-import ItemCategoryReport from "./itemCategoryReport";
-import ItemTypeReport from "./itemTypeReport";
 
-function ItemReport({
+function ItemCategoryReport({
 	pawnTicketData,
 	userData,
 	itemData,
@@ -94,50 +92,19 @@ function ItemReport({
 
 				// console.log(tempIDList)
 			}
-
-			// console.log("curr:", currTransaction);
-
-
-			// tempData.push({
-			// 	pawnTicketID: pt.pawnTicketID,
-			// 	branchName: currBranch.branchName,
-			// 	status: status,
-			// 	loanDate: dayjs(new Date(pt.loanDate)).format("MMM DD, YYYY"),
-			// 	// maturityDate: dayjs(new Date(pt.maturityDate)).format("MMM DD, YYYY"),
-			// 	// expiryDate: dayjs(new Date(pt.expiryDate)).format("MMM DD, YYYY"),
-			// 	loanAmount: pt.loanAmount?.toFixed(2),
-			// });
 		}
 		setData(tempData);
 	}
 
 	const columns = React.useMemo(
 		() => [
-			{
-				Header: "Item ID",
-				accessor: "itemID"
-
-				// Header: "PT Number",
-				// accessor: "pawnTicketID",
-			},
-			{ Header: "Branch", accessor: "branchName" },
-			{
-				Header: "Loan Date",
-				accessor: "loanDate",
-				filter: "between",
-				disableGlobalFilter: true,
-			},
-			{
-				Header: "Item Type",
-				accessor: "itemType",
-			},
+			// {
+			// 	Header: "Item Type",
+			// 	accessor: "itemType",
+			// },
 			{
 				Header: "Item Category",
 				accessor:  "itemCategory",
-			},
-			{
-				Header: "Item Description",
-				accessor: "itemDesc",
 			},
 			{
 				Header: "Amount of Loan",
@@ -298,26 +265,9 @@ function ItemReport({
 				</button>{" "}
 			</div>
 
-			<ItemCategoryReport
-				pawnTicketData={pawnTicketData}
-				userData={userData}
-				itemData={itemData}
-				branchData={branchData}
-				transactionData={transactionData}
-			>
-			</ItemCategoryReport>
-
-			<ItemTypeReport
-				pawnTicketData={pawnTicketData}
-				userData={userData}
-				itemData={itemData}
-				branchData={branchData}
-				transactionData={transactionData}
-			>
-			</ItemTypeReport>
-			
+            
 		</>
 	);
 }
 
-export default ItemReport;
+export default ItemCategoryReport;

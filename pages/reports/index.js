@@ -13,6 +13,7 @@ import ItemSearch from "../../components/search/itemSearch";
 import Transaction from "../../schemas/transaction";
 import PawnTicketReport from "../../components/reports/pawnticketReport";
 import ItemReport from "../../components/reports/itemReport";
+import ItemSummaryReport from "../../components/reports/itemCategoryReport";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {
@@ -155,6 +156,7 @@ function Reports({
 				transactionData={transactionData}
 			>
 			</ItemReport>
+			
 		),
 	};
 
