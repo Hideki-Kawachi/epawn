@@ -73,6 +73,7 @@ function ItemTicketReport({
 			{
 				if (item.itemListID == pt.itemListID)  {
 
+					//If item does not exist in the ID List, extract the items and push it into tempData
 					if ( !(tempIDList.includes(item.itemID)) ) {
 						tempData.push({
 							itemID: item.itemID,
