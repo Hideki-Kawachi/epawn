@@ -59,22 +59,41 @@ function ItemTicketReport({
 				return transac._id.toString() == pt.transactionID;
 			});
 
-			// console.log("curr:", currTransaction);
-
 			let currBranch = branchData.find((branch) => {
 				return branch.branchID == currTransaction.branchID;
+
+				// return pt.branchID
 			});
 
 
-			tempData.push({
-				pawnTicketID: pt.pawnTicketID,
-				branchName: currBranch.branchName,
-				status: status,
-				loanDate: dayjs(new Date(pt.loanDate)).format("MMM DD, YYYY"),
-				// maturityDate: dayjs(new Date(pt.maturityDate)).format("MMM DD, YYYY"),
-				// expiryDate: dayjs(new Date(pt.expiryDate)).format("MMM DD, YYYY"),
-				loanAmount: pt.loanAmount?.toFixed(2),
-			});
+			for (const item of itemData)
+			{
+				if (item.itemListID == pt.itemListID)  {
+					tempData.push({
+						itemID: item.itemID,
+						branchName: currBranch.branchName,
+						loanDate: dayjs(new Date(pt.loanDate)).format("MMM DD, YYYY"),
+						itemType: item.itemType,
+						itemCategory: item.itemCategory,
+						itemDesc: item.description,
+						loanAmount: pt.loanAmount?.toFixed(2)
+					});
+
+				}
+			}
+
+			// console.log("curr:", currTransaction);
+
+
+			// tempData.push({
+			// 	pawnTicketID: pt.pawnTicketID,
+			// 	branchName: currBranch.branchName,
+			// 	status: status,
+			// 	loanDate: dayjs(new Date(pt.loanDate)).format("MMM DD, YYYY"),
+			// 	// maturityDate: dayjs(new Date(pt.maturityDate)).format("MMM DD, YYYY"),
+			// 	// expiryDate: dayjs(new Date(pt.expiryDate)).format("MMM DD, YYYY"),
+			// 	loanAmount: pt.loanAmount?.toFixed(2),
+			// });
 		}
 		setData(tempData);
 	}
@@ -82,15 +101,13 @@ function ItemTicketReport({
 	const columns = React.useMemo(
 		() => [
 			{
-				Header: "PT Number",
-				accessor: "pawnTicketID",
+				Header: "Item ID",
+				accessor: "itemID"
+
+				// Header: "PT Number",
+				// accessor: "pawnTicketID",
 			},
 			{ Header: "Branch", accessor: "branchName" },
-			{
-				Header: "Status",
-				accessor: "status",
-				disableGlobalFilter: true,
-			},
 			{
 				Header: "Loan Date",
 				accessor: "loanDate",
@@ -98,14 +115,16 @@ function ItemTicketReport({
 				disableGlobalFilter: true,
 			},
 			{
-				Header: "Maturity Date",
-				accessor: "maturityDate",
-				disableGlobalFilter: true,
+				Header: "Item Type",
+				accessor: "itemType",
 			},
 			{
-				Header: "Expiry Date",
-				accessor: "expiryDate",
-				disableGlobalFilter: true,
+				Header: "Item Category",
+				accessor:  "itemCategory",
+			},
+			{
+				Header: "Item Description",
+				accessor: "itemDesc",
 			},
 			{
 				Header: "Amount of Loan",
@@ -146,45 +165,11 @@ function ItemTicketReport({
 
 	function printReport() {
 		printReportPTData(data, startDate, endDate);
-
-		let header = [
-			[
-				"PT Number",
-				"Branch",
-				"Status",
-				"Loan Date",
-				"Maturity Date",
-				"Expiry Date",
-				"Amount of Loan",
-			],
-		];
-		const workSheet = utils.json_to_sheet([]);
-		const workBook = utils.book_new();
-		const columnSizes = [
-			{ wch: 10 },
-			{ wch: 20 },
-			{ wch: 15 },
-			{ wch: 15 },
-			{ wch: 15 },
-			{ wch: 15 },
-			{ wch: 15 },
-		];
-
-		workSheet["!cols"] = columnSizes;
-		utils.sheet_add_aoa(workSheet, header);
-		utils.sheet_add_json(workSheet, data, { origin: "A2", skipHeader: true });
-		utils.book_append_sheet(workBook, workSheet, "PT_Report");
-		writeFileXLSX(
-			workBook,
-			"PT_Report(" + dayjs().format("MM-DD-YYYY") + ").xlsx",
-			{
-				bookType: "xlsx",
-			}
-		);
 	}
 
 	return (
 		<>
+			{/* Filter  */}
 			<div className="flex items-center self-start w-full gap-2 my-5 text-sm font-nunito whitespace-nowrap ">
 				<span className="ml-5">Starting Date: </span>
 				<input
@@ -230,6 +215,7 @@ function ItemTicketReport({
 					Generate Report
 				</button>
 			</div>
+			{/* Table */}
 			<table {...getTableProps()} className="w-full text-sm">
 				<thead>
 					{headerGroups.map((headerGroup) => (
