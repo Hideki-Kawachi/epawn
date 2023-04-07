@@ -92,6 +92,8 @@ function CashFlowReport({
 
 				let index = tempData.findIndex(obj => obj.transactDate == (dayjs(new Date(currTransaction.creationDate)).format("MMM DD, YYYY")) )
 
+				console.log(index)
+
 				let newVal;
 				let newTotal;
 
@@ -103,8 +105,13 @@ function CashFlowReport({
 					tempData[index].cashOutAmount = newVal.toFixed(2)
 				}
 
-				newTotal = parseFloat(tempData[index].netCashFlow) + parseFloat(currTransaction.amountPaid)
-				tempData[index].netCashFlow = newTotal.toFixed(2)
+				if (index != 0){
+					newTotal = parseFloat(tempData[index - 1].netCashFlow) + parseFloat(currTransaction.amountPaid)
+					tempData[index].netCashFlow = newTotal.toFixed(2)
+				} else {
+					newTotal = parseFloat(tempData[index].netCashFlow) + parseFloat(currTransaction.amountPaid)
+					tempData[index].netCashFlow = newTotal.toFixed(2)
+				}
 
 
 			}
