@@ -11,12 +11,12 @@ export default function printReportItemData(ptData, startDate, endDate) {
 
 	ptData.forEach((row) =>
 		tempData.push([
-			row.pawnTicketID,
+			row.itemID,
 			row.branchName,
-			row.status,
 			row.loanDate,
-			row.maturityDate,
-			row.expiryDate,
+			row.itemType,
+			row.itemCategory,
+			row.itemDesc,
 			row.loanAmount,
 		])
 	);
@@ -97,16 +97,18 @@ export default function printReportItemData(ptData, startDate, endDate) {
 	// // Define the header data for the table
 	const tableHeader = [
 		[
-			"PT-Number",
+			"Item ID",
 			"Branch",
-			"Status",
 			"Loan Date",
-			"Maturity Date",
-			"Expiry Date",
+			"Item Type",
+			"Item Category",
+			"Item Description",
 			"Amount of Loan",
 		],
 	];
 
+
+	//For summary
     doc.autoTable({
 		head: tableHeader,
 		body: tempData,
@@ -125,6 +127,7 @@ export default function printReportItemData(ptData, startDate, endDate) {
 		},
 	});
 
+	//Real table
 	// Add the table to the document
 	doc.autoTable({
 		head: tableHeader,
