@@ -56,93 +56,74 @@ function CashFlowReport({
 	function getData() {
 		let tempData = [];
 
-		//Get all items
-		let tempIDList = [];
+		// //Get all items
+		// let tempIDList = [];
 
-		for (const pt of pawnTicketData) {
-			let currTransaction = transactionData.find((transac) => {
-				// console.log("transac:", transac._id, "--", pt.transactionID);
-				return transac._id.toString() == pt.transactionID;
-			});
-
+		for (const currTransaction of transactionData) {
 			let currBranch = branchData.find((branch) => {
 				return branch.branchID == currTransaction.branchID;
-
-				// return pt.branchID
 			});
 
-			for (const item of itemData)
-			{
-				if (item.itemListID == pt.itemListID)  {
+			tempData.push({
+				branchName: currBranch.branchName, 
+				transactDate: dayjs(new Date(currTransaction.creationDate)).format("MMM DD, YYYY"),
+				cashInAmount: currTransaction.amountPaid,
+				cashOutAmount: currTransaction.amountPaid,
+				netCashFlow:"",
 
-					//If item does not exist in the ID List, extract the items and push it into tempData
-					if ( !(tempIDList.includes(item.itemID)) ) {
-						tempData.push({
-							itemID: item.itemID,
-							branchName: currBranch.branchName,
-							loanDate: dayjs(new Date(pt.loanDate)).format("MMM DD, YYYY"),
-							itemType: item.itemType,
-							itemCategory: item.itemCategory,
-							itemDesc: item.description,
-							loanAmount: pt.loanAmount?.toFixed(2)
-						});
+			})
 
-						tempIDList.push(item.itemID);
-					}
-
-				}
-
-				// console.log(tempIDList)
-			}
-
-			// console.log("curr:", currTransaction);
-
-
-			// tempData.push({
-			// 	pawnTicketID: pt.pawnTicketID,
-			// 	branchName: currBranch.branchName,
-			// 	status: status,
-			// 	loanDate: dayjs(new Date(pt.loanDate)).format("MMM DD, YYYY"),
-			// 	// maturityDate: dayjs(new Date(pt.maturityDate)).format("MMM DD, YYYY"),
-			// 	// expiryDate: dayjs(new Date(pt.expiryDate)).format("MMM DD, YYYY"),
-			// 	loanAmount: pt.loanAmount?.toFixed(2),
-			// });
 		}
+
+		// for (const pt of pawnTicketData) {
+		// 	let currTransaction = transactionData.find((transac) => {
+		// 		// console.log("transac:", transac._id, "--", pt.transactionID);
+		// 		return transac._id.toString() == pt.transactionID;
+		// 	});
+
+		// 	let currBranch = branchData.find((branch) => {
+		// 		return branch.branchID == currTransaction.branchID;
+		// 	});
+
+		// 		// console.log(tempIDList)
+		// 	}
+
+		// 	console.log("curr:", currTransaction);
+
+
+		// 	// tempData.push({
+		// 	// 	pawnTicketID: pt.pawnTicketID,
+		// 	// 	branchName: currBranch.branchName,
+		// 	// 	status: status,
+		// 	// 	loanDate: dayjs(new Date(pt.loanDate)).format("MMM DD, YYYY"),
+		// 	// 	// maturityDate: dayjs(new Date(pt.maturityDate)).format("MMM DD, YYYY"),
+		// 	// 	// expiryDate: dayjs(new Date(pt.expiryDate)).format("MMM DD, YYYY"),
+		// 	// 	loanAmount: pt.loanAmount?.toFixed(2),
+		// 	// });
+		// }
 		setData(tempData);
 	}
 
 	const columns = React.useMemo(
 		() => [
-			{
-				Header: "Item ID",
-				accessor: "itemID"
-
-				// Header: "PT Number",
-				// accessor: "pawnTicketID",
-			},
 			{ Header: "Branch", accessor: "branchName" },
 			{
-				Header: "Loan Date",
-				accessor: "loanDate",
+				Header: "Date",
+				accessor: "transactDate",
 				filter: "between",
 				disableGlobalFilter: true,
 			},
 			{
-				Header: "Item Type",
-				accessor: "itemType",
+				Header: "Cash In",
+				accessor: "cashInAmount",
 			},
 			{
-				Header: "Item Category",
-				accessor:  "itemCategory",
+				Header: "Cash Out",
+				accessor:  "cashOutAmount",
 			},
 			{
-				Header: "Item Description",
-				accessor: "itemDesc",
-			},
-			{
-				Header: "Appraisal Price",
-				accessor: "loanAmount",
-				disableGlobalFilter: true,
+				Header: "Net Cash Flow",
+				accessor: "netCashFlow",
 			},
 		],
 		[]
