@@ -391,7 +391,7 @@ function RedeemManager({
 				branchID: branch,
 				clerkID: transactionData.clerkID,
 				transactionType: transactionData.transactionType,
-				totalAmount: redeem.payment,
+				totalAmount: amountToPay,
 				redeemArray: redeemList,
 			};
 			if (newLoan > 0) {

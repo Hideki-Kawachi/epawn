@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Header from "../../../components/header";
 import NavBar from "../../../components/navigation/navBar";
-import DetailsCard from "../../../components/redeem/detailsManager";
 import Modal from "react-modal";
 import Submit from "../../../components/modals/submitRedeem";
 import Cancel from "../../../components/modals/cancel";
@@ -10,8 +9,6 @@ import { withIronSessionSsr } from "iron-session/next";
 import { ironOptions } from "../../../utilities/config";
 import { useRouter } from "next/router";
 import dayjs from "dayjs";
-import DetailsCardRedeemManager from "../../../components/redeem/detailsManager";
-import RejectRedeemManager from "../../../components/modals/rejectRedeemManager";
 import printPawnTicket from "../../../utilities/printPawnTicket";
 import printReceipt from "../../../utilities/printReceipt";
 import dbConnect from "../../../utilities/dbConnect";
@@ -362,6 +359,8 @@ function RejectClerk({
             getNewLoan={setNewLoan}
             isOriginal={isOriginal}
             partialPayment={partialPayment}
+            redeem = {redeemList}
+            transaction = {transactionData}
           />
         </div>
 
