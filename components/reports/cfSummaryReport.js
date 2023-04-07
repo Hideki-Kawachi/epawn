@@ -12,9 +12,8 @@ import { utils, writeFile, writeFileXLSX, writeXLSX } from "xlsx";
 import ItemCategoryReport from "./itemCategoryReport";
 import ItemTypeReport from "./itemTypeReport";
 import printReportItemData from "../../utilities/printIReportItemData";
-import CFSummaryReport from "./cfSummaryReport";
 
-function CashFlowReport({
+function CFSummaryReport({
 	pawnTicketData,
 	userData,
 	itemData,
@@ -121,29 +120,56 @@ function CashFlowReport({
 			}
 		}
 
-		setData(tempData);
+		let branchList = []
+
+		for (const someItem of tempData) {
+
+			// console.log(someItem)
+
+			if ( !branchList.some((obj) => obj.branchName === someItem.branchName)) {
+
+				branchList.push({
+					branchName: someItem.branchName,
+					totalCashInAmount: someItem.cashInAmount,
+					totalCashOutAmount: someItem.cashOutAmount,
+					totalNetCashFlow: someItem.netCashFlow
+				})
+
+			} else {
+
+				console.log("hello")
+
+				let index = branchList.findIndex((obj) => obj.branchName == someItem.branchName)
+				let newCashIn = parseFloat(branchList[index].totalCashInAmount) + parseFloat(someItem.cashInAmount)
+
+				let newCashOut =  parseFloat(branchList[index].totalCashOutAmount) + parseFloat(someItem.cashOutAmount)
+				
+				branchList[index].totalCashInAmount = newCashIn.toFixed(2)
+				branchList[index].totalCashOutAmount = newCashOut.toFixed(2)
+
+				branchList[index].totalNetCashFlow = someItem.netCashFlow
+			}
+		}
+
+		
+
+		setData(branchList);
 	}
 
 	const columns = React.useMemo(
 		() => [
 			{ Header: "Branch", accessor: "branchName" },
 			{
-				Header: "Date",
-				accessor: "transactDate",
-				filter: "between",
-				disableGlobalFilter: true,
+				Header: "Total Cash In",
+				accessor: "totalCashInAmount",
 			},
 			{
-				Header: "Cash In",
-				accessor: "cashInAmount",
-			},
-			{
-				Header: "Cash Out",
-				accessor:  "cashOutAmount",
+				Header: "Total Cash Out",
+				accessor:  "totalCashOutAmount",
 			},
 			{
 				Header: "Net Cash Flow",
-				accessor: "netCashFlow",
+				accessor: "totalNetCashFlow",
 			},
 		],
 		[]
@@ -183,17 +209,6 @@ function CashFlowReport({
 
 	return (
 		<>
-
-			<CFSummaryReport
-				pawnTicketData={pawnTicketData}
-				userData={userData}
-				itemData={itemData}
-				branchData={branchData}
-				transactionData={transactionData}
-			>
-			</CFSummaryReport>
-
-
 			{/* Filter  */}
 			<div className="flex items-center self-start w-full gap-2 my-5 text-sm font-nunito whitespace-nowrap ">
 				<span className="ml-5">Starting Date: </span>
@@ -314,4 +329,4 @@ function CashFlowReport({
 	);
 }
 
-export default CashFlowReport;
+export default CFSummaryReport;
