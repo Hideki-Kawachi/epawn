@@ -17,49 +17,75 @@ function ItemCategoryReport({
 	itemData,
 	branchData,
 	transactionData,
+	startDate,
+	endDate,
+	branchFilter,
 }) {
 	const [data, setData] = useState([{}]);
-	const [startDate, setStartDate] = useState();
-	const [endDate, setEndDate] = useState();
 
 	useEffect(() => {
-		getData();
+		getData(pawnTicketData);
 	}, [userData, pawnTicketData, itemData, branchData, transactionData]);
 
 	useEffect(() => {
 		if (startDate && endDate) {
-			console.log(
-				"start is:",
-				new Date(new Date(startDate).setHours(0, 0, 0, 0))
-			);
-			console.log(
-				"end is:",
-				new Date(new Date(endDate).setHours(23, 59, 59, 59))
-			);
-			let tempData = data.filter((pt) => {
-				let start = new Date(startDate).setHours(0, 0, 0, 0);
-				let end = new Date(endDate).setHours(23, 59, 59, 59);
-				return (
-					new Date(pt.loanDate) >= new Date(start) &&
-					new Date(pt.loanDate) <= new Date(endDate)
-				);
-			});
-			console.log("temp:", tempData);
-			setData(tempData);
+			let ptData;
+			if (branchFilter == "") {
+				ptData = pawnTicketData.filter((pt) => {
+					let start = new Date(startDate).setHours(0, 0, 0, 0);
+					let end = new Date(endDate).setHours(23, 59, 59, 59);
+					return (
+						new Date(pt.loanDate) >= new Date(start) &&
+						new Date(pt.loanDate) <= new Date(end)
+					);
+				});
+			} else {
+				let transacData = transactionData.filter((transac) => {
+					return transac.branchID == branchFilter;
+				});
+
+				ptData = pawnTicketData.filter((pt) => {
+					let start = new Date(startDate).setHours(0, 0, 0, 0);
+					let end = new Date(endDate).setHours(23, 59, 59, 59);
+					let found = transacData.find((transac) => {
+						return transac._id.toString() == pt.transactionID;
+					});
+					return (
+						new Date(pt.loanDate) >= new Date(start) &&
+						new Date(pt.loanDate) <= new Date(end) &&
+						found
+					);
+				});
+			}
+
+			getData(ptData);
 		} else if (!startDate && !endDate) {
-			getData();
+			let ptData;
+			if (branchFilter == "") {
+				ptData = pawnTicketData;
+			} else {
+				let transacData = transactionData.filter((transac) => {
+					return transac.branchID == branchFilter;
+				});
+
+				ptData = pawnTicketData.filter((pt) => {
+					let found = transacData.find((transac) => {
+						return transac._id.toString() == pt.transactionID;
+					});
+					return found;
+				});
+			}
+			getData(ptData);
 		}
-	}, [startDate, endDate]);
+	}, [startDate, endDate, branchFilter]);
 
-	function getData() {
-		let tempData = [];
-
+	function getData(ptData) {
 		//Get all items
 		let tempIDList = [];
 
-        let itemCatList = [];
+		let itemCatList = [];
 
-		for (const pt of pawnTicketData) {
+		for (const pt of ptData) {
 			let currTransaction = transactionData.find((transac) => {
 				// console.log("transac:", transac._id, "--", pt.transactionID);
 				return transac._id.toString() == pt.transactionID;
@@ -71,23 +97,25 @@ function ItemCategoryReport({
 				// return pt.branchID
 			});
 
-			for (const item of itemData){
-				if (item.itemListID == pt.itemListID)  {
-
+			for (const item of itemData) {
+				if (item.itemListID == pt.itemListID) {
 					//If item does not exist in the ID List, extract the items and push it into tempData
-					if ( !(tempIDList.includes(item.itemID)) ) {
-
-                        if ( !(itemCatList.some(obj => obj.itemCategory === item.itemCategory) ) ) {
-                            itemCatList.push({
-                                itemCategory: item.itemCategory, 
-                                loanAmount: pt.loanAmount.toFixed(2)
-                            })
-
-                        } else {
-							let index = itemCatList.findIndex(obj => obj.itemCategory == item.itemCategory)
-							let newVal = parseFloat(itemCatList[index].loanAmount) + pt.loanAmount
-							itemCatList[index].loanAmount = newVal.toFixed(2)
-                        }
+					if (!tempIDList.includes(item.itemID)) {
+						if (
+							!itemCatList.some((obj) => obj.itemCategory === item.itemCategory)
+						) {
+							itemCatList.push({
+								itemCategory: item.itemCategory,
+								loanAmount: pt.loanAmount.toFixed(2),
+							});
+						} else {
+							let index = itemCatList.findIndex(
+								(obj) => obj.itemCategory == item.itemCategory
+							);
+							let newVal =
+								parseFloat(itemCatList[index].loanAmount) + pt.loanAmount;
+							itemCatList[index].loanAmount = newVal.toFixed(2);
+						}
 
 						tempIDList.push(item.itemID);
 					}
@@ -100,7 +128,6 @@ function ItemCategoryReport({
 		setData(itemCatList);
 	}
 
-
 	const columns = React.useMemo(
 		() => [
 			// {
@@ -109,7 +136,7 @@ function ItemCategoryReport({
 			// },
 			{
 				Header: "Item Category",
-				accessor:  "itemCategory",
+				accessor: "itemCategory",
 			},
 			{
 				Header: "Appraisal Price",
@@ -269,8 +296,6 @@ function ItemCategoryReport({
 					{">>"}
 				</button>{" "}
 			</div>
-
-            
 		</>
 	);
 }
