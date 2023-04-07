@@ -140,7 +140,7 @@ function ItemReport({
 				accessor: "itemDesc",
 			},
 			{
-				Header: "Amount of Loan",
+				Header: "Appraisal Price",
 				accessor: "loanAmount",
 				disableGlobalFilter: true,
 			},

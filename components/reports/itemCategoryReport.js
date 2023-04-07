@@ -112,7 +112,7 @@ function ItemCategoryReport({
 				accessor:  "itemCategory",
 			},
 			{
-				Header: "Amount of Loan",
+				Header: "Appraisal Price",
 				accessor: "loanAmount",
 				disableGlobalFilter: true,
 			},
