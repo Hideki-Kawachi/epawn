@@ -59,20 +59,55 @@ function CashFlowReport({
 		// //Get all items
 		// let tempIDList = [];
 
+
+
 		for (const currTransaction of transactionData) {
 			let currBranch = branchData.find((branch) => {
 				return branch.branchID == currTransaction.branchID;
 			});
 
-			tempData.push({
-				branchName: currBranch.branchName, 
-				transactDate: dayjs(new Date(currTransaction.creationDate)).format("MMM DD, YYYY"),
-				cashInAmount: currTransaction.amountPaid,
-				cashOutAmount: currTransaction.amountPaid,
-				netCashFlow:"",
+			if ( (!tempData.some(obj => obj.transactDate 
+					== (dayjs(new Date(currTransaction.creationDate)).format("MMM DD, YYYY"))	)	) ) {
+				
+				
+				let tempCashIn = 0
+				let tempCashOut = 0
+				
+				if (currTransaction.amountPaid >= 0) {
+					tempCashIn = currTransaction.amountPaid.toFixed(2)
+				} else {
+					tempCashOut = currTransaction.amountPaid.toFixed(2)
+				}
 
-			})
+				tempData.push({
+					branchName: currBranch.branchName, 
+					transactDate: dayjs(new Date(currTransaction.creationDate)).format("MMM DD, YYYY"),
+					cashInAmount: tempCashIn,
+					cashOutAmount: tempCashOut,
+					netCashFlow: (parseFloat(tempCashIn) + parseFloat(tempCashOut)).toFixed(2),
+				})
+					
+			}
+			else {
 
+				let index = tempData.findIndex(obj => obj.transactDate == (dayjs(new Date(currTransaction.creationDate)).format("MMM DD, YYYY")) )
+
+				let newVal;
+				let newTotal;
+
+				if (currTransaction.amountPaid >= 0) {
+					newVal = parseFloat(tempData[index].cashInAmount) + parseFloat(currTransaction.amountPaid)
+					tempData[index].cashInAmount = newVal.toFixed(2)
+				} else {
+					newVal = parseFloat(tempData[index].cashOutAmount) + parseFloat(currTransaction.amountPaid)
+					tempData[index].cashOutAmount = newVal.toFixed(2)
+				}
+
+				newTotal = parseFloat(tempData[index].netCashFlow) + parseFloat(currTransaction.amountPaid)
+				tempData[index].netCashFlow = newTotal.toFixed(2)
+
+
+			}
 		}
 
 		// for (const pt of pawnTicketData) {
