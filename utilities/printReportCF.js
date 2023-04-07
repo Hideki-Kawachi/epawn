@@ -13,6 +13,28 @@ export default function printReportCF(cfData, startDate, endDate) {
 	//row (item element inside ptData to avoid conflict instead of using name: item)
 	cfData.forEach((row) => {
 
+		if ( !(branchList.some(obj => obj[0] == row.branchName) ) ) {
+			branchList.push([
+				row.branchName, 
+				row.cashInAmount,
+				row.cashOutAmount,
+				row.netCashFlow
+			])
+
+			console.log("hi")
+		} else {
+
+			let index = branchList.findIndex((obj) => obj[0] == row.branchName)
+			let newCashIn = parseFloat(branchList[index][1]) + parseFloat(row.cashInAmount)
+
+			let newCashOut =  parseFloat(branchList[index][2]) + parseFloat(row.cashOutAmount)
+				
+			branchList[index][1] = newCashIn.toFixed(2)
+			branchList[index][2] = newCashOut.toFixed(2)
+
+			branchList[index][3] = row.netCashFlow
+		}
+
 
 		tempData.push([
 			row.branchName,
@@ -23,6 +45,10 @@ export default function printReportCF(cfData, startDate, endDate) {
 		])
 
 	});
+
+
+
+
 
 	// Set up the document
 	const doc = new jsPDF({
@@ -71,7 +97,7 @@ export default function printReportCF(cfData, startDate, endDate) {
 			headerText4 = startDate + " to " + endDate;
 		} else {
 			headerText4 =
-				cfData[0].loanDate + " to " + cfData[cfData.length - 1].loanDate;
+				cfData[0].transactDate + " to " + cfData[cfData.length - 1].transactDate;
 		}
 
 		const headerWidth4 = doc.getTextWidth(headerText4);
@@ -121,7 +147,7 @@ export default function printReportCF(cfData, startDate, endDate) {
 	//For summary
     doc.autoTable({
 		head: cfTableHeader,
-		body: "",
+		body: branchList,
 		startY: 1,
 		margin: { top: 1 },
 		headStyles: {
@@ -130,6 +156,8 @@ export default function printReportCF(cfData, startDate, endDate) {
 		},
 		columnStyles: {
 			1: { halign: "right" },
+			2: { halign: "right" },
+			3: { halign: "right" },
 		},
 	});
 
@@ -145,7 +173,9 @@ export default function printReportCF(cfData, startDate, endDate) {
 			halign: "center",
 		},
 		columnStyles: {
-			6: { halign: "right" },
+			2: { halign: "right" },
+			3: { halign: "right" },
+			4: { halign: "right" }
 		},
 		didDrawPage: (data) => {
 			header(data);
