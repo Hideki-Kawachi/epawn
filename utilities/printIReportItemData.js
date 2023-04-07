@@ -11,6 +11,8 @@ export default function printReportItemData(ptData, startDate, endDate) {
 
 	let itemCatList = [];
 
+	let itemTypeList = [];
+
 	//row (item element inside ptData to avoid conflict instead of using name: item)
 	ptData.forEach((row) => {
 
@@ -21,11 +23,22 @@ export default function printReportItemData(ptData, startDate, endDate) {
 			])
 			console.log("hi")
 		} else {
-
-			// console.log("test" + itemCatList[0][1])
 			let index = itemCatList.findIndex(obj => obj[0] == row.itemCategory)
 			let newVal = parseFloat(itemCatList[index][1]) + parseFloat(row.loanAmount)
 			itemCatList[index][1] = newVal.toFixed(2)
+			// console.log("hello")
+		}
+
+		if ( !(itemTypeList.some(obj => obj[0] == row.itemType) ) ) {
+			itemTypeList.push([
+				row.itemType, 
+				row.loanAmount
+			])
+			console.log("hi")
+		} else {
+			let index = itemTypeList.findIndex(obj => obj[0] == row.itemType)
+			let newVal = parseFloat(itemTypeList[index][1]) + parseFloat(row.loanAmount)
+			itemTypeList[index][1] = newVal.toFixed(2)
 			// console.log("hello")
 		}
 
@@ -149,9 +162,19 @@ export default function printReportItemData(ptData, startDate, endDate) {
 		columnStyles: {
 			1: { halign: "right" },
 		},
-		didDrawPage: (data) => {
-			header(data);
-			footer(data);
+	});
+
+	doc.autoTable({
+		head: itemCatTableHeader,
+		body: itemTypeList,
+		startY: doc.autoTable.previous.finalY + 1,
+		margin: { top: 1 },
+		headStyles: {
+			// fillColor: "#5dbe9d", // set the background color of the header row
+			halign: "center",
+		},
+		columnStyles: {
+			1: { halign: "right" },
 		},
 	});
 
