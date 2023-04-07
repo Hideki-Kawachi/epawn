@@ -1,9 +1,10 @@
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Close from "../closebutton";
 
 function RejectRedeemManager({ trigger, setTrigger, transactionID, itemList}) {
   const [rejectionMessage, setRejectionMessage] = useState("");
+  const [isEmpty, setIsEmpty] = useState(true)
   const router = useRouter();
 
   function closeModal() {
@@ -22,11 +23,21 @@ function RejectRedeemManager({ trigger, setTrigger, transactionID, itemList}) {
       .then((res) => res.json())
       .then((data) => {
         console.log("reject data is:", data);
+        if(data=="success")
         router.replace("/");
+        else
+        console.log("Error in rejecting")
       });
 
   }
 
+  useEffect(() => {
+    if(rejectionMessage.length > 0){
+        setIsEmpty(false)
+    }
+    else  
+        setIsEmpty(true)
+  },[rejectionMessage])
   return (
     <>
       <div id="modal-content-area">
@@ -51,7 +62,7 @@ function RejectRedeemManager({ trigger, setTrigger, transactionID, itemList}) {
             </button>
             <button
               className="px-24 text-base bg-red-300"
-              onClick={() => submitReject()}
+              onClick={() => submitReject()} disabled={isEmpty}
             >
               Reject
             </button>

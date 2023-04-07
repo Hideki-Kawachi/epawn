@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
-import AuthorizedRep from "../modals/authorizedRep";
 import CustomerDetails from "../modals/customerDetails";
 import PawnHistory from "../modals/pawnHistory";
 import dayjs from "dayjs";
+import AuthorizedRepDetails from "../modals/authorizedRepDetails";
 
 function DetailsCardClerkReject({
 	redeem,
@@ -18,7 +18,9 @@ function DetailsCardClerkReject({
 	getAmount,
 	partialPayment,
 	transaction,
-	amountToPay
+	amountToPay,
+  redeemer,
+  isOriginal
 }) {
   const [customerModal, setCustomerModal] = useState(false);
   const [computationModal, setCompOpen] = useState(false);
@@ -71,7 +73,9 @@ function DetailsCardClerkReject({
 	function amountLoan(amount) {
 		getAmount(amount);
 	}
-
+  function viewDetails() {
+    setAuthModal(true);
+  }
 	function getInterest(loan) {
 		//plan: multiply loan * 0.035 with month diff
 		if (pawnTicket.loanDate == null || pawnTicket.maturityDate == null)
@@ -84,6 +88,7 @@ function DetailsCardClerkReject({
 		}
 	}
 
+  
 	function convertFloat(number) {
 		if (mode) {
 			if (number == loanAmount) {
@@ -137,9 +142,58 @@ function DetailsCardClerkReject({
 			return 0;
 		}
 	}
+  useEffect(() => {
+    if (amountToPay) {
+      let newLoanAmount = loanAmount - amountToPay;
+      let tempAdvInterest = 0;
+      if (newLoanAmount > loanAmount) {
+        setNewLoanAmount(loanAmount);
+        setAdvInterest(loanAmount * 0.035);
+      } else {
+        tempAdvInterest = newLoanAmount * 0.035;
+        setAdvInterest(tempAdvInterest);
+        setNewLoanAmount(newLoanAmount);
+      }
+    } else {
+      setAdvInterest(0);
+      setNewLoanAmount(0);
+    }
+  }, [amountToPay, loanAmount]);
+
+  useEffect(() => {
+      setLoanAmount(pawnTicket.loanAmount ? pawnTicket.loanAmount : 0);
+      setPenalties(
+        pawnTicket.loanAmount *
+          0.01 *
+          monthDiff(new Date(pawnTicket.expiryDate), new Date())
+      );
+      setInterest(
+        pawnTicket.loanAmount *
+          0.035 *
+          monthDiff(new Date(pawnTicket.maturityDate), new Date())
+      );
+    }, [pawnTicket, loanAmount]);
+    
+  useEffect(() => {
+    if (redeemer) {
+      fetch("/api/redeem/authRep/" + redeemer.userID, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((info) => {
+          if (info != null) {
+            //console.
+            setAuthRep(info);
+          }
+        });
+    }
+  }, [redeemer]);
 
 
-	
 	return (
     <>
       <div
@@ -161,6 +215,15 @@ function DetailsCardClerkReject({
             setTrigger={setCustomerModal}
             customerInfo={customer}
             userInfo={user}
+          />
+        </Modal>
+
+        <Modal isOpen={authRepModal} ariaHideApp={false} className="modal">
+          <AuthorizedRepDetails
+            trigger={authRepModal}
+            setTrigger={setAuthModal}
+            redeemer={redeemer}
+            authRep={authRep}
           />
         </Modal>
         {/* Left Side of the Card (Details) */}
@@ -199,6 +262,7 @@ function DetailsCardClerkReject({
               <p className="">Full Name:</p>
               <p className="">Contact Number:</p>
               <p className="">Address:</p>
+              <p className="">Redeemed by:</p>
             </div>
             <div className="ml-5 text-left">
               <p className="">
@@ -209,6 +273,24 @@ function DetailsCardClerkReject({
                 {/* Used to make long address break line */}
                 {customer.presentAddress}
               </p>
+              <span>
+                {getFullName(
+                  redeemer.firstName,
+                  redeemer.middleName,
+                  redeemer.lastName
+                )}
+              </span>
+              {isOriginal == false ? (
+                <button
+                  className="bg-green-300 ml-2 text-sm text-white px-5"
+                  onClick={viewDetails}
+                >
+                  {" "}
+                  View Details{" "}
+                </button>
+              ) : (
+                <></>
+              )}
             </div>
           </div>
           <hr className="h-px my-8 bg-gray-500 border-0" />
@@ -251,9 +333,9 @@ function DetailsCardClerkReject({
           </div>
           <hr className="h-px my-8 bg-gray-500 border-0" />
           {/* Rejection Reason */}
-          <p className="font-bold pr-7 text-red-500">
-            Reason for Rejection:{" "}
-            <span className="font-medium ml-5">{transaction.rejectionMessage}</span>
+          <p className="font-bold pr-7 text-red-500">Reason for Rejection: </p>
+          <p className="font-medium ml-5 text-red-500">
+            {transaction.rejectionMessage}
           </p>
         </div>
         {/* Right Side Side of the Card (Computations) */}
@@ -279,7 +361,7 @@ function DetailsCardClerkReject({
               <div className="pr-10 ml-10 text-right min-w-fit">
                 <br />
                 <p> Php {convertFloat(interest.toFixed(2))} </p>
-                <p>{advInterest.toFixed(2)}</p>
+                <p>{convertFloat(advInterest.toFixed(2))}</p>
               </div>
               <div className="text-right min-w-fit">
                 <p className="mr-3 font-bold">
@@ -307,7 +389,7 @@ function DetailsCardClerkReject({
                     disabled={mode}
                   /> */}
 
-                <hr className="my-3" />
+                <hr className="my-3 mx-0" />
                 <p className="mt-5 mr-3 font-bold">
                   Php {convertFloat(newLoanAmount.toFixed(2))}
                 </p>

@@ -184,6 +184,7 @@ function RejectClerk({
         .then((redeem) => {
           // console.log(data)
           if (redeem != null) {
+            console.log("Redeem is " + JSON.stringify(redeem))
             setRedeemID(redeem.redeemID);
             setPTNumber(redeem.pawnTicketID);
             setRedeemerID(redeem.redeemerID);
@@ -208,6 +209,7 @@ function RejectClerk({
         .then((data) => {
           // console.log(data)
           if (data != null) {
+            console.log("Pawn data is" + JSON.stringify(data))
             setCustomerID(data.customerID);
             setPTinfo(data);
             setItemListID(data.itemListID);
@@ -224,9 +226,6 @@ function RejectClerk({
                 //   console.log("Old PT is: " + JSON.stringify(oldpt));
                 if (oldpt != null) {
                   setPartialPayment(Number(oldpt.loanAmount - data.loanAmount));
-                  //   console.log(
-                  //     "Partial Payment is now: " + partialPayment
-                  //   );
                 } else setPartialPayment(0);
               });
           }
@@ -284,6 +283,20 @@ function RejectClerk({
               setRedeemerInfo(user);
               setOriginal(true);
             } else {
+              setOriginal(false)
+              fetch("/api/users/" + redeemerID, {
+                method: "GET",
+                headers: {
+                  Accept: "application/json",
+                  "Content-Type": "application/json",
+                },
+              })
+                .then((res) => res.json())
+                .then((info) => {
+                  if (info != null) {
+                    setRedeemerInfo(info);
+                  }
+                });
               //	console.log("Redeemer is original");
             }
           }
@@ -291,24 +304,23 @@ function RejectClerk({
     }
   }, [customerID, redeemerID]);
 
-  useEffect(() => {
-    if (redeemerInfo) {
-      fetch("/api/users/" + redeemerID, {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      })
-        .then((res) => res.json())
-        .then((info) => {
-          if (info != null) {
-            setRedeemerInfo(info);
-            setOriginal(false);
-          }
-        });
-    }
-  }, [redeemerID]);
+  // useEffect(() => {
+  //   if (redeemerInfo) {
+  //     fetch("/api/users/" + redeemerID, {
+  //       method: "GET",
+  //       headers: {
+  //         Accept: "application/json",
+  //         "Content-Type": "application/json",
+  //       },
+  //     })
+  //       .then((res) => res.json())
+  //       .then((info) => {
+  //         if (info != null) {
+  //           setRedeemerInfo(info);
+  //         }
+  //       });
+  //   }
+  // }, [redeemerID]);
 
   // BACKEND TO RETRIEVE CUSTOMER DETAILS WITH USERID
   useEffect(() => {
@@ -332,7 +344,28 @@ function RejectClerk({
 
   
 	//REJECT
-	useEffect(() => {})
+	function rejectDone(){
+    fetch("/api/redeem/rejectClerk", {
+      method: "POST",
+      body: JSON.stringify({
+        transactionID: transactionID,
+        itemList: itemList,
+        redeemID: redeemID,
+        isOriginal: isOriginal,
+        redeemerID: redeemerID
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("reject data is:", data);
+        if (data == "success"){
+          router.replace("/");
+        }
+        else {
+          console.log("Error in rejecting");
+        }
+      });
+  }
 	return (
     <>
       <NavBar currentUser={currentUser}></NavBar>
@@ -424,7 +457,7 @@ function RejectClerk({
           <div>
             <button
               className="px-10 mx-2 my-5 text-base text-white bg-green-300"
-              onClick={null}
+              onClick={rejectDone}
             >
               Done
             </button>
