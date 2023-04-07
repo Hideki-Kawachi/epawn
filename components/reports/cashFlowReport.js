@@ -11,7 +11,7 @@ import {
 import { utils, writeFile, writeFileXLSX, writeXLSX } from "xlsx";
 import ItemCategoryReport from "./itemCategoryReport";
 import ItemTypeReport from "./itemTypeReport";
-import printReportItemData from "../../utilities/printIReportItemData";
+import printReportCF from "../../utilities/printReportCF";
 import CFSummaryReport from "./cfSummaryReport";
 
 function CashFlowReport({
@@ -178,7 +178,7 @@ function CashFlowReport({
 	);
 
 	function printReport() {
-		printReportItemData(data, startDate, endDate);
+		printReportCF(data, startDate, endDate);
 	}
 
 	return (

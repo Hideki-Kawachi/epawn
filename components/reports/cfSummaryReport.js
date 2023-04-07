@@ -209,7 +209,7 @@ function CFSummaryReport({
 
 	return (
 		<>
-			{/* Filter  */}
+			{/* Filter 
 			<div className="flex items-center self-start w-full gap-2 my-5 text-sm font-nunito whitespace-nowrap ">
 				<span className="ml-5">Starting Date: </span>
 				<input
@@ -254,7 +254,7 @@ function CFSummaryReport({
 				>
 					Generate Report
 				</button>
-			</div>
+			</div> */}
 			{/* Table */}
 			<table {...getTableProps()} className="w-full text-sm">
 				<thead>
