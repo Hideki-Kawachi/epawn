@@ -132,14 +132,14 @@ export default function printReportItemData(ptData, startDate, endDate) {
 	const itemCatTableHeader = [
 		[
 			"Item Category",
-			"Amount of Loan",
+			"Appraisal Price",
 		],
 	];
 
 	const itemTypeTableHeader = [
 		[
 			"Item Type",
-			"Amount of Loan",
+			"Appraisal Price",
 		],
 	];
 
@@ -151,7 +151,7 @@ export default function printReportItemData(ptData, startDate, endDate) {
 			"Item Type",
 			"Item Category",
 			"Item Description",
-			"Amount of Loan",
+			"Appraisal Price",
 		],
 	];
 
