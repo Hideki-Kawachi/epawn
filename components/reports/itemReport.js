@@ -23,6 +23,7 @@ function ItemReport({
 	const [data, setData] = useState([{}]);
 	const [startDate, setStartDate] = useState();
 	const [endDate, setEndDate] = useState();
+	const [branchID, setBranchID] = useState("");
 
 	useEffect(() => {
 		getData();
@@ -30,14 +31,14 @@ function ItemReport({
 
 	useEffect(() => {
 		if (startDate && endDate) {
-			console.log(
-				"start is:",
-				new Date(new Date(startDate).setHours(0, 0, 0, 0))
-			);
-			console.log(
-				"end is:",
-				new Date(new Date(endDate).setHours(23, 59, 59, 59))
-			);
+			// console.log(
+			// 	"start is:",
+			// 	new Date(new Date(startDate).setHours(0, 0, 0, 0))
+			// );
+			// console.log(
+			// 	"end is:",
+			// 	new Date(new Date(endDate).setHours(23, 59, 59, 59))
+			// );
 			let tempData = data.filter((pt) => {
 				let start = new Date(startDate).setHours(0, 0, 0, 0);
 				let end = new Date(endDate).setHours(23, 59, 59, 59);
@@ -46,7 +47,7 @@ function ItemReport({
 					new Date(pt.loanDate) <= new Date(endDate)
 				);
 			});
-			console.log("temp:", tempData);
+			// console.log("temp:", tempData);
 			setData(tempData);
 		} else if (!startDate && !endDate) {
 			getData();
@@ -71,12 +72,10 @@ function ItemReport({
 				// return pt.branchID
 			});
 
-			for (const item of itemData)
-			{
-				if (item.itemListID == pt.itemListID)  {
-
+			for (const item of itemData) {
+				if (item.itemListID == pt.itemListID) {
 					//If item does not exist in the ID List, extract the items and push it into tempData
-					if ( !(tempIDList.includes(item.itemID)) ) {
+					if (!tempIDList.includes(item.itemID)) {
 						tempData.push({
 							itemID: item.itemID,
 							branchName: currBranch.branchName,
@@ -84,19 +83,17 @@ function ItemReport({
 							itemType: item.itemType,
 							itemCategory: item.itemCategory,
 							itemDesc: item.description,
-							loanAmount: pt.loanAmount?.toFixed(2)
+							loanAmount: pt.loanAmount?.toFixed(2),
 						});
 
 						tempIDList.push(item.itemID);
 					}
-
 				}
 
 				// console.log(tempIDList)
 			}
 
 			// console.log("curr:", currTransaction);
-
 
 			// tempData.push({
 			// 	pawnTicketID: pt.pawnTicketID,
@@ -115,7 +112,7 @@ function ItemReport({
 		() => [
 			{
 				Header: "Item ID",
-				accessor: "itemID"
+				accessor: "itemID",
 
 				// Header: "PT Number",
 				// accessor: "pawnTicketID",
@@ -133,7 +130,7 @@ function ItemReport({
 			},
 			{
 				Header: "Item Category",
-				accessor:  "itemCategory",
+				accessor: "itemCategory",
 			},
 			{
 				Header: "Item Description",
@@ -180,17 +177,30 @@ function ItemReport({
 		printReportItemData(data, startDate, endDate);
 	}
 
+	function branchFilter(branchName) {
+		setFilter("branchName", branchName);
+		if (branchName != "") {
+			let currBranch = branchData.find((branch) => {
+				return branch.branchName == branchName;
+			});
+			setBranchID(currBranch.branchID);
+		} else {
+			setBranchID("");
+		}
+	}
+
 	return (
 		<>
-
 			<ItemCategoryReport
 				pawnTicketData={pawnTicketData}
 				userData={userData}
 				itemData={itemData}
 				branchData={branchData}
 				transactionData={transactionData}
-			>
-			</ItemCategoryReport>
+				startDate={startDate}
+				endDate={endDate}
+				branchFilter={branchID}
+			></ItemCategoryReport>
 
 			<ItemTypeReport
 				pawnTicketData={pawnTicketData}
@@ -198,8 +208,7 @@ function ItemReport({
 				itemData={itemData}
 				branchData={branchData}
 				transactionData={transactionData}
-			>
-			</ItemTypeReport>
+			></ItemTypeReport>
 			{/* Filter  */}
 			<div className="flex items-center self-start w-full gap-2 my-5 text-sm font-nunito whitespace-nowrap ">
 				<span className="ml-5">Starting Date: </span>
@@ -219,7 +228,7 @@ function ItemReport({
 				<span className="ml-5">Branch: </span>
 				<select
 					className="h-fit"
-					onChange={(e) => setFilter("branchName", e.target.value)}
+					onChange={(e) => branchFilter(e.target.value)}
 					defaultValue={""}
 				>
 					<option value={""}>All</option>
@@ -228,16 +237,6 @@ function ItemReport({
 							{branch.branchName}
 						</option>
 					))}
-				</select>
-				<span className="ml-5">Status: </span>
-				<select
-					className="h-fit"
-					onChange={(e) => setFilter("status", e.target.value)}
-					defaultValue={""}
-				>
-					<option value={""}>All</option>
-					<option value={"Ongoing"}>Ongoing</option>
-					<option value={"Inactive"}>Inactive</option>
 				</select>
 				<button
 					className="relative ml-auto text-sm bg-green-300"
@@ -315,7 +314,6 @@ function ItemReport({
 					{">>"}
 				</button>{" "}
 			</div>
-			
 		</>
 	);
 }
