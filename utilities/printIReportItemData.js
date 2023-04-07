@@ -3,7 +3,7 @@ import "jspdf-autotable";
 import { useGridLayout } from "react-table/dist/react-table.development";
 
 //add to
-export default function printReportPTData(ptData, startDate, endDate) {
+export default function printReportItemData(ptData, startDate, endDate) {
 	// console.log(ptData);
 
 	// Define the pt data for the table
@@ -50,7 +50,7 @@ export default function printReportPTData(ptData, startDate, endDate) {
 		);
 
 		doc.setFont("Arial", "bold");
-		const headerText3 = "PAWN TICKET REPORT";
+		const headerText3 = "ITEM REPORT";
 		const headerWidth3 = doc.getTextWidth(headerText3);
 		doc.text(
 			headerText3,
@@ -107,11 +107,29 @@ export default function printReportPTData(ptData, startDate, endDate) {
 		],
 	];
 
+    doc.autoTable({
+		head: tableHeader,
+		body: tempData,
+		startY: 1,
+		margin: { top: 1 },
+		headStyles: {
+			// fillColor: "#5dbe9d", // set the background color of the header row
+			halign: "center",
+		},
+		columnStyles: {
+			6: { halign: "right" },
+		},
+		didDrawPage: (data) => {
+			header(data);
+			footer(data);
+		},
+	});
+
 	// Add the table to the document
 	doc.autoTable({
 		head: tableHeader,
 		body: tempData,
-		startY: 1,
+		startY:  doc.autoTable.previous.finalY + 10,
 		margin: { top: 1 },
 		headStyles: {
 			fillColor: "#5dbe9d", // set the background color of the header row
@@ -126,6 +144,7 @@ export default function printReportPTData(ptData, startDate, endDate) {
 		},
 	});
 
+
 	// Save the document
-	doc.save("PT_Report.pdf");
+	doc.save("Item_Report.pdf");
 }

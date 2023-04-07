@@ -9,9 +9,9 @@ import {
 	useTable,
 } from "react-table";
 import { utils, writeFile, writeFileXLSX, writeXLSX } from "xlsx";
-import printReportPTData from "../../utilities/printReportPTData";
 import ItemCategoryReport from "./itemCategoryReport";
 import ItemTypeReport from "./itemTypeReport";
+import printReportItemData from "../../utilities/printIReportItemData";
 
 function ItemReport({
 	pawnTicketData,
@@ -177,7 +177,7 @@ function ItemReport({
 	);
 
 	function printReport() {
-		printReportPTData(data, startDate, endDate);
+		printReportItemData(data, startDate, endDate);
 	}
 
 	return (
