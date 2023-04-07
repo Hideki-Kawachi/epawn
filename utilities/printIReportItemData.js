@@ -9,7 +9,27 @@ export default function printReportItemData(ptData, startDate, endDate) {
 	// Define the pt data for the table
 	let tempData = [];
 
-	ptData.forEach((row) =>
+	let itemCatList = [];
+
+	//row (item element inside ptData to avoid conflict instead of using name: item)
+	ptData.forEach((row) => {
+
+		if ( !(itemCatList.some(obj => obj[0] == row.itemCategory) ) ) {
+			itemCatList.push([
+				row.itemCategory, 
+				row.loanAmount
+			])
+			console.log("hi")
+		} else {
+
+			// console.log("test" + itemCatList[0][1])
+			let index = itemCatList.findIndex(obj => obj[0] == row.itemCategory)
+			let newVal = parseFloat(itemCatList[index][1]) + parseFloat(row.loanAmount)
+			itemCatList[index][1] = newVal.toFixed(2)
+			// console.log("hello")
+		}
+
+
 		tempData.push([
 			row.itemID,
 			row.branchName,
@@ -19,7 +39,8 @@ export default function printReportItemData(ptData, startDate, endDate) {
 			row.itemDesc,
 			row.loanAmount,
 		])
-	);
+
+	});
 
 	// Set up the document
 	const doc = new jsPDF({
@@ -95,6 +116,13 @@ export default function printReportItemData(ptData, startDate, endDate) {
 	};
 
 	// // Define the header data for the table
+	const itemCatTableHeader = [
+		[
+			"Item Category",
+			"Amount of Loan",
+		],
+	];
+
 	const tableHeader = [
 		[
 			"Item ID",
@@ -110,8 +138,8 @@ export default function printReportItemData(ptData, startDate, endDate) {
 
 	//For summary
     doc.autoTable({
-		head: tableHeader,
-		body: tempData,
+		head: itemCatTableHeader,
+		body: itemCatList,
 		startY: 1,
 		margin: { top: 1 },
 		headStyles: {
@@ -119,7 +147,7 @@ export default function printReportItemData(ptData, startDate, endDate) {
 			halign: "center",
 		},
 		columnStyles: {
-			6: { halign: "right" },
+			1: { halign: "right" },
 		},
 		didDrawPage: (data) => {
 			header(data);
@@ -132,7 +160,7 @@ export default function printReportItemData(ptData, startDate, endDate) {
 	doc.autoTable({
 		head: tableHeader,
 		body: tempData,
-		startY:  doc.autoTable.previous.finalY + 10,
+		startY:  doc.autoTable.previous.finalY + 1,
 		margin: { top: 1 },
 		headStyles: {
 			fillColor: "#5dbe9d", // set the background color of the header row
