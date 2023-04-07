@@ -8,14 +8,14 @@ export default function printReportItemData(ptData, startDate, endDate) {
 
 	// Define the pt data for the table
 	let tempData = [];
-
 	let itemCatList = [];
-
 	let itemTypeList = [];
 
 	//row (item element inside ptData to avoid conflict instead of using name: item)
 	ptData.forEach((row) => {
 
+
+		//Item Category
 		if ( !(itemCatList.some(obj => obj[0] == row.itemCategory) ) ) {
 			itemCatList.push([
 				row.itemCategory, 
@@ -26,9 +26,10 @@ export default function printReportItemData(ptData, startDate, endDate) {
 			let index = itemCatList.findIndex(obj => obj[0] == row.itemCategory)
 			let newVal = parseFloat(itemCatList[index][1]) + parseFloat(row.loanAmount)
 			itemCatList[index][1] = newVal.toFixed(2)
-			// console.log("hello")
 		}
 
+
+		//Item Type
 		if ( !(itemTypeList.some(obj => obj[0] == row.itemType) ) ) {
 			itemTypeList.push([
 				row.itemType, 
@@ -39,7 +40,6 @@ export default function printReportItemData(ptData, startDate, endDate) {
 			let index = itemTypeList.findIndex(obj => obj[0] == row.itemType)
 			let newVal = parseFloat(itemTypeList[index][1]) + parseFloat(row.loanAmount)
 			itemTypeList[index][1] = newVal.toFixed(2)
-			// console.log("hello")
 		}
 
 
@@ -136,6 +136,13 @@ export default function printReportItemData(ptData, startDate, endDate) {
 		],
 	];
 
+	const itemTypeTableHeader = [
+		[
+			"Item Type",
+			"Amount of Loan",
+		],
+	];
+
 	const tableHeader = [
 		[
 			"Item ID",
@@ -165,9 +172,9 @@ export default function printReportItemData(ptData, startDate, endDate) {
 	});
 
 	doc.autoTable({
-		head: itemCatTableHeader,
+		head: itemTypeTableHeader,
 		body: itemTypeList,
-		startY: doc.autoTable.previous.finalY + 1,
+		startY: doc.autoTable.previous.finalY + 0.5,
 		margin: { top: 1 },
 		headStyles: {
 			// fillColor: "#5dbe9d", // set the background color of the header row
@@ -183,7 +190,7 @@ export default function printReportItemData(ptData, startDate, endDate) {
 	doc.autoTable({
 		head: tableHeader,
 		body: tempData,
-		startY:  doc.autoTable.previous.finalY + 1,
+		startY:  doc.autoTable.previous.finalY + 0.5,
 		margin: { top: 1 },
 		headStyles: {
 			fillColor: "#5dbe9d", // set the background color of the header row
@@ -201,4 +208,6 @@ export default function printReportItemData(ptData, startDate, endDate) {
 
 	// Save the document
 	doc.save("Item_Report.pdf");
+
+	
 }

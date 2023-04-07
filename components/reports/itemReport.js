@@ -182,6 +182,24 @@ function ItemReport({
 
 	return (
 		<>
+
+			<ItemCategoryReport
+				pawnTicketData={pawnTicketData}
+				userData={userData}
+				itemData={itemData}
+				branchData={branchData}
+				transactionData={transactionData}
+			>
+			</ItemCategoryReport>
+
+			<ItemTypeReport
+				pawnTicketData={pawnTicketData}
+				userData={userData}
+				itemData={itemData}
+				branchData={branchData}
+				transactionData={transactionData}
+			>
+			</ItemTypeReport>
 			{/* Filter  */}
 			<div className="flex items-center self-start w-full gap-2 my-5 text-sm font-nunito whitespace-nowrap ">
 				<span className="ml-5">Starting Date: </span>
@@ -297,24 +315,6 @@ function ItemReport({
 					{">>"}
 				</button>{" "}
 			</div>
-
-			<ItemCategoryReport
-				pawnTicketData={pawnTicketData}
-				userData={userData}
-				itemData={itemData}
-				branchData={branchData}
-				transactionData={transactionData}
-			>
-			</ItemCategoryReport>
-
-			<ItemTypeReport
-				pawnTicketData={pawnTicketData}
-				userData={userData}
-				itemData={itemData}
-				branchData={branchData}
-				transactionData={transactionData}
-			>
-			</ItemTypeReport>
 			
 		</>
 	);
