@@ -3,54 +3,23 @@ import "jspdf-autotable";
 import { useGridLayout } from "react-table/dist/react-table.development";
 
 //add to
-export default function printReportCF(ptData, startDate, endDate) {
+export default function printReportCF(cfData, startDate, endDate) {
 	// console.log(ptData);
 
 	// Define the pt data for the table
 	let tempData = [];
-	let itemCatList = [];
-	let itemTypeList = [];
+	let branchList = [];
 
 	//row (item element inside ptData to avoid conflict instead of using name: item)
-	ptData.forEach((row) => {
-
-
-		//Item Category
-		if ( !(itemCatList.some(obj => obj[0] == row.itemCategory) ) ) {
-			itemCatList.push([
-				row.itemCategory, 
-				row.loanAmount
-			])
-			console.log("hi")
-		} else {
-			let index = itemCatList.findIndex(obj => obj[0] == row.itemCategory)
-			let newVal = parseFloat(itemCatList[index][1]) + parseFloat(row.loanAmount)
-			itemCatList[index][1] = newVal.toFixed(2)
-		}
-
-
-		//Item Type
-		if ( !(itemTypeList.some(obj => obj[0] == row.itemType) ) ) {
-			itemTypeList.push([
-				row.itemType, 
-				row.loanAmount
-			])
-			console.log("hi")
-		} else {
-			let index = itemTypeList.findIndex(obj => obj[0] == row.itemType)
-			let newVal = parseFloat(itemTypeList[index][1]) + parseFloat(row.loanAmount)
-			itemTypeList[index][1] = newVal.toFixed(2)
-		}
+	cfData.forEach((row) => {
 
 
 		tempData.push([
-			row.itemID,
 			row.branchName,
-			row.loanDate,
-			row.itemType,
-			row.itemCategory,
-			row.itemDesc,
-			row.loanAmount,
+			row.transactDate,
+			row.cashInAmount,
+			row.cashOutAmount,
+			row.netCashFlow,
 		])
 
 	});
@@ -102,7 +71,7 @@ export default function printReportCF(ptData, startDate, endDate) {
 			headerText4 = startDate + " to " + endDate;
 		} else {
 			headerText4 =
-				ptData[0].loanDate + " to " + ptData[ptData.length - 1].loanDate;
+				cfData[0].loanDate + " to " + cfData[cfData.length - 1].loanDate;
 		}
 
 		const headerWidth4 = doc.getTextWidth(headerText4);
@@ -129,52 +98,31 @@ export default function printReportCF(ptData, startDate, endDate) {
 	};
 
 	// // Define the header data for the table
-	const itemCatTableHeader = [
+	const cfTableHeader = [
 		[
-			"Item Category",
-			"Appraisal Price",
-		],
-	];
-
-	const itemTypeTableHeader = [
-		[
-			"Item Type",
-			"Appraisal Price",
+			"Branch",
+			"Total Cash In",
+			"Total Cash Out",
+			"Total Net Cash Flow"
 		],
 	];
 
 	const tableHeader = [
 		[
-			"Item ID",
 			"Branch",
-			"Loan Date",
-			"Item Type",
-			"Item Category",
-			"Item Description",
-			"Appraisal Price",
+			"Date",
+			"Cash In",
+			"Cash Out",
+			"Net Cash Flow"
 		],
 	];
 
 
 	//For summary
     doc.autoTable({
-		head: itemCatTableHeader,
-		body: itemCatList,
+		head: cfTableHeader,
+		body: "",
 		startY: 1,
-		margin: { top: 1 },
-		headStyles: {
-			// fillColor: "#5dbe9d", // set the background color of the header row
-			halign: "center",
-		},
-		columnStyles: {
-			1: { halign: "right" },
-		},
-	});
-
-	doc.autoTable({
-		head: itemTypeTableHeader,
-		body: itemTypeList,
-		startY: doc.autoTable.previous.finalY + 0.5,
 		margin: { top: 1 },
 		headStyles: {
 			// fillColor: "#5dbe9d", // set the background color of the header row
