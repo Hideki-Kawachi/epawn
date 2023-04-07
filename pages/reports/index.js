@@ -13,6 +13,7 @@ import ItemSearch from "../../components/search/itemSearch";
 import Transaction from "../../schemas/transaction";
 import PawnTicketReport from "../../components/reports/pawnticketReport";
 import ItemReport from "../../components/reports/itemReport";
+import CashFlowReport from "../../components/reports/cashFlowReport";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {
@@ -134,12 +135,20 @@ function Reports({
 			></PawnTicketReport>
 		),
 		Cashflow: (
-			<CustomerSearch
-				userData={userData}
-				transactionData={transactionData}
+			<CashFlowReport
 				pawnTicketData={pawnTicketData}
+				userData={userData}
 				itemData={itemData}
-			></CustomerSearch>
+				branchData={branchData}
+				transactionData={transactionData}
+			>
+			</CashFlowReport>
+			// <CustomerSearch
+			// 	userData={userData}
+			// 	transactionData={transactionData}
+			// 	pawnTicketData={pawnTicketData}
+			// 	itemData={itemData}
+			// ></CustomerSearch>
 		),
 		Items: (
 			// <ItemSearch
