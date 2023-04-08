@@ -304,24 +304,6 @@ function RejectClerk({
     }
   }, [customerID, redeemerID]);
 
-  // useEffect(() => {
-  //   if (redeemerInfo) {
-  //     fetch("/api/users/" + redeemerID, {
-  //       method: "GET",
-  //       headers: {
-  //         Accept: "application/json",
-  //         "Content-Type": "application/json",
-  //       },
-  //     })
-  //       .then((res) => res.json())
-  //       .then((info) => {
-  //         if (info != null) {
-  //           setRedeemerInfo(info);
-  //         }
-  //       });
-  //   }
-  // }, [redeemerID]);
-
   // BACKEND TO RETRIEVE CUSTOMER DETAILS WITH USERID
   useEffect(() => {
     if (customerID != "N/A") {

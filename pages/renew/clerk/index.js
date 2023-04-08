@@ -135,6 +135,7 @@ function RenewClerk({ currentUser }) {
 						setTransactionID("N/A");
 						setUserInfo("N/A");
 						setCusDetails("N/A");
+						setBranch("N/A");
 						setitemList([]);
 						setButton(true);
 					}
@@ -155,7 +156,23 @@ function RenewClerk({ currentUser }) {
 				.then((transaction) => {
 					// console.log(data)
 					if (transaction != null) {
-						setBranch(transaction.branchID);
+						fetch("/api/branch/" + transaction.branchID, {
+              			method: "GET",
+              			headers: {
+						Accept: "application/json",
+						"Content-Type": "application/json",
+					},
+					})
+					.then((res) => res.json())
+					.then((branch) => {
+						// console.log(data)
+						if (branch != null) {
+						setBranch(branch.branchName);
+						} else {
+						setItemListID("N/A");
+						setBranch("N/A");
+						}
+					});
 					} else {
 						setItemListID("N/A");
 						setBranch("N/A");

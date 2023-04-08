@@ -56,6 +56,7 @@ function RedeemClerk({ currentUser }) {
 	const [PTNumber, setPTNumber] = useState(""); //test A-123456
 	const [userInfo, setUserInfo] = useState([]);
 	const [ptInfo, setPTinfo] = useState([]);
+
 	const [branch, setBranch] = useState("N/A");
 	const [customerID, setCustomerID] = useState("N/A");
 	const [customerDetails, setCusDetails] = useState(["N/A"]);
@@ -109,6 +110,7 @@ function RedeemClerk({ currentUser }) {
 	function putamountToPay(amount) {
 		setAmountToPay(amount);
 	}
+	
 	function getTotalRedeem(redeemList) {
 		var total = 0;
 
@@ -227,6 +229,7 @@ function RedeemClerk({ currentUser }) {
 						setCusDetails("N/A");
 						setCustomerID("N/A");
 						setItemListID("N/A");
+						setBranch("N/A");
 						setitemList([]);
 						setButton(true);
 					}
@@ -248,7 +251,23 @@ function RedeemClerk({ currentUser }) {
 				.then((transaction) => {
 					// console.log(data)
 					if (transaction != null) {
-						setBranch(transaction.branchID);
+						fetch("/api/branch/" + transaction.branchID, {
+						method: "GET",
+						headers: {
+						Accept: "application/json",
+						"Content-Type": "application/json",
+						},
+					})
+					.then((res) => res.json())
+					.then((branch) => {
+					// console.log(data)
+					if (branch != null) {
+						setBranch(branch.branchName);
+					} else {
+						setItemListID("N/A");
+						setBranch("N/A");
+					}
+				});
 					} else {
 						setItemListID("N/A");
 						setBranch("N/A");
