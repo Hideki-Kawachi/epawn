@@ -19,7 +19,7 @@ import Transaction from "../../../schemas/transaction";
 import mongoose from "mongoose";
 import PawnTicket from "../../../schemas/pawnTicket";
 import Branch from "../../../schemas/branch";
-
+import LoadingSpinner from "../../../components/loadingSpinner";
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req, query }) {
 		if (!req.session.userData) {
@@ -130,7 +130,7 @@ function RedeemManager({
 	const [cancelModal, setCancelOpen] = useState(false); //Cancel
 	const [rejectModal, setRejectModal] = useState(false); //reject redeem
 	const [partialPayment, setPartialPayment] = useState(0);
-
+	const [loading, setLoading] = useState(false);
 	//Item List Array
 	const [itemList, setitemList] = useState([]);
 	const [remainList, setRemainList] = useState([]);
@@ -381,6 +381,7 @@ function RedeemManager({
 	//APPROVE
 	useEffect(() => {
 		if (sendForm) {
+			setLoading(true)
 			let transac = {
 				transactionID: router.query.transactionID,
 				customerID: customerID,
@@ -431,143 +432,147 @@ function RedeemManager({
 	}, [sendForm]);
 
 	return (
-		<>
-			<NavBar currentUser={currentUser}></NavBar>
-			<Header currentUser={currentUser}></Header>
-			{/* First Half */}
+    <>
+      <NavBar currentUser={currentUser}></NavBar>
+      <Header currentUser={currentUser}></Header>
+      {/* First Half */}
 
-			<Modal isOpen={submitModal} ariaHideApp={false} className="modal">
-				<Submit
-					trigger={submitModal}
-					setTrigger={setSubmitOpen}
-					PTnumber={PTNumber}
-					itemList={redeemList}
-					setSendForm={setSendForm}
-					sendForm={sendForm}
-					amountToPay={amountToPay}
-					submitForm={submitForm}
-				/>
-			</Modal>
+      <Modal isOpen={submitModal} ariaHideApp={false} className="modal">
+        <Submit
+          trigger={submitModal}
+          setTrigger={setSubmitOpen}
+          PTnumber={PTNumber}
+          itemList={redeemList}
+          setSendForm={setSendForm}
+          sendForm={sendForm}
+          amountToPay={amountToPay}
+          submitForm={submitForm}
+        />
+      </Modal>
 
-			<Modal isOpen={cancelModal} ariaHideApp={false} className="modal">
-				<Cancel
-					trigger={cancelModal}
-					setTrigger={setCancelOpen}
-					content={cancelContentShow()}
-				/>
-			</Modal>
+      <Modal isOpen={cancelModal} ariaHideApp={false} className="modal">
+        <Cancel
+          trigger={cancelModal}
+          setTrigger={setCancelOpen}
+          content={cancelContentShow()}
+        />
+      </Modal>
 
-			<Modal isOpen={rejectModal} ariaHideApp={false} className="modal">
-				<RejectRedeemManager
-					trigger={rejectModal}
-					setTrigger={setRejectModal}
-					transactionID={transactionID}
-					itemList={redeemList}
-					redeemer={redeemerInfo}
-					isOriginal={isOriginal}
-				/>
-			</Modal>
+      <Modal isOpen={rejectModal} ariaHideApp={false} className="modal">
+        <RejectRedeemManager
+          trigger={rejectModal}
+          setTrigger={setRejectModal}
+          transactionID={transactionID}
+          itemList={redeemList}
+          redeemer={redeemerInfo}
+          isOriginal={isOriginal}
+		  loading = {loading}
+		  setLoading = {setLoading}
+        />
+      </Modal>
 
-			<div id="main-content-area" className="flex-col">
-				<p className="mb-5 text-xl font-semibold text-green-500 underline font-dosis">
-					Redeem
-				</p>
-				<div className="flex">
-					<DetailsCardRedeemManager
-						pawnTicket={ptInfo}
-						pawnHistory={pawnHistory}
-						branch={branchData.branchName}
-						PTNumber={PTNumber}
-						user={userInfo}
-						customer={customerDetails}
-						redeemer={redeemerInfo}
-						amountToPay={amountToPay}
-						setAmountToPay={setAmountToPay}
-						cashTendered={cashTendered}
-						setCashTendered={setCashTendered}
-						getNewLoan={setNewLoan}
-						isOriginal={isOriginal}
-						partialPayment={partialPayment}
-					/>
-				</div>
+      <LoadingSpinner isLoading={loading}></LoadingSpinner>
 
-				{/* Second Half */}
+      <div id="main-content-area" className="flex-col">
+        <p className="mb-5 text-xl font-semibold text-green-500 underline font-dosis">
+          Redeem
+        </p>
+        <div className="flex">
+          <DetailsCardRedeemManager
+            pawnTicket={ptInfo}
+            pawnHistory={pawnHistory}
+            branch={branchData.branchName}
+            PTNumber={PTNumber}
+            user={userInfo}
+            customer={customerDetails}
+            redeemer={redeemerInfo}
+            amountToPay={amountToPay}
+            setAmountToPay={setAmountToPay}
+            cashTendered={cashTendered}
+            setCashTendered={setCashTendered}
+            getNewLoan={setNewLoan}
+            isOriginal={isOriginal}
+            partialPayment={partialPayment}
+          />
+        </div>
 
-				<div className="flex">
-					{/* Remaining Items  */}
+        {/* Second Half */}
 
-					<div className="mt-20">
-						<p className="ml-10 text-base font-bold font-nunito">
-							Remaining Items:{" "}
-						</p>
-						{/* plan: CheckItem is ItemCard w/ Check*/}
+        <div className="flex">
+          {/* Remaining Items  */}
 
-						{remainList.length > 0 ? (
-							<>
-								<div className="p-5 mx-10 w-[720px] h-96  overflow-y-scroll bg-white border-2">
-									{remainList.map((item) => (
-										<div className="flex flex-row" key={item.itemID}>
-											<ItemCard key={item.itemID} itemDetails={item}></ItemCard>
-										</div>
-									))}
-								</div>
-							</>
-						) : (
-							<div className="p-5 mx-10 w-[720px] h-[450px]  overflow-y-scroll bg-white border-2">
-								<div className="mt-32 ">
-									<p className="text-xl font-bold text-center text-gray-300 font-nunito">
-										{" "}
-										No items displayed.
-									</p>
-									<p className="text-sm text-center text-gray-300 font-nunito">
-										{" "}
-										All items will be redeemed.
-									</p>
-								</div>
-							</div>
-						)}
-					</div>
-					{/*Items for Redemption */}
-					<div className="mt-20 ">
-						<p className="ml-10 text-base font-bold font-nunito">
-							Items for Redemption:{" "}
-						</p>
-						<div className="bg-white p-5 mx-10 w-[720px] h-[450px] overflow-y-scroll border-2">
-							{redeemList.map((item) => (
-								<ItemCard key={item.itemID} itemDetails={item}></ItemCard>
-							))}
-						</div>
-					</div>
-				</div>
-				<div className="mt-5 flex flex-row ml-[1180px]">
-					<div>
-						<button
-							className="px-10 mx-2 my-5 text-base text-white bg-red-300"
-							onClick={cancelForm}
-						>
-							Cancel
-						</button>
-					</div>
-					<div>
-						<button
-							className="px-10 mx-2 my-5 text-base text-white bg-red-500"
-							onClick={rejectForm}
-						>
-							Reject
-						</button>
-					</div>
-					<div>
-						<button
-							className="px-10 mx-2 my-5 text-base text-white bg-green-300"
-							onClick={approveForm}
-						>
-							Approve
-						</button>
-					</div>
-				</div>
-			</div>
-		</>
-	);
+          <div className="mt-20">
+            <p className="ml-10 text-base font-bold font-nunito">
+              Remaining Items:{" "}
+            </p>
+            {/* plan: CheckItem is ItemCard w/ Check*/}
+
+            {remainList.length > 0 ? (
+              <>
+                <div className="p-5 mx-10 w-[720px] h-96  overflow-y-scroll bg-white border-2">
+                  {remainList.map((item) => (
+                    <div className="flex flex-row" key={item.itemID}>
+                      <ItemCard key={item.itemID} itemDetails={item}></ItemCard>
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <div className="p-5 mx-10 w-[720px] h-[450px]  overflow-y-scroll bg-white border-2">
+                <div className="mt-32 ">
+                  <p className="text-xl font-bold text-center text-gray-300 font-nunito">
+                    {" "}
+                    No items displayed.
+                  </p>
+                  <p className="text-sm text-center text-gray-300 font-nunito">
+                    {" "}
+                    All items will be redeemed.
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+          {/*Items for Redemption */}
+          <div className="mt-20 ">
+            <p className="ml-10 text-base font-bold font-nunito">
+              Items for Redemption:{" "}
+            </p>
+            <div className="bg-white p-5 mx-10 w-[720px] h-[450px] overflow-y-scroll border-2">
+              {redeemList.map((item) => (
+                <ItemCard key={item.itemID} itemDetails={item}></ItemCard>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className="mt-5 flex flex-row ml-[1180px]">
+          <div>
+            <button
+              className="px-10 mx-2 my-5 text-base text-white bg-red-300"
+              onClick={cancelForm}
+            >
+              Cancel
+            </button>
+          </div>
+          <div>
+            <button
+              className="px-10 mx-2 my-5 text-base text-white bg-red-500"
+              onClick={rejectForm}
+            >
+              Reject
+            </button>
+          </div>
+          <div>
+            <button
+              className="px-10 mx-2 my-5 text-base text-white bg-green-300"
+              onClick={approveForm}
+            >
+              Approve
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
+  );
 }
 
 export default RedeemManager;
