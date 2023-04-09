@@ -77,10 +77,10 @@ export default async function newManagerRedeem(req, res) {
 			},
 		});
 
-		let sumWords = toWords.convert(transac.amountPaid, {
-			currency: true,
-			ignoreZeroCurrency: true,
-		});
+		let sumWords = toWords.convert(body.totalAmount, {
+      currency: true,
+      ignoreZeroCurrency: true,
+    });
 		let customerName = String(
 			userInfo.firstName + " " + userInfo.middleName + " " + userInfo.lastName
 		);
@@ -97,15 +97,15 @@ export default async function newManagerRedeem(req, res) {
 		let receiptData = [];
 
 		receiptData = {
-			date: dayjs(new Date()).format("MMM DD, YYYY"),
-			customerName: customerName,
-			address: customerInfo.presentAddress,
-			pawnTicketID: "N/A",
-			principal: (transac.amountPaid - totalInterest).toFixed(2),
-			interest: totalInterest.toFixed(2),
-			total: transac.amountPaid.toFixed(2),
-			totalWords: sumWords,
-		};
+      date: dayjs(new Date()).format("MMM DD, YYYY"),
+      customerName: customerName,
+      address: customerInfo.presentAddress,
+      pawnTicketID: "N/A",
+      principal: (body.totalAmount - totalInterest).toFixed(2),
+      interest: totalInterest.toFixed(2),
+      total: body.totalAmount.toFixed(2),
+      totalWords: sumWords,
+    };
 		res.json({
 			receiptData: receiptData,
 		});
