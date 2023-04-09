@@ -92,7 +92,9 @@ function CashFlowReport({
 						transactDate: dayjs(new Date(currTransaction.creationDate)).format("MMM DD, YYYY"),
 						cashInAmount: tempCashIn,
 						cashOutAmount: tempCashOut,
-						netCashFlow: (parseFloat(tempData[tempData.length - 1].netCashFlow) + parseFloat(tempCashIn) - parseFloat(tempCashOut)).toFixed(2),
+						netCashFlow: (parseFloat(tempCashIn) - parseFloat(tempCashOut)).toFixed(2)
+						// Beginning and End implementation
+						// netCashFlow: (parseFloat(tempData[tempData.length - 1].netCashFlow) + parseFloat(tempCashIn) - parseFloat(tempCashOut)).toFixed(2),
 					})	
 				}
 					

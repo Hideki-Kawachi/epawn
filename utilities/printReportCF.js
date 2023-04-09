@@ -21,7 +21,7 @@ export default function printReportCF(cfData, startDate, endDate) {
 				row.netCashFlow
 			])
 
-			console.log("hi")
+			// console.log("hi")
 		} else {
 
 			let index = branchList.findIndex((obj) => obj[0] == row.branchName)
@@ -32,7 +32,9 @@ export default function printReportCF(cfData, startDate, endDate) {
 			branchList[index][1] = newCashIn.toFixed(2)
 			branchList[index][2] = newCashOut.toFixed(2)
 
-			branchList[index][3] = row.netCashFlow
+			let newVal = parseFloat(branchList[index][3]) + parseFloat(row.netCashFlow) 
+			
+			branchList[index][3] = newVal.toFixed(2)
 		}
 
 
