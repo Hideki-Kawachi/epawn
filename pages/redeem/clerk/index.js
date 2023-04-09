@@ -216,12 +216,12 @@ function RedeemClerk({ currentUser }) {
 							},
 						})
 							.then((res) => res.json())
-							.then((oldpt) => {
+							.then((partialpay) => {
 								// console.log("Old PT is: " + JSON.stringify(oldpt));
-								if (oldpt != null) {
-									setPartialPayment(Number(oldpt.loanAmount - data.loanAmount));
-									// console.log("Partial Payment is now: " + partialPayment);
-								} else setPartialPayment(0);
+								if (partialpay != null) {
+                  				setPartialPayment(Number(partialpay));
+                  // console.log("Partial Payment is now: " + partialPayment);
+                } else setPartialPayment(0);
 							});
 					} else {
 						setPTinfo("N/A");
@@ -602,6 +602,7 @@ function RedeemClerk({ currentUser }) {
         <div className="flex">
           <DetailsCardClerk
             redeem={redeemArray}
+			remain={itemList}
             branch={branch}
             pawnTicket={ptInfo}
             user={userInfo}

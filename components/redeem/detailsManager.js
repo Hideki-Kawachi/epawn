@@ -5,12 +5,25 @@ import ViewComputation from "../modals/viewComputationsRedeem";
 import PawnHistory from "../modals/pawnHistory";
 import dayjs from "dayjs";
 import AuthorizedRepDetails from "../modals/authorizedRepDetails";
-function DetailsCardRedeemManager({ pawnTicket, PTNumber, customer, user, branch, getNewLoan,
-  amountToPay, redeemer, isOriginal, partialPayment, pawnHistory
+function DetailsCardRedeemManager({
+  pawnTicket,
+  PTNumber,
+  customer,
+  user,
+  branch,
+  getNewLoan,
+  amountToPay,
+  redeemer,
+  isOriginal,
+  partialPayment,
+  pawnHistory,
+  remainList,
+  redeemList,
+  cashTendered,
+  setCashTendered,
 }) {
   const [customerModal, setCustomerModal] = useState(false);
   const [computationModal, setCompOpen] = useState(false);
-  const [cashTendered, setCashTendered] = useState(0);
   const [historyModal, setHistoryModal] = useState(false);
   const [authRepModal, setAuthModal] = useState(false);
   const [loanAmount, setLoanAmount] = useState(
@@ -32,9 +45,7 @@ function DetailsCardRedeemManager({ pawnTicket, PTNumber, customer, user, branch
   );
   const [penalties, setPenalties] = useState(
     Number(
-      loanAmount *
-        0.01 *
-        monthDiff(new Date(pawnTicket.expiryDate), new Date())
+      loanAmount * 0.01 * monthDiff(new Date(pawnTicket.expiryDate), new Date())
     )
   );
 
@@ -64,14 +75,13 @@ function DetailsCardRedeemManager({ pawnTicket, PTNumber, customer, user, branch
     setCustomerModal(true);
   }
 
-  function viewDetails(){
-    setAuthModal(true)
+  function viewDetails() {
+    setAuthModal(true);
   }
 
   function historyOpen() {
     setHistoryModal(true);
   }
-
 
   useEffect(() => {
     if (amountToPay) {
@@ -80,13 +90,16 @@ function DetailsCardRedeemManager({ pawnTicket, PTNumber, customer, user, branch
       if (newLoanAmount > loanAmount) {
         setNewLoanAmount(loanAmount);
         setAdvInterest(loanAmount * 0.035);
+      } else if (newLoanAmount <= 0 || remainList.length == 0) {
+        setAdvInterest(0);
+        setNewLoanAmount(0);
+        getNewLoan(0);
       } else {
         tempAdvInterest = newLoanAmount * 0.035;
         setAdvInterest(tempAdvInterest);
         setNewLoanAmount(newLoanAmount);
         getNewLoan(newLoanAmount);
       }
-
     } else {
       setAdvInterest(0);
       setNewLoanAmount(0);
@@ -96,9 +109,7 @@ function DetailsCardRedeemManager({ pawnTicket, PTNumber, customer, user, branch
   useEffect(() => {
     setLoanAmount(pawnTicket.loanAmount ? pawnTicket.loanAmount : 0);
     setPenalties(
-      loanAmount *
-        0.01 *
-        monthDiff(new Date(pawnTicket.expiryDate), new Date())
+      loanAmount * 0.01 * monthDiff(new Date(pawnTicket.expiryDate), new Date())
     );
     setInterest(
       loanAmount *
@@ -127,7 +138,6 @@ function DetailsCardRedeemManager({ pawnTicket, PTNumber, customer, user, branch
     }
   }, [redeemer]);
 
-  
   function convertFloat(number) {
     return Number(number).toLocaleString("en-US", {
       minimumFractionDigits: 2,
@@ -161,7 +171,12 @@ function DetailsCardRedeemManager({ pawnTicket, PTNumber, customer, user, branch
         className="drop-shadow-lg flex text-base font-nunito pr-10"
       >
         <Modal isOpen={historyModal} ariaHideApp={false} className="modal">
-          <PawnHistory trigger={historyModal} setTrigger={setHistoryModal} pawnHistory = {pawnHistory} pawnTicketID = {PTNumber}/>
+          <PawnHistory
+            trigger={historyModal}
+            setTrigger={setHistoryModal}
+            pawnHistory={pawnHistory}
+            pawnTicketID={PTNumber}
+          />
         </Modal>
 
         <Modal isOpen={computationModal} ariaHideApp={false} className="modal">
@@ -171,6 +186,8 @@ function DetailsCardRedeemManager({ pawnTicket, PTNumber, customer, user, branch
             pawnTicket={pawnTicket}
             amountToPay={amountToPay}
             partialPayment={partialPayment}
+            redeemList={redeemList}
+            remainList={remainList}
           />
         </Modal>
         <Modal isOpen={customerModal} ariaHideApp={false} className="modal">
@@ -336,7 +353,7 @@ function DetailsCardRedeemManager({ pawnTicket, PTNumber, customer, user, branch
                   <input
                     type="number"
                     className="text-right border rounded-md stroke-gray-500 px-3 w-40 mb-1"
-                    onChange={(e) => getCash(e.target.value)}
+                    onChange={(e) => setCashTendered(e.target.value)}
                   />
                 </p>
                 <p className="mr-3">

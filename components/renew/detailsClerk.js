@@ -45,7 +45,7 @@ function DetailsCardRenewClerk({
 	);
 	function convertFloat(number) {
 		if (number === NaN || mode) {
-			if (number == loanAmount) {
+			if (number == loanAmount || number > 0) {
 				return Number(number).toLocaleString("en-US", {
 					minimumFractionDigits: 2,
 					maximumFractionDigits: 2,

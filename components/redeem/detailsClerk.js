@@ -7,6 +7,7 @@ import dayjs from "dayjs";
 
 function DetailsCardClerk({
 	redeem,
+  remain, 
 	pawnTicket,
 	search,
 	mode,
@@ -98,7 +99,11 @@ function DetailsCardClerk({
 					maximumFractionDigits: 2,
 				});
 			} else return "0.00";
-		} else {
+		} 
+    else if (number < 0){
+        return "0.00"
+    } 
+    else {
 			return Number(number).toLocaleString("en-US", {
 				minimumFractionDigits: 2,
 				maximumFractionDigits: 2,
@@ -174,7 +179,13 @@ function DetailsCardClerk({
 			if (newLoan > pawnTicket.loanAmount) {
 				setNewLoanAmount(pawnTicket.loanAmount);
 				setAdvInterest(pawnTicket.loanAmount * 0.035);
-			} else {
+			} 
+      else if(newLoan <= 0 || remain.length == 0){
+				tempAdvInterest = 0;
+        setAdvInterest(0);
+        setNewLoanAmount(0);
+      } 
+      else {
 				tempAdvInterest = newLoan * 0.035;
 				setAdvInterest(tempAdvInterest);
 				setNewLoanAmount(newLoan);
@@ -354,7 +365,7 @@ function DetailsCardClerk({
             <></>
           )}
           {isOriginal == "authorized" && authStatus == false ? (
-            <p className="px-5 ml-40 text-sm text-red-400">
+            <p className="px-5 ml-[200px] text-sm text-red-400">
               Missing Authorized <br />
               <span>Rep. Details</span>
             </p>

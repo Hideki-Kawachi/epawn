@@ -3,7 +3,7 @@ import Header from "../../../components/header";
 import NavBar from "../../../components/navigation/navBar";
 import DetailsCard from "../../../components/redeem/detailsManager";
 import Modal from "react-modal";
-import Submit from "../../../components/modals/submitRedeem";
+import Submit from "../../../components/modals/submitManagerRedeem";
 import Cancel from "../../../components/modals/cancel";
 import ItemCard from "../../../components/itemcard";
 import { withIronSessionSsr } from "iron-session/next";
@@ -131,6 +131,7 @@ function RedeemManager({
 	const [rejectModal, setRejectModal] = useState(false); //reject redeem
 	const [partialPayment, setPartialPayment] = useState(0);
 	const [loading, setLoading] = useState(false);
+	const [button, setButton] = useState(true)
 	//Item List Array
 	const [itemList, setitemList] = useState([]);
 	const [remainList, setRemainList] = useState([]);
@@ -268,13 +269,13 @@ function RedeemManager({
 							},
 						})
 							.then((res) => res.json())
-							.then((oldpt) => {
+							.then((partialpay) => {
 								//   console.log("Old PT is: " + JSON.stringify(oldpt));
-								if (oldpt != null) {
-									setPartialPayment(Number(oldpt.loanAmount - data.loanAmount));
-									//   console.log(
-									//     "Partial Payment is now: " + partialPayment
-									//   );
+								if (partialpay != null) {
+								setPartialPayment(Number(partialpay));
+								//   console.log(
+								//     "Partial Payment is now: " + partialPayment
+								//   );
 								} else setPartialPayment(0);
 							});
 					}
@@ -430,7 +431,11 @@ function RedeemManager({
 			}
 		}
 	}, [sendForm]);
-
+	useEffect(() => {
+    if (cashTendered >= amountToPay) {
+      setButton(false);
+    } else setButton(true);
+  }, [cashTendered, amountToPay]);
 	return (
     <>
       <NavBar currentUser={currentUser}></NavBar>
@@ -466,8 +471,8 @@ function RedeemManager({
           itemList={redeemList}
           redeemer={redeemerInfo}
           isOriginal={isOriginal}
-		  loading = {loading}
-		  setLoading = {setLoading}
+          loading={loading}
+          setLoading={setLoading}
         />
       </Modal>
 
@@ -487,12 +492,13 @@ function RedeemManager({
             customer={customerDetails}
             redeemer={redeemerInfo}
             amountToPay={amountToPay}
-            setAmountToPay={setAmountToPay}
             cashTendered={cashTendered}
             setCashTendered={setCashTendered}
             getNewLoan={setNewLoan}
             isOriginal={isOriginal}
             partialPayment={partialPayment}
+			redeemList={redeemList}
+            remainList={remainList}
           />
         </div>
 
@@ -564,7 +570,7 @@ function RedeemManager({
           <div>
             <button
               className="px-10 mx-2 my-5 text-base text-white bg-green-300"
-              onClick={approveForm}
+              onClick={approveForm} disabled={button}
             >
               Approve
             </button>
