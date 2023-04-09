@@ -15,8 +15,8 @@ export default async function PawnHistory(req, res) {
   for(let ticket of pawnTicketData){
     let transaction = await Transaction.findOne({
       _id: ticket.transactionID,
-      status: "Done" || "Approved"
-    })
+      status: { $in: ["Done", "Approved"] },
+    });
 
     let branch = await Branch.findOne({
       branchID : transaction.branchID
