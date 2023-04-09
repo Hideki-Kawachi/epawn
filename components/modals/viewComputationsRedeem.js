@@ -2,7 +2,7 @@ import Close from "../closebutton";
 import dayjs from "dayjs";
 import React, { useState, useEffect } from "react";
 
-function ViewComputation({ trigger, setTrigger, pawnTicket, amountToPay, partialPayment}) {
+function ViewComputation({ trigger, setTrigger, pawnTicket, amountToPay, partialPayment, redeemList, remainList}) {
   	const [loanAmount, setLoanAmount] = useState(
       pawnTicket.loanAmount ? pawnTicket.loanAmount : 0
     );
@@ -54,6 +54,9 @@ useEffect(() => {
     if (newLoanAmount > pawnTicket.loanAmount) {
       setNewLoanAmount(pawnTicket.loanAmount);
       setAdvInterest(pawnTicket.loanAmount * 0.035);
+    } else if (newLoanAmount <= 0) {
+      setAdvInterest(0);
+      setNewLoanAmount(0);
     } else {
       tempAdvInterest = newLoanAmount * 0.035;
       setAdvInterest(tempAdvInterest);
@@ -87,9 +90,11 @@ useEffect(() => {
          maximumFractionDigits: 2,
        });
    }
-       function getTotalRedeem() {
+       function getTotalRedeem(redeemList) {
          var total = 0;
-
+        		redeemList.forEach((item) => {
+              total += Number(item.price);
+            });
          return total;
        }
 
@@ -111,8 +116,7 @@ useEffect(() => {
               <p>Adv. Interest:</p>
               <p>Total Interest:</p>
               <p>Penalties (1%):</p>
-              {/* <p>Total Items for Redemption:</p> */}
-              {/* <p>Total Items for Redemption</p> */}
+              <p>Total Items for Redemption</p>
               <p>Partial Payments:</p>
               <p>Total Amount to be Paid:</p>
               <br />
@@ -137,7 +141,7 @@ useEffect(() => {
               </p>
               <p className="mr-3">{convertFloat(penalties.toFixed(2))}</p>
               <p className="mr-3">
-                {/* {convertFloat(getTotalRedeem())} */}
+                {convertFloat(getTotalRedeem(redeemList))}
               </p>
               <p className="mr-1.5">
                 ({convertFloat(partialPayment.toFixed(2))})
