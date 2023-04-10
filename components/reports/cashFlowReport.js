@@ -167,6 +167,23 @@ function CashFlowReport({
 		setData(tempData);
 	}
 
+	function branchFilter(branchName) {
+		setFilter("branchName", branchName);
+		if (branchName != "") {
+			let currBranch = branchData.find((branch) => {
+				return branch.branchName == branchName;
+			});
+			setBranchID(currBranch.branchID);
+		} else {
+			setBranchID("");
+		}
+	}
+
+	function statsuFilter(value) {
+		setFilter("status", value);
+		setStatus(value);
+	}
+
 	const columns = React.useMemo(
 		() => [
 			{ Header: "Branch", accessor: "branchName" },
@@ -268,6 +285,10 @@ function CashFlowReport({
 				itemData={itemData}
 				branchData={branchData}
 				transactionData={transactionData}
+				startDate={startDate}
+				endDate={endDate}
+				branchFilter={branchID}
+				statusFilter={status}
 			></CFSummaryReport>
 			{/* Table */}
 			<table {...getTableProps()} className="w-full text-sm">
