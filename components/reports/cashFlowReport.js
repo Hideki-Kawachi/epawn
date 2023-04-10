@@ -24,37 +24,25 @@ function CashFlowReport({
 	const [data, setData] = useState([{}]);
 	const [startDate, setStartDate] = useState();
 	const [endDate, setEndDate] = useState();
+	const [branchID, setBranchID] = useState("");
+	const [status, setStatus] = useState("");
 
+	
 	useEffect(() => {
-		getData();
-	}, [userData, pawnTicketData, itemData, branchData, transactionData]);
+		getData(startDate, endDate, branchID, status);
+	}, [
+		userData,
+		pawnTicketData,
+		itemData,
+		branchData,
+		transactionData,
+		startDate,
+		endDate,
+		branchID,
+		status,
+	]);
 
-	useEffect(() => {
-		if (startDate && endDate) {
-			console.log(
-				"start is:",
-				new Date(new Date(startDate).setHours(0, 0, 0, 0))
-			);
-			console.log(
-				"end is:",
-				new Date(new Date(endDate).setHours(23, 59, 59, 59))
-			);
-			let tempData = data.filter((pt) => {
-				let start = new Date(startDate).setHours(0, 0, 0, 0);
-				let end = new Date(endDate).setHours(23, 59, 59, 59);
-				return (
-					new Date(pt.loanDate) >= new Date(start) &&
-					new Date(pt.loanDate) <= new Date(endDate)
-				);
-			});
-			console.log("temp:", tempData);
-			setData(tempData);
-		} else if (!startDate && !endDate) {
-			getData();
-		}
-	}, [startDate, endDate]);
-
-	function getData() {
+	function getData(startDate, endDate, branchID, status) {
 		let tempData = [];
 
 		for (const currTransaction of transactionData) {
@@ -146,6 +134,35 @@ function CashFlowReport({
 				}
 			}
 		}
+
+		if (startDate && endDate) {
+			tempData = tempData.filter((currTransac) => {
+				let start = new Date(startDate).setHours(0, 0, 0, 0);
+				let end = new Date(endDate).setHours(23, 59, 59, 59);
+				return (
+					new Date(currTransac.transactDate) >= new Date(start) &&
+					new Date(currTransac.transactDate) <= new Date(end)
+				);
+			});
+		}
+
+		if (branchID != "") {
+			let currBranch = branchData.find((branch) => {
+				return branch.branchID == branchID;
+			});
+			console.log("curr:", currBranch.branchName);
+
+			tempData = tempData.filter((row) => {
+				return row.branchName == currBranch.branchName;
+			});
+		}
+
+		// if (status != "") {
+		// 	tempData = tempData.filter((row) => {
+		// 		return row.status == status;
+		// 	});
+		// }
+
 
 		setData(tempData);
 	}
