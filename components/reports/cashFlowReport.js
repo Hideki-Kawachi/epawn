@@ -25,11 +25,9 @@ function CashFlowReport({
 	const [startDate, setStartDate] = useState();
 	const [endDate, setEndDate] = useState();
 	const [branchID, setBranchID] = useState("");
-	const [status, setStatus] = useState("");
 
-	
 	useEffect(() => {
-		getData(startDate, endDate, branchID, status);
+		getData(startDate, endDate, branchID);
 	}, [
 		userData,
 		pawnTicketData,
@@ -39,13 +37,30 @@ function CashFlowReport({
 		startDate,
 		endDate,
 		branchID,
-		status,
 	]);
 
-	function getData(startDate, endDate, branchID, status) {
+	function getData(startDate, endDate, branchID) {
 		let tempData = [];
 
-		for (const currTransaction of transactionData) {
+		let tempTransac = transactionData;
+		if (startDate && endDate) {
+			tempTransac = tempTransac.filter((currTransac) => {
+				let start = new Date(startDate).setHours(0, 0, 0, 0);
+				let end = new Date(endDate).setHours(23, 59, 59, 59);
+				return (
+					new Date(currTransac.createdAt) >= new Date(start) &&
+					new Date(currTransac.createdAt) <= new Date(end)
+				);
+			});
+		}
+
+		if (branchID != "") {
+			tempTransac = tempTransac.filter((transac) => {
+				return transac.branchID == branchID;
+			});
+		}
+
+		for (const currTransaction of tempTransac) {
 			let currBranch = branchData.find((branch) => {
 				return branch.branchID == currTransaction.branchID;
 			});
@@ -123,9 +138,7 @@ function CashFlowReport({
 					newVal =
 						parseFloat(currTransaction.amountPaid) -
 						parseFloat(tempData[index].cashOutAmount);
-					tempData[index].cashOutAmount = Math.abs(newVal.toFixed(2)).toFixed(
-						2
-					);
+					tempData[index].cashOutAmount = Math.abs(newVal).toFixed(2);
 
 					newTotal =
 						parseFloat(currTransaction.amountPaid) +
@@ -134,35 +147,6 @@ function CashFlowReport({
 				}
 			}
 		}
-
-		if (startDate && endDate) {
-			tempData = tempData.filter((currTransac) => {
-				let start = new Date(startDate).setHours(0, 0, 0, 0);
-				let end = new Date(endDate).setHours(23, 59, 59, 59);
-				return (
-					new Date(currTransac.transactDate) >= new Date(start) &&
-					new Date(currTransac.transactDate) <= new Date(end)
-				);
-			});
-		}
-
-		if (branchID != "") {
-			let currBranch = branchData.find((branch) => {
-				return branch.branchID == branchID;
-			});
-			console.log("curr:", currBranch.branchName);
-
-			tempData = tempData.filter((row) => {
-				return row.branchName == currBranch.branchName;
-			});
-		}
-
-		// if (status != "") {
-		// 	tempData = tempData.filter((row) => {
-		// 		return row.status == status;
-		// 	});
-		// }
-
 
 		setData(tempData);
 	}
@@ -177,11 +161,6 @@ function CashFlowReport({
 		} else {
 			setBranchID("");
 		}
-	}
-
-	function statsuFilter(value) {
-		setFilter("status", value);
-		setStatus(value);
 	}
 
 	const columns = React.useMemo(
@@ -262,8 +241,7 @@ function CashFlowReport({
 				<span className="ml-5">Branch: </span>
 				<select
 					className="h-fit"
-					onChange={(e) => setFilter("branchName", e.target.value)}
-					defaultValue={""}
+					onChange={(e) => branchFilter(e.target.value)}
 				>
 					<option value={""}>All</option>
 					{branchData.map((branch) => (
@@ -288,7 +266,6 @@ function CashFlowReport({
 				startDate={startDate}
 				endDate={endDate}
 				branchFilter={branchID}
-				statusFilter={status}
 			></CFSummaryReport>
 			{/* Table */}
 			<table {...getTableProps()} className="w-full text-sm">

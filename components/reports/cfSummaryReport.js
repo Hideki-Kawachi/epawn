@@ -19,141 +19,168 @@ function CFSummaryReport({
 	itemData,
 	branchData,
 	transactionData,
+	startDate,
+	endDate,
+	branchFilter,
 }) {
 	const [data, setData] = useState([{}]);
-	const [startDate, setStartDate] = useState();
-	const [endDate, setEndDate] = useState();
 
 	useEffect(() => {
 		getData();
-	}, [userData, pawnTicketData, itemData, branchData, transactionData]);
+	}, [
+		userData,
+		pawnTicketData,
+		itemData,
+		branchData,
+		transactionData,
+		startDate,
+		endDate,
+		branchFilter,
+	]);
 
-	useEffect(() => {
+	function getData() {
+		let tempTransac = transactionData;
+		let tempData = [];
+
 		if (startDate && endDate) {
-			console.log(
-				"start is:",
-				new Date(new Date(startDate).setHours(0, 0, 0, 0))
-			);
-			console.log(
-				"end is:",
-				new Date(new Date(endDate).setHours(23, 59, 59, 59))
-			);
-			let tempData = data.filter((pt) => {
+			tempTransac = transactionData.filter((pt) => {
 				let start = new Date(startDate).setHours(0, 0, 0, 0);
 				let end = new Date(endDate).setHours(23, 59, 59, 59);
 				return (
-					new Date(pt.loanDate) >= new Date(start) &&
-					new Date(pt.loanDate) <= new Date(endDate)
+					new Date(pt.createdAt) >= new Date(start) &&
+					new Date(pt.createdAt) <= new Date(end)
 				);
 			});
-			console.log("temp:", tempData);
-			setData(tempData);
-		} else if (!startDate && !endDate) {
-			getData();
 		}
-	}, [startDate, endDate]);
 
-	function getData() {
-		let tempData = [];
+		if (branchFilter != "") {
+			tempTransac = tempTransac.filter((row) => {
+				return row.branchID == branchFilter;
+			});
+		}
 
-		for (const currTransaction of transactionData) {
+		for (const currTransaction of tempTransac) {
 			let currBranch = branchData.find((branch) => {
 				return branch.branchID == currTransaction.branchID;
 			});
 
-
 			//If not same transaction date, then create a new element (Else retrieve previous)
-			if ( (!tempData.some(obj => obj.transactDate 
-					== (dayjs(new Date(currTransaction.creationDate)).format("MMM DD, YYYY"))	)	) ) {
-				
-				let tempCashIn = 0
-				let tempCashOut = 0
-				
+			if (
+				!tempData.some(
+					(obj) =>
+						obj.transactDate ==
+						dayjs(new Date(currTransaction.creationDate)).format("MMM DD, YYYY")
+				)
+			) {
+				let tempCashIn = "0";
+				let tempCashOut = "0";
+
 				//If amount paid is positive then cashin, else false
 				if (currTransaction.amountPaid >= 0) {
-					tempCashIn = currTransaction.amountPaid.toFixed(2)
+					tempCashIn = currTransaction.amountPaid.toFixed(2);
 				} else {
-					tempCashOut = Math.abs(currTransaction.amountPaid.toFixed(2)).toFixed(2)
+					tempCashOut = Math.abs(currTransaction.amountPaid).toFixed(2);
 				}
 
 				//If array length is 0, use current cashin and cashout (Else, get the previous)
 				if (tempData.length == 0) {
 					tempData.push({
-						branchName: currBranch.branchName, 
-						transactDate: dayjs(new Date(currTransaction.creationDate)).format("MMM DD, YYYY"),
+						branchName: currBranch.branchName,
+						transactDate: dayjs(new Date(currTransaction.creationDate)).format(
+							"MMM DD, YYYY"
+						),
 						cashInAmount: tempCashIn,
 						cashOutAmount: tempCashOut,
-						netCashFlow: (parseFloat(tempCashIn) - parseFloat(tempCashOut)).toFixed(2),
-					})
+						netCashFlow: (
+							parseFloat(tempCashIn) - parseFloat(tempCashOut)
+						).toFixed(2),
+					});
 				} else {
 					tempData.push({
-						branchName: currBranch.branchName, 
-						transactDate: dayjs(new Date(currTransaction.creationDate)).format("MMM DD, YYYY"),
+						branchName: currBranch.branchName,
+						transactDate: dayjs(new Date(currTransaction.creationDate)).format(
+							"MMM DD, YYYY"
+						),
 						cashInAmount: tempCashIn,
 						cashOutAmount: tempCashOut,
 						// netCashFlow: (parseFloat(tempCashIn) - parseFloat(tempCashOut)).toFixed(2)
 						// Beginning and End implementation
-						netCashFlow: (parseFloat(tempData[tempData.length - 1].netCashFlow) + parseFloat(tempCashIn) - parseFloat(tempCashOut)).toFixed(2),
-					})	
+						netCashFlow: (
+							parseFloat(tempData[tempData.length - 1].netCashFlow) +
+							parseFloat(tempCashIn) -
+							parseFloat(tempCashOut)
+						).toFixed(2),
+					});
 				}
-					
-			}
-			else {
-
-				let index = tempData.findIndex(obj => obj.transactDate == (dayjs(new Date(currTransaction.creationDate)).format("MMM DD, YYYY")) )
+			} else {
+				let index = tempData.findIndex(
+					(obj) =>
+						obj.transactDate ==
+						dayjs(new Date(currTransaction.creationDate)).format("MMM DD, YYYY")
+				);
 
 				let newVal;
 				let newTotal;
 
 				//If amountPaid is >= 0, then cashIn
 				if (currTransaction.amountPaid >= 0) {
-					newVal = parseFloat(tempData[index].cashInAmount) + parseFloat(currTransaction.amountPaid)
-					tempData[index].cashInAmount = newVal.toFixed(2)
+					newVal =
+						parseFloat(tempData[index].cashInAmount) +
+						parseFloat(currTransaction.amountPaid);
+					tempData[index].cashInAmount = newVal.toFixed(2);
 
-					newTotal = parseFloat(currTransaction.amountPaid) + parseFloat(tempData[index].netCashFlow) 
-					tempData[index].netCashFlow = newTotal.toFixed(2)
+					newTotal =
+						parseFloat(currTransaction.amountPaid) +
+						parseFloat(tempData[index].netCashFlow);
+					tempData[index].netCashFlow = newTotal.toFixed(2);
 				} else {
-					newVal = parseFloat(currTransaction.amountPaid) - parseFloat(tempData[index].cashOutAmount)
-					tempData[index].cashOutAmount = Math.abs(newVal.toFixed(2)).toFixed(2)
+					newVal =
+						parseFloat(currTransaction.amountPaid) -
+						parseFloat(tempData[index].cashOutAmount);
+					tempData[index].cashOutAmount = Math.abs(newVal.toFixed(2)).toFixed(
+						2
+					);
 
-					newTotal = parseFloat(currTransaction.amountPaid) + parseFloat(tempData[index].netCashFlow)
-					tempData[index].netCashFlow = (newTotal).toFixed(2)
+					newTotal =
+						parseFloat(currTransaction.amountPaid) +
+						parseFloat(tempData[index].netCashFlow);
+					tempData[index].netCashFlow = newTotal.toFixed(2);
 				}
 			}
 		}
 
-		let branchList = []
+		let branchList = [];
 
 		for (const someItem of tempData) {
-
 			// console.log(someItem)
 
-			if ( !branchList.some((obj) => obj.branchName === someItem.branchName)) {
-
+			if (!branchList.some((obj) => obj.branchName === someItem.branchName)) {
 				branchList.push({
 					branchName: someItem.branchName,
 					totalCashInAmount: someItem.cashInAmount,
 					totalCashOutAmount: someItem.cashOutAmount,
-					totalNetCashFlow: someItem.netCashFlow
-				})
-
+					totalNetCashFlow: someItem.netCashFlow,
+				});
 			} else {
+				console.log("hello");
 
-				console.log("hello")
+				let index = branchList.findIndex(
+					(obj) => obj.branchName == someItem.branchName
+				);
+				let newCashIn =
+					parseFloat(branchList[index].totalCashInAmount) +
+					parseFloat(someItem.cashInAmount);
 
-				let index = branchList.findIndex((obj) => obj.branchName == someItem.branchName)
-				let newCashIn = parseFloat(branchList[index].totalCashInAmount) + parseFloat(someItem.cashInAmount)
+				let newCashOut =
+					parseFloat(branchList[index].totalCashOutAmount) +
+					parseFloat(someItem.cashOutAmount);
 
-				let newCashOut =  parseFloat(branchList[index].totalCashOutAmount) + parseFloat(someItem.cashOutAmount)
-				
-				branchList[index].totalCashInAmount = newCashIn.toFixed(2)
-				branchList[index].totalCashOutAmount = newCashOut.toFixed(2)
+				branchList[index].totalCashInAmount = newCashIn.toFixed(2);
+				branchList[index].totalCashOutAmount = newCashOut.toFixed(2);
 
-				branchList[index].totalNetCashFlow = someItem.netCashFlow
+				branchList[index].totalNetCashFlow = someItem.netCashFlow;
 			}
 		}
-
-		
 
 		setData(branchList);
 	}
@@ -167,7 +194,7 @@ function CFSummaryReport({
 			},
 			{
 				Header: "Total Cash Out",
-				accessor:  "totalCashOutAmount",
+				accessor: "totalCashOutAmount",
 			},
 			{
 				Header: "Net Cash Flow",
@@ -326,7 +353,6 @@ function CFSummaryReport({
 					{">>"}
 				</button>{" "}
 			</div>
-			
 		</>
 	);
 }
