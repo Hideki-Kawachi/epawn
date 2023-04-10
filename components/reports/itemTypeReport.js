@@ -19,10 +19,10 @@ function ItemTypeReport({
 	transactionData,
 	statusFilter,
 	branchFilter,
+	startDate,
+	endDate,
 }) {
 	const [data, setData] = useState([{}]);
-	const [startDate, setStartDate] = useState();
-	const [endDate, setEndDate] = useState();
 
 	useEffect(() => {
 		getData();
@@ -34,23 +34,25 @@ function ItemTypeReport({
 		transactionData,
 		branchFilter,
 		statusFilter,
+		startDate,
+		endDate,
 	]);
 
-	useEffect(() => {
-		if (startDate && endDate) {
-			let tempData = data.filter((pt) => {
-				let start = new Date(startDate).setHours(0, 0, 0, 0);
-				let end = new Date(endDate).setHours(23, 59, 59, 59);
-				return (
-					new Date(pt.loanDate) >= new Date(start) &&
-					new Date(pt.loanDate) <= new Date(end)
-				);
-			});
-			setData(tempData);
-		} else if (!startDate && !endDate) {
-			getData();
-		}
-	}, [startDate, endDate]);
+	// useEffect(() => {
+	// 	if (startDate && endDate) {
+	// 		let tempData = data.filter((pt) => {
+	// 			let start = new Date(startDate).setHours(0, 0, 0, 0);
+	// 			let end = new Date(endDate).setHours(23, 59, 59, 59);
+	// 			return (
+	// 				new Date(pt.loanDate) >= new Date(start) &&
+	// 				new Date(pt.loanDate) <= new Date(end)
+	// 			);
+	// 		});
+	// 		setData(tempData);
+	// 	} else if (!startDate && !endDate) {
+	// 		getData();
+	// 	}
+	// }, [startDate, endDate]);
 
 	function getData() {
 		let tempData = [];
@@ -60,7 +62,20 @@ function ItemTypeReport({
 
 		let itemTypeList = [];
 
-		for (const pt of pawnTicketData) {
+		if (startDate && endDate) {
+			tempData = pawnTicketData.filter((pt) => {
+				let start = new Date(startDate).setHours(0, 0, 0, 0);
+				let end = new Date(endDate).setHours(23, 59, 59, 59);
+				return (
+					new Date(pt.loanDate) >= new Date(start) &&
+					new Date(pt.loanDate) <= new Date(end)
+				);
+			});
+		} else {
+			tempData = pawnTicketData;
+		}
+
+		for (const pt of tempData) {
 			let currTransaction = transactionData.find((transac) => {
 				// console.log("transac:", transac._id, "--", pt.transactionID);
 				return transac._id.toString() == pt.transactionID;
@@ -151,7 +166,6 @@ function ItemTypeReport({
 										parseFloat(itemTypeList[index].loanAmount) + pt.loanAmount;
 									itemTypeList[index].loanAmount = newVal.toFixed(2);
 								}
-
 								tempIDList.push(item.itemID);
 							}
 						}

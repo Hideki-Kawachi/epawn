@@ -274,6 +274,8 @@ function ItemReport({
 				transactionData={transactionData}
 				branchFilter={branchID}
 				statusFilter={status}
+				startDate={startDate}
+				endDate={endDate}
 			></ItemTypeReport>
 
 			{/* Table */}
