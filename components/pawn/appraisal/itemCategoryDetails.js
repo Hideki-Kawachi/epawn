@@ -8,7 +8,7 @@ import DiamondShapeValues from "../,,/../../../utilities/dropdownValues/diamondS
 
 function ItemCategoryDetails({ itemCategory, itemDetails, setItemDetails }) {
 	const [weight, setWeight] = useState(
-		itemDetails.weight > 0 ? itemDetails.weight.toString() : "0"
+		itemDetails.weight > 0 ? itemDetails.weight : 0
 	);
 	const [quantity, setQuantity] = useState(
 		itemDetails.quantity ? itemDetails.quantity : 0
@@ -29,7 +29,7 @@ function ItemCategoryDetails({ itemCategory, itemDetails, setItemDetails }) {
 	const [shape, setShape] = useState(shapeSetting());
 
 	useEffect(() => {
-		setWeight(itemDetails.weight > 0 ? itemDetails.weight.toString() : "0");
+		setWeight(itemDetails.weight > 0 ? itemDetails.weight : 0);
 		setQuantity(itemDetails.quantity ? itemDetails.quantity : 0);
 		setColor(colorSetting());
 		setPurity(puritySetting());
@@ -164,8 +164,8 @@ function ItemCategoryDetails({ itemCategory, itemDetails, setItemDetails }) {
 	useEffect(() => {
 		let NewItemDetails;
 		let newWeight;
-		if (isNaN(parseFloat(weight))) {
-			newWeight = "0";
+		if (isNaN(weight)) {
+			newWeight = 0;
 		} else {
 			newWeight = weight;
 		}
@@ -336,9 +336,21 @@ function ItemCategoryDetails({ itemCategory, itemDetails, setItemDetails }) {
 				});
 			}
 		}
-
+		console.log("ITEM DESC:", NewItemDetails);
 		setItemDetails(NewItemDetails);
-	}, [itemCategory, color, purity, carat, shape, clarity]);
+	}, [
+		itemCategory,
+		color,
+		purity,
+		carat,
+		shape,
+		clarity,
+		description,
+		weight,
+		brand,
+		model,
+		quantity,
+	]);
 
 	function weightInsert(value) {
 		if (isNaN(parseFloat(weight)) && isNaN(value)) {
@@ -420,7 +432,7 @@ function ItemCategoryDetails({ itemCategory, itemDetails, setItemDetails }) {
 					<div className="flex flex-col w-full gap-3">
 						<input
 							type="number"
-							onChange={(e) => weightInsert(e.target.value)}
+							onChange={(e) => setWeight(e.target.value)}
 							value={parseFloat(weight)}
 						></input>
 						<select value={purity} onChange={(e) => setPurity(e.target.value)}>
