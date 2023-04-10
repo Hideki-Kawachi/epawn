@@ -62,63 +62,87 @@ function CashFlowReport({
 				return branch.branchID == currTransaction.branchID;
 			});
 
-
 			//If not same transaction date, then create a new element (Else retrieve previous)
-			if ( (!tempData.some(obj => obj.transactDate 
-					== (dayjs(new Date(currTransaction.creationDate)).format("MMM DD, YYYY"))	)	) ) {
-				
-				let tempCashIn = 0
-				let tempCashOut = 0
-				
+			if (
+				!tempData.some(
+					(obj) =>
+						obj.transactDate ==
+						dayjs(new Date(currTransaction.creationDate)).format("MMM DD, YYYY")
+				)
+			) {
+				let tempCashIn = 0;
+				let tempCashOut = 0;
+
 				//If amount paid is positive then cashin, else false
 				if (currTransaction.amountPaid >= 0) {
-					tempCashIn = currTransaction.amountPaid.toFixed(2)
+					tempCashIn = currTransaction.amountPaid.toFixed(2);
 				} else {
-					tempCashOut = Math.abs(currTransaction.amountPaid.toFixed(2)).toFixed(2)
+					tempCashOut = Math.abs(currTransaction.amountPaid.toFixed(2)).toFixed(
+						2
+					);
 				}
 
 				//If array length is 0, use current cashin and cashout (Else, get the previous)
 				if (tempData.length == 0) {
 					tempData.push({
-						branchName: currBranch.branchName, 
-						transactDate: dayjs(new Date(currTransaction.creationDate)).format("MMM DD, YYYY"),
+						branchName: currBranch.branchName,
+						transactDate: dayjs(new Date(currTransaction.creationDate)).format(
+							"MMM DD, YYYY"
+						),
 						cashInAmount: tempCashIn,
 						cashOutAmount: tempCashOut,
-						netCashFlow: (parseFloat(tempCashIn) - parseFloat(tempCashOut)).toFixed(2),
-					})
+						netCashFlow: (
+							parseFloat(tempCashIn) - parseFloat(tempCashOut)
+						).toFixed(2),
+					});
 				} else {
 					tempData.push({
-						branchName: currBranch.branchName, 
-						transactDate: dayjs(new Date(currTransaction.creationDate)).format("MMM DD, YYYY"),
+						branchName: currBranch.branchName,
+						transactDate: dayjs(new Date(currTransaction.creationDate)).format(
+							"MMM DD, YYYY"
+						),
 						cashInAmount: tempCashIn,
 						cashOutAmount: tempCashOut,
-						netCashFlow: (parseFloat(tempCashIn) - parseFloat(tempCashOut)).toFixed(2)
+						netCashFlow: (
+							parseFloat(tempCashIn) - parseFloat(tempCashOut)
+						).toFixed(2),
 						// Beginning and End implementation
 						// netCashFlow: (parseFloat(tempData[tempData.length - 1].netCashFlow) + parseFloat(tempCashIn) - parseFloat(tempCashOut)).toFixed(2),
-					})	
+					});
 				}
-					
-			}
-			else {
-
-				let index = tempData.findIndex(obj => obj.transactDate == (dayjs(new Date(currTransaction.creationDate)).format("MMM DD, YYYY")) )
+			} else {
+				let index = tempData.findIndex(
+					(obj) =>
+						obj.transactDate ==
+						dayjs(new Date(currTransaction.creationDate)).format("MMM DD, YYYY")
+				);
 
 				let newVal;
 				let newTotal;
 
 				//If amountPaid is >= 0, then cashIn
 				if (currTransaction.amountPaid >= 0) {
-					newVal = parseFloat(tempData[index].cashInAmount) + parseFloat(currTransaction.amountPaid)
-					tempData[index].cashInAmount = newVal.toFixed(2)
+					newVal =
+						parseFloat(tempData[index].cashInAmount) +
+						parseFloat(currTransaction.amountPaid);
+					tempData[index].cashInAmount = newVal.toFixed(2);
 
-					newTotal = parseFloat(currTransaction.amountPaid) + parseFloat(tempData[index].netCashFlow) 
-					tempData[index].netCashFlow = newTotal.toFixed(2)
+					newTotal =
+						parseFloat(currTransaction.amountPaid) +
+						parseFloat(tempData[index].netCashFlow);
+					tempData[index].netCashFlow = newTotal.toFixed(2);
 				} else {
-					newVal = parseFloat(currTransaction.amountPaid) - parseFloat(tempData[index].cashOutAmount)
-					tempData[index].cashOutAmount = Math.abs(newVal.toFixed(2)).toFixed(2)
+					newVal =
+						parseFloat(currTransaction.amountPaid) -
+						parseFloat(tempData[index].cashOutAmount);
+					tempData[index].cashOutAmount = Math.abs(newVal.toFixed(2)).toFixed(
+						2
+					);
 
-					newTotal = parseFloat(currTransaction.amountPaid) + parseFloat(tempData[index].netCashFlow)
-					tempData[index].netCashFlow = (newTotal).toFixed(2)
+					newTotal =
+						parseFloat(currTransaction.amountPaid) +
+						parseFloat(tempData[index].netCashFlow);
+					tempData[index].netCashFlow = newTotal.toFixed(2);
 				}
 			}
 		}
@@ -141,7 +165,7 @@ function CashFlowReport({
 			},
 			{
 				Header: "Cash Out",
-				accessor:  "cashOutAmount",
+				accessor: "cashOutAmount",
 			},
 			{
 				Header: "Net Cash Flow",
@@ -185,17 +209,6 @@ function CashFlowReport({
 
 	return (
 		<>
-
-			<CFSummaryReport
-				pawnTicketData={pawnTicketData}
-				userData={userData}
-				itemData={itemData}
-				branchData={branchData}
-				transactionData={transactionData}
-			>
-			</CFSummaryReport>
-
-
 			{/* Filter  */}
 			<div className="flex items-center self-start w-full gap-2 my-5 text-sm font-nunito whitespace-nowrap ">
 				<span className="ml-5">Starting Date: </span>
@@ -225,16 +238,6 @@ function CashFlowReport({
 						</option>
 					))}
 				</select>
-				<span className="ml-5">Status: </span>
-				<select
-					className="h-fit"
-					onChange={(e) => setFilter("status", e.target.value)}
-					defaultValue={""}
-				>
-					<option value={""}>All</option>
-					<option value={"Ongoing"}>Ongoing</option>
-					<option value={"Inactive"}>Inactive</option>
-				</select>
 				<button
 					className="relative ml-auto text-sm bg-green-300"
 					onClick={() => printReport()}
@@ -242,6 +245,13 @@ function CashFlowReport({
 					Generate Report
 				</button>
 			</div>
+			<CFSummaryReport
+				pawnTicketData={pawnTicketData}
+				userData={userData}
+				itemData={itemData}
+				branchData={branchData}
+				transactionData={transactionData}
+			></CFSummaryReport>
 			{/* Table */}
 			<table {...getTableProps()} className="w-full text-sm">
 				<thead>
@@ -311,7 +321,6 @@ function CashFlowReport({
 					{">>"}
 				</button>{" "}
 			</div>
-			
 		</>
 	);
 }

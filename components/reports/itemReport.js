@@ -191,24 +191,6 @@ function ItemReport({
 
 	return (
 		<>
-			<ItemCategoryReport
-				pawnTicketData={pawnTicketData}
-				userData={userData}
-				itemData={itemData}
-				branchData={branchData}
-				transactionData={transactionData}
-				startDate={startDate}
-				endDate={endDate}
-				branchFilter={branchID}
-			></ItemCategoryReport>
-
-			<ItemTypeReport
-				pawnTicketData={pawnTicketData}
-				userData={userData}
-				itemData={itemData}
-				branchData={branchData}
-				transactionData={transactionData}
-			></ItemTypeReport>
 			{/* Filter  */}
 			<div className="flex items-center self-start w-full gap-2 my-5 text-sm font-nunito whitespace-nowrap ">
 				<span className="ml-5">Starting Date: </span>
@@ -245,6 +227,25 @@ function ItemReport({
 					Generate Report
 				</button>
 			</div>
+			<ItemCategoryReport
+				pawnTicketData={pawnTicketData}
+				userData={userData}
+				itemData={itemData}
+				branchData={branchData}
+				transactionData={transactionData}
+				startDate={startDate}
+				endDate={endDate}
+				branchFilter={branchID}
+			></ItemCategoryReport>
+
+			<ItemTypeReport
+				pawnTicketData={pawnTicketData}
+				userData={userData}
+				itemData={itemData}
+				branchData={branchData}
+				transactionData={transactionData}
+			></ItemTypeReport>
+
 			{/* Table */}
 			<table {...getTableProps()} className="w-full text-sm">
 				<thead>
