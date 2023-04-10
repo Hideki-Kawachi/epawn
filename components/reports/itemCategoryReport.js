@@ -132,6 +132,7 @@ function ItemCategoryReport({
 									parseFloat(itemCatList[index].loanAmount) + pt.loanAmount;
 								itemCatList[index].loanAmount = newVal.toFixed(2);
 							}
+							tempIDList.push(item.itemID);
 						} else if (statusFilter == "Redeemed" && item.isRedeemed) {
 							if (
 								!itemCatList.some(
@@ -150,6 +151,7 @@ function ItemCategoryReport({
 									parseFloat(itemCatList[index].loanAmount) + pt.loanAmount;
 								itemCatList[index].loanAmount = newVal.toFixed(2);
 							}
+							tempIDList.push(item.itemID);
 						} else if (statusFilter == "For Auction" && item.forAuction) {
 							if (
 								!itemCatList.some(
@@ -168,6 +170,7 @@ function ItemCategoryReport({
 									parseFloat(itemCatList[index].loanAmount) + pt.loanAmount;
 								itemCatList[index].loanAmount = newVal.toFixed(2);
 							}
+							tempIDList.push(item.itemID);
 						} else if (statusFilter == "") {
 							if (
 								!itemCatList.some(
@@ -186,9 +189,8 @@ function ItemCategoryReport({
 									parseFloat(itemCatList[index].loanAmount) + pt.loanAmount;
 								itemCatList[index].loanAmount = newVal.toFixed(2);
 							}
+							tempIDList.push(item.itemID);
 						}
-
-						tempIDList.push(item.itemID);
 					}
 				}
 			}

@@ -308,7 +308,7 @@ function ItemReport({
 							<tr
 								{...row.getRowProps()}
 								// onClick={() => openRow(data[row.id])}
-								className="cursor-pointer hover:bg-green-100"
+								className="text-right cursor-pointer hover:bg-green-100"
 							>
 								{row.cells.map((cell) => {
 									return (
