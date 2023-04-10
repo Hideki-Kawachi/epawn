@@ -21,37 +21,55 @@ function PawnTicketReport({
 	const [data, setData] = useState([{}]);
 	const [startDate, setStartDate] = useState();
 	const [endDate, setEndDate] = useState();
+	const [branchID, setBranchID] = useState("");
+	const [status, setStatus] = useState("");
 
 	useEffect(() => {
-		getData();
-	}, [userData, pawnTicketData, itemData, branchData, transactionData]);
+		getData(startDate, endDate, branchID, status);
+	}, [
+		userData,
+		pawnTicketData,
+		itemData,
+		branchData,
+		transactionData,
+		startDate,
+		endDate,
+		branchID,
+		status,
+	]);
 
-	useEffect(() => {
-		if (startDate && endDate) {
-			console.log(
-				"start is:",
-				new Date(new Date(startDate).setHours(0, 0, 0, 0))
-			);
-			console.log(
-				"end is:",
-				new Date(new Date(endDate).setHours(23, 59, 59, 59))
-			);
-			let tempData = data.filter((pt) => {
-				let start = new Date(startDate).setHours(0, 0, 0, 0);
-				let end = new Date(endDate).setHours(23, 59, 59, 59);
-				return (
-					new Date(pt.loanDate) >= new Date(start) &&
-					new Date(pt.loanDate) <= new Date(endDate)
-				);
-			});
-			console.log("temp:", tempData);
-			setData(tempData);
-		} else if (!startDate && !endDate) {
-			getData();
-		}
-	}, [startDate, endDate]);
 
-	function getData() {
+	
+	// useEffect(() => {
+	// 	getData();
+	// }, [userData, pawnTicketData, itemData, branchData, transactionData]);
+
+	// useEffect(() => {
+	// 	if (startDate && endDate) {
+	// 		console.log(
+	// 			"start is:",
+	// 			new Date(new Date(startDate).setHours(0, 0, 0, 0))
+	// 		);
+	// 		console.log(
+	// 			"end is:",
+	// 			new Date(new Date(endDate).setHours(23, 59, 59, 59))
+	// 		);
+	// 		let tempData = data.filter((pt) => {
+	// 			let start = new Date(startDate).setHours(0, 0, 0, 0);
+	// 			let end = new Date(endDate).setHours(23, 59, 59, 59);
+	// 			return (
+	// 				new Date(pt.loanDate) >= new Date(start) &&
+	// 				new Date(pt.loanDate) <= new Date(endDate)
+	// 			);
+	// 		});
+	// 		console.log("temp:", tempData);
+	// 		setData(tempData);
+	// 	} else if (!startDate && !endDate) {
+	// 		getData();
+	// 	}
+	// }, [startDate, endDate]);
+
+	function getData(startDate, endDate, branchID, status) {
 		let tempData = [];
 		for (const pt of pawnTicketData) {
 			let currTransaction = transactionData.find((transac) => {
@@ -81,7 +99,36 @@ function PawnTicketReport({
 				loanAmount: pt.loanAmount?.toFixed(2),
 			});
 		}
-		setData(tempData);
+
+		if (startDate && endDate) {
+			tempData = tempData.filter((pt) => {
+				let start = new Date(startDate).setHours(0, 0, 0, 0);
+				let end = new Date(endDate).setHours(23, 59, 59, 59);
+				return (
+					new Date(pt.loanDate) >= new Date(start) &&
+					new Date(pt.loanDate) <= new Date(end)
+				);
+			});
+		}
+
+		if (branchID != "") {
+			let currBranch = branchData.find((branch) => {
+				return branch.branchID == branchID;
+			});
+			console.log("curr:", currBranch.branchName);
+
+			tempData = tempData.filter((row) => {
+				return row.branchName == currBranch.branchName;
+			});
+		}
+
+		if (status != "") {
+			tempData = tempData.filter((row) => {
+				return row.status == status;
+			});
+		}
+
+		setData(tempData)
 	}
 
 	const columns = React.useMemo(
