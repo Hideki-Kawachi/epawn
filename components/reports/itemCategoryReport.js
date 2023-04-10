@@ -20,12 +20,20 @@ function ItemCategoryReport({
 	startDate,
 	endDate,
 	branchFilter,
+	statusFilter,
 }) {
 	const [data, setData] = useState([{}]);
 
 	useEffect(() => {
 		getData(pawnTicketData);
-	}, [userData, pawnTicketData, itemData, branchData, transactionData]);
+	}, [
+		userData,
+		pawnTicketData,
+		itemData,
+		branchData,
+		transactionData,
+		statusFilter,
+	]);
 
 	useEffect(() => {
 		if (startDate && endDate) {
@@ -100,21 +108,84 @@ function ItemCategoryReport({
 			for (const item of itemData) {
 				if (item.itemListID == pt.itemListID) {
 					//If item does not exist in the ID List, extract the items and push it into tempData
+
 					if (!tempIDList.includes(item.itemID)) {
 						if (
-							!itemCatList.some((obj) => obj.itemCategory === item.itemCategory)
+							statusFilter == "Pawned" &&
+							!item.isRedeemed &&
+							!item.forAuction
 						) {
-							itemCatList.push({
-								itemCategory: item.itemCategory,
-								loanAmount: pt.loanAmount.toFixed(2),
-							});
-						} else {
-							let index = itemCatList.findIndex(
-								(obj) => obj.itemCategory == item.itemCategory
-							);
-							let newVal =
-								parseFloat(itemCatList[index].loanAmount) + pt.loanAmount;
-							itemCatList[index].loanAmount = newVal.toFixed(2);
+							if (
+								!itemCatList.some(
+									(obj) => obj.itemCategory === item.itemCategory
+								)
+							) {
+								itemCatList.push({
+									itemCategory: item.itemCategory,
+									loanAmount: pt.loanAmount.toFixed(2),
+								});
+							} else {
+								let index = itemCatList.findIndex(
+									(obj) => obj.itemCategory == item.itemCategory
+								);
+								let newVal =
+									parseFloat(itemCatList[index].loanAmount) + pt.loanAmount;
+								itemCatList[index].loanAmount = newVal.toFixed(2);
+							}
+						} else if (statusFilter == "Redeemed" && item.isRedeemed) {
+							if (
+								!itemCatList.some(
+									(obj) => obj.itemCategory === item.itemCategory
+								)
+							) {
+								itemCatList.push({
+									itemCategory: item.itemCategory,
+									loanAmount: pt.loanAmount.toFixed(2),
+								});
+							} else {
+								let index = itemCatList.findIndex(
+									(obj) => obj.itemCategory == item.itemCategory
+								);
+								let newVal =
+									parseFloat(itemCatList[index].loanAmount) + pt.loanAmount;
+								itemCatList[index].loanAmount = newVal.toFixed(2);
+							}
+						} else if (statusFilter == "For Auction" && item.forAuction) {
+							if (
+								!itemCatList.some(
+									(obj) => obj.itemCategory === item.itemCategory
+								)
+							) {
+								itemCatList.push({
+									itemCategory: item.itemCategory,
+									loanAmount: pt.loanAmount.toFixed(2),
+								});
+							} else {
+								let index = itemCatList.findIndex(
+									(obj) => obj.itemCategory == item.itemCategory
+								);
+								let newVal =
+									parseFloat(itemCatList[index].loanAmount) + pt.loanAmount;
+								itemCatList[index].loanAmount = newVal.toFixed(2);
+							}
+						} else if (statusFilter == "") {
+							if (
+								!itemCatList.some(
+									(obj) => obj.itemCategory === item.itemCategory
+								)
+							) {
+								itemCatList.push({
+									itemCategory: item.itemCategory,
+									loanAmount: pt.loanAmount.toFixed(2),
+								});
+							} else {
+								let index = itemCatList.findIndex(
+									(obj) => obj.itemCategory == item.itemCategory
+								);
+								let newVal =
+									parseFloat(itemCatList[index].loanAmount) + pt.loanAmount;
+								itemCatList[index].loanAmount = newVal.toFixed(2);
+							}
 						}
 
 						tempIDList.push(item.itemID);

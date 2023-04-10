@@ -17,6 +17,8 @@ function ItemTypeReport({
 	itemData,
 	branchData,
 	transactionData,
+	statusFilter,
+	branchFilter,
 }) {
 	const [data, setData] = useState([{}]);
 	const [startDate, setStartDate] = useState();
@@ -24,27 +26,26 @@ function ItemTypeReport({
 
 	useEffect(() => {
 		getData();
-	}, [userData, pawnTicketData, itemData, branchData, transactionData]);
+	}, [
+		userData,
+		pawnTicketData,
+		itemData,
+		branchData,
+		transactionData,
+		branchFilter,
+		statusFilter,
+	]);
 
 	useEffect(() => {
 		if (startDate && endDate) {
-			console.log(
-				"start is:",
-				new Date(new Date(startDate).setHours(0, 0, 0, 0))
-			);
-			console.log(
-				"end is:",
-				new Date(new Date(endDate).setHours(23, 59, 59, 59))
-			);
 			let tempData = data.filter((pt) => {
 				let start = new Date(startDate).setHours(0, 0, 0, 0);
 				let end = new Date(endDate).setHours(23, 59, 59, 59);
 				return (
 					new Date(pt.loanDate) >= new Date(start) &&
-					new Date(pt.loanDate) <= new Date(endDate)
+					new Date(pt.loanDate) <= new Date(end)
 				);
 			});
-			console.log("temp:", tempData);
 			setData(tempData);
 		} else if (!startDate && !endDate) {
 			getData();
@@ -57,7 +58,7 @@ function ItemTypeReport({
 		//Get all items
 		let tempIDList = [];
 
-        let itemTypeList = [];
+		let itemTypeList = [];
 
 		for (const pt of pawnTicketData) {
 			let currTransaction = transactionData.find((transac) => {
@@ -71,28 +72,91 @@ function ItemTypeReport({
 				// return pt.branchID
 			});
 
-			for (const item of itemData) {
-				if (item.itemListID == pt.itemListID)  {
+			if (branchFilter == "" || branchFilter == currBranch.branchID) {
+				for (const item of itemData) {
+					if (item.itemListID == pt.itemListID) {
+						//If item does not exist in the ID List, extract the items and push it into tempData
+						if (!tempIDList.includes(item.itemID)) {
+							if (statusFilter == "") {
+								if (
+									!itemTypeList.some((obj) => obj.itemType === item.itemType)
+								) {
+									itemTypeList.push({
+										itemType: item.itemType,
+										loanAmount: pt.loanAmount.toFixed(2),
+									});
+								} else {
+									let index = itemTypeList.findIndex(
+										(obj) => obj.itemType == item.itemType
+									);
+									let newVal =
+										parseFloat(itemTypeList[index].loanAmount) + pt.loanAmount;
+									itemTypeList[index].loanAmount = newVal.toFixed(2);
+								}
 
-					//If item does not exist in the ID List, extract the items and push it into tempData
-					if ( !(tempIDList.includes(item.itemID)) ) {
+								tempIDList.push(item.itemID);
+							} else if (
+								statusFilter == "Pawned" &&
+								!item.isRedeemed &&
+								!item.forAuction
+							) {
+								if (
+									!itemTypeList.some((obj) => obj.itemType === item.itemType)
+								) {
+									itemTypeList.push({
+										itemType: item.itemType,
+										loanAmount: pt.loanAmount.toFixed(2),
+									});
+								} else {
+									let index = itemTypeList.findIndex(
+										(obj) => obj.itemType == item.itemType
+									);
+									let newVal =
+										parseFloat(itemTypeList[index].loanAmount) + pt.loanAmount;
+									itemTypeList[index].loanAmount = newVal.toFixed(2);
+								}
 
-                        if ( !(itemTypeList.some(obj => obj.itemType === item.itemType) ) ) {
-                            itemTypeList.push({
-                                itemType: item.itemType, 
-                                loanAmount: pt.loanAmount.toFixed(2)
-                            })
+								tempIDList.push(item.itemID);
+							} else if (statusFilter == "Redeemed" && item.isRedeemed) {
+								if (
+									!itemTypeList.some((obj) => obj.itemType === item.itemType)
+								) {
+									itemTypeList.push({
+										itemType: item.itemType,
+										loanAmount: pt.loanAmount.toFixed(2),
+									});
+								} else {
+									let index = itemTypeList.findIndex(
+										(obj) => obj.itemType == item.itemType
+									);
+									let newVal =
+										parseFloat(itemTypeList[index].loanAmount) + pt.loanAmount;
+									itemTypeList[index].loanAmount = newVal.toFixed(2);
+								}
 
-                        } else {
-							let index = itemTypeList.findIndex(obj => obj.itemType == item.itemType)
-							let newVal = parseFloat(itemTypeList[index].loanAmount) + pt.loanAmount
-							itemTypeList[index].loanAmount = newVal.toFixed(2)
-                        }
+								tempIDList.push(item.itemID);
+							} else if (statusFilter == "For Auction" && item.forAuction) {
+								if (
+									!itemTypeList.some((obj) => obj.itemType === item.itemType)
+								) {
+									itemTypeList.push({
+										itemType: item.itemType,
+										loanAmount: pt.loanAmount.toFixed(2),
+									});
+								} else {
+									let index = itemTypeList.findIndex(
+										(obj) => obj.itemType == item.itemType
+									);
+									let newVal =
+										parseFloat(itemTypeList[index].loanAmount) + pt.loanAmount;
+									itemTypeList[index].loanAmount = newVal.toFixed(2);
+								}
 
-						tempIDList.push(item.itemID);
+								tempIDList.push(item.itemID);
+							}
+						}
 					}
 				}
-
 			}
 		}
 
@@ -267,8 +331,6 @@ function ItemTypeReport({
 					{">>"}
 				</button>{" "}
 			</div>
-
-            
 		</>
 	);
 }

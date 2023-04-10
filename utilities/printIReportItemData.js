@@ -13,46 +13,38 @@ export default function printReportItemData(ptData, startDate, endDate) {
 
 	//row (item element inside ptData to avoid conflict instead of using name: item)
 	ptData.forEach((row) => {
-
-
 		//Item Category
-		if ( !(itemCatList.some(obj => obj[0] == row.itemCategory) ) ) {
-			itemCatList.push([
-				row.itemCategory, 
-				row.loanAmount
-			])
-			console.log("hi")
+		if (!itemCatList.some((obj) => obj[0] == row.itemCategory)) {
+			itemCatList.push([row.itemCategory, row.loanAmount]);
+			console.log("hi");
 		} else {
-			let index = itemCatList.findIndex(obj => obj[0] == row.itemCategory)
-			let newVal = parseFloat(itemCatList[index][1]) + parseFloat(row.loanAmount)
-			itemCatList[index][1] = newVal.toFixed(2)
+			let index = itemCatList.findIndex((obj) => obj[0] == row.itemCategory);
+			let newVal =
+				parseFloat(itemCatList[index][1]) + parseFloat(row.loanAmount);
+			itemCatList[index][1] = newVal.toFixed(2);
 		}
-
 
 		//Item Type
-		if ( !(itemTypeList.some(obj => obj[0] == row.itemType) ) ) {
-			itemTypeList.push([
-				row.itemType, 
-				row.loanAmount
-			])
-			console.log("hi")
+		if (!itemTypeList.some((obj) => obj[0] == row.itemType)) {
+			itemTypeList.push([row.itemType, row.loanAmount]);
+			console.log("hi");
 		} else {
-			let index = itemTypeList.findIndex(obj => obj[0] == row.itemType)
-			let newVal = parseFloat(itemTypeList[index][1]) + parseFloat(row.loanAmount)
-			itemTypeList[index][1] = newVal.toFixed(2)
+			let index = itemTypeList.findIndex((obj) => obj[0] == row.itemType);
+			let newVal =
+				parseFloat(itemTypeList[index][1]) + parseFloat(row.loanAmount);
+			itemTypeList[index][1] = newVal.toFixed(2);
 		}
-
 
 		tempData.push([
 			row.itemID,
 			row.branchName,
+			row.status,
 			row.loanDate,
 			row.itemType,
 			row.itemCategory,
 			row.itemDesc,
 			row.loanAmount,
-		])
-
+		]);
 	});
 
 	// Set up the document
@@ -129,24 +121,15 @@ export default function printReportItemData(ptData, startDate, endDate) {
 	};
 
 	// // Define the header data for the table
-	const itemCatTableHeader = [
-		[
-			"Item Category",
-			"Appraisal Price",
-		],
-	];
+	const itemCatTableHeader = [["Item Category", "Appraisal Price"]];
 
-	const itemTypeTableHeader = [
-		[
-			"Item Type",
-			"Appraisal Price",
-		],
-	];
+	const itemTypeTableHeader = [["Item Type", "Appraisal Price"]];
 
 	const tableHeader = [
 		[
 			"Item ID",
 			"Branch",
+			"Status",
 			"Loan Date",
 			"Item Type",
 			"Item Category",
@@ -155,9 +138,8 @@ export default function printReportItemData(ptData, startDate, endDate) {
 		],
 	];
 
-
 	//For summary
-    doc.autoTable({
+	doc.autoTable({
 		head: itemCatTableHeader,
 		body: itemCatList,
 		startY: 1,
@@ -190,7 +172,7 @@ export default function printReportItemData(ptData, startDate, endDate) {
 	doc.autoTable({
 		head: tableHeader,
 		body: tempData,
-		startY:  doc.autoTable.previous.finalY + 0.5,
+		startY: doc.autoTable.previous.finalY + 0.5,
 		margin: { top: 1 },
 		headStyles: {
 			fillColor: "#5dbe9d", // set the background color of the header row
@@ -205,9 +187,6 @@ export default function printReportItemData(ptData, startDate, endDate) {
 		},
 	});
 
-
 	// Save the document
 	doc.save("Item_Report.pdf");
-
-	
 }

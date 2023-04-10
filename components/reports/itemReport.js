@@ -24,37 +24,23 @@ function ItemReport({
 	const [startDate, setStartDate] = useState();
 	const [endDate, setEndDate] = useState();
 	const [branchID, setBranchID] = useState("");
+	const [status, setStatus] = useState("");
 
 	useEffect(() => {
-		getData();
-	}, [userData, pawnTicketData, itemData, branchData, transactionData]);
+		getData(startDate, endDate, branchID, status);
+	}, [
+		userData,
+		pawnTicketData,
+		itemData,
+		branchData,
+		transactionData,
+		startDate,
+		endDate,
+		branchID,
+		status,
+	]);
 
-	useEffect(() => {
-		if (startDate && endDate) {
-			// console.log(
-			// 	"start is:",
-			// 	new Date(new Date(startDate).setHours(0, 0, 0, 0))
-			// );
-			// console.log(
-			// 	"end is:",
-			// 	new Date(new Date(endDate).setHours(23, 59, 59, 59))
-			// );
-			let tempData = data.filter((pt) => {
-				let start = new Date(startDate).setHours(0, 0, 0, 0);
-				let end = new Date(endDate).setHours(23, 59, 59, 59);
-				return (
-					new Date(pt.loanDate) >= new Date(start) &&
-					new Date(pt.loanDate) <= new Date(endDate)
-				);
-			});
-			// console.log("temp:", tempData);
-			setData(tempData);
-		} else if (!startDate && !endDate) {
-			getData();
-		}
-	}, [startDate, endDate]);
-
-	function getData() {
+	function getData(startDate, endDate, branchID, status) {
 		let tempData = [];
 
 		//Get all items
@@ -75,6 +61,15 @@ function ItemReport({
 			for (const item of itemData) {
 				if (item.itemListID == pt.itemListID) {
 					//If item does not exist in the ID List, extract the items and push it into tempData
+					let stat;
+					if (item.isRedeemed) {
+						stat = "Redeemed";
+					} else if (item.forAuction) {
+						stat = "For Auction";
+					} else {
+						stat = "Pawned";
+					}
+
 					if (!tempIDList.includes(item.itemID)) {
 						tempData.push({
 							itemID: item.itemID,
@@ -84,27 +79,42 @@ function ItemReport({
 							itemCategory: item.itemCategory,
 							itemDesc: item.description,
 							loanAmount: pt.loanAmount?.toFixed(2),
+							status: stat,
 						});
-
 						tempIDList.push(item.itemID);
 					}
 				}
-
-				// console.log(tempIDList)
 			}
-
-			// console.log("curr:", currTransaction);
-
-			// tempData.push({
-			// 	pawnTicketID: pt.pawnTicketID,
-			// 	branchName: currBranch.branchName,
-			// 	status: status,
-			// 	loanDate: dayjs(new Date(pt.loanDate)).format("MMM DD, YYYY"),
-			// 	// maturityDate: dayjs(new Date(pt.maturityDate)).format("MMM DD, YYYY"),
-			// 	// expiryDate: dayjs(new Date(pt.expiryDate)).format("MMM DD, YYYY"),
-			// 	loanAmount: pt.loanAmount?.toFixed(2),
-			// });
 		}
+
+		if (startDate && endDate) {
+			tempData = tempData.filter((pt) => {
+				let start = new Date(startDate).setHours(0, 0, 0, 0);
+				let end = new Date(endDate).setHours(23, 59, 59, 59);
+				return (
+					new Date(pt.loanDate) >= new Date(start) &&
+					new Date(pt.loanDate) <= new Date(end)
+				);
+			});
+		}
+
+		if (branchID != "") {
+			let currBranch = branchData.find((branch) => {
+				return branch.branchID == branchID;
+			});
+			console.log("curr:", currBranch.branchName);
+
+			tempData = tempData.filter((row) => {
+				return row.branchName == currBranch.branchName;
+			});
+		}
+
+		if (status != "") {
+			tempData = tempData.filter((row) => {
+				return row.status == status;
+			});
+		}
+		console.log("tempData", tempData);
 		setData(tempData);
 	}
 
@@ -118,6 +128,7 @@ function ItemReport({
 				// accessor: "pawnTicketID",
 			},
 			{ Header: "Branch", accessor: "branchName" },
+			{ Header: "Status", accessor: "status" },
 			{
 				Header: "Loan Date",
 				accessor: "loanDate",
@@ -189,6 +200,11 @@ function ItemReport({
 		}
 	}
 
+	function statsuFilter(value) {
+		setFilter("status", value);
+		setStatus(value);
+	}
+
 	return (
 		<>
 			{/* Filter  */}
@@ -220,6 +236,17 @@ function ItemReport({
 						</option>
 					))}
 				</select>
+				<span className="ml-5">Status: </span>
+				<select
+					className="h-fit"
+					onChange={(e) => statsuFilter(e.target.value)}
+					defaultValue={""}
+				>
+					<option value={""}>All</option>
+					<option value={"Pawned"}>Pawned</option>
+					<option value={"Redeemed"}>Redeemed</option>
+					<option value={"For Auction"}>For Auction</option>
+				</select>
 				<button
 					className="relative ml-auto text-sm bg-green-300"
 					onClick={() => printReport()}
@@ -236,6 +263,7 @@ function ItemReport({
 				startDate={startDate}
 				endDate={endDate}
 				branchFilter={branchID}
+				statusFilter={status}
 			></ItemCategoryReport>
 
 			<ItemTypeReport
@@ -244,6 +272,8 @@ function ItemReport({
 				itemData={itemData}
 				branchData={branchData}
 				transactionData={transactionData}
+				branchFilter={branchID}
+				statusFilter={status}
 			></ItemTypeReport>
 
 			{/* Table */}
