@@ -22,8 +22,8 @@ function CashFlowReport({
 	transactionData,
 }) {
 	const [data, setData] = useState([{}]);
-	const [startDate, setStartDate] = useState();
-	const [endDate, setEndDate] = useState();
+	const [startDate, setStartDate] = useState("");
+	const [endDate, setEndDate] = useState("");
 	const [branchID, setBranchID] = useState("");
 
 	useEffect(() => {
@@ -94,9 +94,7 @@ function CashFlowReport({
 						),
 						cashInAmount: tempCashIn,
 						cashOutAmount: tempCashOut,
-						netCashFlow: (
-							parseFloat(tempCashIn) - parseFloat(tempCashOut)
-						).toFixed(2),
+						netCashFlow: (Number(tempCashIn) - Number(tempCashOut)).toFixed(2),
 					});
 				} else {
 					tempData.push({
@@ -106,9 +104,7 @@ function CashFlowReport({
 						),
 						cashInAmount: tempCashIn,
 						cashOutAmount: tempCashOut,
-						netCashFlow: (
-							parseFloat(tempCashIn) - parseFloat(tempCashOut)
-						).toFixed(2),
+						netCashFlow: (Number(tempCashIn) - Number(tempCashOut)).toFixed(2),
 						// Beginning and End implementation
 						// netCashFlow: (parseFloat(tempData[tempData.length - 1].netCashFlow) + parseFloat(tempCashIn) - parseFloat(tempCashOut)).toFixed(2),
 					});
@@ -126,9 +122,9 @@ function CashFlowReport({
 				//If amountPaid is >= 0, then cashIn
 				if (currTransaction.amountPaid >= 0) {
 					newVal =
-						parseFloat(tempData[index].cashInAmount) +
+						Number(tempData[index].cashInAmount) +
 						parseFloat(currTransaction.amountPaid);
-					tempData[index].cashInAmount = newVal.toFixed(2);
+					tempData[index].cashInAmount = Number(newVal.toFixed(2));
 
 					newTotal =
 						parseFloat(currTransaction.amountPaid) +
@@ -137,8 +133,8 @@ function CashFlowReport({
 				} else {
 					newVal =
 						parseFloat(currTransaction.amountPaid) -
-						parseFloat(tempData[index].cashOutAmount);
-					tempData[index].cashOutAmount = Math.abs(newVal).toFixed(2);
+						Number(tempData[index].cashOutAmount);
+					tempData[index].cashOutAmount = Number(Math.abs(newVal).toFixed(2));
 
 					newTotal =
 						parseFloat(currTransaction.amountPaid) +
