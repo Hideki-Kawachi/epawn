@@ -227,10 +227,10 @@ button:not(.x-button){
         color: black;
         font-size: theme('fontSize.base');
         font-weight: theme('fontWeight.bold');
-
+        margin: -10px;
         &:disabled{
             background-color: transparent;
-            border: none;
+        //    border: 1;
             box-shadow: none;
             color: theme('colors.gray.200');
         }

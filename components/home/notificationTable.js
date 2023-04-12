@@ -1,5 +1,7 @@
 import { useRouter } from "next/router";
 import React from "react";
+import dayjs from "dayjs";
+import { useState, useEffect } from "react";
 import {
 	useFilters,
 	useGlobalFilter,
@@ -18,7 +20,7 @@ function NotificationTable({ role, data }) {
 			},
 			{ Header: "Customer Name", accessor: "customerName" },
 			{ Header: "Date", accessor: "date", disableGlobalFilter: true },
-			{ Header: "Time", accessor: "time", disableGlobalFilter: true },
+			{ Header: "Time", accessor: "time", Cell: ({value}) => { return dayjs(value).format("h:mm A")}, disableGlobalFilter: true },
 			{ Header: "Status", accessor: "status", disableGlobalFilter: true },
 		],
 		[]
@@ -44,6 +46,7 @@ function NotificationTable({ role, data }) {
 		{
 			columns,
 			data,
+      minRows: 10
 		},
 
 		useFilters,
@@ -140,129 +143,197 @@ function NotificationTable({ role, data }) {
         }
 			// console.log("CLERK", rowData);
 	}
+
+  
 	}
+const [currentTime, setCurrentTime] = useState(dayjs().format("h:mm A"));
+const [currentDate, setCurrentDate] = useState(dayjs().format("MMMM D, YYYY"));
+
+useEffect(() => {
+  const intervalId = setInterval(() => {
+    setCurrentTime(dayjs().format("h:mm A"));
+  }, 1000);
+
+  return () => clearInterval(intervalId);
+}, []);
+
+const isDataEmpty = data.length === 0;
 
 	return (
-		<div className="flex flex-col w-full p-10 bg-white border-2 h-fit">
-			<div className="flex items-center justify-center w-full gap-2 my-5 text-base font-nunito">
-				<span className="text-base">Search: </span>
-				<input
-					className="flex-grow"
-					onChange={(e) => {
-						setGlobalFilter(e.target.value);
-					}}
-					placeholder={"PT Number or Customer Name"}
-				/>
-				<span className="ml-5">Transaction: </span>
-				<select
-					className="h-fit"
-					onChange={(e) => setFilter("transactionType", e.target.value)}
-					defaultValue={""}
-				>
-					<option value={""}>All</option>
-					<option value={"Pawn"}>Pawn</option>
-					<option value={"Renew"}>Renew</option>
-					<option value={"Redeem"}>Redeem</option>
-				</select>
-				<span className="ml-5">Status: </span>
-				<select
-					className="h-fit"
-					onChange={(e) => setFilter("status", e.target.value)}
-					defaultValue={""}
-				>
-					<option value={""}>All</option>
-					<option value={"For Appraisal"}>For Appraisal</option>
-					<option value={"For Negoation"}>For Negotiation</option>
-					<option value={"For Approval"}>For Approval</option>
-					<option value={"Appraised"}>Appraised</option>
-					<option value={"Pending"}>Pending</option>
-					<option value={"Approved"}>Approved</option>
-				</select>
-			</div>
-			<table {...getTableProps()} className="w-full text-base">
-				<thead>
-					{headerGroups.map((headerGroup) => (
-						<tr {...headerGroup.getHeaderGroupProps()}>
-							{headerGroup.headers.map((column) => {
-								if (
-									column.Header !== "Transaction" &&
-									column.Header.toString() !== "Status"
-								) {
-									return (
-										<th
-											{...column.getHeaderProps(column.getSortByToggleProps())}
-											className="border-4 border-gray-500 border-solid"
-										>
-											{column.render("Header")}
-											<span className="ml-2 text-base">
-												{column.isSorted
-													? column.isSortedDesc
-														? "↑"
-														: "↓"
-													: "-"}
-											</span>
-										</th>
-									);
-								}
+    <div className="flex flex-col w-full p-10 bg-white border-2 h-[750px]">
+      <span className="text-lg font-bold font-nunito">
+        {" "}
+        Ongoing Transactions{" "}
+      </span>
+      <span className="text-base font-nunito">
+        {" "}
+        As of {currentDate} | {currentTime}
+      </span>
+      <div className="flex items-center justify-center w-full gap-2 my-5 text-base font-nunito">
+        <span className="text-base">Search: </span>
+        <input
+          className="flex-grow"
+          onChange={(e) => {
+            setGlobalFilter(e.target.value);
+          }}
+          placeholder={"PT Number or Customer Name"}
+        />
+        <span className="ml-5">Transaction: </span>
+        <select
+          className="h-fit"
+          onChange={(e) => setFilter("transactionType", e.target.value)}
+          defaultValue={""}
+        >
+          <option value={""}>All</option>
+          <option value={"Pawn"}>Pawn</option>
+          <option value={"Renew"}>Renew</option>
+          <option value={"Redeem"}>Redeem</option>
+        </select>
+        <span className="ml-5">Status: </span>
+        <select
+          className="h-fit"
+          onChange={(e) => setFilter("status", e.target.value)}
+          defaultValue={""}
+        >
+          <option value={""}>All</option>
+          <option value={"For Appraisal"}>For Appraisal</option>
+          <option value={"For Negoation"}>For Negotiation</option>
+          <option value={"For Approval"}>For Approval</option>
+          <option value={"Appraised"}>Appraised</option>
+          <option value={"Pending"}>Pending</option>
+          <option value={"Approved"}>Approved</option>
+        </select>
+        <div className="font-dosis text-base pawn-pagination-container mb-2">
+          <button
+            className="mb-2"
+            onClick={() => previousPage()}
+            disabled={!canPreviousPage}
+          >
+            {"<"}
+          </button>
+          {pageOptions.length > 1 ? (
+            <span className="text-sm mt-1.5 font-nunito">
+              <strong>{pageIndex + 1}</strong> / {pageOptions.length} pages
+            </span>
+          ) : (
+            <span className="text-sm mt-1.5 font-nunito">
+              <strong>{pageIndex + 1}</strong> / 1 page
+            </span>
+          )}
+          <button
+            className="text-lg"
+            onClick={() => nextPage()}
+            disabled={!canNextPage}
+          >
+            {">"}
+          </button>{" "}
+        </div>
+      </div>
+      {!isDataEmpty ? (
+        <table
+          {...getTableProps()}
+          className="w-full text-base font-nunito rounded-t-sm"
+        >
+          <thead>
+            {headerGroups.map((headerGroup) => (
+              <tr key={0} {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map((column) => {
+                  if (
+                    column.Header !== "Transaction" &&
+                    column.Header.toString() !== "Status"
+                  ) {
+                    return (
+                      <th
+                        key={0}
+                        {...column.getHeaderProps(
+                          column.getSortByToggleProps()
+                        )}
+                        className="text-base text-left py-4 pl-3 font-nunito bg-green-50 "
+                      >
+                        {column.render("Header")}
+                        <span className="ml-2 text-base">
+                          {column.isSorted
+                            ? column.isSortedDesc
+                              ? "▴"
+                              : "▾"
+                            : "-"}
+                        </span>
+                      </th>
+                    );
+                  }
 
-								return (
-									<th
-										{...column.getHeaderProps()}
-										className="border-4 border-gray-500 border-solid"
-									>
-										{column.render("Header")}
-									</th>
-								);
-							})}
-						</tr>
-					))}
-				</thead>
-				<tbody {...getTableBodyProps()}>
-					{page.map((row, i) => {
-						prepareRow(row);
-						return (
-							<tr
-								{...row.getRowProps()}
-								onClick={() => openRow(data[row.id])}
-								className="cursor-pointer hover:bg-green-100"
-							>
-								{row.cells.map((cell) => {
-									return (
-										<td
-											{...cell.getCellProps()}
-											className="p-1 border-2 border-gray-300"
-										>
-											{cell.render("Cell")}
-										</td>
-									);
-								})}
-							</tr>
-						);
-					})}
-				</tbody>
-			</table>
-			<div className="pawn-pagination-container">
-				<button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
-					{"<<"}
-				</button>{" "}
-				<button onClick={() => previousPage()} disabled={!canPreviousPage}>
-					{"<"}
-				</button>
-				<span>
-					Page{" "}
-					<strong>
-						{pageIndex + 1} of {pageOptions.length}
-					</strong>
-				</span>
-				<button onClick={() => nextPage()} disabled={!canNextPage}>
-					{">"}
-				</button>{" "}
-				<button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
-					{">>"}
-				</button>{" "}
-			</div>
-		</div>
-	);
+                  return (
+                    <th
+                      key={0}
+                      {...column.getHeaderProps()}
+                      className="text-base text-left pl-3 font-nunito bg-green-50"
+                    >
+                      {column.render("Header")}
+                    </th>
+                  );
+                })}
+              </tr>
+            ))}
+          </thead>
+          <tbody {...getTableBodyProps()}>
+            {page.map((row, i) => {
+              prepareRow(row);
+              return (
+                <tr
+                  key={0}
+                  {...row.getRowProps()}
+                  onClick={() => openRow(data[row.id])}
+                  className={
+                    i % 2 === 0
+                      ? "text-sm cursor-pointer hover:bg-green-100 pl-3  "
+                      : "text-sm cursor-pointer hover:bg-green-100 pl-3  bg-gray-150"
+                  }
+                >
+                  {row.cells.map((cell) => {
+                    return (
+                      <td
+                        key={0}
+                        {...cell.getCellProps()}
+                        className="py-2 pl-3"
+                      >
+                        {cell.render("Cell")}
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      ) : (
+        <div>
+          <div className="font-nunito text-gray-400 text-lg text-center font-bold pt-20 pb-32">
+            No past transactions
+          </div>
+        </div>
+      )}
+      {/* <div className="pawn-pagination-container">
+        <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
+          {"<<"}
+        </button>{" "}
+        <button onClick={() => previousPage()} disabled={!canPreviousPage}>
+          {"<"}
+        </button>
+        <span>
+          Page{" "}
+          <strong>
+            {pageIndex + 1} of {pageOptions.length}
+          </strong>
+        </span>
+        <button onClick={() => nextPage()} disabled={!canNextPage}>
+          {">"}
+        </button>{" "}
+        <button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
+          {">>"}
+        </button>{" "}
+      </div> */}
+    </div>
+  );
 }
 
 export default NotificationTable;
