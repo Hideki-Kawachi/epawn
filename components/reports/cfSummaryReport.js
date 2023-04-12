@@ -186,23 +186,38 @@ function CFSummaryReport({
 	}
 
 	const columns = React.useMemo(
-		() => [
-			{ Header: "Branch", accessor: "branchName" },
-			{
-				Header: "Total Cash In",
-				accessor: "totalCashInAmount",
-			},
-			{
-				Header: "Total Cash Out",
-				accessor: "totalCashOutAmount",
-			},
-			{
-				Header: "Net Cash Flow",
-				accessor: "totalNetCashFlow",
-			},
-		],
-		[]
-	);
+    () => [
+      {
+        Header: "Branch",
+        accessor: "branchName",
+        Cell: ({ value }) => {
+          return <div className="text-center px-20">{value}</div>;
+        },
+      },
+      {
+        Header: "Total Cash In",
+        Cell: ({ value }) => {
+          return <div className="text-center px-20">{convertFloat(value)}</div>;
+        },
+        accessor: "totalCashInAmount",
+      },
+      {
+        Header: "Total Cash Out",
+        Cell: ({ value }) => {
+          return <div className="text-center px-20">{convertFloat(value)}</div>;
+        },
+        accessor: "totalCashOutAmount",
+      },
+      {
+        Header: "Net Cash Flow",
+        Cell: ({ value }) => {
+          return <div className="text-center px-20">{convertFloat(value)}</div>;
+        },
+        accessor: "totalNetCashFlow",
+      },
+    ],
+    []
+  );
 
 	const {
 		getTableProps,
@@ -231,14 +246,25 @@ function CFSummaryReport({
 		useSortBy,
 		usePagination
 	);
+	
+	const [monthYr, setMonthYr] = useState(dayjs().format("MMMM YYYY"));
 
 	function printReport() {
 		printReportItemData(data, startDate, endDate);
 	}
 
+	function convertFloat(number) {
+      return (
+        "Php " +
+        Number(number).toLocaleString("en-US", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })
+      );
+    }
 	return (
-		<>
-			{/* Filter 
+    <>
+      {/* Filter 
 			<div className="flex items-center self-start w-full gap-2 my-5 text-sm font-nunito whitespace-nowrap ">
 				<span className="ml-5">Starting Date: </span>
 				<input
@@ -284,77 +310,62 @@ function CFSummaryReport({
 					Generate Report
 				</button>
 			</div> */}
-			{/* Table */}
-			<table {...getTableProps()} className="w-full text-sm">
-				<thead>
-					{headerGroups.map((headerGroup) => (
-						<tr {...headerGroup.getHeaderGroupProps()}>
-							{headerGroup.headers.map((column) => {
-								return (
-									<th
-										{...column.getHeaderProps(column.getSortByToggleProps())}
-										className="border-4 border-gray-500 border-solid"
-									>
-										{column.render("Header")}
-										<span className="ml-2 text-base">
-											{column.isSorted
-												? column.isSortedDesc
-													? "↑"
-													: "↓"
-												: "-"}
-										</span>
-									</th>
-								);
-							})}
-						</tr>
-					))}
-				</thead>
-				<tbody {...getTableBodyProps()}>
-					{page.map((row, i) => {
-						prepareRow(row);
-						return (
-							<tr
-								{...row.getRowProps()}
-								// onClick={() => openRow(data[row.id])}
-								className="cursor-pointer hover:bg-green-100"
-							>
-								{row.cells.map((cell) => {
-									return (
-										<td
-											{...cell.getCellProps()}
-											className="p-1 border-2 border-gray-300"
-										>
-											{cell.render("Cell")}
-										</td>
-									);
-								})}
-							</tr>
-						);
-					})}
-				</tbody>
-			</table>
-			<div className="pawn-pagination-container">
-				<button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
-					{"<<"}
-				</button>{" "}
-				<button onClick={() => previousPage()} disabled={!canPreviousPage}>
-					{"<"}
-				</button>
-				<span>
-					Page{" "}
-					<strong>
-						{pageIndex + 1} of {pageOptions.length}
-					</strong>
-				</span>
-				<button onClick={() => nextPage()} disabled={!canNextPage}>
-					{">"}
-				</button>{" "}
-				<button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
-					{">>"}
-				</button>{" "}
-			</div>
-		</>
-	);
+      {/* Table */}
+	  <div>
+		<p className="font-nunito font-bold text-base text-center my-5 text-green-500">Cashflow Summary for {monthYr}</p>
+	  </div>
+      <table {...getTableProps()} className="w-full text-sm border font-nunito mb-5">
+        <thead>
+          {headerGroups.map((headerGroup) => (
+            <tr {...headerGroup.getHeaderGroupProps()}>
+              {headerGroup.headers.map((column) => {
+                return (
+                  <th
+                    {...column.getHeaderProps(column.getSortByToggleProps())}
+                    className="text-sm text-center py-4 pl-3 font-nunito bg-green-50"
+                  >
+                    {column.render("Header")}
+                    <span className="ml-2 text-base">
+                      {column.isSorted
+                        ? column.isSortedDesc
+                          ? "▴"
+                          : "▾"
+                        : "-"}
+                    </span>
+                  </th>
+                );
+              })}
+            </tr>
+          ))}
+        </thead>
+        <tbody {...getTableBodyProps()}>
+          {page.map((row, i) => {
+            prepareRow(row);
+            return (
+              <tr
+                {...row.getRowProps()}
+                // onClick={() => openRow(data[row.id])}
+                className={
+                  i % 2 === 0
+                    ? "text-sm cursor-pointer hover:bg-green-100 pl-3  "
+                    : "text-sm cursor-pointer hover:bg-green-100 pl-3  bg-gray-150"
+                }
+              >
+                {row.cells.map((cell) => {
+                  return (
+                    <td {...cell.getCellProps()} className="py-2 pl-3">
+                      {cell.render("Cell")}
+                    </td>
+                  );
+                })}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+
+    </>
+  );
 }
 
 export default CFSummaryReport;
