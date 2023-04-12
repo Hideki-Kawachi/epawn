@@ -9,7 +9,7 @@ import dbConnect from "../../../../utilities/dbConnect";
 import Transaction from "../../../../schemas/transaction";
 import User from "../../../../schemas/user";
 import PriceHistory from "../../../../schemas/priceHistory";
-
+import dayjs from "dayjs";
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {
 		if (!req.session.userData) {
@@ -43,7 +43,7 @@ export const getServerSideProps = withIronSessionSsr(
 					date: transaction.updatedAt
 						.toDateString()
 						.substring(4, transaction.creationDate.length),
-					time: transaction.updatedAt.toLocaleTimeString("en-GB"),
+					time: transaction.updatedAt.toString(),
 				});
 				console.log("tableData:", tableData);
 			});
@@ -71,12 +71,22 @@ function Appraisal({ currentUser, tableData }) {
 				Header: "Customer Name",
 				accessor: "customerName",
 			},
-			{ Header: "Ask Price", accessor: "askPrice" },
+			{ Header: "Ask Price", Cell: ({value}) => { return convertFloat(value)},accessor: "askPrice" },
 			{ Header: "Date", accessor: "date" },
-			{ Header: "Time", accessor: "time" },
+			{ Header: "Time", Cell: ({value}) => { return dayjs(value).format("h:mm A")},  accessor: "time" },
 		],
 		[]
 	);
+
+function convertFloat(number) {
+     return (
+       "Php " +
+       Number(number).toLocaleString("en-US", {
+         minimumFractionDigits: 2,
+         maximumFractionDigits: 2,
+       })
+     );
+}
 
 	return (
 		<>
