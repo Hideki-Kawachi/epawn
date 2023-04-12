@@ -94,7 +94,7 @@ function PawnTicketTable({ data }) {
 					<option value={"Inactive"}>Inactive</option>
 				</select>
 			</div>
-			<table {...getTableProps()} className="w-full text-base">
+			<table {...getTableProps()} className="w-full text-base border">
 				<thead>
 					{headerGroups.map((headerGroup) => (
 						<tr {...headerGroup.getHeaderGroupProps()}>
