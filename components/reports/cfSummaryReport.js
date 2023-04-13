@@ -191,20 +191,20 @@ function CFSummaryReport({
         Header: "Branch",
         accessor: "branchName",
         Cell: ({ value }) => {
-          return <div className="text-center px-20">{value}</div>;
+          return <div className="text-center">{value}</div>;
         },
       },
       {
         Header: "Total Cash In",
         Cell: ({ value }) => {
-          return <div className="text-center px-20">{convertFloat(value)}</div>;
+          return <div className="text-center ">{convertFloat(value)}</div>;
         },
         accessor: "totalCashInAmount",
       },
       {
         Header: "Total Cash Out",
         Cell: ({ value }) => {
-          return <div className="text-center px-20">{convertFloat(value)}</div>;
+          return <div className="text-center ">{convertFloat(value)}</div>;
         },
         accessor: "totalCashOutAmount",
       },
@@ -212,11 +212,11 @@ function CFSummaryReport({
         Header: "Net Cash Flow",
         Cell: ({ value }) => {
           return value < 0 ? (
-            <div className="text-center px-20 text-red-500">
+            <div className="text-center  text-red-500">
               {convertFloat(value)}
             </div>
           ) : (
-            <div className="text-center px-20">{convertFloat(value)}</div>
+            <div className="text-center">{convertFloat(value)}</div>
           );
         },
         accessor: "totalNetCashFlow",

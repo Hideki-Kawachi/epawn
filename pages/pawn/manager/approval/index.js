@@ -9,7 +9,7 @@ import dbConnect from "../../../../utilities/dbConnect";
 import Transaction from "../../../../schemas/transaction";
 import User from "../../../../schemas/user";
 import PriceHistory from "../../../../schemas/priceHistory";
-
+import dayjs from "dayjs";
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req }) {
 		if (!req.session.userData) {
@@ -43,7 +43,7 @@ export const getServerSideProps = withIronSessionSsr(
 					date: transaction.updatedAt
 						.toDateString()
 						.substring(4, transaction.creationDate.length),
-					time: transaction.updatedAt.toLocaleTimeString("en-GB"),
+					time: transaction.updatedAt.toString(),
 				});
 			});
 			return {
@@ -63,19 +63,44 @@ export const getServerSideProps = withIronSessionSsr(
 	ironOptions
 );
 
+function convertFloat(number) {
+    return (
+      "Php " +
+      Number(number).toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })
+    );
+  }
+
 function Approval({ currentUser, tableData }) {
 	const columns = React.useMemo(
-		() => [
-			{
-				Header: "Customer Name",
-				accessor: "customerName",
-			},
-			{ Header: "Total Loan Amount", accessor: "totalLoanAmount" },
-			{ Header: "Date", accessor: "date" },
-			{ Header: "Time", accessor: "time" },
-		],
-		[]
-	);
+    () => [
+      {
+        Header: "Customer Name",
+        accessor: "customerName",
+      },
+      {
+        Header: "Total Loan Amount",
+        Cell: ({ value }) => {
+          return <div className="text-right ml-[-120px] mr-52">{convertFloat(value)}</div>;
+        },
+        accessor: "totalLoanAmount",
+      },
+      {
+        Header: "Date",
+        accessor: "date",
+      },
+      {
+        Header: "Time",
+        Cell: ({ value }) => {
+          return dayjs(value).format("h:mm A");
+        },
+        accessor: "time",
+      },
+    ],
+    []
+  );
 
 	return (
 		<>

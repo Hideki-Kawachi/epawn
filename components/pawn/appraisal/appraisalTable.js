@@ -7,6 +7,7 @@ import {
 	useTable,
 } from "react-table";
 import GlobalFilter from "../../globalFilter";
+import dayjs from "dayjs";
 
 function AppraisalTable({ columns, data, screen }) {
 	const {
@@ -41,7 +42,16 @@ function AppraisalTable({ columns, data, screen }) {
 			query: { transactionID: rowData.transactionID },
 		});
 	}
-
+  
+	function convertFloat(number) {
+    return (
+      "Php " +
+      Number(number).toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })
+    );
+  }
 
 	return (
     <>
@@ -52,7 +62,7 @@ function AppraisalTable({ columns, data, screen }) {
               setGlobalFilter={setGlobalFilter}
               placeHolder={"Customer Name"}
             ></GlobalFilter>
-            <div className="font-dosis text-base pawn-pagination-container mb-2 ml-96">
+            <div className="font-dosis text-base pawn-pagination-container mb-2 ml-[300px]">
               <button
                 className="mb-2"
                 onClick={() => previousPage()}

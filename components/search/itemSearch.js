@@ -199,7 +199,7 @@ function ItemSearch({ pawnTicketData, userData, itemData }) {
           <option value={"For Auction"}>For Auction</option>
         </select>
 
-        <div className="font-dosis text-base pawn-pagination-container ml-96 h-fit">
+        <div className="font-dosis text-base pawn-pagination-container ml-[200px] h-fit">
           <button
             className="mb-2"
             onClick={() => previousPage()}

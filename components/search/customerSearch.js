@@ -166,7 +166,7 @@ function CustomerSearch({
           }}
           placeholder={"Customer ID or Name"}
         />
-        <div className="font-dosis text-base pawn-pagination-container mb-2 ml-[1005px]">
+        <div className="font-dosis text-base pawn-pagination-container mb-2 ml-[800px]">
           <button
             className="mb-2"
             onClick={() => previousPage()}
@@ -192,7 +192,7 @@ function CustomerSearch({
           </button>{" "}
         </div>
       </div>
-      <table {...getTableProps()} className="w-full text-sm border text-center">
+      <table {...getTableProps()} className="w-full text-sm border text-center font-nunito">
         <thead>
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>

@@ -169,10 +169,10 @@ const isDataEmpty = data.length === 0;
         {" "}
         As of {currentDate} | {currentTime}
       </span>
-      <div className="flex items-center justify-center w-full gap-2 my-5 text-base font-nunito">
-        <span className="text-base">Search: </span>
+      <div className="flex items-center justify-center w-full gap-2 my-5 text-sm font-nunito">
+        <span className="text-sm">Search: </span>
         <input
-          className="flex-grow"
+          className="w-[300px] text-sm"
           onChange={(e) => {
             setGlobalFilter(e.target.value);
           }}

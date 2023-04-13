@@ -142,7 +142,7 @@ function LogsTable({ data, branchData }) {
               </option>
             ))}
           </select>
-          <div className="font-dosis text-sm pawn-pagination-container mb-2 ml-[600px]">
+          <div className="font-dosis text-sm pawn-pagination-container mb-2 ml-[350px]">
             <button
               className="mb-2"
               onClick={() => previousPage()}

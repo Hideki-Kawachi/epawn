@@ -87,7 +87,7 @@ function ReturnTable({ columns, data, setLoading }) {
             setGlobalFilter={setGlobalFilter}
             placeHolder={"User ID or Name"}
           ></GlobalFilter>
-          <div className="font-dosis text-base pawn-pagination-container mb-2 ml-96">
+          <div className="font-dosis text-base pawn-pagination-container mb-2 ml-[300px]">
             <button
               className="mb-2"
               onClick={() => previousPage()}

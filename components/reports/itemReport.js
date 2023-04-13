@@ -124,7 +124,7 @@ function ItemReport({
         Header: "Item ID",
         accessor: "itemID",
         Cell: ({ value }) => {
-          return <div className="text-center px-5">{value}</div>;
+          return <div className="text-center">{value}</div>;
         },
 
         // Header: "PT Number",
@@ -134,14 +134,14 @@ function ItemReport({
         Header: "Branch",
         accessor: "branchName",
         Cell: ({ value }) => {
-          return <div className="text-center px-5">{value}</div>;
+          return <div className="text-center">{value}</div>;
         },
       },
       {
         Header: "Status",
         accessor: "status",
         Cell: ({ value }) => {
-          return <div className="text-center px-5">{value}</div>;
+          return <div className="text-center">{value}</div>;
         },
       },
       {
@@ -150,14 +150,14 @@ function ItemReport({
         filter: "between",
         disableGlobalFilter: true,
         Cell: ({ value }) => {
-          return <div className="text-center px-10">{value}</div>;
+          return <div className="text-center">{value}</div>;
         },
       },
       {
         Header: "Item Type",
         accessor: "itemType",
         Cell: ({ value }) => {
-          return <div className="text-center px-10">{value}</div>;
+          return <div className="text-center">{value}</div>;
         },
       },
       {
@@ -165,14 +165,14 @@ function ItemReport({
         accessor: "itemCategory",
 
         Cell: ({ value }) => {
-          return <div className="text-center px-12">{value}</div>;
+          return <div className="text-center">{value}</div>;
         },
       },
       {
         Header: "Item Description",
         accessor: "itemDesc",
         Cell: ({ value }) => {
-          return <div className="text-center px-10">{value}</div>;
+          return <div className="text-center">{value}</div>;
         },
       },
       {
@@ -180,7 +180,7 @@ function ItemReport({
         accessor: "loanAmount",
         Cell: ({ value }) => {
           return (
-            <div className="text-right pl-20 pr-28">{convertFloat(value)}</div>
+            <div className="text-right pl-10 pr-20">{convertFloat(value)}</div>
           );
         },
         disableGlobalFilter: true,
@@ -320,7 +320,7 @@ function ItemReport({
       ></ItemTypeReport>
 
       {/* Table */}
-      <div className="font-dosis text-base pawn-pagination-container mb-2 ml-[1505px]">
+      <div className="font-dosis text-base pawn-pagination-container mb-2 ml-[1100px]">
         <button
           className="mb-2"
           onClick={() => previousPage()}
@@ -376,18 +376,15 @@ function ItemReport({
               <tr
                 {...row.getRowProps()}
                 // onClick={() => openRow(data[row.id])}
-                className="cursor-pointer hover:bg-green-100"
+                className={
+                  i % 2 === 0
+                    ? "text-sm cursor-pointer hover:bg-green-100 pl-3  "
+                    : "text-sm cursor-pointer hover:bg-green-100 pl-3  bg-gray-150"
+                }
               >
                 {row.cells.map((cell) => {
                   return (
-                    <td
-                      {...cell.getCellProps()}
-                      className={
-                        i % 2 === 0
-                          ? "text-sm cursor-pointer hover:bg-green-100 pl-3  "
-                          : "text-sm cursor-pointer hover:bg-green-100 pl-3  bg-gray-150"
-                      }
-                    >
+                    <td {...cell.getCellProps()} className="py-2 pl-3">
                       {cell.render("Cell")}
                     </td>
                   );

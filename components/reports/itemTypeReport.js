@@ -194,7 +194,7 @@ function ItemTypeReport({
         Header: "Appraisal Price",
         accessor: "loanAmount",
         Cell: ({ value }) => {
-          return <div className="text-right pl-20 pr-28">{convertFloat(value)}</div>;
+          return <div className="text-right pl-10 pr-20">{convertFloat(value)}</div>;
         },
         disableGlobalFilter: true,
       },

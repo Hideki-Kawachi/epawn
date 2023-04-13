@@ -68,7 +68,7 @@ export const getServerSideProps = withIronSessionSsr(
 							date: transaction.updatedAt
 								.toDateString()
 								.substring(4, transaction.creationDate.length),
-							time: transaction.updatedAt.toLocaleTimeString("en-GB"),
+							time: transaction.updatedAt.toString(),
 							transactionType: transaction.transactionType,
 							status: transaction.status,
 						});

@@ -165,7 +165,7 @@ function PawnTicketSearch({
           }}
           placeholder={"PT Number or Customer Name"}
         />
-        <div className="font-dosis text-base pawn-pagination-container mb-2 ml-[1005px]">
+        <div className="font-dosis text-base pawn-pagination-container mb-2 ml-[800px]">
           <button
             className="mb-2"
             onClick={() => previousPage()}

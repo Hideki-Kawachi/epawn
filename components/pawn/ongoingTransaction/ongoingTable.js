@@ -7,17 +7,25 @@ import {
 	useSortBy,
 	useTable,
 } from "react-table";
+import dayjs from "dayjs";
 
 function OngoingTable({ role, data }) {
 	const columns = React.useMemo(
-		() => [
-			{ Header: "Customer Name", accessor: "customerName" },
-			{ Header: "Date", accessor: "date", disableGlobalFilter: true },
-			{ Header: "Time", accessor: "time", disableGlobalFilter: true },
-			{ Header: "Status", accessor: "status", disableGlobalFilter: true },
-		],
-		[]
-	);
+    () => [
+      { Header: "Customer Name", accessor: "customerName" },
+      { Header: "Date", accessor: "date", disableGlobalFilter: true },
+      {
+        Header: "Time",
+        accessor: "time",
+        Cell: ({ value }) => {
+          return dayjs(value).format("h:mm A");
+        },
+        disableGlobalFilter: true,
+      },
+      { Header: "Status", accessor: "status", disableGlobalFilter: true },
+    ],
+    []
+  );
 
 	const {
 		getTableProps,
@@ -93,17 +101,17 @@ function OngoingTable({ role, data }) {
 	return (
     <>
       <div className="w-3/4 p-10 bg-white border-2 h-[750px]">
-        <div className="flex w-full gap-2 my-5 text-base font-nunito">
-          <span className="text-base">Search: </span>
+        <div className="flex w-full gap-2 my-5 text-sm font-nunito">
+          <span className="text-sm">Search: </span>
           <input
-            className="w-96"
+            className="w-96 h-fit"
             onChange={(e) => {
               setGlobalFilter(e.target.value);
             }}
             placeholder={"Customer Name"}
           />
 
-          <span className="ml-[280px] ">Status: </span>
+          <span className="ml-5">Status: </span>
           <select
             className="h-fit"
             onChange={(e) => setFilter("status", e.target.value)}
@@ -117,7 +125,7 @@ function OngoingTable({ role, data }) {
             <option value={"Pending"}>Pending</option>
             <option value={"Approved"}>Approved</option>
           </select>
-          <div className="font-dosis text-base pawn-pagination-container mb-2 ">
+          <div className="font-dosis text-base pawn-pagination-container mb-2 ml-[200px] ">
             <button
               className="mb-2"
               onClick={() => previousPage()}
@@ -157,7 +165,7 @@ function OngoingTable({ role, data }) {
                         {...column.getHeaderProps(
                           column.getSortByToggleProps()
                         )}
-                        className="text-base text-left py-4 pl-3 font-nunito bg-green-50 "
+                        className="text-base text-center py-4 pl-3 font-nunito bg-green-50 "
                       >
                         {column.render("Header")}
                         <span className="ml-2 text-base">
@@ -174,7 +182,7 @@ function OngoingTable({ role, data }) {
                   return (
                     <th
                       {...column.getHeaderProps()}
-                      className="text-base text-left py-4 pl-3 font-nunito bg-green-50 "
+                      className="text-base text-center py-4 pl-3 font-nunito bg-green-50 "
                     >
                       {column.render("Header")}
                     </th>
