@@ -211,7 +211,13 @@ function CFSummaryReport({
       {
         Header: "Net Cash Flow",
         Cell: ({ value }) => {
-          return <div className="text-center px-20">{convertFloat(value)}</div>;
+          return value < 0 ? (
+            <div className="text-center px-20 text-red-500">
+              {convertFloat(value)}
+            </div>
+          ) : (
+            <div className="text-center px-20">{convertFloat(value)}</div>
+          );
         },
         accessor: "totalNetCashFlow",
       },

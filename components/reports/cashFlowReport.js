@@ -205,7 +205,13 @@ function CashFlowReport({
         Header: "Net Cash Flow",
         accessor: "netCashFlow",
         Cell: ({ value }) => {
-          return <div className="text-right px-20">{convertFloat(value)}</div>;
+            return value < 0 ? (
+            <div className="text-right px-20 text-red-500">
+              {convertFloat(value)}
+            </div>
+          ) : (
+            <div className="text-right px-20">{convertFloat(value)}</div>
+          );
         },
       },
     ],
