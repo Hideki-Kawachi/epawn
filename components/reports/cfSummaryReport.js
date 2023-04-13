@@ -186,44 +186,44 @@ function CFSummaryReport({
 	}
 
 	const columns = React.useMemo(
-    () => [
-      {
-        Header: "Branch",
-        accessor: "branchName",
-        Cell: ({ value }) => {
-          return <div className="text-center">{value}</div>;
-        },
-      },
-      {
-        Header: "Total Cash In",
-        Cell: ({ value }) => {
-          return <div className="text-center ">{convertFloat(value)}</div>;
-        },
-        accessor: "totalCashInAmount",
-      },
-      {
-        Header: "Total Cash Out",
-        Cell: ({ value }) => {
-          return <div className="text-center ">{convertFloat(value)}</div>;
-        },
-        accessor: "totalCashOutAmount",
-      },
-      {
-        Header: "Net Cash Flow",
-        Cell: ({ value }) => {
-          return value < 0 ? (
-            <div className="text-center  text-red-500">
-              {convertFloat(value)}
-            </div>
-          ) : (
-            <div className="text-center">{convertFloat(value)}</div>
-          );
-        },
-        accessor: "totalNetCashFlow",
-      },
-    ],
-    []
-  );
+		() => [
+			{
+				Header: "Branch",
+				accessor: "branchName",
+				Cell: ({ value }) => {
+					return <div className="text-center">{value}</div>;
+				},
+			},
+			{
+				Header: "Total Cash In",
+				Cell: ({ value }) => {
+					return <div className="text-center ">{convertFloat(value)}</div>;
+				},
+				accessor: "totalCashInAmount",
+			},
+			{
+				Header: "Total Cash Out",
+				Cell: ({ value }) => {
+					return <div className="text-center ">{convertFloat(value)}</div>;
+				},
+				accessor: "totalCashOutAmount",
+			},
+			{
+				Header: "Net Cash Flow",
+				Cell: ({ value }) => {
+					return value < 0 ? (
+						<div className="text-center text-red-500">
+							{convertFloat(value)}
+						</div>
+					) : (
+						<div className="text-center">{convertFloat(value)}</div>
+					);
+				},
+				accessor: "totalNetCashFlow",
+			},
+		],
+		[]
+	);
 
 	const {
 		getTableProps,
@@ -252,7 +252,7 @@ function CFSummaryReport({
 		useSortBy,
 		usePagination
 	);
-	
+
 	const [monthYr, setMonthYr] = useState(dayjs().format("MMMM YYYY"));
 
 	function printReport() {
@@ -260,17 +260,17 @@ function CFSummaryReport({
 	}
 
 	function convertFloat(number) {
-      return (
-        "Php " +
-        Number(number).toLocaleString("en-US", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        })
-      );
-    }
+		return (
+			"Php " +
+			Number(number).toLocaleString("en-US", {
+				minimumFractionDigits: 2,
+				maximumFractionDigits: 2,
+			})
+		);
+	}
 	return (
-    <>
-      {/* Filter 
+		<>
+			{/* Filter 
 			<div className="flex items-center self-start w-full gap-2 my-5 text-sm font-nunito whitespace-nowrap ">
 				<span className="ml-5">Starting Date: </span>
 				<input
@@ -316,68 +316,68 @@ function CFSummaryReport({
 					Generate Report
 				</button>
 			</div> */}
-      {/* Table */}
-      <div>
-        <p className="font-nunito font-bold text-base text-center my-5 text-green-500">
-          Cashflow Summary for {monthYr}
-        </p>
-      </div>
-      <div className="flex justify-center items-center">
-        <table
-          {...getTableProps()}
-          className="w-3/4 text-sm border font-nunito mb-5"
-        >
-          <thead>
-            {headerGroups.map((headerGroup) => (
-              <tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column) => {
-                  return (
-                    <th
-                      {...column.getHeaderProps(column.getSortByToggleProps())}
-                      className="text-sm text-center py-4 pl-3 font-nunito bg-green-50"
-                    >
-                      {column.render("Header")}
-                      <span className="ml-2 text-base">
-                        {column.isSorted
-                          ? column.isSortedDesc
-                            ? "▴"
-                            : "▾"
-                          : "-"}
-                      </span>
-                    </th>
-                  );
-                })}
-              </tr>
-            ))}
-          </thead>
-          <tbody {...getTableBodyProps()}>
-            {page.map((row, i) => {
-              prepareRow(row);
-              return (
-                <tr
-                  {...row.getRowProps()}
-                  // onClick={() => openRow(data[row.id])}
-                  className={
-                    i % 2 === 0
-                      ? "text-sm cursor-pointer hover:bg-green-100 pl-3  "
-                      : "text-sm cursor-pointer hover:bg-green-100 pl-3  bg-gray-150"
-                  }
-                >
-                  {row.cells.map((cell) => {
-                    return (
-                      <td {...cell.getCellProps()} className="py-2 pl-3">
-                        {cell.render("Cell")}
-                      </td>
-                    );
-                  })}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-    </>
-  );
+			{/* Table */}
+			<div>
+				<p className="my-5 text-base font-semibold text-center text-green-500 font-dosis">
+					Cashflow Summary
+				</p>
+			</div>
+			<div className="flex items-center justify-center">
+				<table
+					{...getTableProps()}
+					className="w-3/4 mb-5 text-sm border font-nunito"
+				>
+					<thead>
+						{headerGroups.map((headerGroup) => (
+							<tr {...headerGroup.getHeaderGroupProps()}>
+								{headerGroup.headers.map((column) => {
+									return (
+										<th
+											{...column.getHeaderProps(column.getSortByToggleProps())}
+											className="py-4 pl-3 text-sm text-center font-nunito bg-green-50"
+										>
+											{column.render("Header")}
+											<span className="ml-2 text-base">
+												{column.isSorted
+													? column.isSortedDesc
+														? "▴"
+														: "▾"
+													: "-"}
+											</span>
+										</th>
+									);
+								})}
+							</tr>
+						))}
+					</thead>
+					<tbody {...getTableBodyProps()}>
+						{page.map((row, i) => {
+							prepareRow(row);
+							return (
+								<tr
+									{...row.getRowProps()}
+									// onClick={() => openRow(data[row.id])}
+									className={
+										i % 2 === 0
+											? "text-sm cursor-pointer hover:bg-green-100 pl-3  "
+											: "text-sm cursor-pointer hover:bg-green-100 pl-3  bg-gray-150"
+									}
+								>
+									{row.cells.map((cell) => {
+										return (
+											<td {...cell.getCellProps()} className="py-2 pl-3">
+												{cell.render("Cell")}
+											</td>
+										);
+									})}
+								</tr>
+							);
+						})}
+					</tbody>
+				</table>
+			</div>
+		</>
+	);
 }
 
 export default CFSummaryReport;
