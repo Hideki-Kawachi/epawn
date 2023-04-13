@@ -33,57 +33,58 @@ export const getServerSideProps = withIronSessionSsr(
 					new mongoose.Types.ObjectId(query.transactionID)
 				);
 				let br = await Branch.findOne({
-					branchID : transactionInfo.branchID
-				})
+					branchID: transactionInfo.branchID,
+				});
 
 				let pawnTicketData = await PawnTicket.find({
-					itemListID : transactionInfo.itemListID
-				}).sort({loanDate: -1})
+					itemListID: transactionInfo.itemListID,
+				}).sort({ loanDate: -1 });
 
-				let pawnHistory = []
-				
-				for (let ticket of pawnTicketData){
-					let transaction = await Transaction.findOne({ 
+				let pawnHistory = [];
+
+				for (let ticket of pawnTicketData) {
+					let transaction = await Transaction.findOne({
 						_id: ticket.transactionID,
-						status : "Done" || "Approved",
-						})
-					
-						let branch = await Branch.findOne({
-							branchID : transaction.branchID
-						})	
-						
-						let amountPaid = 0
-						if (transaction.amountPaid > 0 ){
-							amountPaid = transaction.amountPaid
-						}
-						else 
-							amountPaid = 0
+						status: { $in: ["Done", "Approved"] },
+					});
 
-					if (branch && transaction){
+					let branch = await Branch.findOne({
+						branchID: transaction.branchID,
+					});
+
+					let amountPaid = 0;
+					if (transaction.amountPaid > 0) {
+						amountPaid = transaction.amountPaid;
+					} else amountPaid = 0;
+
+					if (branch && transaction) {
 						pawnHistory.push({
 							pawnTicketID: ticket.pawnTicketID,
 							transactionType: transaction.transactionType,
-							branchID : branch.branchName,
-							loanDate: dayjs(ticket.loanDate).format('MM/DD/YYYY'),
-						
-							amountPaid : "Php " + amountPaid.toLocaleString("en-US", {
-								minimumFractionDigits: 2,
-								maximumFractionDigits: 2,
-							  }),
-							loanAmount : "Php " + ticket.loanAmount.toLocaleString("en-US", {
-								minimumFractionDigits: 2,
-								maximumFractionDigits: 2,
-							  })
-						})
-					}
+							branchID: branch.branchName,
+							loanDate: dayjs(ticket.loanDate).format("MM/DD/YYYY"),
 
+							amountPaid:
+								"Php " +
+								amountPaid.toLocaleString("en-US", {
+									minimumFractionDigits: 2,
+									maximumFractionDigits: 2,
+								}),
+							loanAmount:
+								"Php " +
+								ticket.loanAmount.toLocaleString("en-US", {
+									minimumFractionDigits: 2,
+									maximumFractionDigits: 2,
+								}),
+						});
+					}
 				}
 				return {
 					props: {
 						currentUser: req.session.userData,
 						transactionData: JSON.parse(JSON.stringify(transactionInfo)),
 						pawnHistory: JSON.parse(JSON.stringify(pawnHistory)),
-						branchData: JSON.parse(JSON.stringify(br))
+						branchData: JSON.parse(JSON.stringify(br)),
 					},
 				};
 			}
@@ -105,12 +106,17 @@ export const getServerSideProps = withIronSessionSsr(
 	ironOptions
 );
 
-function RenewManager({ currentUser, transactionData,  pawnHistory, branchData }) {
+function RenewManager({
+	currentUser,
+	transactionData,
+	pawnHistory,
+	branchData,
+}) {
 	// Modals
 	const [submitModal, setSubmitOpen] = useState(false); //Submit
 	const [cancelModal, setCancelOpen] = useState(false); //Cancel
 	const [loading, setLoading] = useState(false);
-	//Item List Array	
+	//Item List Array
 	const [itemList, setitemList] = useState([]);
 
 	//Pawn Ticket Details
@@ -182,7 +188,7 @@ function RenewManager({ currentUser, transactionData,  pawnHistory, branchData }
 
 	useEffect(() => {
 		if (transactionID != "N/A") {
-		//	setLoading(true)
+			//	setLoading(true)
 			fetch("/api/redeem/" + transactionID, {
 				method: "GET",
 				headers: {
@@ -303,12 +309,12 @@ function RenewManager({ currentUser, transactionData,  pawnHistory, branchData }
 					}
 				});
 		}
-	//	setLoading(false)
+		//	setLoading(false)
 	}, [customerID]);
 	//SUBMIT FORM
 	useEffect(() => {
 		if (sendForm) {
-			setLoading(true)
+			setLoading(true);
 			if (customerID) {
 				let transac = {
 					transactionID: router.query.transactionID,
@@ -347,129 +353,129 @@ function RenewManager({ currentUser, transactionData,  pawnHistory, branchData }
 		} else setButton(true);
 	}, [cashTendered, amountToPay]);
 	return (
-    <>
-      <NavBar currentUser={currentUser}></NavBar>
-      <Header currentUser={currentUser}></Header>
-      {/* First Half */}
-      <Modal isOpen={submitModal} ariaHideApp={false} className="modal">
-        <Submit
-          trigger={submitModal}
-          setTrigger={setSubmitOpen}
-          PTnumber={PTNumber}
-          itemList={itemList}
-          setSendForm={setSendForm}
-          sendForm={sendForm}
-          submitForm={submitForm}
-          amountToPay={amountToPay}
-        />
-      </Modal>
+		<>
+			<NavBar currentUser={currentUser}></NavBar>
+			<Header currentUser={currentUser}></Header>
+			{/* First Half */}
+			<Modal isOpen={submitModal} ariaHideApp={false} className="modal">
+				<Submit
+					trigger={submitModal}
+					setTrigger={setSubmitOpen}
+					PTnumber={PTNumber}
+					itemList={itemList}
+					setSendForm={setSendForm}
+					sendForm={sendForm}
+					submitForm={submitForm}
+					amountToPay={amountToPay}
+				/>
+			</Modal>
 
-      <Modal isOpen={cancelModal} ariaHideApp={false} className="modal">
-        <Cancel
-          trigger={cancelModal}
-          setTrigger={setCancelOpen}
-          content={cancelContentShow()}
-        />
-      </Modal>
+			<Modal isOpen={cancelModal} ariaHideApp={false} className="modal">
+				<Cancel
+					trigger={cancelModal}
+					setTrigger={setCancelOpen}
+					content={cancelContentShow()}
+				/>
+			</Modal>
 
-      <LoadingSpinner isLoading={loading}></LoadingSpinner>
-      <div id="main-content-area" className="flex-col ">
-        <p className="text-xl font-semibold text-green-500 underline font-dosis">
-          Renew
-        </p>
-        <p className="mb-5 text-lg text-green-500 font-dosis">
-          On-site Renewal (Manager)
-        </p>
+			<LoadingSpinner isLoading={loading}></LoadingSpinner>
+			<div id="main-content-area" className="flex-col ">
+				<p className="text-xl font-semibold text-green-500 underline font-dosis">
+					Renew
+				</p>
+				<p className="mb-5 text-lg text-green-500 font-dosis">
+					On-site Renewal (Manager)
+				</p>
 
-        <div className="flex">
-          <DetailsCardRenewManager
-            branch={branchData.branchName}
-            pawnHistory={pawnHistory}
-            pawnTicket={ptInfo}
-            PTNumber={PTNumber}
-            user={userInfo}
-            customer={customerDetails}
-            amountToPay={amountToPay}
-            cashTendered={cashTendered}
-            setCashTendered={setCashTendered}
-            newLoan={newLoan}
-            getNewLoan={setNewLoan}
-          />
-        </div>
+				<div className="flex">
+					<DetailsCardRenewManager
+						branch={branchData.branchName}
+						pawnHistory={pawnHistory}
+						pawnTicket={ptInfo}
+						PTNumber={PTNumber}
+						user={userInfo}
+						customer={customerDetails}
+						amountToPay={amountToPay}
+						cashTendered={cashTendered}
+						setCashTendered={setCashTendered}
+						newLoan={newLoan}
+						getNewLoan={setNewLoan}
+					/>
+				</div>
 
-        {/* Second Half */}
+				{/* Second Half */}
 
-        <div className="flex py-10 mt-20 bg-white shadow-lg rounded-xl">
-          {/* Remaining Items  */}
+				<div className="flex py-10 mt-20 bg-white shadow-lg rounded-xl">
+					{/* Remaining Items  */}
 
-          <div className="px-5">
-            <p className="ml-10 text-base font-bold font-nunito">
-              New Pawn Details:{" "}
-            </p>
+					<div className="px-5">
+						<p className="ml-10 text-base font-bold font-nunito">
+							New Pawn Details:{" "}
+						</p>
 
-            <div className="flex my-10 ml-5 mr-6 text-base font-nunito">
-              <div className="ml-5 text-right">
-                <p>
-                  <b>
-                    <i>New </i>
-                  </b>
-                  Date Loan Granted:
-                </p>
-                <p>
-                  <b>
-                    <i>New </i>
-                  </b>
-                  Maturity Date:
-                </p>
-                <p>
-                  <b>
-                    <i>New </i>
-                  </b>
-                  Expiry Date of Redemption:
-                </p>
-              </div>
-              <div className="ml-8 text-left">
-                <p>{getNewLoanDate()}</p>
-                <p>{getNewMaturityDate()}</p>
-                <p>{getNewExpiryDate()}</p>
-              </div>
-            </div>
-          </div>
+						<div className="flex my-10 ml-5 mr-6 text-base font-nunito">
+							<div className="ml-5 text-right">
+								<p>
+									<b>
+										<i>New </i>
+									</b>
+									Date Loan Granted:
+								</p>
+								<p>
+									<b>
+										<i>New </i>
+									</b>
+									Maturity Date:
+								</p>
+								<p>
+									<b>
+										<i>New </i>
+									</b>
+									Expiry Date of Redemption:
+								</p>
+							</div>
+							<div className="ml-8 text-left">
+								<p>{getNewLoanDate()}</p>
+								<p>{getNewMaturityDate()}</p>
+								<p>{getNewExpiryDate()}</p>
+							</div>
+						</div>
+					</div>
 
-          {/*Items*/}
-          <div className="">
-            <p className="ml-10 text-base font-bold font-nunito">Items: </p>
-            <div className="bg-white px-5 mx-10 w-[720px] h-[280px] overflow-y-scroll border-2">
-              {itemList.map((item) => (
-                <div className="flex flex-row" key={item.itemID}>
-                  <ItemCard key={item.itemID} itemDetails={item}></ItemCard>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-        <div className="mt-5 flex flex-row ml-[1180px]">
-          <div>
-            <button
-              className="px-10 mx-2 my-5 text-base text-white bg-red-300"
-              onClick={cancelForm}
-            >
-              Cancel
-            </button>
-          </div>
-          <div>
-            <button
-              className="px-10 mx-2 my-5 text-base text-white bg-green-300"
-              onClick={submitForm}
-              disabled={button}
-            >
-              Approve
-            </button>
-          </div>
-        </div>
-      </div>
-    </>
-  );
+					{/*Items*/}
+					<div className="">
+						<p className="ml-10 text-base font-bold font-nunito">Items: </p>
+						<div className="bg-white px-5 mx-10 w-[720px] h-[280px] overflow-y-scroll border-2">
+							{itemList.map((item) => (
+								<div className="flex flex-row" key={item.itemID}>
+									<ItemCard key={item.itemID} itemDetails={item}></ItemCard>
+								</div>
+							))}
+						</div>
+					</div>
+				</div>
+				<div className="mt-5 flex flex-row ml-[1180px]">
+					<div>
+						<button
+							className="px-10 mx-2 my-5 text-base text-white bg-red-300"
+							onClick={cancelForm}
+						>
+							Cancel
+						</button>
+					</div>
+					<div>
+						<button
+							className="px-10 mx-2 my-5 text-base text-white bg-green-300"
+							onClick={submitForm}
+							disabled={button}
+						>
+							Approve
+						</button>
+					</div>
+				</div>
+			</div>
+		</>
+	);
 }
 
 export default RenewManager;
