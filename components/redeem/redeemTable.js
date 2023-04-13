@@ -7,23 +7,30 @@ import {
 	useSortBy,
 	useTable,
 } from "react-table";
-
+import dayjs from "dayjs";
 function RedeemTable({ role, data }) {
 	const columns = React.useMemo(
-		() => [
-			{
-				Header: "Transaction",
-				accessor: "transactionType",
-				disableGlobalFilter: true,
-			},
-			{ Header: "PT Number", accessor: "ptNumber" },
-			{ Header: "Customer Name", accessor: "customerName" },
-			{ Header: "Date", accessor: "date", disableGlobalFilter: true },
-			{ Header: "Time", accessor: "time", disableGlobalFilter: true },
-			{ Header: "Status", accessor: "status", disableGlobalFilter: true },
-		],
-		[]
-	);
+    () => [
+      {
+        Header: "Transaction",
+        accessor: "transactionType",
+        disableGlobalFilter: true,
+      },
+      { Header: "PT Number", accessor: "ptNumber" },
+      { Header: "Customer Name", accessor: "customerName" },
+      { Header: "Date", accessor: "date", disableGlobalFilter: true },
+      {
+        Header: "Time",
+        accessor: "time",
+        Cell: ({ value }) => {
+          return dayjs(value).format("h:mm A");
+        },
+        disableGlobalFilter: true,
+      },
+      { Header: "Status", accessor: "status", disableGlobalFilter: true },
+    ],
+    []
+  );
 
 	const {
 		getTableProps,
@@ -70,10 +77,10 @@ function RedeemTable({ role, data }) {
 	return (
     <>
       <div className="w-3/4 p-10 bg-white border-2 h-[750px]">
-        <div className="flex w-full gap-2 my-5 text-base font-nunito">
-          <span className="text-base">Search: </span>
+        <div className="flex w-full gap-2 my-5 text-sm font-nunito">
+          <span className="text-sm">Search: </span>
           <input
-            className="w-96 "
+            className="text-sm w-96 h-fit"
             onChange={(e) => {
               setGlobalFilter(e.target.value);
             }}
@@ -107,7 +114,7 @@ function RedeemTable({ role, data }) {
         </div>
         <table
           {...getTableProps()}
-          className="w-full text-base font-nunito border"
+          className="w-full text-base text-center font-nunito border"
         >
           <thead>
             {headerGroups.map((headerGroup) => (
@@ -122,7 +129,7 @@ function RedeemTable({ role, data }) {
                         {...column.getHeaderProps(
                           column.getSortByToggleProps()
                         )}
-                        className="text-base text-left py-4 pl-3 font-nunito bg-green-50"
+                        className="text-sm text-center py-4 pl-3 font-nunito bg-green-50"
                       >
                         {column.render("Header")}
                         <span className="ml-2 text-base">
@@ -139,7 +146,7 @@ function RedeemTable({ role, data }) {
                   return (
                     <th
                       {...column.getHeaderProps()}
-                      className="text-base text-left py-4 pl-3 font-nunito bg-green-50"
+                      className="text-sm text-center py-4 pl-3 font-nunito bg-green-50"
                     >
                       {column.render("Header")}
                     </th>

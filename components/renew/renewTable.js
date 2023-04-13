@@ -7,28 +7,38 @@ import {
 	useSortBy,
 	useTable,
 } from "react-table";
-
+import dayjs from "dayjs";
 function RenewTable({ role, data }) {
 	const columns = React.useMemo(
-		() => [
-			{
-				Header: "Transaction",
-				accessor: "transactionType",
-				disableGlobalFilter: true,
-			},
-			{ Header: "PT Number", accessor: "ptNumber" },
-			{ Header: "Customer Name", accessor: "customerName" },
-			{
-				Header: "Total Amount to be Paid",
-				accessor: "amountPaid",
-				disableGlobalFilter: true,
-			},
-			{ Header: "Date", accessor: "date", disableGlobalFilter: true },
-			{ Header: "Time", accessor: "time", disableGlobalFilter: true },
-			{ Header: "Status", accessor: "status", disableGlobalFilter: true },
-		],
-		[]
-	);
+    () => [
+      {
+        Header: "Transaction",
+        accessor: "transactionType",
+        disableGlobalFilter: true,
+      },
+      { Header: "PT Number", accessor: "ptNumber" },
+      { Header: "Customer Name", accessor: "customerName" },
+      {
+        Header: "Total Amount to be Paid",
+        accessor: "amountPaid",
+        Cell: ({ value }) => {
+          return <div className="text-right pl-20 pr-28">{value}</div>;
+        },
+        disableGlobalFilter: true,
+      },
+      { Header: "Date", accessor: "date", disableGlobalFilter: true },
+      {
+        Header: "Time",
+        accessor: "time",
+        Cell: ({ value }) => {
+          return dayjs(value).format("h:mm A");
+        },
+        disableGlobalFilter: true,
+      },
+      { Header: "Status", accessor: "status", disableGlobalFilter: true },
+    ],
+    []
+  );
 
 	const {
 		getTableProps,
@@ -74,17 +84,17 @@ function RenewTable({ role, data }) {
 
 	return (
     <>
-      <div className="w-full p-10 bg-white border-2 h-[750px]">
-        <div className="flex w-full gap-2 my-5 text-base font-nunito">
-          <span className="text-base">Search: </span>
+      <div className="w-3/4 p-10 bg-white border-2 h-[750px]">
+        <div className="flex w-full gap-2 my-5 text-sm font-nunito">
+          <span className="text-sm">Search: </span>
           <input
-            className="w-96"
+            className="text-sm w-96 h-fit"
             onChange={(e) => {
               setGlobalFilter(e.target.value);
             }}
             placeholder={"PT Number or Customer Name"}
           />
-          <div className="font-dosis text-base pawn-pagination-container mb-2 ml-[1000px]">
+          <div className="font-dosis text-base pawn-pagination-container mb-2 ml-[595px]">
             <button
               className="mb-2"
               onClick={() => previousPage()}
@@ -112,7 +122,7 @@ function RenewTable({ role, data }) {
         </div>
         <table
           {...getTableProps()}
-          className="w-full text-base font-nunito border"
+          className="w-full text-base font-nunito border text-center"
         >
           <thead>
             {headerGroups.map((headerGroup) => (
@@ -127,7 +137,7 @@ function RenewTable({ role, data }) {
                         {...column.getHeaderProps(
                           column.getSortByToggleProps()
                         )}
-                        className="text-base text-left py-4 pl-3 font-nunito bg-green-50"
+                        className="text-sm text-center py-4 pl-3 font-nunito bg-green-50"
                       >
                         {column.render("Header")}
                         <span className="ml-2 text-base">
@@ -144,7 +154,7 @@ function RenewTable({ role, data }) {
                   return (
                     <th
                       {...column.getHeaderProps()}
-                      className="text-base text-left py-4 pl-3 font-nunito bg-green-50"
+                      className="text-sm text-center py-4 pl-3 font-nunito bg-green-50"
                     >
                       {column.render("Header")}
                     </th>
@@ -180,26 +190,7 @@ function RenewTable({ role, data }) {
           </tbody>
         </table>
       </div>
-      <div className="pawn-pagination-container">
-        <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
-          {"<<"}
-        </button>{" "}
-        <button onClick={() => previousPage()} disabled={!canPreviousPage}>
-          {"<"}
-        </button>
-        <span>
-          Page{" "}
-          <strong>
-            {pageIndex + 1} of {pageOptions.length}
-          </strong>
-        </span>
-        <button onClick={() => nextPage()} disabled={!canNextPage}>
-          {">"}
-        </button>{" "}
-        <button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
-          {">>"}
-        </button>{" "}
-      </div>
+
     </>
   );
 }

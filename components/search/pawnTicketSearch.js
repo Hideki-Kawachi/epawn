@@ -87,7 +87,9 @@ function PawnTicketSearch({
         Header: "Loan Amount",
         accessor: "loanAmount",
         Cell: ({ value }) => {
-          return convertFloat(value);
+          return (
+            <div className="text-right ml-[-80px] mr-20">{convertFloat(value)}</div>
+          );
         },
         disableGlobalFilter: true,
       },
@@ -189,7 +191,7 @@ function PawnTicketSearch({
           </button>{" "}
         </div>
       </div>
-      <table {...getTableProps()} className="w-full text-sm border font-nunito">
+      <table {...getTableProps()} className="w-full text-sm border font-nunito text-center">
         <thead>
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
@@ -197,7 +199,7 @@ function PawnTicketSearch({
                 return (
                   <th
                     {...column.getHeaderProps(column.getSortByToggleProps())}
-                    className="text-sm text-left py-4 pl-3 font-nunito bg-green-50"
+                    className="text-sm text-center py-4 pl-3 font-nunito bg-green-50"
                   >
                     {column.render("Header")}
                     <span className="ml-2 text-base">

@@ -62,40 +62,47 @@ function ItemSearch({ pawnTicketData, userData, itemData }) {
 	}, [userData, pawnTicketData, itemData]);
 
 	const columns = React.useMemo(
-		() => [
-			{
-				Header: "Item ID",
-				accessor: "itemID",
-			},
-			{
-				Header: "Name",
-				accessor: "itemName",
-				disableGlobalFilter: true,
-			},
-			{
-				Header: "Category",
-				accessor: "itemCategory",
-				disableGlobalFilter: true,
-			},
-			{
-				Header: "Type",
-				accessor: "itemType",
-				disableGlobalFilter: true,
-			},
-			{
-				Header: "Appraisal Price",
-				accessor: "price",
-				disableGlobalFilter: true,
-			},
-			{
-				Header: "Customer Name",
-				accessor: "customerName",
-				disableGlobalFilter: true,
-			},
-			{ Header: "Status", accessor: "status", disableGlobalFilter: true },
-		],
-		[]
-	);
+    () => [
+      {
+        Header: "Item ID",
+        accessor: "itemID",
+      },
+      {
+        Header: "Name",
+        accessor: "itemName",
+        disableGlobalFilter: true,
+      },
+      {
+        Header: "Category",
+        accessor: "itemCategory",
+        disableGlobalFilter: true,
+      },
+      {
+        Header: "Type",
+        accessor: "itemType",
+        disableGlobalFilter: true,
+      },
+      {
+        Header: "Appraisal Price",
+        accessor: "price",
+        disableGlobalFilter: true,
+        Cell: ({ value }) => {
+          return (
+            <div className="text-right ml-[-80px] mr-20">
+              {convertFloat(value)}
+            </div>
+          );
+        },
+      },
+      {
+        Header: "Customer Name",
+        accessor: "customerName",
+        disableGlobalFilter: true,
+      },
+      { Header: "Status", accessor: "status", disableGlobalFilter: true },
+    ],
+    []
+  );
 
 	const {
 		getTableProps,
@@ -134,6 +141,15 @@ function ItemSearch({ pawnTicketData, userData, itemData }) {
 		});
 	}
 
+  	function convertFloat(number) {
+      return (
+        "Php " +
+        Number(number).toLocaleString("en-US", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })
+      );
+    }
 	return (
     <div>
       <div className="flex gap-2 my-5 text-sm font-nunito">
@@ -209,7 +225,7 @@ function ItemSearch({ pawnTicketData, userData, itemData }) {
           </button>{" "}
         </div>
       </div>
-      <table {...getTableProps()} className="w-full text-sm border font-nunito">
+      <table {...getTableProps()} className="w-full text-sm border font-nunito text-center">
         <thead>
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
@@ -221,7 +237,7 @@ function ItemSearch({ pawnTicketData, userData, itemData }) {
                   return (
                     <th
                       {...column.getHeaderProps(column.getSortByToggleProps())}
-                      className="text-sm text-left py-4 pl-3 font-nunito bg-green-50"
+                      className="text-sm text-center py-4 pl-3 font-nunito bg-green-50"
                     >
                       {column.render("Header")}
                       <span className="ml-2 text-base">

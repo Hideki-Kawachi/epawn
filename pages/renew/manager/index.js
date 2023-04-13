@@ -60,17 +60,17 @@ export const getServerSideProps = withIronSessionSsr(
 
 				if (customerInfo) {
 					notifData.push({
-						_id: transaction._id,
-						customerName: customerInfo.firstName + " " + customerInfo.lastName,
-						date: transaction.updatedAt
-							.toDateString()
-							.substring(4, transaction.creationDate.length),
-						time: transaction.updatedAt.toLocaleTimeString("en-GB"),
-						transactionType: transaction.transactionType,
-						ptNumber: transaction.ptNumber,
-						amountPaid: "Php " + convertFloat(transaction.amountPaid),
-						status: transaction.status,
-					});
+            _id: transaction._id,
+            customerName: customerInfo.firstName + " " + customerInfo.lastName,
+            date: transaction.updatedAt
+              .toDateString()
+              .substring(4, transaction.creationDate.length),
+            time: transaction.updatedAt.toString(),
+            transactionType: transaction.transactionType,
+            ptNumber: transaction.ptNumber,
+            amountPaid: "Php " + convertFloat(transaction.amountPaid),
+            status: transaction.status,
+          });
 				}
 			});
 			return {

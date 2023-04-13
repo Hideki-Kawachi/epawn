@@ -29,7 +29,11 @@ function CustomerSearch({
         Header: "Current Total Loan Amount",
         accessor: "totalLoanAmount",
         Cell: ({ value }) => {
-          return convertFloat(value);
+          return (
+            <div className="text-right  ml-[-200px] mr-40">
+              {convertFloat(value)}
+            </div>
+          );
         },
         disableGlobalFilter: true,
       },
@@ -188,7 +192,7 @@ function CustomerSearch({
           </button>{" "}
         </div>
       </div>
-      <table {...getTableProps()} className="w-full text-sm border">
+      <table {...getTableProps()} className="w-full text-sm border text-center">
         <thead>
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
@@ -196,7 +200,7 @@ function CustomerSearch({
                 return (
                   <th
                     {...column.getHeaderProps(column.getSortByToggleProps())}
-                    className="text-sm text-left py-4 pl-3 font-nunito bg-green-50"
+                    className="text-sm text-center py-4 pl-3 font-nunito bg-green-50"
                   >
                     {column.render("Header")}
                     <span className="ml-2 text-base">
