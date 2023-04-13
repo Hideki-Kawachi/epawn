@@ -190,14 +190,22 @@ function CashFlowReport({
       {
         Header: "Cash In",
         Cell: ({ value }) => {
-          return <div className="text-right px-20">{convertFloat(value)}</div>;
+          return (
+            <div className="text-right ml-[-60px] mr-20">
+              {convertFloat(value)}
+            </div>
+          );
         },
         accessor: "cashInAmount",
       },
       {
         Header: "Cash Out",
         Cell: ({ value }) => {
-          return <div className="text-right px-20">{convertFloat(value)}</div>;
+          return (
+            <div className="text-right ml-[-60px] mr-20">
+              {convertFloat(value)}
+            </div>
+          );
         },
         accessor: "cashOutAmount",
       },
@@ -206,12 +214,14 @@ function CashFlowReport({
         accessor: "netCashFlow",
         Cell: ({ value }) => {
             return value < 0 ? (
-            <div className="text-right px-20 text-red-500">
-              {convertFloat(value)}
-            </div>
-          ) : (
-            <div className="text-right px-20">{convertFloat(value)}</div>
-          );
+              <div className="text-right ml-[-40px] mr-40 text-red-500">
+                {convertFloat(value)}
+              </div>
+            ) : (
+              <div className="text-right ml-[-60px] mr-40">
+                {convertFloat(value)}
+              </div>
+            );
         },
       },
     ],

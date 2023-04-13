@@ -254,7 +254,7 @@ function ItemSearch({ pawnTicketData, userData, itemData }) {
                 return (
                   <th
                     {...column.getHeaderProps()}
-                    className="text-sm text-left py-4 pl-3 font-nunito bg-green-50"
+                    className="text-sm text-center py-4 pl-3 font-nunito bg-green-50"
                   >
                     {column.render("Header")}
                   </th>

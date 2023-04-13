@@ -103,7 +103,7 @@ export const getServerSideProps = withIronSessionSsr(
 							date: transaction.updatedAt
 								.toDateString()
 								.substring(4, transaction.updatedAt.length),
-							time: transaction.updatedAt.toLocaleTimeString("en-GB"),
+							time: transaction.updatedAt.toString(),
 						});
 					} else {
 						for (const pawnPT of pawnTicket) {
@@ -120,7 +120,7 @@ export const getServerSideProps = withIronSessionSsr(
 								date: transaction.updatedAt
 									.toDateString()
 									.substring(4, transaction.updatedAt.length),
-								time: transaction.updatedAt.toLocaleTimeString("en-GB"),
+								time: transaction.updatedAt.toString(),
 							});
 						}
 					}
@@ -213,7 +213,7 @@ export const getServerSideProps = withIronSessionSsr(
 							date: transaction.updatedAt
 								.toDateString()
 								.substring(4, transaction.updatedAt.length),
-							time: transaction.updatedAt.toLocaleTimeString("en-GB"),
+							time: transaction.updatedAt.toString(),
 						});
 					} else {
 						for (const pawnPT of pawnTicket) {
@@ -230,7 +230,7 @@ export const getServerSideProps = withIronSessionSsr(
 								date: transaction.updatedAt
 									.toDateString()
 									.substring(4, transaction.updatedAt.length),
-								time: transaction.updatedAt.toLocaleTimeString("en-GB"),
+								time: transaction.updatedAt.toString()
 							});
 						}
 					}
@@ -266,14 +266,17 @@ export const getServerSideProps = withIronSessionSsr(
 
 function Logs({ currentUser, tableData, branchData }) {
 	return (
-		<>
-			<NavBar currentUser={currentUser}></NavBar>
-			<Header currentUser={currentUser}></Header>
-			<div id="main-content-area">
-				<LogsTable data={tableData} branchData={branchData}></LogsTable>
-			</div>
-		</>
-	);
+    <>
+      <NavBar currentUser={currentUser}></NavBar>
+      <Header currentUser={currentUser}></Header>
+      <div id="main-content-area">
+        <p className="text-xl font-semibold text-green-500 underline mb-5 font-dosis">
+          Transaction Logs
+        </p>
+        <LogsTable data={tableData} branchData={branchData}></LogsTable>
+      </div>
+    </>
+  );
 }
 
 export default Logs;

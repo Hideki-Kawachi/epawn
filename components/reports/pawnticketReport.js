@@ -190,10 +190,10 @@ function PawnTicketReport({
         },
       },
       {
-        Header: "Amount of Loan",
+        Header: "Loan Amount",
         accessor: "loanAmount",
         Cell: ({ value }) => {
-          return <div className="text-right px-10">{value}</div>;
+          return <div className="text-right pl-[-20px] pr-10">{value}</div>;
         },
         disableGlobalFilter: true,
       },
