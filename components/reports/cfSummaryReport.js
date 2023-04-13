@@ -318,8 +318,8 @@ function CFSummaryReport({
 			</div> */}
       {/* Table */}
       <div>
-        <p className="font-nunito font-bold text-base text-center my-5 text-green-500">
-          Cashflow Summary for {monthYr}
+        <p className="font-dosis font-semibold text-base text-center my-5 text-green-500">
+          Cashflow Summary
         </p>
       </div>
       <div className="flex justify-center items-center">

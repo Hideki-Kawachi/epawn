@@ -4,11 +4,9 @@ import React from "react";
 function CashflowSummary({ cashflowSummary }) {
 	return (
 		<div className="flex flex-col items-center justify-center p-5 bg-white border-2 border-gray-500 rounded font-nunito">
-			<h1 className="text-lg font-semibold">
+			<h1 className="text-lg font-semibold font-dosis">
 				Cashflow Summary{" "}
-				<span className="text-sm font-normal">
-					for {dayjs(new Date()).format("MMM DD, YYYY")}
-				</span>
+
 			</h1>
 
 			<div className="flex flex-row justify-center w-full gap-8 mt-2 text-base">
