@@ -82,7 +82,7 @@ function NotificationTable({ role, data }) {
 				}
 			}
 			// if renew
-			else if (rowData.transactionType == "Renew") {
+			else if (rowData.transactionType.includes("Renew")) {
 				if (rowData.status == "Pending") {
 					//	console.log("pending", rowData);
 					router.push({

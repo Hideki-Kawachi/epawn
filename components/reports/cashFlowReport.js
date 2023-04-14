@@ -40,13 +40,10 @@ function CashFlowReport({
 	]);
 
 	function convertFloat(number) {
-		return (
-			"Php " +
-			Number(number).toLocaleString("en-US", {
-				minimumFractionDigits: 2,
-				maximumFractionDigits: 2,
-			})
-		);
+		return Number(number).toLocaleString("en-US", {
+			minimumFractionDigits: 2,
+			maximumFractionDigits: 2,
+		});
 	}
 
 	function getData(startDate, endDate, branchID) {
@@ -100,10 +97,9 @@ function CashFlowReport({
 						transactDate: dayjs(new Date(currTransaction.creationDate)).format(
 							"MMM DD, YYYY"
 						),
-						cashInAmount: "Php " + tempCashIn,
-						cashOutAmount: "Php " + tempCashOut,
-						netCashFlow:
-							"Php " + (Number(tempCashIn) - Number(tempCashOut)).toFixed(2),
+						cashInAmount: tempCashIn,
+						cashOutAmount: tempCashOut,
+						netCashFlow: (Number(tempCashIn) - Number(tempCashOut)).toFixed(2),
 					});
 				} else {
 					tempData.push({
@@ -111,10 +107,9 @@ function CashFlowReport({
 						transactDate: dayjs(new Date(currTransaction.creationDate)).format(
 							"MMM DD, YYYY"
 						),
-						cashInAmount: "Php " + tempCashIn,
-						cashOutAmount: "Php " + tempCashOut,
-						netCashFlow:
-							"Php " + (Number(tempCashIn) - Number(tempCashOut)).toFixed(2),
+						cashInAmount: tempCashIn,
+						cashOutAmount: tempCashOut,
+						netCashFlow: (Number(tempCashIn) - Number(tempCashOut)).toFixed(2),
 						// Beginning and End implementation
 						// netCashFlow: (parseFloat(tempData[tempData.length - 1].netCashFlow) + parseFloat(tempCashIn) - parseFloat(tempCashOut)).toFixed(2),
 					});
@@ -133,24 +128,17 @@ function CashFlowReport({
 
 				//If amountPaid is >= 0, then cashIn
 				if (currAmountPaid >= 0) {
-					newVal =
-						Number(tempData[index].cashInAmount.split(" ")[1]) + currAmountPaid;
-					tempData[index].cashInAmount = "Php " + newVal.toFixed(2);
+					newVal = Number(tempData[index].cashInAmount) + currAmountPaid;
+					tempData[index].cashInAmount = newVal;
 
-					newTotal =
-						currAmountPaid +
-						parseFloat(tempData[index].netCashFlow.split(" ")[1]);
-					tempData[index].netCashFlow = "Php " + newTotal.toFixed(2);
+					newTotal = currAmountPaid + parseFloat(tempData[index].netCashFlow);
+					tempData[index].netCashFlow = newTotal.toFixed(2);
 				} else {
-					newVal =
-						currAmountPaid -
-						Number(tempData[index].cashOutAmount.split(" ")[1]);
-					tempData[index].cashOutAmount = "Php " + Math.abs(newVal).toFixed(2);
+					newVal = currAmountPaid - Number(tempData[index].cashOutAmount);
+					tempData[index].cashOutAmount = Math.abs(newVal);
 
-					newTotal =
-						currAmountPaid +
-						parseFloat(tempData[index].netCashFlow.split(" ")[1]);
-					tempData[index].netCashFlow = "Php " + newTotal.toFixed(2);
+					newTotal = currAmountPaid + parseFloat(tempData[index].netCashFlow);
+					tempData[index].netCashFlow = newTotal.toFixed(2);
 				}
 			}
 		}
@@ -193,7 +181,7 @@ function CashFlowReport({
 				Cell: ({ value }) => {
 					return (
 						<div className="text-right ml-[-60px] mr-20">
-							{convertFloat(value.split(" ")[1])}
+							{"Php " + convertFloat(value)}
 						</div>
 					);
 				},
@@ -204,7 +192,7 @@ function CashFlowReport({
 				Cell: ({ value }) => {
 					return (
 						<div className="text-right ml-[-60px] mr-20">
-							{convertFloat(value.split(" ")[1])}
+							{"Php " + convertFloat(value)}
 						</div>
 					);
 				},
@@ -216,11 +204,11 @@ function CashFlowReport({
 				Cell: ({ value }) => {
 					return Number(value) < 0 ? (
 						<div className="text-right ml-[-40px] mr-40 text-red-500">
-							{convertFloat(value.split(" ")[1])}
+							{"Php " + convertFloat(value)}
 						</div>
 					) : (
 						<div className="text-right ml-[-60px] mr-40">
-							{convertFloat(value.split(" ")[1])}
+							{"Php " + convertFloat(value)}
 						</div>
 					);
 				},
