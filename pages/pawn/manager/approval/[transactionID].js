@@ -162,7 +162,7 @@ function ApprovalTransactionID({
 	}
 
 	function cancelForm() {
-		console.log("cancel");
+		router.replace("/");
 	}
 
 	return (

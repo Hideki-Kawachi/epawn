@@ -405,7 +405,11 @@ function PawnTicketTransactionID({
 					</div>
 				</div>
 				<div className="flex justify-end w-full gap-5 text-base mr-28">
-					<button className="px-10 mx-2 my-5 bg-red-300" type="button">
+					<button
+						className="px-10 mx-2 my-5 bg-red-300"
+						type="button"
+						onClick={() => router.replace("/")}
+					>
 						Cancel
 					</button>
 					<button

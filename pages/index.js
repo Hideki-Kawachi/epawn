@@ -117,14 +117,10 @@ export const getServerSideProps = withIronSessionSsr(
 			let cashIn = 0;
 			let cashOut = 0;
 
-			let currCashflow = await Cashflow.findOne({
-				branchID: req.session.userData.branchID,
-				date: dayjs().format("YYYY-MM-DD"),
-			});
-
-			if (currCashflow) {
-				balance = currCashflow.beginningBalance;
-			}
+			// let currCashflow = await Cashflow.findOne({
+			// 	branchID: req.session.userData.branchID,
+			// 	date: dayjs().format("YYYY-MM-DD"),
+			// });
 
 			for (const cashflow of cashflowTransac) {
 				if (
