@@ -143,8 +143,9 @@ function PawnTicketReport({
 							tempSummaryData[index].inactiveCount++;
 						}
 						tempSummaryData[index].avgLoan =
-							tempSummaryData[index].avgLoan +
-							Number(tempDataRow.loanAmount) / 2;
+							(tempSummaryData[index].avgLoan +
+								Number(tempDataRow.loanAmount)) /
+							2;
 						if (totalRenewalCount.length > 0) {
 							tempSummaryData[index].renewalRate =
 								(tempSummaryData[index].inactiveCount /

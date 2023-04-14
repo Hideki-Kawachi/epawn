@@ -79,7 +79,7 @@ function ItemReport({
 							itemType: item.itemType,
 							itemCategory: item.itemCategory,
 							itemDesc: item.description,
-							loanAmount: pt.loanAmount?.toFixed(2),
+							loanAmount: item.price?.toFixed(2),
 							status: stat,
 						});
 						tempIDList.push(item.itemID);
