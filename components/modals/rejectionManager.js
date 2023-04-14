@@ -2,7 +2,14 @@ import { useRouter } from "next/router";
 import React, { useState } from "react";
 import Close from "../closebutton";
 
-function RejectionManager({ trigger, setTrigger, transactionID, itemList, redeemer, isOriginal}) {
+function RejectionManager({
+	trigger,
+	setTrigger,
+	transactionID,
+	itemList,
+	redeemer,
+	isOriginal,
+}) {
 	const [rejectionMessage, setRejectionMessage] = useState("");
 	const router = useRouter();
 
@@ -17,7 +24,7 @@ function RejectionManager({ trigger, setTrigger, transactionID, itemList, redeem
 				transactionID: transactionID,
 				itemListID: JSON.stringify(itemList),
 				rejectionMessage: rejectionMessage,
-				userID: redeemer.userID,
+				userID: redeemer ? redeemer.userID : null,
 				isOriginal: isOriginal,
 			}),
 		})
