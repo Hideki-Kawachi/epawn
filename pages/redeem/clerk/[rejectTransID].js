@@ -222,10 +222,10 @@ function RejectClerk({
               },
             })
               .then((res) => res.json())
-              .then((oldpt) => {
+              .then((partialpay) => {
                 //   console.log("Old PT is: " + JSON.stringify(oldpt));
-                if (oldpt != null) {
-                  setPartialPayment(Number(oldpt.loanAmount - data.loanAmount));
+                if (partialpay != null) {
+                  setPartialPayment(Number(partialpay));
                 } else setPartialPayment(0);
               });
           }
