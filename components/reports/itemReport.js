@@ -75,6 +75,7 @@ function ItemReport({
 							itemID: item.itemID,
 							branchName: currBranch.branchName,
 							loanDate: dayjs(new Date(pt.loanDate)).format("MMM DD, YYYY"),
+							expiryDate: dayjs(new Date(pt.expiryDate)).format("MMM DD, YYYY"),
 							itemType: item.itemType,
 							itemCategory: item.itemCategory,
 							itemDesc: item.description,
@@ -147,6 +148,15 @@ function ItemReport({
 			{
 				Header: "Loan Date",
 				accessor: "loanDate",
+				filter: "between",
+				disableGlobalFilter: true,
+				Cell: ({ value }) => {
+					return <div className="text-center">{value}</div>;
+				},
+			},
+			{
+				Header: "Expiry Date",
+				accessor: "expiryDate",
 				filter: "between",
 				disableGlobalFilter: true,
 				Cell: ({ value }) => {

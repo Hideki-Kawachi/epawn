@@ -42,6 +42,7 @@ export default function printReportItemData(ptData, startDate, endDate) {
 			row.branchName,
 			row.status,
 			row.loanDate,
+			row.expiryDate,
 			row.itemType,
 			row.itemCategory,
 			row.itemDesc,
@@ -133,6 +134,7 @@ export default function printReportItemData(ptData, startDate, endDate) {
 			"Branch",
 			"Status",
 			"Loan Date",
+			"Expiry Date",
 			"Item Type",
 			"Item Category",
 			"Item Description",
@@ -184,7 +186,7 @@ export default function printReportItemData(ptData, startDate, endDate) {
 			halign: "center",
 		},
 		columnStyles: {
-			7: { halign: "right" },
+			8: { halign: "right" },
 		},
 		didDrawPage: (data) => {
 			header(data);
