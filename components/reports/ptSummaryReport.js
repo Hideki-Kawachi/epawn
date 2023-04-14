@@ -99,9 +99,9 @@ const {
   );
 
   	function getData(startDate, endDate, branchID, status) {
-		let tempData = [];
-    	let totalItemPT = 0;
-    	let activeItemPT = 0;
+		    let tempData = [];
+        let totalItemPT = 0;
+        let activeItemPT = 0;
         let pawnCount = 0;
         let loanAmount = 0;
 

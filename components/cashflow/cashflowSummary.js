@@ -2,6 +2,16 @@ import dayjs from "dayjs";
 import React from "react";
 
 function CashflowSummary({ cashflowSummary }) {
+
+	function convertFloat(number) {
+      return (
+        Number(number).toLocaleString("en-US", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })
+      );
+    }
+
 	return (
 		<div className="flex flex-col items-center justify-center p-5 bg-white border-2 border-gray-500 rounded font-nunito">
 			<h1 className="text-lg font-semibold font-dosis">
@@ -23,26 +33,26 @@ function CashflowSummary({ cashflowSummary }) {
 					<span className="text-green-300">
 						Php{" "}
 						{cashflowSummary.beginningBalance
-							? cashflowSummary.beginningBalance.toFixed(2)
-							: "0.00"}
+							? convertFloat(cashflowSummary.beginningBalance)
+							: "Php 0.00"}
 					</span>
 					<span className="text-red-500">
-						(Php {cashflowSummary.pawn.toFixed(2)})
+						(Php {convertFloat(cashflowSummary.pawn)})
 					</span>
 					<span className="text-green-300">
-						Php {cashflowSummary.redeem.toFixed(2)}
+						Php {convertFloat(cashflowSummary.redeem)}
 					</span>
 					<span className="text-green-300">
-						Php {cashflowSummary.renew.toFixed(2)}
+						Php {convertFloat(cashflowSummary.renew)}
 					</span>
 					<span className="text-green-300">
-						Php {cashflowSummary.additionalFunds.toFixed(2)}
+						Php {convertFloat(cashflowSummary.additionalFunds)}
 					</span>
 					<span className="text-red-500">
-						(Php {cashflowSummary.withdraw.toFixed(2)})
+						(Php {convertFloat(cashflowSummary.withdraw)})
 					</span>
 					<span className="font-semibold">
-						Php {cashflowSummary.currentBalance.toFixed(2)}
+						Php {convertFloat(cashflowSummary.currentBalance)}
 					</span>
 				</div>
 			</div>
