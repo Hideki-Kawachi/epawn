@@ -3,16 +3,27 @@ import "jspdf-autotable";
 import { useGridLayout } from "react-table/dist/react-table.development";
 
 //add to
-export default function printReportPTData(ptData, startDate, endDate) {
+export default function printReportPTData(ptData, startDate, endDate, ptSummaryData) {
 	// console.log(ptData);
 
 	// Define the pt data for the table
 	let tempData = [];
 
+	let tempSummaryData = []
+
 	//For status filter
 	let compVal = ptData[0].status.toString()
 	let isFound = false
 	let tempText = " - " + ptData[0].status.toString()
+
+	ptSummaryData.forEach((summ) => 
+		ptSummaryData.push([
+			summ.branchName,
+			summ.avgLoan,
+			summ.activeCount,
+			summ.renewalRate
+		])
+	);
 
 	ptData.forEach((row) => {
 		if (row.status != compVal) {
