@@ -176,22 +176,14 @@ function CashFlowReport({
 				Header: "Branch",
 				accessor: "branchName",
 				Cell: ({ value }) => {
-					return (
-						<div className="px-10 text-center">
-							{convertFloat(value.split(" ")[1])}
-						</div>
-					);
+					return <div className="px-10 text-center">{value}</div>;
 				},
 			},
 			{
 				Header: "Date",
 				accessor: "transactDate",
 				Cell: ({ value }) => {
-					return (
-						<div className="px-10 text-center">
-							{convertFloat(value.split(" ")[1])}
-						</div>
-					);
+					return <div className="px-10 text-center">{value}</div>;
 				},
 				filter: "between",
 				disableGlobalFilter: true,
