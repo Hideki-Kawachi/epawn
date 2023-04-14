@@ -9,17 +9,42 @@ export default function printReportPTData(ptData, startDate, endDate) {
 	// Define the pt data for the table
 	let tempData = [];
 
-	ptData.forEach((row) =>
-		tempData.push([
-			row.pawnTicketID,
-			row.branchName,
-			row.status,
-			row.loanDate,
-			row.maturityDate,
-			row.expiryDate,
-			row.loanAmount,
-		])
-	);
+	//For status filter
+	let compVal = ptData[0].status.toString()
+	let isFound = false
+	let tempText = " - " + ptData[0].status.toString()
+
+	ptData.forEach((row) => {
+		if (row.status != compVal) {
+			isFound = true
+			tempText = ""
+		}
+	})
+
+	if (isFound) {
+		ptData.forEach((row) =>
+			tempData.push([
+				row.pawnTicketID,
+				row.branchName,
+				row.status,
+				row.loanDate,
+				row.maturityDate,
+				row.expiryDate,
+				row.loanAmount,
+			])
+		);
+	} else {
+		ptData.forEach((row) =>
+			tempData.push([
+				row.pawnTicketID,
+				row.branchName,
+				row.loanDate,
+				row.maturityDate,
+				row.expiryDate,
+				row.loanAmount,
+			])
+		);
+	}
 
 	// Set up the document
 	const doc = new jsPDF({
@@ -50,7 +75,7 @@ export default function printReportPTData(ptData, startDate, endDate) {
 		);
 
 		doc.setFont("Arial", "bold");
-		const headerText3 = "PAWN TICKET REPORT";
+		const headerText3 = "PAWN TICKET REPORT"  + tempText;
 		const headerWidth3 = doc.getTextWidth(headerText3);
 		doc.text(
 			headerText3,
@@ -94,37 +119,77 @@ export default function printReportPTData(ptData, startDate, endDate) {
 		// doc.text(`Page ${data.pageNumber} of ${pageCount}`, doc.internal.pageSize.width - data.settings.margin.right - footerWidth, doc.internal.pageSize.height - 0.5);
 	};
 
-	// // Define the header data for the table
-	const tableHeader = [
-		[
-			"PT-Number",
-			"Branch",
-			"Status",
-			"Loan Date",
-			"Maturity Date",
-			"Expiry Date",
-			"Amount of Loan",
-		],
-	];
+	let tableHeader
 
-	// Add the table to the document
-	doc.autoTable({
-		head: tableHeader,
-		body: tempData,
-		startY: 1,
-		margin: { top: 1 },
-		headStyles: {
-			fillColor: "#5dbe9d", // set the background color of the header row
-			halign: "center",
-		},
-		columnStyles: {
-			6: { halign: "right" },
-		},
-		didDrawPage: (data) => {
-			header(data);
-			footer(data);
-		},
-	});
+	// // Define the header data for the table
+	if (!isFound) {
+
+		tableHeader = [
+			[
+				"PT-Number",
+				"Branch",
+				"Loan Date",
+				"Maturity Date",
+				"Expiry Date",
+				"Amount of Loan",
+			],
+		];
+
+	} else {
+		tableHeader = [
+			[
+				"PT-Number",
+				"Branch",
+				"Status",
+				"Loan Date",
+				"Maturity Date",
+				"Expiry Date",
+				"Amount of Loan",
+			],
+		];
+	}
+
+	if (!isFound) {
+
+		doc.autoTable({
+			head: tableHeader,
+			body: tempData,
+			startY: 1,
+			margin: { top: 1 },
+			headStyles: {
+				fillColor: "#5dbe9d", // set the background color of the header row
+				halign: "center",
+			},
+			columnStyles: {
+				5: { halign: "right" },
+			},
+			didDrawPage: (data) => {
+				header(data);
+				footer(data);
+			},
+		});
+
+	}
+	else {
+		// Add the table to the document
+		doc.autoTable({
+			head: tableHeader,
+			body: tempData,
+			startY: 1,
+			margin: { top: 1 },
+			headStyles: {
+				fillColor: "#5dbe9d", // set the background color of the header row
+				halign: "center",
+			},
+			columnStyles: {
+				6: { halign: "right" },
+			},
+			didDrawPage: (data) => {
+				header(data);
+				footer(data);
+			},
+		});
+	}
 
 	// Save the document
 	doc.save("PT_Report.pdf");
