@@ -91,51 +91,60 @@ function PawnTicketSummaryReport({ data }) {
 
 	return (
 		<>
-			<table {...getTableProps()} className="w-full text-sm border font-nunito">
-				<thead>
-					{headerGroups.map((headerGroup) => (
-						<tr {...headerGroup.getHeaderGroupProps()}>
-							{headerGroup.headers.map((column) => {
-								return (
-									<th
-										{...column.getHeaderProps(column.getSortByToggleProps())}
-										className="py-4 pl-3 text-sm text-center font-nunito bg-green-50"
-									>
-										{column.render("Header")}
-										<span className="ml-2 text-base">
-											{column.isSorted
-												? column.isSortedDesc
-													? "▴"
-													: "▾"
-												: "-"}
-										</span>
-									</th>
-								);
-							})}
-						</tr>
-					))}
-				</thead>
-				<tbody {...getTableBodyProps()}>
-					{page.map((row, i) => {
-						prepareRow(row);
-						return (
-							<tr
-								{...row.getRowProps()}
-								// onClick={() => openRow(data[row.id])}
-								className={i % 2 === 0 ? "text-sm  " : "text-sm  bg-gray-150"}
-							>
-								{row.cells.map((cell) => {
+			<p className="my-5 text-base font-semibold text-center text-green-500 font-dosis">
+				PawnTicket Summary
+			</p>
+
+			<div className="flex items-center justify-center mb-5">
+				<table
+					{...getTableProps()}
+					className="w-3/4 text-sm border font-nunito"
+				>
+					<thead>
+						{headerGroups.map((headerGroup) => (
+							<tr {...headerGroup.getHeaderGroupProps()}>
+								{headerGroup.headers.map((column) => {
 									return (
-										<td {...cell.getCellProps()} className="py-2 pl-3">
-											{cell.render("Cell")}
-										</td>
+										<th
+											{...column.getHeaderProps(column.getSortByToggleProps())}
+											className="py-4 pl-3 text-sm text-center font-nunito bg-green-50"
+										>
+											{column.render("Header")}
+											<span className="ml-2 text-base">
+												{column.isSorted
+													? column.isSortedDesc
+														? "▴"
+														: "▾"
+													: "-"}
+											</span>
+										</th>
 									);
 								})}
 							</tr>
-						);
-					})}
-				</tbody>
-			</table>
+						))}
+					</thead>
+					<tbody {...getTableBodyProps()}>
+						{page.map((row, i) => {
+							prepareRow(row);
+							return (
+								<tr
+									{...row.getRowProps()}
+									// onClick={() => openRow(data[row.id])}
+									className={i % 2 === 0 ? "text-sm  " : "text-sm  bg-gray-150"}
+								>
+									{row.cells.map((cell) => {
+										return (
+											<td {...cell.getCellProps()} className="py-2 pl-3">
+												{cell.render("Cell")}
+											</td>
+										);
+									})}
+								</tr>
+							);
+						})}
+					</tbody>
+				</table>
+			</div>
 		</>
 	);
 }
