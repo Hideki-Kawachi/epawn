@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import Transaction from "../../schemas/transaction";
 import User from "../../schemas/user";
 import dbConnect from "../../utilities/dbConnect";
+import dayjs from "dayjs";
 
 export default async function NotifTable(req, res) {
 	let userInfo = req.headers;
@@ -46,7 +47,7 @@ export default async function NotifTable(req, res) {
 						date: transaction.updatedAt
 							.toDateString()
 							.substring(4, transaction.creationDate.length),
-						time: transaction.updatedAt.toLocaleTimeString("en-GB"),
+						time: dayjs(transaction.updatedAt).format("h:mm A"),
 						transactionType: transaction.transactionType,
 						status: transaction.status,
 					});

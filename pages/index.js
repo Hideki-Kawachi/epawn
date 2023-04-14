@@ -99,7 +99,7 @@ export const getServerSideProps = withIronSessionSsr(
 						date: transaction.updatedAt
 							.toDateString()
 							.substring(4, transaction.updatedAt.length),
-						time: transaction.updatedAt,
+						time: dayjs(transaction.updatedAt).format("h:mm A"),
 						transactionType: transaction.transactionType,
 						status: transaction.status,
 					});
