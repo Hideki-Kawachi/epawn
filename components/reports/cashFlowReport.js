@@ -40,14 +40,14 @@ function CashFlowReport({
 	]);
 
 	function convertFloat(number) {
-        return (
-          "Php " +
-          Number(number).toLocaleString("en-US", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })
-        );
-      }
+		return (
+			"Php " +
+			Number(number).toLocaleString("en-US", {
+				minimumFractionDigits: 2,
+				maximumFractionDigits: 2,
+			})
+		);
+	}
 
 	function getData(startDate, endDate, branchID) {
 		let tempData = [];
@@ -88,11 +88,9 @@ function CashFlowReport({
 
 				//If amount paid is positive then cashin, else false
 				if (currTransaction.amountPaid >= 0) {
-					tempCashIn = currTransaction.amountPaid.toFixed(2);
+					tempCashIn = currTransaction.amountPaid;
 				} else {
-					tempCashOut = Math.abs(currTransaction.amountPaid.toFixed(2)).toFixed(
-						2
-					);
+					tempCashOut = currTransaction.amountPaid;
 				}
 
 				//If array length is 0, use current cashin and cashout (Else, get the previous)
@@ -102,9 +100,10 @@ function CashFlowReport({
 						transactDate: dayjs(new Date(currTransaction.creationDate)).format(
 							"MMM DD, YYYY"
 						),
-						cashInAmount: tempCashIn,
-						cashOutAmount: tempCashOut,
-						netCashFlow: (Number(tempCashIn) - Number(tempCashOut)).toFixed(2),
+						cashInAmount: "Php " + tempCashIn,
+						cashOutAmount: "Php " + tempCashOut,
+						netCashFlow:
+							"Php " + (Number(tempCashIn) - Number(tempCashOut)).toFixed(2),
 					});
 				} else {
 					tempData.push({
@@ -112,9 +111,10 @@ function CashFlowReport({
 						transactDate: dayjs(new Date(currTransaction.creationDate)).format(
 							"MMM DD, YYYY"
 						),
-						cashInAmount: tempCashIn,
-						cashOutAmount: tempCashOut,
-						netCashFlow: (Number(tempCashIn) - Number(tempCashOut)).toFixed(2),
+						cashInAmount: "Php " + tempCashIn,
+						cashOutAmount: "Php " + tempCashOut,
+						netCashFlow:
+							"Php " + (Number(tempCashIn) - Number(tempCashOut)).toFixed(2),
 						// Beginning and End implementation
 						// netCashFlow: (parseFloat(tempData[tempData.length - 1].netCashFlow) + parseFloat(tempCashIn) - parseFloat(tempCashOut)).toFixed(2),
 					});
@@ -129,27 +129,28 @@ function CashFlowReport({
 				let newVal;
 				let newTotal;
 
+				let currAmountPaid = Number(currTransaction.amountPaid);
+
 				//If amountPaid is >= 0, then cashIn
-				if (currTransaction.amountPaid >= 0) {
+				if (currAmountPaid >= 0) {
 					newVal =
-						Number(tempData[index].cashInAmount) +
-						parseFloat(currTransaction.amountPaid);
-					tempData[index].cashInAmount = Number(newVal.toFixed(2));
+						Number(tempData[index].cashInAmount.split(" ")[1]) + currAmountPaid;
+					tempData[index].cashInAmount = "Php " + newVal.toFixed(2);
 
 					newTotal =
-						parseFloat(currTransaction.amountPaid) +
-						parseFloat(tempData[index].netCashFlow);
-					tempData[index].netCashFlow = newTotal.toFixed(2);
+						currAmountPaid +
+						parseFloat(tempData[index].netCashFlow.split(" ")[1]);
+					tempData[index].netCashFlow = "Php " + newTotal.toFixed(2);
 				} else {
 					newVal =
-						parseFloat(currTransaction.amountPaid) -
-						Number(tempData[index].cashOutAmount);
-					tempData[index].cashOutAmount = Number(Math.abs(newVal).toFixed(2));
+						currAmountPaid -
+						Number(tempData[index].cashOutAmount.split(" ")[1]);
+					tempData[index].cashOutAmount = "Php " + Math.abs(newVal).toFixed(2);
 
 					newTotal =
-						parseFloat(currTransaction.amountPaid) +
-						parseFloat(tempData[index].netCashFlow);
-					tempData[index].netCashFlow = newTotal.toFixed(2);
+						currAmountPaid +
+						parseFloat(tempData[index].netCashFlow.split(" ")[1]);
+					tempData[index].netCashFlow = "Php " + newTotal.toFixed(2);
 				}
 			}
 		}
@@ -170,63 +171,53 @@ function CashFlowReport({
 	}
 
 	const columns = React.useMemo(
-    () => [
-      {
-        Header: "Branch",
-        accessor: "branchName",
-        Cell: ({ value }) => {
-          return <div className="text-center px-10">{value}</div>;
-        },
-      },
-      {
-        Header: "Date",
-        accessor: "transactDate",
-        Cell: ({ value }) => {
-          return <div className="text-center px-10">{value}</div>;
-        },
-        filter: "between",
-        disableGlobalFilter: true,
-      },
-      {
-        Header: "Cash In",
-        Cell: ({ value }) => {
-          return (
-            <div className="text-right ml-[-60px] mr-20">
-              {convertFloat(value)}
-            </div>
-          );
-        },
-        accessor: "cashInAmount",
-      },
-      {
-        Header: "Cash Out",
-        Cell: ({ value }) => {
-          return (
-            <div className="text-right ml-[-60px] mr-20">
-              {convertFloat(value)}
-            </div>
-          );
-        },
-        accessor: "cashOutAmount",
-      },
-      {
-        Header: "Net Cash Flow",
-        accessor: "netCashFlow",
-        Cell: ({ value }) => {
-            return value < 0 ? (
-              <div className="text-right ml-[-40px] mr-40 text-red-500">
-                {convertFloat(value)}
-              </div>
-            ) : (
-              <div className="text-right ml-[-60px] mr-40">
-                {convertFloat(value)}
-              </div>
-            );
-        },
-      },
-    ],
-    []
-  );
+		() => [
+			{
+				Header: "Branch",
+				accessor: "branchName",
+				Cell: ({ value }) => {
+					return <div className="px-10 text-center">{value}</div>;
+				},
+			},
+			{
+				Header: "Date",
+				accessor: "transactDate",
+				Cell: ({ value }) => {
+					return <div className="px-10 text-center">{value}</div>;
+				},
+				filter: "between",
+				disableGlobalFilter: true,
+			},
+			{
+				Header: "Cash In",
+				Cell: ({ value }) => {
+					return <div className="text-right ml-[-60px] mr-20">{value}</div>;
+				},
+				accessor: "cashInAmount",
+			},
+			{
+				Header: "Cash Out",
+				Cell: ({ value }) => {
+					return <div className="text-right ml-[-60px] mr-20">{value}</div>;
+				},
+				accessor: "cashOutAmount",
+			},
+			{
+				Header: "Net Cash Flow",
+				accessor: "netCashFlow",
+				Cell: ({ value }) => {
+					return Number(value) < 0 ? (
+						<div className="text-right ml-[-40px] mr-40 text-red-500">
+							{value}
+						</div>
+					) : (
+						<div className="text-right ml-[-60px] mr-40">{value}</div>
+					);
+				},
+			},
+		],
+		[]
+	);
 
 	const {
 		getTableProps,
@@ -261,129 +252,127 @@ function CashFlowReport({
 	}
 
 	return (
-    <>
-      {/* Filter  */}
-      <div className="flex items-center self-start w-full gap-2 my-5 text-sm font-nunito whitespace-nowrap ">
-        <span className="ml-5">Starting Date: </span>
-        <input
-          type="date"
-          onChange={(e) => {
-            setStartDate(e.target.value);
-          }}
-        ></input>
-        <span className="ml-5">Ending Date: </span>
-        <input
-          type="date"
-          onChange={(e) => {
-            setEndDate(e.target.value);
-          }}
-        ></input>
-        <span className="ml-5">Branch: </span>
-        <select
-          className="h-fit"
-          onChange={(e) => branchFilter(e.target.value)}
-        >
-          <option value={""}>All</option>
-          {branchData.map((branch) => (
-            <option key={branch.branchName} value={branch.branchName}>
-              {branch.branchName}
-            </option>
-          ))}
-        </select>
-        <div className="font-dosis text-base pawn-pagination-container mb-2">
-          <button
-            className="mb-2"
-            onClick={() => previousPage()}
-            disabled={!canPreviousPage}
-          >
-            {"<"}
-          </button>
-          {pageOptions.length > 1 ? (
-            <span className="text-sm mt-1.5 font-nunito">
-              <strong>{pageIndex + 1}</strong> / {pageOptions.length} pages
-            </span>
-          ) : (
-            <span className="text-sm mt-1.5 font-nunito">
-              <strong>{pageIndex + 1}</strong> / 1 page
-            </span>
-          )}
-          <button
-            className="text-lg"
-            onClick={() => nextPage()}
-            disabled={!canNextPage}
-          >
-            {">"}
-          </button>{" "}
-        </div>
-        <button
-          className="relative ml-auto text-sm bg-green-300"
-          onClick={() => printReport()}
-        >
-          Generate Report
-        </button>
-      </div>
-      <CFSummaryReport
-        pawnTicketData={pawnTicketData}
-        userData={userData}
-        itemData={itemData}
-        branchData={branchData}
-        transactionData={transactionData}
-        startDate={startDate}
-        endDate={endDate}
-        branchFilter={branchID}
-      ></CFSummaryReport>
-      {/* Table */}
-      <table {...getTableProps()} className="w-full text-sm border font-nunito">
-        <thead>
-          {headerGroups.map((headerGroup) => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column) => {
-                return (
-                  <th
-                    {...column.getHeaderProps(column.getSortByToggleProps())}
-                    className="text-sm text-center py-4 px-10 font-nunito bg-green-50"
-                  >
-                    {column.render("Header")}
-                    <span className="ml-2 text-base">
-                      {column.isSorted
-                        ? column.isSortedDesc
-                          ? "▴"
-                          : "▾"
-                        : "-"}
-                    </span>
-                  </th>
-                );
-              })}
-            </tr>
-          ))}
-        </thead>
-        <tbody {...getTableBodyProps()}>
-          {page.map((row, i) => {
-            prepareRow(row);
-            return (
-              <tr
-                {...row.getRowProps()}
-                // onClick={() => openRow(data[row.id])}
-                className={
-                  i % 2 === 0
-                    ? "text-sm pl-3  "
-                    : "text-sm  bg-gray-150"
-                }
-              >
-                {row.cells.map((cell) => {
-                  return (
-                    <td {...cell.getCellProps()} className="py-2 pl-3">
-                      {cell.render("Cell")}
-                    </td>
-                  );
-                })}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </>
-  );
+		<>
+			{/* Filter  */}
+			<div className="flex items-center self-start w-full gap-2 my-5 text-sm font-nunito whitespace-nowrap ">
+				<span className="ml-5">Starting Date: </span>
+				<input
+					type="date"
+					onChange={(e) => {
+						setStartDate(e.target.value);
+					}}
+				></input>
+				<span className="ml-5">Ending Date: </span>
+				<input
+					type="date"
+					onChange={(e) => {
+						setEndDate(e.target.value);
+					}}
+				></input>
+				<span className="ml-5">Branch: </span>
+				<select
+					className="h-fit"
+					onChange={(e) => branchFilter(e.target.value)}
+				>
+					<option value={""}>All</option>
+					{branchData.map((branch) => (
+						<option key={branch.branchName} value={branch.branchName}>
+							{branch.branchName}
+						</option>
+					))}
+				</select>
+				<div className="mb-2 text-base font-dosis pawn-pagination-container">
+					<button
+						className="mb-2"
+						onClick={() => previousPage()}
+						disabled={!canPreviousPage}
+					>
+						{"<"}
+					</button>
+					{pageOptions.length > 1 ? (
+						<span className="text-sm mt-1.5 font-nunito">
+							<strong>{pageIndex + 1}</strong> / {pageOptions.length} pages
+						</span>
+					) : (
+						<span className="text-sm mt-1.5 font-nunito">
+							<strong>{pageIndex + 1}</strong> / 1 page
+						</span>
+					)}
+					<button
+						className="text-lg"
+						onClick={() => nextPage()}
+						disabled={!canNextPage}
+					>
+						{">"}
+					</button>{" "}
+				</div>
+				<button
+					className="relative ml-auto text-sm bg-green-300"
+					onClick={() => printReport()}
+				>
+					Generate Report
+				</button>
+			</div>
+			<CFSummaryReport
+				pawnTicketData={pawnTicketData}
+				userData={userData}
+				itemData={itemData}
+				branchData={branchData}
+				transactionData={transactionData}
+				startDate={startDate}
+				endDate={endDate}
+				branchFilter={branchID}
+			></CFSummaryReport>
+			{/* Table */}
+			<table {...getTableProps()} className="w-full text-sm border font-nunito">
+				<thead>
+					{headerGroups.map((headerGroup) => (
+						<tr {...headerGroup.getHeaderGroupProps()}>
+							{headerGroup.headers.map((column) => {
+								return (
+									<th
+										{...column.getHeaderProps(column.getSortByToggleProps())}
+										className="px-10 py-4 text-sm text-center font-nunito bg-green-50"
+									>
+										{column.render("Header")}
+										<span className="ml-2 text-base">
+											{column.isSorted
+												? column.isSortedDesc
+													? "▴"
+													: "▾"
+												: "-"}
+										</span>
+									</th>
+								);
+							})}
+						</tr>
+					))}
+				</thead>
+				<tbody {...getTableBodyProps()}>
+					{page.map((row, i) => {
+						prepareRow(row);
+						return (
+							<tr
+								{...row.getRowProps()}
+								// onClick={() => openRow(data[row.id])}
+								className={
+									i % 2 === 0 ? "text-sm pl-3  " : "text-sm  bg-gray-150"
+								}
+							>
+								{row.cells.map((cell) => {
+									return (
+										<td {...cell.getCellProps()} className="py-2 pl-3">
+											{cell.render("Cell")}
+										</td>
+									);
+								})}
+							</tr>
+						);
+					})}
+				</tbody>
+			</table>
+		</>
+	);
 }
 
 export default CashFlowReport;

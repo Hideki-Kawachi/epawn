@@ -202,31 +202,31 @@ function ItemCategoryReport({
 	}
 
 	const columns = React.useMemo(
-    () => [
-      // {
-      // 	Header: "Item Type",
-      // 	accessor: "itemType",
-      // },
-      {
-        Header: "Item Category",
-        accessor: "itemCategory",
-        Cell: ({ value }) => {
-          return <div className="text-center px-20">{value}</div>;
-        },
-      },
-      {
-        Header: "Appraisal Price",
-        accessor: "loanAmount",
-        Cell: ({ value }) => {
-          return (
-            <div className="text-right pl-10 pr-20">{convertFloat(value)}</div>
-          );
-        },
-        disableGlobalFilter: true,
-      },
-    ],
-    []
-  );
+		() => [
+			// {
+			// 	Header: "Item Type",
+			// 	accessor: "itemType",
+			// },
+			{
+				Header: "Item Category",
+				accessor: "itemCategory",
+				Cell: ({ value }) => {
+					return <div className="px-20 text-center">{value}</div>;
+				},
+			},
+			{
+				Header: "Appraisal Price",
+				accessor: "loanAmount",
+				Cell: ({ value }) => {
+					return (
+						<div className="pl-10 pr-20 text-right">{convertFloat(value)}</div>
+					);
+				},
+				disableGlobalFilter: true,
+			},
+		],
+		[]
+	);
 
 	const {
 		getTableProps,
@@ -259,19 +259,19 @@ function ItemCategoryReport({
 	function printReport() {
 		printReportPTData(data, startDate, endDate);
 	}
-	
+
 	function convertFloat(number) {
-      return (
-        "Php " +
-        Number(number).toLocaleString("en-US", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        })
-      );
-    }
+		return (
+			"Php " +
+			Number(number).toLocaleString("en-US", {
+				minimumFractionDigits: 2,
+				maximumFractionDigits: 2,
+			})
+		);
+	}
 	return (
-    <>
-      {/* Filter 
+		<>
+			{/* Filter 
 			<div className="flex items-center self-start w-full gap-2 my-5 text-sm font-nunito whitespace-nowrap ">
 				<span className="ml-5">Starting Date: </span>
 				<input
@@ -317,71 +317,68 @@ function ItemCategoryReport({
 					Generate Report
 				</button>
 			</div> */}
-      {/* Table */}
-      <div>
-        <p className="font-dosis font-semibold text-base text-center my-5 text-green-500">
-          Appraisal Price Summary (Item Category)
-        </p>
-      </div>
-      <div className="flex justify-center items-center">
-        <table
-          {...getTableProps()}
-          className="w-2/5 text-sm border font-nunito"
-        >
-          <thead>
-            {headerGroups.map((headerGroup) => (
-              <tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column) => {
-                  return (
-                    <th
-                      {...column.getHeaderProps(column.getSortByToggleProps())}
-                      className="text-sm text-center py-4 pl-3 font-nunito bg-green-50"
-                    >
-                      {column.render("Header")}
-                      <span className="ml-2 text-base">
-                        {column.isSorted
-                          ? column.isSortedDesc
-                            ? "▴"
-                            : "▾"
-                          : "-"}
-                      </span>
-                    </th>
-                  );
-                })}
-              </tr>
-            ))}
-          </thead>
-          <tbody {...getTableBodyProps()}>
-            {page.map((row, i) => {
-              prepareRow(row);
-              return (
-                <tr
-                  {...row.getRowProps()}
-                  // onClick={() => openRow(data[row.id])}
-                  className="cursor-pointer hover:bg-green-100"
-                >
-                  {row.cells.map((cell) => {
-                    return (
-                      <td
-                        {...cell.getCellProps()}
-                        className={
-                          i % 2 === 0
-                            ? "text-sm cursor-pointer hover:bg-green-100 pl-3  "
-                            : "text-sm cursor-pointer hover:bg-green-100 pl-3  bg-gray-150"
-                        }
-                      >
-                        {cell.render("Cell")}
-                      </td>
-                    );
-                  })}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-    </>
-  );
+			{/* Table */}
+			<div>
+				<p className="my-5 text-base font-semibold text-center text-green-500 font-dosis">
+					Appraisal Price Summary (Item Category)
+				</p>
+			</div>
+			<div className="flex items-center justify-center">
+				<table
+					{...getTableProps()}
+					className="w-2/5 text-sm border font-nunito"
+				>
+					<thead>
+						{headerGroups.map((headerGroup) => (
+							<tr {...headerGroup.getHeaderGroupProps()}>
+								{headerGroup.headers.map((column) => {
+									return (
+										<th
+											{...column.getHeaderProps(column.getSortByToggleProps())}
+											className="py-4 pl-3 text-sm text-center font-nunito bg-green-50"
+										>
+											{column.render("Header")}
+											<span className="ml-2 text-base">
+												{column.isSorted
+													? column.isSortedDesc
+														? "▴"
+														: "▾"
+													: "-"}
+											</span>
+										</th>
+									);
+								})}
+							</tr>
+						))}
+					</thead>
+					<tbody {...getTableBodyProps()}>
+						{page.map((row, i) => {
+							prepareRow(row);
+							return (
+								<tr
+									{...row.getRowProps()}
+									// onClick={() => openRow(data[row.id])}
+								>
+									{row.cells.map((cell) => {
+										return (
+											<td
+												{...cell.getCellProps()}
+												className={
+													i % 2 === 0 ? "text-sm " : "text-sm  bg-gray-150"
+												}
+											>
+												{cell.render("Cell")}
+											</td>
+										);
+									})}
+								</tr>
+							);
+						})}
+					</tbody>
+				</table>
+			</div>
+		</>
+	);
 }
 
 export default ItemCategoryReport;

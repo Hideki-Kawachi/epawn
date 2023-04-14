@@ -12,31 +12,31 @@ export default function printReportCF(cfData, startDate, endDate) {
 
 	//row (item element inside ptData to avoid conflict instead of using name: item)
 	cfData.forEach((row) => {
-
-		if ( !(branchList.some(obj => obj[0] == row.branchName) ) ) {
+		if (!branchList.some((obj) => obj[0] == row.branchName)) {
 			branchList.push([
-				row.branchName, 
+				row.branchName,
 				row.cashInAmount,
 				row.cashOutAmount,
-				row.netCashFlow
-			])
+				row.netCashFlow,
+			]);
 
 			// console.log("hi")
 		} else {
+			let index = branchList.findIndex((obj) => obj[0] == row.branchName);
+			let newCashIn =
+				parseFloat(branchList[index][1]) + parseFloat(row.cashInAmount);
 
-			let index = branchList.findIndex((obj) => obj[0] == row.branchName)
-			let newCashIn = parseFloat(branchList[index][1]) + parseFloat(row.cashInAmount)
+			let newCashOut =
+				parseFloat(branchList[index][2]) + parseFloat(row.cashOutAmount);
 
-			let newCashOut =  parseFloat(branchList[index][2]) + parseFloat(row.cashOutAmount)
-				
-			branchList[index][1] = newCashIn.toFixed(2)
-			branchList[index][2] = newCashOut.toFixed(2)
+			branchList[index][1] = newCashIn.toFixed(2);
+			branchList[index][2] = newCashOut.toFixed(2);
 
-			let newVal = parseFloat(branchList[index][3]) + parseFloat(row.netCashFlow) 
-			
-			branchList[index][3] = newVal.toFixed(2)
+			let newVal =
+				parseFloat(branchList[index][3]) + parseFloat(row.netCashFlow);
+
+			branchList[index][3] = newVal.toFixed(2);
 		}
-
 
 		tempData.push([
 			row.branchName,
@@ -44,13 +44,8 @@ export default function printReportCF(cfData, startDate, endDate) {
 			row.cashInAmount,
 			row.cashOutAmount,
 			row.netCashFlow,
-		])
-
+		]);
 	});
-
-
-
-
 
 	// Set up the document
 	const doc = new jsPDF({
@@ -95,11 +90,13 @@ export default function printReportCF(cfData, startDate, endDate) {
 
 		let headerText4;
 
-		if (startDate != undefined || endDate != undefined) {
+		if (startDate && endDate) {
 			headerText4 = startDate + " to " + endDate;
 		} else {
 			headerText4 =
-				cfData[0].transactDate + " to " + cfData[cfData.length - 1].transactDate;
+				cfData[0].transactDate +
+				" to " +
+				cfData[cfData.length - 1].transactDate;
 		}
 
 		const headerWidth4 = doc.getTextWidth(headerText4);
@@ -127,27 +124,15 @@ export default function printReportCF(cfData, startDate, endDate) {
 
 	// // Define the header data for the table
 	const cfTableHeader = [
-		[
-			"Branch",
-			"Total Cash In",
-			"Total Cash Out",
-			"Total Net Cash Flow"
-		],
+		["Branch", "Total Cash In", "Total Cash Out", "Total Net Cash Flow"],
 	];
 
 	const tableHeader = [
-		[
-			"Branch",
-			"Date",
-			"Cash In",
-			"Cash Out",
-			"Net Cash Flow"
-		],
+		["Branch", "Date", "Cash In", "Cash Out", "Net Cash Flow"],
 	];
 
-
 	//For summary
-    doc.autoTable({
+	doc.autoTable({
 		head: cfTableHeader,
 		body: branchList,
 		startY: 1,
@@ -168,7 +153,7 @@ export default function printReportCF(cfData, startDate, endDate) {
 	doc.autoTable({
 		head: tableHeader,
 		body: tempData,
-		startY:  doc.autoTable.previous.finalY + 0.5,
+		startY: doc.autoTable.previous.finalY + 0.5,
 		margin: { top: 1 },
 		headStyles: {
 			fillColor: "#5dbe9d", // set the background color of the header row
@@ -177,7 +162,7 @@ export default function printReportCF(cfData, startDate, endDate) {
 		columnStyles: {
 			2: { halign: "right" },
 			3: { halign: "right" },
-			4: { halign: "right" }
+			4: { halign: "right" },
 		},
 		didDrawPage: (data) => {
 			header(data);
@@ -185,9 +170,6 @@ export default function printReportCF(cfData, startDate, endDate) {
 		},
 	});
 
-
 	// Save the document
 	doc.save("CashFlow_Report.pdf");
-
-	
 }

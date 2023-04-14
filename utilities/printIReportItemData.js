@@ -179,7 +179,7 @@ export default function printReportItemData(ptData, startDate, endDate) {
 			halign: "center",
 		},
 		columnStyles: {
-			6: { halign: "right" },
+			7: { halign: "right" },
 		},
 		didDrawPage: (data) => {
 			header(data);

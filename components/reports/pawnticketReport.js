@@ -38,8 +38,6 @@ function PawnTicketReport({
 		status,
 	]);
 
-
-	
 	// useEffect(() => {
 	// 	getData();
 	// }, [userData, pawnTicketData, itemData, branchData, transactionData]);
@@ -68,15 +66,15 @@ function PawnTicketReport({
 	// 		getData();
 	// 	}
 	// }, [startDate, endDate]);
-		function convertFloat(number) {
-      return (
-        "Php " +
-        Number(number).toLocaleString("en-US", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        })
-      );
-    }
+	function convertFloat(number) {
+		return (
+			"Php " +
+			Number(number).toLocaleString("en-US", {
+				minimumFractionDigits: 2,
+				maximumFractionDigits: 2,
+			})
+		);
+	}
 
 	function getData(startDate, endDate, branchID, status) {
 		let tempData = [];
@@ -137,69 +135,69 @@ function PawnTicketReport({
 			});
 		}
 
-		setData(tempData)
+		setData(tempData);
 	}
 
 	const columns = React.useMemo(
-    () => [
-      {
-        Header: "PT Number",
-        accessor: "pawnTicketID",
-        Cell: ({ value }) => {
-          return <div className="text-center px-10">{value}</div>;
-        },
-      },
-      {
-        Header: "Branch",
-        accessor: "branchName",
-        Cell: ({ value }) => {
-          return <div className="text-center px-10">{value}</div>;
-        },
-      },
-      {
-        Header: "Status",
-        accessor: "status",
-        disableGlobalFilter: true,
-        Cell: ({ value }) => {
-          return <div className="text-center px-10">{value}</div>;
-        },
-      },
-      {
-        Header: "Loan Date",
-        accessor: "loanDate",
-        filter: "between",
-        disableGlobalFilter: true,
-        Cell: ({ value }) => {
-          return <div className="text-center px-10">{value}</div>;
-        },
-      },
-      {
-        Header: "Maturity Date",
-        accessor: "maturityDate",
-        disableGlobalFilter: true,
-        Cell: ({ value }) => {
-          return <div className="text-center px-10">{value}</div>;
-        },
-      },
-      {
-        Header: "Expiry Date",
-        accessor: "expiryDate",
-        disableGlobalFilter: true,
-        Cell: ({ value }) => {
-          return <div className="text-center px-10">{value}</div>;
-        },
-      },
-      {
-        Header: "Loan Amount",
-        accessor: "loanAmount",
-        Cell: ({ value }) => {
-          return <div className="text-right pl-[-20px] pr-10">{value}</div>;
-        },
-        disableGlobalFilter: true,
-      },
-    ],
-    []
-  );
+		() => [
+			{
+				Header: "PT Number",
+				accessor: "pawnTicketID",
+				Cell: ({ value }) => {
+					return <div className="px-10 text-center">{value}</div>;
+				},
+			},
+			{
+				Header: "Branch",
+				accessor: "branchName",
+				Cell: ({ value }) => {
+					return <div className="px-10 text-center">{value}</div>;
+				},
+			},
+			{
+				Header: "Status",
+				accessor: "status",
+				disableGlobalFilter: true,
+				Cell: ({ value }) => {
+					return <div className="px-10 text-center">{value}</div>;
+				},
+			},
+			{
+				Header: "Loan Date",
+				accessor: "loanDate",
+				filter: "between",
+				disableGlobalFilter: true,
+				Cell: ({ value }) => {
+					return <div className="px-10 text-center">{value}</div>;
+				},
+			},
+			{
+				Header: "Maturity Date",
+				accessor: "maturityDate",
+				disableGlobalFilter: true,
+				Cell: ({ value }) => {
+					return <div className="px-10 text-center">{value}</div>;
+				},
+			},
+			{
+				Header: "Expiry Date",
+				accessor: "expiryDate",
+				disableGlobalFilter: true,
+				Cell: ({ value }) => {
+					return <div className="px-10 text-center">{value}</div>;
+				},
+			},
+			{
+				Header: "Loan Amount",
+				accessor: "loanAmount",
+				Cell: ({ value }) => {
+					return <div className="text-right pl-[-20px] pr-10">{value}</div>;
+				},
+				disableGlobalFilter: true,
+			},
+		],
+		[]
+	);
 
 	const {
 		getTableProps,
@@ -269,128 +267,124 @@ function PawnTicketReport({
 	}
 
 	return (
-    <>
-      <div className="flex items-center self-start w-full gap-2 my-5 text-sm font-nunito whitespace-nowrap ">
-        <span className="ml-5">Starting Date: </span>
-        <input
-          type="date"
-          onChange={(e) => {
-            setStartDate(e.target.value);
-          }}
-        ></input>
-        <span className="ml-5">Ending Date: </span>
-        <input
-          type="date"
-          onChange={(e) => {
-            setEndDate(e.target.value);
-          }}
-        ></input>
-        <span className="ml-5">Branch: </span>
-        <select
-          className="h-fit"
-          onChange={(e) => setFilter("branchName", e.target.value)}
-          defaultValue={""}
-        >
-          <option value={""}>All</option>
-          {branchData.map((branch) => (
-            <option key={branch.branchName} value={branch.branchName}>
-              {branch.branchName}
-            </option>
-          ))}
-        </select>
-        <span className="ml-5">Status: </span>
-        <select
-          className="h-fit"
-          onChange={(e) => setFilter("status", e.target.value)}
-          defaultValue={""}
-        >
-          <option value={""}>All</option>
-          <option value={"Ongoing"}>Ongoing</option>
-          <option value={"Inactive"}>Inactive</option>
-        </select>
-        <div className="font-dosis text-base pawn-pagination-container mb-2 ">
-          <button
-            className="mb-2"
-            onClick={() => previousPage()}
-            disabled={!canPreviousPage}
-          >
-            {"<"}
-          </button>
-          {pageOptions.length > 1 ? (
-            <span className="text-sm mt-1.5 font-nunito">
-              <strong>{pageIndex + 1}</strong> / {pageOptions.length} pages
-            </span>
-          ) : (
-            <span className="text-sm mt-1.5 font-nunito">
-              <strong>{pageIndex + 1}</strong> / 1 page
-            </span>
-          )}
-          <button
-            className="text-lg"
-            onClick={() => nextPage()}
-            disabled={!canNextPage}
-          >
-            {">"}
-          </button>{" "}
-        </div>
-        <button
-          className="relative ml-auto text-sm bg-green-300"
-          onClick={() => printReport()}
-        >
-          Generate Report
-        </button>
-      </div>
-      <table {...getTableProps()} className="w-full text-sm border font-nunito">
-        <thead>
-          {headerGroups.map((headerGroup) => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column) => {
-                return (
-                  <th
-                    {...column.getHeaderProps(column.getSortByToggleProps())}
-                    className="text-sm text-center py-4 pl-3 font-nunito bg-green-50"
-                  >
-                    {column.render("Header")}
-                    <span className="ml-2 text-base">
-                      {column.isSorted
-                        ? column.isSortedDesc
-                          ? "▴"
-                          : "▾"
-                        : "-"}
-                    </span>
-                  </th>
-                );
-              })}
-            </tr>
-          ))}
-        </thead>
-        <tbody {...getTableBodyProps()}>
-          {page.map((row, i) => {
-            prepareRow(row);
-            return (
-              <tr
-                {...row.getRowProps()}
-                // onClick={() => openRow(data[row.id])}
-                className={
-                  i % 2 === 0
-                    ? "text-sm cursor-pointer hover:bg-green-100 pl-3  "
-                    : "text-sm cursor-pointer hover:bg-green-100 pl-3  bg-gray-150"
-                }
-              >
-                {row.cells.map((cell) => {
-                  return (
-                    <td {...cell.getCellProps()} className="py-2 pl-3">
-                      {cell.render("Cell")}
-                    </td>
-                  );
-                })}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </>
-  );
+		<>
+			<div className="flex items-center self-start w-full gap-2 my-5 text-sm font-nunito whitespace-nowrap ">
+				<span className="ml-5">Starting Date: </span>
+				<input
+					type="date"
+					onChange={(e) => {
+						setStartDate(e.target.value);
+					}}
+				></input>
+				<span className="ml-5">Ending Date: </span>
+				<input
+					type="date"
+					onChange={(e) => {
+						setEndDate(e.target.value);
+					}}
+				></input>
+				<span className="ml-5">Branch: </span>
+				<select
+					className="h-fit"
+					onChange={(e) => setFilter("branchName", e.target.value)}
+					defaultValue={""}
+				>
+					<option value={""}>All</option>
+					{branchData.map((branch) => (
+						<option key={branch.branchName} value={branch.branchName}>
+							{branch.branchName}
+						</option>
+					))}
+				</select>
+				<span className="ml-5">Status: </span>
+				<select
+					className="h-fit"
+					onChange={(e) => setFilter("status", e.target.value)}
+					defaultValue={""}
+				>
+					<option value={""}>All</option>
+					<option value={"Ongoing"}>Ongoing</option>
+					<option value={"Inactive"}>Inactive</option>
+				</select>
+				<div className="mb-2 text-base font-dosis pawn-pagination-container ">
+					<button
+						className="mb-2"
+						onClick={() => previousPage()}
+						disabled={!canPreviousPage}
+					>
+						{"<"}
+					</button>
+					{pageOptions.length > 1 ? (
+						<span className="text-sm mt-1.5 font-nunito">
+							<strong>{pageIndex + 1}</strong> / {pageOptions.length} pages
+						</span>
+					) : (
+						<span className="text-sm mt-1.5 font-nunito">
+							<strong>{pageIndex + 1}</strong> / 1 page
+						</span>
+					)}
+					<button
+						className="text-lg"
+						onClick={() => nextPage()}
+						disabled={!canNextPage}
+					>
+						{">"}
+					</button>{" "}
+				</div>
+				<button
+					className="relative ml-auto text-sm bg-green-300"
+					onClick={() => printReport()}
+				>
+					Generate Report
+				</button>
+			</div>
+			<table {...getTableProps()} className="w-full text-sm border font-nunito">
+				<thead>
+					{headerGroups.map((headerGroup) => (
+						<tr {...headerGroup.getHeaderGroupProps()}>
+							{headerGroup.headers.map((column) => {
+								return (
+									<th
+										{...column.getHeaderProps(column.getSortByToggleProps())}
+										className="py-4 pl-3 text-sm text-center font-nunito bg-green-50"
+									>
+										{column.render("Header")}
+										<span className="ml-2 text-base">
+											{column.isSorted
+												? column.isSortedDesc
+													? "▴"
+													: "▾"
+												: "-"}
+										</span>
+									</th>
+								);
+							})}
+						</tr>
+					))}
+				</thead>
+				<tbody {...getTableBodyProps()}>
+					{page.map((row, i) => {
+						prepareRow(row);
+						return (
+							<tr
+								{...row.getRowProps()}
+								// onClick={() => openRow(data[row.id])}
+								className={i % 2 === 0 ? "text-sm  " : "text-sm  bg-gray-150"}
+							>
+								{row.cells.map((cell) => {
+									return (
+										<td {...cell.getCellProps()} className="py-2 pl-3">
+											{cell.render("Cell")}
+										</td>
+									);
+								})}
+							</tr>
+						);
+					})}
+				</tbody>
+			</table>
+		</>
+	);
 }
 
 export default PawnTicketReport;

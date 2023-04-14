@@ -376,11 +376,7 @@ function ItemReport({
 							<tr
 								{...row.getRowProps()}
 								// onClick={() => openRow(data[row.id])}
-								className={
-									i % 2 === 0
-										? "text-sm cursor-pointer hover:bg-green-100 pl-3  "
-										: "text-sm cursor-pointer hover:bg-green-100 pl-3  bg-gray-150"
-								}
+								className={i % 2 === 0 ? "text-sm  " : "text-sm bg-gray-150"}
 							>
 								{row.cells.map((cell) => {
 									return (
