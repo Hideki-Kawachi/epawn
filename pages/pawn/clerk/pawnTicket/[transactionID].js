@@ -298,7 +298,7 @@ function PawnTicketTransactionID({
 									)}
 									<p className="max-w-md">
 										{/* Used to make long address break line */}
-										One Archers Residences, Taft Ave, Malate, Metro Manila
+										{customerData.presentAddress}
 									</p>
 								</div>
 							</div>

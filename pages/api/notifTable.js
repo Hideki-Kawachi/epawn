@@ -27,7 +27,7 @@ export default async function NotifTable(req, res) {
 				.sort({ updatedAt: -1 })
 				.lean();
 		}
-		console.log("transac data:", transactionData);
+		// console.log("transac data:", transactionData);
 
 		let notifData = [];
 		if (transactionData) {
