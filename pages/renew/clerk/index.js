@@ -44,7 +44,7 @@ function RenewClerk({ currentUser }) {
 	const [historyModal, setHistoryOpen] = useState(false); //Pawn History
 	const [mode, setMode] = useState(true); //how the layout behaves, true if no PT, select if PT is false
 	const [loading, setLoading] = useState(false);
-	
+
 	//Item List Array
 	const [itemList, setitemList] = useState([]);
 
@@ -101,13 +101,13 @@ function RenewClerk({ currentUser }) {
 
 	function getNewMaturityDate() {
 		const dt = new Date();
-		const nt = new Date().setDate(dt.getDate() + 120);
+		const nt = new Date().setDate(dt.getDate() + 30);
 		return dayjs(nt).format("MM/DD/YYYY");
 	}
 
 	function getNewExpiryDate() {
 		const dt = new Date();
-		const nt = new Date().setDate(dt.getDate() + 30);
+		const nt = new Date().setDate(dt.getDate() + 120);
 		return dayjs(nt).format("MM/DD/YYYY");
 	}
 	useEffect(() => {
@@ -159,22 +159,22 @@ function RenewClerk({ currentUser }) {
 					// console.log(data)
 					if (transaction != null) {
 						fetch("/api/branch/" + transaction.branchID, {
-              			method: "GET",
-              			headers: {
-						Accept: "application/json",
-						"Content-Type": "application/json",
-					},
-					})
-					.then((res) => res.json())
-					.then((branch) => {
-						// console.log(data)
-						if (branch != null) {
-						setBranch(branch.branchName);
-						} else {
-						setItemListID("N/A");
-						setBranch("N/A");
-						}
-					});
+							method: "GET",
+							headers: {
+								Accept: "application/json",
+								"Content-Type": "application/json",
+							},
+						})
+							.then((res) => res.json())
+							.then((branch) => {
+								// console.log(data)
+								if (branch != null) {
+									setBranch(branch.branchName);
+								} else {
+									setItemListID("N/A");
+									setBranch("N/A");
+								}
+							});
 					} else {
 						setItemListID("N/A");
 						setBranch("N/A");
@@ -211,15 +211,14 @@ function RenewClerk({ currentUser }) {
 			})
 				.then((res) => res.json())
 				.then((history) => {
-					if(history != "error"){
-						console.log("Pawn history found: " + history)
-						setPawnHistory(history)
+					if (history != "error") {
+						console.log("Pawn history found: " + history);
+						setPawnHistory(history);
+					} else {
+						setPawnHistory([]);
+						console.log("Pawn history NOT found");
 					}
-					else{
-					setPawnHistory([])
-					console.log("Pawn history NOT found")
-					}
-				})
+				});
 		}
 	}, [itemListID]);
 
@@ -240,7 +239,6 @@ function RenewClerk({ currentUser }) {
 						// console.log(JSON.stringify(info))
 						setUserInfo(user);
 					}
-
 				});
 		}
 	}, [customerID]);
@@ -295,176 +293,176 @@ function RenewClerk({ currentUser }) {
 	}, [sendForm, customerID]);
 
 	return (
-    <>
-      <NavBar currentUser={currentUser}></NavBar>
-      <Header currentUser={currentUser}></Header>
-      {/* First Half */}
-      <Modal isOpen={submitModal} ariaHideApp={false} className="modal">
-        <LoadingSpinner isLoading={loading}></LoadingSpinner>
-        <Submit
-          trigger={submitModal}
-          setTrigger={setSubmitOpen}
-          mode={mode}
-          changeMode={changeMode}
-          PTnumber={PTNumber}
-          itemList={itemList}
-          setSendForm={setSendForm}
-          amountToPay={amountToPay}
-        />
-      </Modal>
+		<>
+			<NavBar currentUser={currentUser}></NavBar>
+			<Header currentUser={currentUser}></Header>
+			{/* First Half */}
+			<Modal isOpen={submitModal} ariaHideApp={false} className="modal">
+				<LoadingSpinner isLoading={loading}></LoadingSpinner>
+				<Submit
+					trigger={submitModal}
+					setTrigger={setSubmitOpen}
+					mode={mode}
+					changeMode={changeMode}
+					PTnumber={PTNumber}
+					itemList={itemList}
+					setSendForm={setSendForm}
+					amountToPay={amountToPay}
+				/>
+			</Modal>
 
-      <Modal isOpen={cancelModal} ariaHideApp={false} className="modal">
-        <Cancel
-          trigger={cancelModal}
-          setTrigger={setCancelOpen}
-          content={cancelContentShow()}
-        />
-      </Modal>
+			<Modal isOpen={cancelModal} ariaHideApp={false} className="modal">
+				<Cancel
+					trigger={cancelModal}
+					setTrigger={setCancelOpen}
+					content={cancelContentShow()}
+				/>
+			</Modal>
 
-      <div id="main-content-area" className="flex-col ">
-        <p className="text-xl font-semibold text-green-500 underline font-dosis">
-          Renew
-        </p>
-        <p className="mb-5 text-lg text-green-500 font-dosis">
-          On-site Renewal
-        </p>
+			<div id="main-content-area" className="flex-col ">
+				<p className="text-xl font-semibold text-green-500 underline font-dosis">
+					Renew
+				</p>
+				<p className="mb-5 text-lg text-green-500 font-dosis">
+					On-site Renewal
+				</p>
 
-        <div className="flex">
-          <div className="flex">
-            <DetailsCardClerk
-              branch={branch}
-              pawnTicket={ptInfo}
-              user={userInfo}
-              PTNumber={PTNumber}
-              search={searchPawnTicket}
-              mode={mode}
-              customer={customerDetails}
-              getNewLoan={setNewLoan}
-              getAmount={setAmountToPay}
-              amountToPay={amountToPay}
-              button2={button2}
-              setButton2={setButton2}
-              pawnHistory={pawnHistory}
-            />
-          </div>
-        </div>
+				<div className="flex">
+					<div className="flex">
+						<DetailsCardClerk
+							branch={branch}
+							pawnTicket={ptInfo}
+							user={userInfo}
+							PTNumber={PTNumber}
+							search={searchPawnTicket}
+							mode={mode}
+							customer={customerDetails}
+							getNewLoan={setNewLoan}
+							getAmount={setAmountToPay}
+							amountToPay={amountToPay}
+							button2={button2}
+							setButton2={setButton2}
+							pawnHistory={pawnHistory}
+						/>
+					</div>
+				</div>
 
-        {/* Second Half */}
+				{/* Second Half */}
 
-        <div className="flex py-10 mt-20 bg-white shadow-lg rounded-xl">
-          {/* Remaining Items  */}
+				<div className="flex py-10 mt-20 bg-white shadow-lg rounded-xl">
+					{/* Remaining Items  */}
 
-          <div className="px-5">
-            <p className="ml-10 text-base font-bold font-nunito">
-              New Pawn Details:{" "}
-            </p>
+					<div className="px-5">
+						<p className="ml-10 text-base font-bold font-nunito">
+							New Pawn Details:{" "}
+						</p>
 
-            <div className="flex my-10 ml-10 mr-32 text-base font-nunito ">
-              <div className="ml-5 text-right">
-                <p>
-                  <b>
-                    <i>New </i>
-                  </b>
-                  Date Loan Granted:
-                </p>
-                <p>
-                  <b>
-                    <i>New </i>
-                  </b>
-                  Maturity Date:
-                </p>
-                <p>
-                  <b>
-                    <i>New </i>
-                  </b>
-                  Expiry Date of Redemption:
-                </p>
-              </div>
-              {mode == true ? (
-                <div className="ml-8 text-left">
-                  <p>N/A</p>
-                  <p>N/A</p>
-                  <p>N/A</p>
-                </div>
-              ) : (
-                <div className="ml-8 text-left">
-                  <p>{getNewLoanDate()}</p>
-                  <p>{getNewMaturityDate()}</p>
-                  <p>{getNewExpiryDate()}</p>
-                </div>
-              )}
-            </div>
-          </div>
+						<div className="flex my-10 ml-10 mr-32 text-base font-nunito ">
+							<div className="ml-5 text-right">
+								<p>
+									<b>
+										<i>New </i>
+									</b>
+									Date Loan Granted:
+								</p>
+								<p>
+									<b>
+										<i>New </i>
+									</b>
+									Maturity Date:
+								</p>
+								<p>
+									<b>
+										<i>New </i>
+									</b>
+									Expiry Date of Redemption:
+								</p>
+							</div>
+							{mode == true ? (
+								<div className="ml-8 text-left">
+									<p>N/A</p>
+									<p>N/A</p>
+									<p>N/A</p>
+								</div>
+							) : (
+								<div className="ml-8 text-left">
+									<p>{getNewLoanDate()}</p>
+									<p>{getNewMaturityDate()}</p>
+									<p>{getNewExpiryDate()}</p>
+								</div>
+							)}
+						</div>
+					</div>
 
-          {/*Items*/}
-          <div className="flex">
-            <div className="">
-              <p className="ml-10 text-sm font-bold font-nunito">
-                Pawned Items:{" "}
-              </p>
-              <div className="p-5 mx-10 w-[720px] h-96  overflow-y-scroll bg-white border-2">
-                {/* plan: CheckItem & ItemCard section will be generated using .map */}
+					{/*Items*/}
+					<div className="flex">
+						<div className="">
+							<p className="ml-10 text-sm font-bold font-nunito">
+								Pawned Items:{" "}
+							</p>
+							<div className="p-5 mx-10 w-[720px] h-96  overflow-y-scroll bg-white border-2">
+								{/* plan: CheckItem & ItemCard section will be generated using .map */}
 
-                {/* When PT isn't selected yet*/}
-                {itemList.length > 0 ? (
-                  <>
-                    {itemList.map((item) => (
-                      <div className="flex flex-row" key={item.itemID}>
-                        <ItemCard
-                          key={item.itemID}
-                          itemDetails={item}
-                        ></ItemCard>
-                      </div>
-                    ))}
-                  </>
-                ) : (
-                  <div className="mt-32 ">
-                    <p className="text-xl font-bold text-center text-gray-300 font-nunito">
-                      {" "}
-                      No items displayed.
-                    </p>
-                    <p className="text-sm text-center text-gray-300 font-nunito">
-                      {" "}
-                      Search for a Pawn Ticket to display its details and items.
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="mt-5 flex flex-row ml-[1180px] md:ml-[800px]">
-          <div>
-            <button
-              className="px-10 mx-2 my-5 text-sm text-white bg-red-300"
-              onClick={cancelForm}
-            >
-              Cancel
-            </button>
-          </div>
-          <div>
-            {mode == true ? (
-              <button
-                className="px-10 mx-2 my-5 text-sm text-white bg-green-300 disabled:bg-gray-500 disabled:text-gray-500 "
-                onClick={submitOpen}
-                disabled={button}
-              >
-                Select
-              </button>
-            ) : (
-              <button
-                className="px-10 mx-2 my-5 text-sm text-white bg-green-300 disabled:bg-gray-500 disabled:text-gray-500 "
-                onClick={submitOpen}
-                disabled={button2}
-              >
-                Submit
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
-    </>
-  );
+								{/* When PT isn't selected yet*/}
+								{itemList.length > 0 ? (
+									<>
+										{itemList.map((item) => (
+											<div className="flex flex-row" key={item.itemID}>
+												<ItemCard
+													key={item.itemID}
+													itemDetails={item}
+												></ItemCard>
+											</div>
+										))}
+									</>
+								) : (
+									<div className="mt-32 ">
+										<p className="text-xl font-bold text-center text-gray-300 font-nunito">
+											{" "}
+											No items displayed.
+										</p>
+										<p className="text-sm text-center text-gray-300 font-nunito">
+											{" "}
+											Search for a Pawn Ticket to display its details and items.
+										</p>
+									</div>
+								)}
+							</div>
+						</div>
+					</div>
+				</div>
+				<div className="mt-5 flex flex-row ml-[1180px] md:ml-[800px]">
+					<div>
+						<button
+							className="px-10 mx-2 my-5 text-sm text-white bg-red-300"
+							onClick={cancelForm}
+						>
+							Cancel
+						</button>
+					</div>
+					<div>
+						{mode == true ? (
+							<button
+								className="px-10 mx-2 my-5 text-sm text-white bg-green-300 disabled:bg-gray-500 disabled:text-gray-500 "
+								onClick={submitOpen}
+								disabled={button}
+							>
+								Select
+							</button>
+						) : (
+							<button
+								className="px-10 mx-2 my-5 text-sm text-white bg-green-300 disabled:bg-gray-500 disabled:text-gray-500 "
+								onClick={submitOpen}
+								disabled={button2}
+							>
+								Submit
+							</button>
+						)}
+					</div>
+				</div>
+			</div>
+		</>
+	);
 }
 
 export default RenewClerk;
