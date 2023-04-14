@@ -45,6 +45,8 @@ export const getServerSideProps = withIronSessionSsr(
 					transactionInfo.push(transac);
 				}
 			}
+			
+
 
 			let userInfo = await User.find(
 				{ isDisabled: false },

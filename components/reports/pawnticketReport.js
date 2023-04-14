@@ -10,7 +10,8 @@ import {
 } from "react-table";
 import { utils, writeFile, writeFileXLSX, writeXLSX } from "xlsx";
 import printReportPTData from "../../utilities/printReportPTData";
-
+import { set } from "mongoose";
+import PawnTicketSummaryReport from "./ptSummaryReport";
 function PawnTicketReport({
 	pawnTicketData,
 	userData,
@@ -78,6 +79,8 @@ function PawnTicketReport({
 
 	function getData(startDate, endDate, branchID, status) {
 		let tempData = [];
+    	let totalItemPT = 0;
+    	let activeItemPT = 0;
 		for (const pt of pawnTicketData) {
 			let currTransaction = transactionData.find((transac) => {
 				// console.log("transac:", transac._id, "--", pt.transactionID);
@@ -95,6 +98,11 @@ function PawnTicketReport({
 			if (pt.isInactive) {
 				status = "Inactive";
 			}
+      else {
+        activeItemPT++;
+      }
+
+      totalItemPT++;
 
 			tempData.push({
 				pawnTicketID: pt.pawnTicketID,
@@ -108,6 +116,8 @@ function PawnTicketReport({
 		}
 
 		if (startDate && endDate) {
+      totalItemPT = 0;
+      activeItemPT = 0;
 			tempData = tempData.filter((pt) => {
 				let start = new Date(startDate).setHours(0, 0, 0, 0);
 				let end = new Date(endDate).setHours(23, 59, 59, 59);
@@ -116,6 +126,14 @@ function PawnTicketReport({
 					new Date(pt.loanDate) <= new Date(end)
 				);
 			});
+
+			for (const data of tempData) {
+				if (status == "Ongoing"){
+				activeItemPT++
+				}
+				totalItemPT++
+			}
+
 		}
 
 		if (branchID != "") {
@@ -134,8 +152,9 @@ function PawnTicketReport({
 				return row.status == status;
 			});
 		}
+    
+	setData(tempData);
 
-		setData(tempData);
 	}
 
 	const columns = React.useMemo(
@@ -194,6 +213,45 @@ function PawnTicketReport({
 					return <div className="text-right pl-[-20px] pr-10">{value}</div>;
 				},
 				disableGlobalFilter: true,
+			},
+		],
+		[]
+	);
+
+  
+	const sumColumns = React.useMemo(
+		() => [
+			{
+				Header: "Branch",
+				accessor: "branchName",
+				Cell: ({ value }) => {
+					return <div className="px-10 text-center">{value}</div>;
+				},
+			},
+			{
+				Header: "Average Loan Amount",
+				accessor: "avgLoan",
+				disableGlobalFilter: true,
+				Cell: ({ value }) => {
+					return <div className="px-10 text-center">{value}</div>;
+				},
+			},
+			{
+				Header: "Active Pawn Tickets",
+				accessor: "activeCount",
+				//filter: "between",
+				disableGlobalFilter: true,
+				Cell: ({ value }) => {
+					return <div className="px-10 text-center">{value}</div>;
+				},
+			},
+			{
+				Header: "Renewal Rate",
+				accessor: "maturityDate",
+				disableGlobalFilter: true,
+				Cell: ({ value }) => {
+					return <div className="px-10 text-center">{value}</div>;
+				},
 			},
 		],
 		[]
@@ -338,6 +396,7 @@ function PawnTicketReport({
 					Generate Report
 				</button>
 			</div>
+			<PawnTicketSummaryReport data={data} userData={userData} branchData={branchData} startDate={startDate} endDate={endDate} pawnTicketData={pawnTicketData} transactionData={transactionData}></PawnTicketSummaryReport>
 			<table {...getTableProps()} className="w-full text-sm border font-nunito">
 				<thead>
 					{headerGroups.map((headerGroup) => (

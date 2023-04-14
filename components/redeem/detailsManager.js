@@ -104,7 +104,7 @@ function DetailsCardRedeemManager({
       setAdvInterest(0);
       setNewLoanAmount(0);
     }
-  }, [amountToPay, loanAmount]);
+  }, [amountToPay, loanAmount, remainList]);
 
   useEffect(() => {
     setLoanAmount(pawnTicket.loanAmount ? pawnTicket.loanAmount : 0);

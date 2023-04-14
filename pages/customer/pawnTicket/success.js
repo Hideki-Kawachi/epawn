@@ -32,28 +32,28 @@ export const getServerSideProps = withIronSessionSsr(
 function Success({ currentUser }) {
 	const [pawnTicketData, setPawnTicketData] = useState({});
 	const router = useRouter();
-	// useEffect(() => {
-	// 	//get payment status
-	// 	const options2 = {
-	// 		method: "GET",
-	// 		headers: {
-	// 			accept: "application/json",
-	// 			authorization: "Basic c2tfdGVzdF9kaUVONlRCeXBRVlNScEhzcFBWQlhuaUQ=",
-	// 		},
-	// 	};
-	// 	let sourceID = localStorage.getItem("sourceID");
-	// 	if (localStorage.getItem("pawnTicketData") != null) {
-	// 		setPawnTicketData(JSON.parse(localStorage.getItem("pawnTicketData")));
-	// 		fetch("https://api.paymongo.com/v1/sources/" + sourceID, options2)
-	// 			.then((response) => response.json())
-	// 			.then((response) => {
-	// 				localStorage.clear();
-	// 			})
-	// 			.catch((err) => console.error(err));
-	// 	} else {
-	// 		router.replace("/customer");
-	// 	}
-	// }, []);
+	useEffect(() => {
+		//get payment status
+		const options2 = {
+			method: "GET",
+			headers: {
+				accept: "application/json",
+				authorization: "Basic c2tfdGVzdF9kaUVONlRCeXBRVlNScEhzcFBWQlhuaUQ=",
+			},
+		};
+		let sourceID = localStorage.getItem("sourceID");
+		if (localStorage.getItem("pawnTicketData") != null) {
+			setPawnTicketData(JSON.parse(localStorage.getItem("pawnTicketData")));
+			fetch("https://api.paymongo.com/v1/sources/" + sourceID, options2)
+				.then((response) => response.json())
+				.then((response) => {
+					localStorage.clear();
+				})
+				.catch((err) => console.error(err));
+		} else {
+			router.replace("/customer");
+		}
+	}, []);
 
 	useEffect(() => {
 		if (JSON.stringify(pawnTicketData) != "{}") {
