@@ -16,7 +16,7 @@ export default function printReportItemData(ptData, startDate, endDate) {
 	let compVal = ptData[0].status.toString()
 	let isFound = false
 
-	let tempText = ptData[0].status.toString()
+	let tempText = " - " + ptData[0].status.toString()
 
 	// console.log(compVal)
 
@@ -111,7 +111,7 @@ export default function printReportItemData(ptData, startDate, endDate) {
 		);
 
 		doc.setFont("Arial", "bold");
-		const headerText3 = "ITEM REPORT" +  " - " + tempText;
+		const headerText3 = "ITEM REPORT" + tempText;
 		const headerWidth3 = doc.getTextWidth(headerText3);
 		doc.text(
 			headerText3,
