@@ -44,7 +44,11 @@ function PawnTicketSummaryReport({ data }) {
 				accessor: "renewalRate",
 				disableGlobalFilter: true,
 				Cell: ({ value }) => {
-					return <div className="px-10 text-center">{value + "%"}</div>;
+					return (
+						<div className="px-10 text-center">
+							{value + (value == "N/A" ? "" : " %")}
+						</div>
+					);
 				},
 			},
 		],
