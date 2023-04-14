@@ -33,7 +33,8 @@ export default async function newManagerRedeem(req, res) {
 
 	let oldPT = await PawnTicket.findOneAndUpdate(
 		{ pawnTicketID: body.oldPawnTicket },
-		{ isInactive: true }
+		{   transactionID : body.transactionID,
+			isInactive: true }
 	);
 
 	body.redeemArray.map(async (redeem) => {
