@@ -176,14 +176,22 @@ function CashFlowReport({
 				Header: "Branch",
 				accessor: "branchName",
 				Cell: ({ value }) => {
-					return <div className="px-10 text-center">{value}</div>;
+					return (
+						<div className="px-10 text-center">
+							{convertFloat(value.split(" ")[1])}
+						</div>
+					);
 				},
 			},
 			{
 				Header: "Date",
 				accessor: "transactDate",
 				Cell: ({ value }) => {
-					return <div className="px-10 text-center">{value}</div>;
+					return (
+						<div className="px-10 text-center">
+							{convertFloat(value.split(" ")[1])}
+						</div>
+					);
 				},
 				filter: "between",
 				disableGlobalFilter: true,
@@ -191,14 +199,22 @@ function CashFlowReport({
 			{
 				Header: "Cash In",
 				Cell: ({ value }) => {
-					return <div className="text-right ml-[-60px] mr-20">{value}</div>;
+					return (
+						<div className="text-right ml-[-60px] mr-20">
+							{convertFloat(value.split(" ")[1])}
+						</div>
+					);
 				},
 				accessor: "cashInAmount",
 			},
 			{
 				Header: "Cash Out",
 				Cell: ({ value }) => {
-					return <div className="text-right ml-[-60px] mr-20">{value}</div>;
+					return (
+						<div className="text-right ml-[-60px] mr-20">
+							{convertFloat(value.split(" ")[1])}
+						</div>
+					);
 				},
 				accessor: "cashOutAmount",
 			},
@@ -208,10 +224,12 @@ function CashFlowReport({
 				Cell: ({ value }) => {
 					return Number(value) < 0 ? (
 						<div className="text-right ml-[-40px] mr-40 text-red-500">
-							{value}
+							{convertFloat(value.split(" ")[1])}
 						</div>
 					) : (
-						<div className="text-right ml-[-60px] mr-40">{value}</div>
+						<div className="text-right ml-[-60px] mr-40">
+							{convertFloat(value.split(" ")[1])}
+						</div>
 					);
 				},
 			},
