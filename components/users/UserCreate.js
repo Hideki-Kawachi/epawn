@@ -96,7 +96,7 @@ function UserCreate(foundBranchID){
 				<div className="user-create-top-container m-5 grid grid-cols-3 gap-4">
 
 					<div className="flex w-1/4 flex-col">
-						<span className="font-bold pr-7">First Name: </span>
+						<span className="font-bold pr-7">First Name:<span className="text-red-500">*</span></span>
           				<input className="border rounded-md stroke-gray-500 px-3" 
 								type="text"
 								id="firstName"
@@ -114,7 +114,7 @@ function UserCreate(foundBranchID){
 					</div>
 
                     <div className="flex w-1/4 flex-col">
-						<span className="font-bold pr-7">Last Name: </span>
+						<span className="font-bold pr-7">Last Name: <span className="text-red-500">*</span> </span>
           				<input className="border rounded-md stroke-gray-500 px-3"
 								type="text"
 								id="lastName"
@@ -123,7 +123,7 @@ function UserCreate(foundBranchID){
 					</div>
 
 					<div className="flex w-1/4 flex-col">
-						<span className="font-bold pr-7">Role   : </span>
+						<span className="font-bold pr-7">Role   : <span className="text-red-500">*</span></span>
 						{/* Change to Select */}
 						<select
 							className="border rounded-md stroke-gray-500 px-3"
@@ -138,7 +138,7 @@ function UserCreate(foundBranchID){
 					</div>
 
                     <div className="flex w-1/4 flex-col">
-						<span className="font-bold pr-7">Password: </span>
+						<span className="font-bold pr-7">Password: <span className="text-red-500">*</span> </span>
           				<input className="border rounded-md stroke-gray-500 px-3"
 								type="password"
 								id="password"
@@ -146,7 +146,7 @@ function UserCreate(foundBranchID){
 						 />
 					</div>
 					   <div className="flex w-1/4 flex-col">
-						<span className="font-bold pr-7">Branch ID: </span>
+						<span className="font-bold pr-7">Branch ID: <span className="text-red-500">*</span></span>
           				<input className="border rounded-md stroke-gray-500 px-3"
 								type="text"
 								id="branchID"
