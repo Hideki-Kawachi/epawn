@@ -18,6 +18,7 @@ import dbConnect from "../../../utilities/dbConnect";
 import Transaction from "../../../schemas/transaction";
 import mongoose from "mongoose";
 import LoadingSpinner from "../../../components/loadingSpinner";
+import ItemList from "../../../schemas/itemList";
 
 export const getServerSideProps = withIronSessionSsr(
 	async function getServerSideProps({ req, query }) {
@@ -32,13 +33,23 @@ export const getServerSideProps = withIronSessionSsr(
 				let transactionInfo = await Transaction.findById(
 					new mongoose.Types.ObjectId(query.transactionID)
 				);
-				let br = await Branch.findOne({
-					branchID: transactionInfo.branchID,
-				});
+
 
 				let pawnTicketData = await PawnTicket.find({
 					itemListID: transactionInfo.itemListID,
 				}).sort({ loanDate: -1 });
+				
+				let currPawnTicket = await PawnTicket.findOne({
+          		itemListID: transactionInfo.itemListID,
+        		});
+				
+				let itemID = await ItemList.findOne({
+                    itemListID: currPawnTicket.itemListID,
+                  });
+
+				let br = await Branch.findOne({
+                    branchID: itemID.branchID,
+                });
 
 				let pawnHistory = [];
 
@@ -47,6 +58,7 @@ export const getServerSideProps = withIronSessionSsr(
 						_id: ticket.transactionID,
 						status: { $in: ["Done", "Approved"] },
 					});
+					
 
 					let branch = await Branch.findOne({
 						branchID: transaction.branchID,
