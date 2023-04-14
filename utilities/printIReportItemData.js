@@ -6,6 +6,8 @@ import { useGridLayout } from "react-table/dist/react-table.development";
 export default function printReportItemData(ptData, startDate, endDate) {
 	// console.log(ptData);
 
+	
+
 	// Define the pt data for the table
 	let tempData = [];
 	let itemCatList = [];
@@ -151,12 +153,14 @@ export default function printReportItemData(ptData, startDate, endDate) {
 		columnStyles: {
 			1: { halign: "right" },
 		},
+		tableWidth: 'wrap',
 	});
 
 	doc.autoTable({
 		head: itemTypeTableHeader,
 		body: itemTypeList,
 		startY: doc.autoTable.previous.finalY + 0.5,
+		// startX: doc.autoTable.previous.finalX + 0.5,
 		margin: { top: 1 },
 		headStyles: {
 			// fillColor: "#5dbe9d", // set the background color of the header row
@@ -165,6 +169,7 @@ export default function printReportItemData(ptData, startDate, endDate) {
 		columnStyles: {
 			1: { halign: "right" },
 		},
+		tableWidth: 'wrap',
 	});
 
 	//Real table
