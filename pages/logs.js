@@ -27,7 +27,7 @@ export const getServerSideProps = withIronSessionSsr(
 					.sort({ updatedAt: -1 })
 					.lean();
 				let userInfo = await User.find(
-					{ isDisabled: false },
+					{},
 					{ userID: 1, firstName: 1, middleName: 1, lastName: 1 }
 				).lean();
 				let pawnTicketInfo = await PawnTicket.find({
@@ -44,17 +44,15 @@ export const getServerSideProps = withIronSessionSsr(
 					let branchData = branchInfo.filter((branch) => {
 						return branch.branchID == transaction.branchID;
 					});
-					console.log("pawnticket", pawnTicket);
+					// console.log("pawnticket", pawnTicket);
 
 					let customerName;
 					let clerkName;
 					let managerName;
 					let index = 0;
 					while (
-						!customerName ||
-						!clerkName ||
-						!managerName ||
-						index == userInfo.length
+						(!customerName || !clerkName || !managerName) &&
+						index < userInfo.length
 					) {
 						let currUser = userInfo[index];
 
@@ -140,7 +138,7 @@ export const getServerSideProps = withIronSessionSsr(
 					.sort({ updatedAt: -1 })
 					.lean();
 				let userInfo = await User.find(
-					{ isDisabled: false },
+					{},
 					{ userID: 1, firstName: 1, middleName: 1, lastName: 1 }
 				).lean();
 				let pawnTicketInfo = await PawnTicket.find({
@@ -156,7 +154,7 @@ export const getServerSideProps = withIronSessionSsr(
 					let pawnTicket = pawnTicketInfo.filter((pt) => {
 						return pt.transactionID.toString() == transaction._id.toString();
 					});
-					console.log("pawnticket", pawnTicket);
+					// console.log("pawnticket", pawnTicket);
 
 					let customerName;
 					let clerkName;
@@ -164,7 +162,7 @@ export const getServerSideProps = withIronSessionSsr(
 					let index = 0;
 					while (
 						(!customerName || !clerkName || !managerName) &&
-						index != userInfo.length
+						index < userInfo.length
 					) {
 						let currUser = userInfo[index];
 
@@ -230,7 +228,7 @@ export const getServerSideProps = withIronSessionSsr(
 								date: transaction.updatedAt
 									.toDateString()
 									.substring(4, transaction.updatedAt.length),
-								time: transaction.updatedAt.toString()
+								time: transaction.updatedAt.toString(),
 							});
 						}
 					}
@@ -266,17 +264,17 @@ export const getServerSideProps = withIronSessionSsr(
 
 function Logs({ currentUser, tableData, branchData }) {
 	return (
-    <>
-      <NavBar currentUser={currentUser}></NavBar>
-      <Header currentUser={currentUser}></Header>
-      <div id="main-content-area">
-        <p className="text-xl font-semibold text-green-500 underline mb-5 font-dosis">
-          Transaction Logs
-        </p>
-        <LogsTable data={tableData} branchData={branchData}></LogsTable>
-      </div>
-    </>
-  );
+		<>
+			<NavBar currentUser={currentUser}></NavBar>
+			<Header currentUser={currentUser}></Header>
+			<div id="main-content-area">
+				<p className="mb-5 text-xl font-semibold text-green-500 underline font-dosis">
+					Transaction Logs
+				</p>
+				<LogsTable data={tableData} branchData={branchData}></LogsTable>
+			</div>
+		</>
+	);
 }
 
 export default Logs;
