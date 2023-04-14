@@ -24,6 +24,7 @@ function PawnTicketReport({
 	const [endDate, setEndDate] = useState();
 	const [branchID, setBranchID] = useState("");
 	const [status, setStatus] = useState("");
+	const [summaryData, setSummaryData] = useState([{}]);
 
 	useEffect(() => {
 		getData(startDate, endDate, branchID, status);
@@ -39,34 +40,6 @@ function PawnTicketReport({
 		status,
 	]);
 
-	// useEffect(() => {
-	// 	getData();
-	// }, [userData, pawnTicketData, itemData, branchData, transactionData]);
-
-	// useEffect(() => {
-	// 	if (startDate && endDate) {
-	// 		console.log(
-	// 			"start is:",
-	// 			new Date(new Date(startDate).setHours(0, 0, 0, 0))
-	// 		);
-	// 		console.log(
-	// 			"end is:",
-	// 			new Date(new Date(endDate).setHours(23, 59, 59, 59))
-	// 		);
-	// 		let tempData = data.filter((pt) => {
-	// 			let start = new Date(startDate).setHours(0, 0, 0, 0);
-	// 			let end = new Date(endDate).setHours(23, 59, 59, 59);
-	// 			return (
-	// 				new Date(pt.loanDate) >= new Date(start) &&
-	// 				new Date(pt.loanDate) <= new Date(endDate)
-	// 			);
-	// 		});
-	// 		console.log("temp:", tempData);
-	// 		setData(tempData);
-	// 	} else if (!startDate && !endDate) {
-	// 		getData();
-	// 	}
-	// }, [startDate, endDate]);
 	function convertFloat(number) {
 		return (
 			"Php " +
@@ -79,8 +52,8 @@ function PawnTicketReport({
 
 	function getData(startDate, endDate, branchID, status) {
 		let tempData = [];
-    	let totalItemPT = 0;
-    	let activeItemPT = 0;
+		let totalItemPT = 0;
+		let activeItemPT = 0;
 		for (const pt of pawnTicketData) {
 			let currTransaction = transactionData.find((transac) => {
 				// console.log("transac:", transac._id, "--", pt.transactionID);
@@ -97,12 +70,11 @@ function PawnTicketReport({
 
 			if (pt.isInactive) {
 				status = "Inactive";
+			} else {
+				activeItemPT++;
 			}
-      else {
-        activeItemPT++;
-      }
 
-      totalItemPT++;
+			totalItemPT++;
 
 			tempData.push({
 				pawnTicketID: pt.pawnTicketID,
@@ -111,13 +83,13 @@ function PawnTicketReport({
 				loanDate: dayjs(new Date(pt.loanDate)).format("MMM DD, YYYY"),
 				maturityDate: dayjs(new Date(pt.maturityDate)).format("MMM DD, YYYY"),
 				expiryDate: dayjs(new Date(pt.expiryDate)).format("MMM DD, YYYY"),
-				loanAmount: convertFloat(pt.loanAmount?.toFixed(2)),
+				loanAmount: pt.loanAmount.toFixed(2),
 			});
 		}
 
 		if (startDate && endDate) {
-      totalItemPT = 0;
-      activeItemPT = 0;
+			totalItemPT = 0;
+			activeItemPT = 0;
 			tempData = tempData.filter((pt) => {
 				let start = new Date(startDate).setHours(0, 0, 0, 0);
 				let end = new Date(endDate).setHours(23, 59, 59, 59);
@@ -128,12 +100,11 @@ function PawnTicketReport({
 			});
 
 			for (const data of tempData) {
-				if (status == "Ongoing"){
-				activeItemPT++
+				if (status == "Ongoing") {
+					activeItemPT++;
 				}
-				totalItemPT++
+				totalItemPT++;
 			}
-
 		}
 
 		if (branchID != "") {
@@ -152,9 +123,51 @@ function PawnTicketReport({
 				return row.status == status;
 			});
 		}
-    
-	setData(tempData);
 
+		let tempSummaryData = [];
+		let totalRenewalCount = tempData.filter((row) => {
+			return row.status == "Inactive";
+		});
+
+		tempData.forEach((tempDataRow) => {
+			if (
+				tempSummaryData.some((row) => {
+					return row.branchName == tempDataRow.branchName;
+				})
+			) {
+				tempSummaryData.forEach((row, index) => {
+					if (row.branchName == tempDataRow.branchName) {
+						if (tempDataRow.status == "Ongoing") {
+							tempSummaryData[index].activeCount++;
+						} else {
+							tempSummaryData[index].inactiveCount++;
+						}
+						tempSummaryData[index].avgLoan =
+							tempSummaryData[index].avgLoan +
+							Number(tempDataRow.loanAmount) / 2;
+						if (totalRenewalCount.length > 0) {
+							tempSummaryData[index].renewalRate =
+								(tempSummaryData[index].inactiveCount /
+									(tempSummaryData[index].activeCount +
+										tempSummaryData[index].inactiveCount)) *
+								100;
+						} else {
+							tempSummaryData[index].renewalRate = "N/A";
+						}
+					}
+				});
+			} else {
+				tempSummaryData.push({
+					branchName: tempDataRow.branchName,
+					activeCount: tempDataRow.status == "Ongoing" ? 1 : 0,
+					inactiveCount: tempDataRow.status == "Inactive" ? 1 : 0,
+					avgLoan: Number(tempDataRow.loanAmount),
+					renewalRate: tempDataRow.status == "Ongoing" ? 100 : 0,
+				});
+			}
+		});
+		setSummaryData(tempSummaryData);
+		setData(tempData);
 	}
 
 	const columns = React.useMemo(
@@ -210,48 +223,13 @@ function PawnTicketReport({
 				Header: "Loan Amount",
 				accessor: "loanAmount",
 				Cell: ({ value }) => {
-					return <div className="text-right pl-[-20px] pr-10">{value}</div>;
+					return (
+						<div className="text-right pl-[-20px] pr-10">
+							{convertFloat(value)}
+						</div>
+					);
 				},
 				disableGlobalFilter: true,
-			},
-		],
-		[]
-	);
-
-  
-	const sumColumns = React.useMemo(
-		() => [
-			{
-				Header: "Branch",
-				accessor: "branchName",
-				Cell: ({ value }) => {
-					return <div className="px-10 text-center">{value}</div>;
-				},
-			},
-			{
-				Header: "Average Loan Amount",
-				accessor: "avgLoan",
-				disableGlobalFilter: true,
-				Cell: ({ value }) => {
-					return <div className="px-10 text-center">{value}</div>;
-				},
-			},
-			{
-				Header: "Active Pawn Tickets",
-				accessor: "activeCount",
-				//filter: "between",
-				disableGlobalFilter: true,
-				Cell: ({ value }) => {
-					return <div className="px-10 text-center">{value}</div>;
-				},
-			},
-			{
-				Header: "Renewal Rate",
-				accessor: "maturityDate",
-				disableGlobalFilter: true,
-				Cell: ({ value }) => {
-					return <div className="px-10 text-center">{value}</div>;
-				},
 			},
 		],
 		[]
@@ -287,41 +265,23 @@ function PawnTicketReport({
 
 	function printReport() {
 		printReportPTData(data, startDate, endDate);
+	}
 
-		// let header = [
-		// 	[
-		// 		"PT Number",
-		// 		"Branch",
-		// 		"Status",
-		// 		"Loan Date",
-		// 		"Maturity Date",
-		// 		"Expiry Date",
-		// 		"Amount of Loan",
-		// 	],
-		// ];
-		// const workSheet = utils.json_to_sheet([]);
-		// const workBook = utils.book_new();
-		// const columnSizes = [
-		// 	{ wch: 10 },
-		// 	{ wch: 20 },
-		// 	{ wch: 15 },
-		// 	{ wch: 15 },
-		// 	{ wch: 15 },
-		// 	{ wch: 15 },
-		// 	{ wch: 15 },
-		// ];
+	function branchFilterSet(value) {
+		setFilter("branchName", value);
+		let currBranch = branchData.find((branch) => {
+			return branch.branchName == value;
+		});
+		if (currBranch) {
+			setBranchID(currBranch.branchID);
+		} else {
+			setBranchID("");
+		}
+	}
 
-		// workSheet["!cols"] = columnSizes;
-		// utils.sheet_add_aoa(workSheet, header);
-		// utils.sheet_add_json(workSheet, data, { origin: "A2", skipHeader: true });
-		// utils.book_append_sheet(workBook, workSheet, "PT_Report");
-		// writeFileXLSX(
-		// 	workBook,
-		// 	"PT_Report(" + dayjs().format("MM-DD-YYYY") + ").xlsx",
-		// 	{
-		// 		bookType: "xlsx",
-		// 	}
-		// );
+	function statusFilterSet(value) {
+		setFilter("status", value);
+		setStatus(value);
 	}
 
 	return (
@@ -344,7 +304,7 @@ function PawnTicketReport({
 				<span className="ml-5">Branch: </span>
 				<select
 					className="h-fit"
-					onChange={(e) => setFilter("branchName", e.target.value)}
+					onChange={(e) => branchFilterSet(e.target.value)}
 					defaultValue={""}
 				>
 					<option value={""}>All</option>
@@ -357,7 +317,7 @@ function PawnTicketReport({
 				<span className="ml-5">Status: </span>
 				<select
 					className="h-fit"
-					onChange={(e) => setFilter("status", e.target.value)}
+					onChange={(e) => statusFilterSet(e.target.value)}
 					defaultValue={""}
 				>
 					<option value={""}>All</option>
@@ -396,7 +356,7 @@ function PawnTicketReport({
 					Generate Report
 				</button>
 			</div>
-			<PawnTicketSummaryReport data={data} userData={userData} branchData={branchData} startDate={startDate} endDate={endDate} pawnTicketData={pawnTicketData} transactionData={transactionData}></PawnTicketSummaryReport>
+			<PawnTicketSummaryReport data={summaryData}></PawnTicketSummaryReport>
 			<table {...getTableProps()} className="w-full text-sm border font-nunito">
 				<thead>
 					{headerGroups.map((headerGroup) => (
