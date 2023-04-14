@@ -176,13 +176,13 @@ function RenewManager({
 
 	function getNewMaturityDate() {
 		const dt = new Date();
-		const nt = new Date().setDate(dt.getDate() + 120);
+		const nt = new Date().setDate(dt.getDate() + 30);
 		return dayjs(nt).format("MM/DD/YYYY");
 	}
 
 	function getNewExpiryDate() {
 		const dt = new Date();
-		const nt = new Date().setDate(dt.getDate() + 30);
+		const nt = new Date().setDate(dt.getDate() + 120);
 		return dayjs(nt).format("MM/DD/YYYY");
 	}
 
