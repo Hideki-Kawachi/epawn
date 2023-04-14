@@ -13,12 +13,27 @@ export default function printReportItemData(ptData, startDate, endDate) {
 	let itemCatList = [];
 	let itemTypeList = [];
 
+	let compVal = ptData[0].status.toString()
+	let isFound = false
+
+	let tempText = ptData[0].status.toString()
+
+	// console.log(compVal)
+
+	ptData.forEach((row) => {
+		if (row.status != compVal) {
+			isFound = true
+			tempText = ""
+		}
+	})
+
+
 	//row (item element inside ptData to avoid conflict instead of using name: item)
 	ptData.forEach((row) => {
 		//Item Category
 		if (!itemCatList.some((obj) => obj[0] == row.itemCategory)) {
 			itemCatList.push([row.itemCategory, row.loanAmount]);
-			console.log("hi");
+			// console.log("hi");
 		} else {
 			let index = itemCatList.findIndex((obj) => obj[0] == row.itemCategory);
 			let newVal =
@@ -29,7 +44,7 @@ export default function printReportItemData(ptData, startDate, endDate) {
 		//Item Type
 		if (!itemTypeList.some((obj) => obj[0] == row.itemType)) {
 			itemTypeList.push([row.itemType, row.loanAmount]);
-			console.log("hi");
+			// console.log("hi");
 		} else {
 			let index = itemTypeList.findIndex((obj) => obj[0] == row.itemType);
 			let newVal =
@@ -37,18 +52,35 @@ export default function printReportItemData(ptData, startDate, endDate) {
 			itemTypeList[index][1] = newVal.toFixed(2);
 		}
 
-		tempData.push([
-			row.itemID,
-			row.branchName,
-			row.status,
-			row.loanDate,
-			row.expiryDate,
-			row.itemType,
-			row.itemCategory,
-			row.itemDesc,
-			row.loanAmount,
-		]);
+		
+		if (isFound) {
+			tempData.push([
+				row.itemID,
+				row.branchName,
+				row.status,
+				row.loanDate,
+				row.expiryDate,
+				row.itemType,
+				row.itemCategory,
+				row.itemDesc,
+				row.loanAmount,
+			]);
+
+		} else {
+			tempData.push([
+				row.itemID,
+				row.branchName,
+				row.loanDate,
+				row.expiryDate,
+				row.itemType,
+				row.itemCategory,
+				row.itemDesc,
+				row.loanAmount,
+			]);
+		}
+	
 	});
+
 
 	// Set up the document
 	const doc = new jsPDF({
@@ -79,7 +111,7 @@ export default function printReportItemData(ptData, startDate, endDate) {
 		);
 
 		doc.setFont("Arial", "bold");
-		const headerText3 = "ITEM REPORT";
+		const headerText3 = "ITEM REPORT" +  " - " + tempText;
 		const headerWidth3 = doc.getTextWidth(headerText3);
 		doc.text(
 			headerText3,
@@ -128,19 +160,39 @@ export default function printReportItemData(ptData, startDate, endDate) {
 
 	const itemTypeTableHeader = [["Item Type", "Appraisal Price"]];
 
-	const tableHeader = [
-		[
-			"Item ID",
-			"Branch",
-			"Status",
-			"Loan Date",
-			"Expiry Date",
-			"Item Type",
-			"Item Category",
-			"Item Description",
-			"Appraisal Price",
-		],
-	];
+	let tableHeader
+
+	if (!isFound) {
+		
+		tableHeader = [
+			[
+				"Item ID",
+				"Branch",
+				"Loan Date",
+				"Expiry Date",
+				"Item Type",
+				"Item Category",
+				"Item Description",
+				"Appraisal Price",
+			],
+		];
+	} else {
+
+		tableHeader = [
+			[
+				"Item ID",
+				"Branch",
+				"Status",
+				"Loan Date",
+				"Expiry Date",
+				"Item Type",
+				"Item Category",
+				"Item Description",
+				"Appraisal Price",
+			],
+		];
+
+	}
 
 	//For summary
 	doc.autoTable({
@@ -176,23 +228,46 @@ export default function printReportItemData(ptData, startDate, endDate) {
 
 	//Real table
 	// Add the table to the document
-	doc.autoTable({
-		head: tableHeader,
-		body: tempData,
-		startY: doc.autoTable.previous.finalY + 0.5,
-		margin: { top: 1 },
-		headStyles: {
-			fillColor: "#5dbe9d", // set the background color of the header row
-			halign: "center",
-		},
-		columnStyles: {
-			8: { halign: "right" },
-		},
-		didDrawPage: (data) => {
-			header(data);
-			footer(data);
-		},
-	});
+
+	if (!isFound) {
+
+		doc.autoTable({
+			head: tableHeader,
+			body: tempData,
+			startY: doc.autoTable.previous.finalY + 0.5,
+			margin: { top: 1 },
+			headStyles: {
+				fillColor: "#5dbe9d", // set the background color of the header row
+				halign: "center",
+			},
+			columnStyles: {
+				7: { halign: "right" },
+			},
+			didDrawPage: (data) => {
+				header(data);
+				footer(data);
+			},
+		});
+
+	} else {
+		doc.autoTable({
+			head: tableHeader,
+			body: tempData,
+			startY: doc.autoTable.previous.finalY + 0.5,
+			margin: { top: 1 },
+			headStyles: {
+				fillColor: "#5dbe9d", // set the background color of the header row
+				halign: "center",
+			},
+			columnStyles: {
+				8: { halign: "right" },
+			},
+			didDrawPage: (data) => {
+				header(data);
+				footer(data);
+			},
+		});
+	}
 
 	// Save the document
 	doc.save("Item_Report.pdf");
