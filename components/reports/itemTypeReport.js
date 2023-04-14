@@ -98,14 +98,14 @@ function ItemTypeReport({
 								) {
 									itemTypeList.push({
 										itemType: item.itemType,
-										loanAmount: pt.loanAmount.toFixed(2),
+										loanAmount: item.price.toFixed(2),
 									});
 								} else {
 									let index = itemTypeList.findIndex(
 										(obj) => obj.itemType == item.itemType
 									);
 									let newVal =
-										parseFloat(itemTypeList[index].loanAmount) + pt.loanAmount;
+										parseFloat(itemTypeList[index].loanAmount) + item.price;
 									itemTypeList[index].loanAmount = newVal.toFixed(2);
 								}
 
@@ -120,14 +120,14 @@ function ItemTypeReport({
 								) {
 									itemTypeList.push({
 										itemType: item.itemType,
-										loanAmount: pt.loanAmount.toFixed(2),
+										loanAmount: item.price.toFixed(2),
 									});
 								} else {
 									let index = itemTypeList.findIndex(
 										(obj) => obj.itemType == item.itemType
 									);
 									let newVal =
-										parseFloat(itemTypeList[index].loanAmount) + pt.loanAmount;
+										parseFloat(itemTypeList[index].loanAmount) + item.price;
 									itemTypeList[index].loanAmount = newVal.toFixed(2);
 								}
 
@@ -138,14 +138,14 @@ function ItemTypeReport({
 								) {
 									itemTypeList.push({
 										itemType: item.itemType,
-										loanAmount: pt.loanAmount.toFixed(2),
+										loanAmount: item.price.toFixed(2),
 									});
 								} else {
 									let index = itemTypeList.findIndex(
 										(obj) => obj.itemType == item.itemType
 									);
 									let newVal =
-										parseFloat(itemTypeList[index].loanAmount) + pt.loanAmount;
+										parseFloat(itemTypeList[index].loanAmount) + item.price;
 									itemTypeList[index].loanAmount = newVal.toFixed(2);
 								}
 
@@ -156,14 +156,14 @@ function ItemTypeReport({
 								) {
 									itemTypeList.push({
 										itemType: item.itemType,
-										loanAmount: pt.loanAmount.toFixed(2),
+										loanAmount: item.price.toFixed(2),
 									});
 								} else {
 									let index = itemTypeList.findIndex(
 										(obj) => obj.itemType == item.itemType
 									);
 									let newVal =
-										parseFloat(itemTypeList[index].loanAmount) + pt.loanAmount;
+										parseFloat(itemTypeList[index].loanAmount) + item.price;
 									itemTypeList[index].loanAmount = newVal.toFixed(2);
 								}
 								tempIDList.push(item.itemID);

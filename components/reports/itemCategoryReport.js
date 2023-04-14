@@ -122,14 +122,15 @@ function ItemCategoryReport({
 							) {
 								itemCatList.push({
 									itemCategory: item.itemCategory,
-									loanAmount: pt.loanAmount.toFixed(2),
+									loanAmount: item.price.toFixed(2),
 								});
 							} else {
 								let index = itemCatList.findIndex(
 									(obj) => obj.itemCategory == item.itemCategory
 								);
 								let newVal =
-									parseFloat(itemCatList[index].loanAmount) + pt.loanAmount;
+									parseFloat(itemCatList[index].loanAmount) +
+									item.price.loanAmount;
 								itemCatList[index].loanAmount = newVal.toFixed(2);
 							}
 							tempIDList.push(item.itemID);
@@ -141,14 +142,14 @@ function ItemCategoryReport({
 							) {
 								itemCatList.push({
 									itemCategory: item.itemCategory,
-									loanAmount: pt.loanAmount.toFixed(2),
+									loanAmount: item.price.toFixed(2),
 								});
 							} else {
 								let index = itemCatList.findIndex(
 									(obj) => obj.itemCategory == item.itemCategory
 								);
 								let newVal =
-									parseFloat(itemCatList[index].loanAmount) + pt.loanAmount;
+									parseFloat(itemCatList[index].loanAmount) + item.price;
 								itemCatList[index].loanAmount = newVal.toFixed(2);
 							}
 							tempIDList.push(item.itemID);
@@ -160,14 +161,14 @@ function ItemCategoryReport({
 							) {
 								itemCatList.push({
 									itemCategory: item.itemCategory,
-									loanAmount: pt.loanAmount.toFixed(2),
+									loanAmount: item.price.toFixed(2),
 								});
 							} else {
 								let index = itemCatList.findIndex(
 									(obj) => obj.itemCategory == item.itemCategory
 								);
 								let newVal =
-									parseFloat(itemCatList[index].loanAmount) + pt.loanAmount;
+									parseFloat(itemCatList[index].loanAmount) + item.price;
 								itemCatList[index].loanAmount = newVal.toFixed(2);
 							}
 							tempIDList.push(item.itemID);
@@ -179,14 +180,14 @@ function ItemCategoryReport({
 							) {
 								itemCatList.push({
 									itemCategory: item.itemCategory,
-									loanAmount: pt.loanAmount.toFixed(2),
+									loanAmount: item.price.toFixed(2),
 								});
 							} else {
 								let index = itemCatList.findIndex(
 									(obj) => obj.itemCategory == item.itemCategory
 								);
 								let newVal =
-									parseFloat(itemCatList[index].loanAmount) + pt.loanAmount;
+									parseFloat(itemCatList[index].loanAmount) + item.price;
 								itemCatList[index].loanAmount = newVal.toFixed(2);
 							}
 							tempIDList.push(item.itemID);
