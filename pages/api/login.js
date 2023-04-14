@@ -11,21 +11,20 @@ export default withIronSessionApiRoute(login, ironOptions);
 
 async function login(req, res) {
 	const { userID, password, disabled } = req.body;
-
+	await dbConnect();
 	const user = await User.findOne({ userID: userID });
 
 	let isDisabled = true;
 
 	if (user) {
-		isDisabled = user.get("disabled");
+		isDisabled = user.isDisabled;
 	}
 
 	if (!user || isDisabled) {
 		return res.json("Invalid userID");
 	} else {
-		const retrievedHash = user.get("password");
+		const retrievedHash = user.password;
 		const isMatch = await bcrypt.compare(password, retrievedHash);
-
 		if (isMatch) {
 			if (user.role == "customer") {
 				req.session.userData = {
