@@ -2,31 +2,38 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { useGridLayout } from "react-table/dist/react-table.development";
 
+function convertFloat(number) {
+	return (
+		"Php " +
+		Number(number).toLocaleString("en-US", {
+			minimumFractionDigits: 2,
+			maximumFractionDigits: 2,
+		})
+	);
+}
+
 //add to
 export default function printReportItemData(ptData, startDate, endDate) {
 	// console.log(ptData);
-
-	
 
 	// Define the pt data for the table
 	let tempData = [];
 	let itemCatList = [];
 	let itemTypeList = [];
 
-	let compVal = ptData[0].status.toString()
-	let isFound = false
+	let compVal = ptData[0].status.toString();
+	let isFound = false;
 
-	let tempText = " - " + ptData[0].status.toString()
+	let tempText = " - " + ptData[0].status.toString();
 
 	// console.log(compVal)
 
 	ptData.forEach((row) => {
 		if (row.status != compVal) {
-			isFound = true
-			tempText = ""
+			isFound = true;
+			tempText = "";
 		}
-	})
-
+	});
 
 	//row (item element inside ptData to avoid conflict instead of using name: item)
 	ptData.forEach((row) => {
@@ -37,8 +44,9 @@ export default function printReportItemData(ptData, startDate, endDate) {
 		} else {
 			let index = itemCatList.findIndex((obj) => obj[0] == row.itemCategory);
 			let newVal =
-				parseFloat(itemCatList[index][1]) + parseFloat(row.loanAmount);
-			itemCatList[index][1] = newVal.toFixed(2);
+				parseFloat(itemCatList[index][1].split(" ")[1].replace(/,/g, "")) +
+				parseFloat(row.loanAmount.split(" ")[1].replace(/,/g, ""));
+			itemCatList[index][1] = convertFloat(newVal);
 		}
 
 		//Item Type
@@ -48,11 +56,11 @@ export default function printReportItemData(ptData, startDate, endDate) {
 		} else {
 			let index = itemTypeList.findIndex((obj) => obj[0] == row.itemType);
 			let newVal =
-				parseFloat(itemTypeList[index][1]) + parseFloat(row.loanAmount);
-			itemTypeList[index][1] = newVal.toFixed(2);
+				parseFloat(itemTypeList[index][1].split(" ")[1].replace(/,/g, "")) +
+				parseFloat(row.loanAmount.split(" ")[1].replace(/,/g, ""));
+			itemTypeList[index][1] = convertFloat(newVal);
 		}
 
-		
 		if (isFound) {
 			tempData.push([
 				row.itemID,
@@ -65,7 +73,6 @@ export default function printReportItemData(ptData, startDate, endDate) {
 				row.itemDesc,
 				row.loanAmount,
 			]);
-
 		} else {
 			tempData.push([
 				row.itemID,
@@ -78,9 +85,7 @@ export default function printReportItemData(ptData, startDate, endDate) {
 				row.loanAmount,
 			]);
 		}
-	
 	});
-
 
 	// Set up the document
 	const doc = new jsPDF({
@@ -160,10 +165,9 @@ export default function printReportItemData(ptData, startDate, endDate) {
 
 	const itemTypeTableHeader = [["Item Type", "Appraisal Price"]];
 
-	let tableHeader
+	let tableHeader;
 
 	if (!isFound) {
-		
 		tableHeader = [
 			[
 				"Item ID",
@@ -177,7 +181,6 @@ export default function printReportItemData(ptData, startDate, endDate) {
 			],
 		];
 	} else {
-
 		tableHeader = [
 			[
 				"Item ID",
@@ -191,7 +194,6 @@ export default function printReportItemData(ptData, startDate, endDate) {
 				"Appraisal Price",
 			],
 		];
-
 	}
 
 	//For summary
@@ -207,7 +209,7 @@ export default function printReportItemData(ptData, startDate, endDate) {
 		columnStyles: {
 			1: { halign: "right" },
 		},
-		tableWidth: 'wrap',
+		tableWidth: "wrap",
 	});
 
 	doc.autoTable({
@@ -223,14 +225,13 @@ export default function printReportItemData(ptData, startDate, endDate) {
 		columnStyles: {
 			1: { halign: "right" },
 		},
-		tableWidth: 'wrap',
+		tableWidth: "wrap",
 	});
 
 	//Real table
 	// Add the table to the document
 
 	if (!isFound) {
-
 		doc.autoTable({
 			head: tableHeader,
 			body: tempData,
@@ -248,7 +249,6 @@ export default function printReportItemData(ptData, startDate, endDate) {
 				footer(data);
 			},
 		});
-
 	} else {
 		doc.autoTable({
 			head: tableHeader,

@@ -98,7 +98,7 @@ function ItemTypeReport({
 								) {
 									itemTypeList.push({
 										itemType: item.itemType,
-										loanAmount: item.price.toFixed(2),
+										loanAmount: item.price,
 									});
 								} else {
 									let index = itemTypeList.findIndex(
@@ -106,7 +106,7 @@ function ItemTypeReport({
 									);
 									let newVal =
 										parseFloat(itemTypeList[index].loanAmount) + item.price;
-									itemTypeList[index].loanAmount = newVal.toFixed(2);
+									itemTypeList[index].loanAmount = newVal;
 								}
 
 								tempIDList.push(item.itemID);
@@ -120,7 +120,7 @@ function ItemTypeReport({
 								) {
 									itemTypeList.push({
 										itemType: item.itemType,
-										loanAmount: item.price.toFixed(2),
+										loanAmount: item.price,
 									});
 								} else {
 									let index = itemTypeList.findIndex(
@@ -128,7 +128,7 @@ function ItemTypeReport({
 									);
 									let newVal =
 										parseFloat(itemTypeList[index].loanAmount) + item.price;
-									itemTypeList[index].loanAmount = newVal.toFixed(2);
+									itemTypeList[index].loanAmount = newVal;
 								}
 
 								tempIDList.push(item.itemID);
@@ -138,7 +138,7 @@ function ItemTypeReport({
 								) {
 									itemTypeList.push({
 										itemType: item.itemType,
-										loanAmount: item.price.toFixed(2),
+										loanAmount: item.price,
 									});
 								} else {
 									let index = itemTypeList.findIndex(
@@ -146,7 +146,7 @@ function ItemTypeReport({
 									);
 									let newVal =
 										parseFloat(itemTypeList[index].loanAmount) + item.price;
-									itemTypeList[index].loanAmount = newVal.toFixed(2);
+									itemTypeList[index].loanAmount = newVal;
 								}
 
 								tempIDList.push(item.itemID);
@@ -156,7 +156,7 @@ function ItemTypeReport({
 								) {
 									itemTypeList.push({
 										itemType: item.itemType,
-										loanAmount: item.price.toFixed(2),
+										loanAmount: item.price,
 									});
 								} else {
 									let index = itemTypeList.findIndex(
@@ -164,7 +164,7 @@ function ItemTypeReport({
 									);
 									let newVal =
 										parseFloat(itemTypeList[index].loanAmount) + item.price;
-									itemTypeList[index].loanAmount = newVal.toFixed(2);
+									itemTypeList[index].loanAmount = newVal;
 								}
 								tempIDList.push(item.itemID);
 							}
@@ -173,6 +173,10 @@ function ItemTypeReport({
 				}
 			}
 		}
+
+		itemTypeList.forEach((row) => {
+			row.loanAmount = convertFloat(row.loanAmount);
+		});
 
 		setData(itemTypeList);
 	}
@@ -186,17 +190,11 @@ function ItemTypeReport({
 					return <div className="px-20 text-center">{value}</div>;
 				},
 			},
-			// {
-			// 	Header: "Item Category",
-			// 	accessor:  "itemCategory",
-			// },
 			{
 				Header: "Appraisal Price",
 				accessor: "loanAmount",
 				Cell: ({ value }) => {
-					return (
-						<div className="pl-10 pr-20 text-right">{convertFloat(value)}</div>
-					);
+					return <div className="pl-10 pr-20 text-right">{value}</div>;
 				},
 				disableGlobalFilter: true,
 			},

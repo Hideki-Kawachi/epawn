@@ -115,7 +115,10 @@ function ItemReport({
 				return row.status == status;
 			});
 		}
-		console.log("tempData", tempData);
+		tempData.forEach((row) => {
+			row.loanAmount = convertFloat(row.loanAmount);
+		});
+
 		setData(tempData);
 	}
 
@@ -189,9 +192,7 @@ function ItemReport({
 				Header: "Appraisal Price",
 				accessor: "loanAmount",
 				Cell: ({ value }) => {
-					return (
-						<div className="pl-10 pr-20 text-right">{convertFloat(value)}</div>
-					);
+					return <div className="pl-10 pr-20 text-right">{value}</div>;
 				},
 				disableGlobalFilter: true,
 			},
