@@ -123,13 +123,13 @@ function CashFlowReport({
 					newVal = Number(tempData[index].cashInAmount) + currAmountPaid;
 					tempData[index].cashInAmount = newVal;
 
-					newTotal = currAmountPaid + parseFloat(tempData[index].netCashFlow);
+					newTotal = currAmountPaid + tempData[index].netCashFlow;
 					tempData[index].netCashFlow = newTotal;
 				} else {
 					newVal = currAmountPaid - Number(tempData[index].cashOutAmount);
 					tempData[index].cashOutAmount = Math.abs(newVal);
 
-					newTotal = currAmountPaid + parseFloat(tempData[index].netCashFlow);
+					newTotal = currAmountPaid + tempData[index].netCashFlow;
 					tempData[index].netCashFlow = newTotal;
 				}
 			}

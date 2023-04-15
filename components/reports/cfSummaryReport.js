@@ -64,23 +64,16 @@ function CFSummaryReport({
 				return branch.branchID == currTransaction.branchID;
 			});
 
-			//If not same transaction date, then create a new element (Else retrieve previous)
-			if (
-				!tempData.some(
-					(obj) =>
-						obj.transactDate ==
-						dayjs(new Date(currTransaction.creationDate)).format("MMM DD, YYYY")
-				) ||
-				!tempData.some((obj) => obj.branchName == currBranch.branchName)
-			) {
-				let tempCashIn = "0";
-				let tempCashOut = "0";
+			//If not same branch name, then create a new element (Else retrieve previous)
+			if (!tempData.some((obj) => obj.branchName == currBranch.branchName)) {
+				let tempCashIn = 0;
+				let tempCashOut = 0;
 
 				//If amount paid is positive then cashin, else false
 				if (currTransaction.amountPaid >= 0) {
-					tempCashIn = currTransaction.amountPaid.toFixed(2);
+					tempCashIn = currTransaction.amountPaid;
 				} else {
-					tempCashOut = Math.abs(currTransaction.amountPaid).toFixed(2);
+					tempCashOut = Math.abs(currTransaction.amountPaid);
 				}
 
 				//If array length is 0, use current cashin and cashout (Else, get the previous)
@@ -92,9 +85,7 @@ function CFSummaryReport({
 						),
 						cashInAmount: tempCashIn,
 						cashOutAmount: tempCashOut,
-						netCashFlow: (
-							parseFloat(tempCashIn) - parseFloat(tempCashOut)
-						).toFixed(2),
+						netCashFlow: tempCashIn - tempCashOut,
 					});
 				} else {
 					tempData.push({
@@ -104,20 +95,15 @@ function CFSummaryReport({
 						),
 						cashInAmount: tempCashIn,
 						cashOutAmount: tempCashOut,
-						// netCashFlow: (parseFloat(tempCashIn) - parseFloat(tempCashOut)).toFixed(2)
-						// Beginning and End implementation
-						netCashFlow: (
-							parseFloat(tempData[tempData.length - 1].netCashFlow) +
-							parseFloat(tempCashIn) -
-							parseFloat(tempCashOut)
-						).toFixed(2),
+						netCashFlow:
+							tempData[tempData.length - 1].netCashFlow +
+							tempCashIn -
+							tempCashOut,
 					});
 				}
 			} else {
 				let index = tempData.findIndex(
-					(obj) =>
-						obj.transactDate ==
-						dayjs(new Date(currTransaction.creationDate)).format("MMM DD, YYYY")
+					(obj) => obj.branchName == currBranch.branchName
 				);
 
 				let newVal;
@@ -125,27 +111,17 @@ function CFSummaryReport({
 
 				//If amountPaid is >= 0, then cashIn
 				if (currTransaction.amountPaid >= 0) {
-					newVal =
-						parseFloat(tempData[index].cashInAmount) +
-						parseFloat(currTransaction.amountPaid);
-					tempData[index].cashInAmount = newVal.toFixed(2);
+					newVal = tempData[index].cashInAmount + currTransaction.amountPaid;
+					tempData[index].cashInAmount = newVal;
 
-					newTotal =
-						parseFloat(currTransaction.amountPaid) +
-						parseFloat(tempData[index].netCashFlow);
-					tempData[index].netCashFlow = newTotal.toFixed(2);
+					newTotal = currTransaction.amountPaid + tempData[index].netCashFlow;
+					tempData[index].netCashFlow = newTotal;
 				} else {
-					newVal =
-						parseFloat(currTransaction.amountPaid) -
-						parseFloat(tempData[index].cashOutAmount);
-					tempData[index].cashOutAmount = Math.abs(newVal.toFixed(2)).toFixed(
-						2
-					);
+					newVal = currTransaction.amountPaid - tempData[index].cashOutAmount;
+					tempData[index].cashOutAmount = Math.abs(newVal);
 
-					newTotal =
-						parseFloat(currTransaction.amountPaid) +
-						parseFloat(tempData[index].netCashFlow);
-					tempData[index].netCashFlow = newTotal.toFixed(2);
+					newTotal = currTransaction.amountPaid + tempData[index].netCashFlow;
+					tempData[index].netCashFlow = newTotal;
 				}
 			}
 		}
@@ -167,19 +143,23 @@ function CFSummaryReport({
 					(obj) => obj.branchName == someItem.branchName
 				);
 				let newCashIn =
-					parseFloat(branchList[index].totalCashInAmount) +
-					parseFloat(someItem.cashInAmount);
+					branchList[index].totalCashInAmount + someItem.cashInAmount;
 
 				let newCashOut =
-					parseFloat(branchList[index].totalCashOutAmount) +
-					parseFloat(someItem.cashOutAmount);
+					branchList[index].totalCashOutAmount + someItem.cashOutAmount;
 
-				branchList[index].totalCashInAmount = newCashIn.toFixed(2);
-				branchList[index].totalCashOutAmount = newCashOut.toFixed(2);
+				branchList[index].totalCashInAmount = newCashIn;
+				branchList[index].totalCashOutAmount = newCashOut;
 
 				branchList[index].totalNetCashFlow = someItem.netCashFlow;
 			}
 		}
+
+		branchList.forEach((row) => {
+			row.totalCashInAmount = convertFloat(row.totalCashInAmount);
+			row.totalCashOutAmount = convertFloat(row.totalCashOutAmount);
+			row.totalNetCashFlow = convertFloat(row.totalNetCashFlow);
+		});
 
 		setData(branchList);
 	}
@@ -196,27 +176,27 @@ function CFSummaryReport({
 			{
 				Header: "Total Cash In",
 				Cell: ({ value }) => {
-					return <div className="text-center ">{convertFloat(value)}</div>;
+					return <div className="text-center ">{value}</div>;
 				},
 				accessor: "totalCashInAmount",
 			},
 			{
 				Header: "Total Cash Out",
 				Cell: ({ value }) => {
-					return <div className="text-center ">{convertFloat(value)}</div>;
+					return <div className="text-center ">{value}</div>;
 				},
 				accessor: "totalCashOutAmount",
 			},
 			{
 				Header: "Net Cash Flow",
 				Cell: ({ value }) => {
-					return value < 0 ? (
-						<div className="text-center text-red-500">
-							{convertFloat(value)}
-						</div>
-					) : (
-						<div className="text-center">{convertFloat(value)}</div>
-					);
+					if (value) {
+						return value.includes("-") ? (
+							<div className="text-center text-red-500">{value}</div>
+						) : (
+							<div className="text-center">{value}</div>
+						);
+					}
 				},
 				accessor: "totalNetCashFlow",
 			},

@@ -2,6 +2,16 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { useGridLayout } from "react-table/dist/react-table.development";
 
+function convertFloat(number) {
+	return (
+		"Php " +
+		Number(number).toLocaleString("en-US", {
+			minimumFractionDigits: 2,
+			maximumFractionDigits: 2,
+		})
+	);
+}
+
 //add to
 export default function printReportCF(cfData, startDate, endDate) {
 	// console.log(ptData);
@@ -15,27 +25,28 @@ export default function printReportCF(cfData, startDate, endDate) {
 		if (!branchList.some((obj) => obj[0] == row.branchName)) {
 			branchList.push([
 				row.branchName,
-				row.cashInAmount,
-				row.cashOutAmount,
-				row.netCashFlow,
+				parseFloat(row.cashInAmount.split(" ")[1].replace(/,/g, "")),
+				parseFloat(row.cashOutAmount.split(" ")[1].replace(/,/g, "")),
+				parseFloat(row.netCashFlow.split(" ")[1].replace(/,/g, "")),
 			]);
-
-			// console.log("hi")
 		} else {
 			let index = branchList.findIndex((obj) => obj[0] == row.branchName);
 			let newCashIn =
-				parseFloat(branchList[index][1]) + parseFloat(row.cashInAmount);
+				parseFloat(branchList[index][1]) +
+				parseFloat(row.cashInAmount.split(" ")[1].replace(/,/g, ""));
 
 			let newCashOut =
-				parseFloat(branchList[index][2]) + parseFloat(row.cashOutAmount);
+				parseFloat(branchList[index][2]) +
+				parseFloat(row.cashOutAmount.split(" ")[1].replace(/,/g, ""));
 
-			branchList[index][1] = newCashIn.toFixed(2);
-			branchList[index][2] = newCashOut.toFixed(2);
+			branchList[index][1] = newCashIn;
+			branchList[index][2] = newCashOut;
 
 			let newVal =
-				parseFloat(branchList[index][3]) + parseFloat(row.netCashFlow);
+				parseFloat(branchList[index][3]) +
+				parseFloat(row.netCashFlow.split(" ")[1].replace(/,/g, ""));
 
-			branchList[index][3] = newVal.toFixed(2);
+			branchList[index][3] = newVal;
 		}
 
 		tempData.push([
@@ -46,6 +57,12 @@ export default function printReportCF(cfData, startDate, endDate) {
 			row.netCashFlow,
 		]);
 	});
+
+	// tempData.forEach((row) => {
+	// 	row.cashInAmount = convertFloat(row.cashInAmount);
+	// 	row.cashOutAmount = convertFloat(row.cashOutAmount);
+	// 	row.netCashFlow = convertFloat(row.netCashFlow);
+	// });
 
 	// Set up the document
 	const doc = new jsPDF({
@@ -76,7 +93,7 @@ export default function printReportCF(cfData, startDate, endDate) {
 		);
 
 		doc.setFont("Arial", "bold");
-		const headerText3 = "ITEM REPORT";
+		const headerText3 = "CASHFLOW REPORT";
 		const headerWidth3 = doc.getTextWidth(headerText3);
 		doc.text(
 			headerText3,
