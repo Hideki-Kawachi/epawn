@@ -340,7 +340,7 @@ function DetailsCardRenewClerk({
                 ) : (
                   <br></br>
                 )}
-                {amountToPay < interest + advInterest - 1 && mode == false ? (
+                {amountToPay < minPayment && mode == false ? (
                   <p className="text-[16px] text-red-500">
                     {" "}
                     Amount of payment must be higher
