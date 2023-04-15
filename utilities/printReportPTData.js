@@ -16,14 +16,17 @@ export default function printReportPTData(ptData, startDate, endDate, ptSummaryD
 	let isFound = false
 	let tempText = " - " + ptData[0].status.toString()
 
+
 	ptSummaryData.forEach((summ) => 
-		ptSummaryData.push([
+		tempSummaryData.push([
 			summ.branchName,
 			summ.avgLoan,
 			summ.activeCount,
 			summ.renewalRate
 		])
 	);
+
+	console.log(tempSummaryData)
 
 	ptData.forEach((row) => {
 		if (row.status != compVal) {
@@ -130,7 +133,34 @@ export default function printReportPTData(ptData, startDate, endDate, ptSummaryD
 		// doc.text(`Page ${data.pageNumber} of ${pageCount}`, doc.internal.pageSize.width - data.settings.margin.right - footerWidth, doc.internal.pageSize.height - 0.5);
 	};
 
+	let summaryTableHeader
+
+	summaryTableHeader = [
+		[
+			"Branch Namer",
+			"Average Loan",
+			"Active Count",
+			"Renewal Rate",
+		],
+	];
+
+	doc.autoTable({
+		head: summaryTableHeader,
+		body: tempSummaryData,
+		startY: 1,
+		margin: { top: 1 },
+		headStyles: {
+			// fillColor: "#5dbe9d", // set the background color of the header row
+			halign: "center",
+		},
+		columnStyles: {
+			1: { halign: "right" },
+		},
+		tableWidth: 'wrap',
+	});
+
 	let tableHeader
+
 
 	// // Define the header data for the table
 	if (!isFound) {
@@ -165,7 +195,7 @@ export default function printReportPTData(ptData, startDate, endDate, ptSummaryD
 		doc.autoTable({
 			head: tableHeader,
 			body: tempData,
-			startY: 1,
+			startY: doc.autoTable.previous.finalY + 0.5,
 			margin: { top: 1 },
 			headStyles: {
 				fillColor: "#5dbe9d", // set the background color of the header row
@@ -186,7 +216,7 @@ export default function printReportPTData(ptData, startDate, endDate, ptSummaryD
 		doc.autoTable({
 			head: tableHeader,
 			body: tempData,
-			startY: 1,
+			startY: doc.autoTable.previous.finalY + 0.5,
 			margin: { top: 1 },
 			headStyles: {
 				fillColor: "#5dbe9d", // set the background color of the header row
