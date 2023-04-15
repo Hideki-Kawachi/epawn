@@ -21,6 +21,8 @@ function ItemTypeReport({
 	branchFilter,
 	startDate,
 	endDate,
+	typeFilter,
+	categoryFilter,
 }) {
 	const [data, setData] = useState([{}]);
 
@@ -36,6 +38,8 @@ function ItemTypeReport({
 		statusFilter,
 		startDate,
 		endDate,
+		typeFilter,
+		categoryFilter,
 	]);
 
 	// useEffect(() => {
@@ -90,83 +94,88 @@ function ItemTypeReport({
 			if (branchFilter == "" || branchFilter == currBranch.branchID) {
 				for (const item of itemData) {
 					if (item.itemListID == pt.itemListID) {
-						//If item does not exist in the ID List, extract the items and push it into tempData
-						if (!tempIDList.includes(item.itemID)) {
-							if (statusFilter == "") {
-								if (
-									!itemTypeList.some((obj) => obj.itemType === item.itemType)
-								) {
-									itemTypeList.push({
-										itemType: item.itemType,
-										loanAmount: item.price,
-									});
-								} else {
-									let index = itemTypeList.findIndex(
-										(obj) => obj.itemType == item.itemType
-									);
-									let newVal =
-										parseFloat(itemTypeList[index].loanAmount) + item.price;
-									itemTypeList[index].loanAmount = newVal;
-								}
+						if (
+							(item.itemType == typeFilter || !typeFilter) &&
+							(item.itemCategory == categoryFilter || !categoryFilter)
+						) {
+							//If item does not exist in the ID List, extract the items and push it into tempData
+							if (!tempIDList.includes(item.itemID)) {
+								if (statusFilter == "") {
+									if (
+										!itemTypeList.some((obj) => obj.itemType === item.itemType)
+									) {
+										itemTypeList.push({
+											itemType: item.itemType,
+											loanAmount: item.price,
+										});
+									} else {
+										let index = itemTypeList.findIndex(
+											(obj) => obj.itemType == item.itemType
+										);
+										let newVal =
+											parseFloat(itemTypeList[index].loanAmount) + item.price;
+										itemTypeList[index].loanAmount = newVal;
+									}
 
-								tempIDList.push(item.itemID);
-							} else if (
-								statusFilter == "Pawned" &&
-								!item.isRedeemed &&
-								!item.forAuction
-							) {
-								if (
-									!itemTypeList.some((obj) => obj.itemType === item.itemType)
+									tempIDList.push(item.itemID);
+								} else if (
+									statusFilter == "Pawned" &&
+									!item.isRedeemed &&
+									!item.forAuction
 								) {
-									itemTypeList.push({
-										itemType: item.itemType,
-										loanAmount: item.price,
-									});
-								} else {
-									let index = itemTypeList.findIndex(
-										(obj) => obj.itemType == item.itemType
-									);
-									let newVal =
-										parseFloat(itemTypeList[index].loanAmount) + item.price;
-									itemTypeList[index].loanAmount = newVal;
-								}
+									if (
+										!itemTypeList.some((obj) => obj.itemType === item.itemType)
+									) {
+										itemTypeList.push({
+											itemType: item.itemType,
+											loanAmount: item.price,
+										});
+									} else {
+										let index = itemTypeList.findIndex(
+											(obj) => obj.itemType == item.itemType
+										);
+										let newVal =
+											parseFloat(itemTypeList[index].loanAmount) + item.price;
+										itemTypeList[index].loanAmount = newVal;
+									}
 
-								tempIDList.push(item.itemID);
-							} else if (statusFilter == "Redeemed" && item.isRedeemed) {
-								if (
-									!itemTypeList.some((obj) => obj.itemType === item.itemType)
-								) {
-									itemTypeList.push({
-										itemType: item.itemType,
-										loanAmount: item.price,
-									});
-								} else {
-									let index = itemTypeList.findIndex(
-										(obj) => obj.itemType == item.itemType
-									);
-									let newVal =
-										parseFloat(itemTypeList[index].loanAmount) + item.price;
-									itemTypeList[index].loanAmount = newVal;
-								}
+									tempIDList.push(item.itemID);
+								} else if (statusFilter == "Redeemed" && item.isRedeemed) {
+									if (
+										!itemTypeList.some((obj) => obj.itemType === item.itemType)
+									) {
+										itemTypeList.push({
+											itemType: item.itemType,
+											loanAmount: item.price,
+										});
+									} else {
+										let index = itemTypeList.findIndex(
+											(obj) => obj.itemType == item.itemType
+										);
+										let newVal =
+											parseFloat(itemTypeList[index].loanAmount) + item.price;
+										itemTypeList[index].loanAmount = newVal;
+									}
 
-								tempIDList.push(item.itemID);
-							} else if (statusFilter == "For Auction" && item.forAuction) {
-								if (
-									!itemTypeList.some((obj) => obj.itemType === item.itemType)
-								) {
-									itemTypeList.push({
-										itemType: item.itemType,
-										loanAmount: item.price,
-									});
-								} else {
-									let index = itemTypeList.findIndex(
-										(obj) => obj.itemType == item.itemType
-									);
-									let newVal =
-										parseFloat(itemTypeList[index].loanAmount) + item.price;
-									itemTypeList[index].loanAmount = newVal;
+									tempIDList.push(item.itemID);
+								} else if (statusFilter == "For Auction" && item.forAuction) {
+									if (
+										!itemTypeList.some((obj) => obj.itemType === item.itemType)
+									) {
+										itemTypeList.push({
+											itemType: item.itemType,
+											loanAmount: item.price,
+										});
+									} else {
+										let index = itemTypeList.findIndex(
+											(obj) => obj.itemType == item.itemType
+										);
+										let newVal =
+											parseFloat(itemTypeList[index].loanAmount) + item.price;
+										itemTypeList[index].loanAmount = newVal;
+									}
+									tempIDList.push(item.itemID);
 								}
-								tempIDList.push(item.itemID);
 							}
 						}
 					}

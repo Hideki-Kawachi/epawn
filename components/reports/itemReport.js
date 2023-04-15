@@ -11,6 +11,8 @@ import {
 import { utils, writeFile, writeFileXLSX, writeXLSX } from "xlsx";
 import ItemCategoryReport from "./itemCategoryReport";
 import ItemTypeReport from "./itemTypeReport";
+import ItemCategoryValues from "../../utilities/dropdownValues/itemCategory.json";
+import ItemTypeValues from "../../utilities/dropdownValues/itemType.json";
 import printReportItemData from "../../utilities/printIReportItemData";
 
 function ItemReport({
@@ -25,9 +27,11 @@ function ItemReport({
 	const [endDate, setEndDate] = useState();
 	const [branchID, setBranchID] = useState("");
 	const [status, setStatus] = useState("");
+	const [type, setType] = useState("");
+	const [category, setCategory] = useState("");
 
 	useEffect(() => {
-		getData(startDate, endDate, branchID, status);
+		getData(startDate, endDate, branchID, status, type, category);
 	}, [
 		userData,
 		pawnTicketData,
@@ -38,9 +42,11 @@ function ItemReport({
 		endDate,
 		branchID,
 		status,
+		type,
+		category,
 	]);
 
-	function getData(startDate, endDate, branchID, status) {
+	function getData(startDate, endDate, branchID, status, type, category) {
 		let tempData = [];
 
 		//Get all items
@@ -93,8 +99,10 @@ function ItemReport({
 				let start = new Date(startDate).setHours(0, 0, 0, 0);
 				let end = new Date(endDate).setHours(23, 59, 59, 59);
 				return (
-					new Date(pt.loanDate) >= new Date(start) &&
-					new Date(pt.loanDate) <= new Date(end)
+					(new Date(pt.loanDate) >= new Date(start) &&
+						new Date(pt.loanDate) <= new Date(end)) ||
+					(new Date(pt.expiryDate) >= new Date(start) &&
+						new Date(pt.expiryDate) <= new Date(end))
 				);
 			});
 		}
@@ -115,6 +123,19 @@ function ItemReport({
 				return row.status == status;
 			});
 		}
+
+		if (type != "") {
+			tempData = tempData.filter((row) => {
+				return row.itemType == type;
+			});
+		}
+
+		if (category != "") {
+			tempData = tempData.filter((row) => {
+				return row.itemCategory == category;
+			});
+		}
+
 		tempData.forEach((row) => {
 			row.loanAmount = convertFloat(row.loanAmount);
 		});
@@ -248,6 +269,17 @@ function ItemReport({
 		setFilter("status", value);
 		setStatus(value);
 	}
+
+	function typeFilter(value) {
+		setFilter("itemType", value);
+		setType(value);
+	}
+
+	function categoryFilter(value) {
+		setFilter("itemCategory", value);
+		setCategory(value);
+	}
+
 	function convertFloat(number) {
 		return (
 			"Php " +
@@ -260,21 +292,56 @@ function ItemReport({
 	return (
 		<>
 			{/* Filter  */}
-			<div className="flex items-center self-start w-full gap-2 my-5 text-sm font-nunito whitespace-nowrap ">
-				<span className="ml-5">Starting Date: </span>
-				<input
-					type="date"
-					onChange={(e) => {
-						setStartDate(e.target.value);
-					}}
-				></input>
-				<span className="ml-5">Ending Date: </span>
-				<input
-					type="date"
-					onChange={(e) => {
-						setEndDate(e.target.value);
-					}}
-				></input>
+			<div className="flex items-start self-start w-full gap-2 my-5 text-sm font-nunito whitespace-nowrap ">
+				<div className="flex flex-col justify-between gap-3">
+					<div className="flex gap-2">
+						<span className="ml-5">Starting Date: </span>
+						<input
+							type="date"
+							onChange={(e) => {
+								setStartDate(e.target.value);
+							}}
+						></input>
+						<span className="ml-5">Ending Date: </span>
+						<input
+							type="date"
+							onChange={(e) => {
+								setEndDate(e.target.value);
+							}}
+						></input>
+					</div>
+					<div>
+						<span className="ml-5">Item Type: </span>
+						<select
+							className="h-fit"
+							onChange={(e) => typeFilter(e.target.value)}
+							defaultValue={""}
+						>
+							<option value={""}>All</option>
+							{ItemTypeValues.map((itemType) => (
+								<option key={itemType.itemType} value={itemType.itemType}>
+									{itemType.itemType}
+								</option>
+							))}
+						</select>
+						<span className="ml-5">Item Category: </span>
+						<select
+							className="h-fit"
+							onChange={(e) => categoryFilter(e.target.value)}
+							defaultValue={""}
+						>
+							<option value={""}>All</option>
+							{ItemCategoryValues.map((itemCategory) => (
+								<option
+									key={itemCategory.itemCategory}
+									value={itemCategory.itemCategory}
+								>
+									{itemCategory.itemCategory}
+								</option>
+							))}
+						</select>
+					</div>
+				</div>
 				<span className="ml-5">Branch: </span>
 				<select
 					className="h-fit"
@@ -299,6 +366,7 @@ function ItemReport({
 					<option value={"Redeemed"}>Redeemed</option>
 					<option value={"For Auction"}>For Auction</option>
 				</select>
+
 				<div className="mb-2 text-base font-dosis pawn-pagination-container">
 					<button
 						className="mb-2"
@@ -341,6 +409,8 @@ function ItemReport({
 				endDate={endDate}
 				branchFilter={branchID}
 				statusFilter={status}
+				typeFilter={type}
+				categoryFilter={category}
 			></ItemCategoryReport>
 
 			<ItemTypeReport
@@ -353,6 +423,8 @@ function ItemReport({
 				statusFilter={status}
 				startDate={startDate}
 				endDate={endDate}
+				typeFilter={type}
+				categoryFilter={category}
 			></ItemTypeReport>
 
 			{/* Table */}
