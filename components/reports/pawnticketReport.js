@@ -148,10 +148,12 @@ function PawnTicketReport({
 							2;
 						if (totalRenewalCount.length > 0) {
 							tempSummaryData[index].renewalRate =
-								(tempSummaryData[index].inactiveCount /
-									(tempSummaryData[index].activeCount +
-										tempSummaryData[index].inactiveCount)) *
-								100;
+								(
+									(tempSummaryData[index].inactiveCount /
+										(tempSummaryData[index].activeCount +
+											tempSummaryData[index].inactiveCount)) *
+									100
+								).toFixed(2) + "%";
 						} else {
 							tempSummaryData[index].renewalRate = "N/A";
 						}
@@ -163,10 +165,15 @@ function PawnTicketReport({
 					activeCount: tempDataRow.status == "Ongoing" ? 1 : 0,
 					inactiveCount: tempDataRow.status == "Inactive" ? 1 : 0,
 					avgLoan: Number(tempDataRow.loanAmount),
-					renewalRate: tempDataRow.status == "Ongoing" ? 100 : 0,
+					renewalRate: tempDataRow.status == "Ongoing" ? "100%" : "N/A",
 				});
 			}
 		});
+
+		tempSummaryData.forEach((row) => {
+			row.avgLoan = "Php " + row.avgLoan.toFixed(2);
+		});
+
 		setSummaryData(tempSummaryData);
 		setData(tempData);
 	}

@@ -27,7 +27,7 @@ function PawnTicketSummaryReport({ data }) {
 				accessor: "avgLoan",
 				disableGlobalFilter: true,
 				Cell: ({ value }) => {
-					return <div className="px-10 text-center">{convertFloat(value)}</div>;
+					return <div className="px-10 text-center">{"Php " + value}</div>;
 				},
 			},
 			{
@@ -44,11 +44,7 @@ function PawnTicketSummaryReport({ data }) {
 				accessor: "renewalRate",
 				disableGlobalFilter: true,
 				Cell: ({ value }) => {
-					return (
-						<div className="px-10 text-center">
-							{value + (value == "N/A" ? "" : " %")}
-						</div>
-					);
+					return <div className="px-10 text-center">{value}</div>;
 				},
 			},
 		],
