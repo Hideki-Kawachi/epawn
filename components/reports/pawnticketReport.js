@@ -80,7 +80,6 @@ function PawnTicketReport({
 				pawnTicketID: pt.pawnTicketID,
 				branchName: currBranch.branchName,
 				status: status,
-				loanDate: dayjs(new Date(pt.loanDate)).format("MMM DD, YYYY"),
 				maturityDate: dayjs(new Date(pt.maturityDate)).format("MMM DD, YYYY"),
 				expiryDate: dayjs(new Date(pt.expiryDate)).format("MMM DD, YYYY"),
 				loanAmount: pt.loanAmount.toFixed(2),
@@ -94,8 +93,10 @@ function PawnTicketReport({
 				let start = new Date(startDate).setHours(0, 0, 0, 0);
 				let end = new Date(endDate).setHours(23, 59, 59, 59);
 				return (
-					new Date(pt.loanDate) >= new Date(start) &&
-					new Date(pt.loanDate) <= new Date(end)
+					(new Date(pt.maturityDate) >= new Date(start) &&
+						new Date(pt.maturityDate) <= new Date(end)) ||
+					(new Date(pt.expiryDate) >= new Date(start) &&
+						new Date(pt.expiryDate) <= new Date(end))
 				);
 			});
 
@@ -201,15 +202,6 @@ function PawnTicketReport({
 			{
 				Header: "Status",
 				accessor: "status",
-				disableGlobalFilter: true,
-				Cell: ({ value }) => {
-					return <div className="px-10 text-center">{value}</div>;
-				},
-			},
-			{
-				Header: "Loan Date",
-				accessor: "loanDate",
-				filter: "between",
 				disableGlobalFilter: true,
 				Cell: ({ value }) => {
 					return <div className="px-10 text-center">{value}</div>;

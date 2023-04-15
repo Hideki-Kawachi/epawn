@@ -3,37 +3,41 @@ import "jspdf-autotable";
 import { useGridLayout } from "react-table/dist/react-table.development";
 
 //add to
-export default function printReportPTData(ptData, startDate, endDate, ptSummaryData) {
+export default function printReportPTData(
+	ptData,
+	startDate,
+	endDate,
+	ptSummaryData
+) {
 	// console.log(ptData);
 
 	// Define the pt data for the table
 	let tempData = [];
 
-	let tempSummaryData = []
+	let tempSummaryData = [];
 
 	//For status filter
-	let compVal = ptData[0].status.toString()
-	let isFound = false
-	let tempText = " - " + ptData[0].status.toString()
+	let compVal = ptData[0].status.toString();
+	let isFound = false;
+	let tempText = " - " + ptData[0].status.toString();
 
-
-	ptSummaryData.forEach((summ) => 
+	ptSummaryData.forEach((summ) =>
 		tempSummaryData.push([
 			summ.branchName,
 			summ.avgLoan,
 			summ.activeCount,
-			summ.renewalRate
+			summ.renewalRate,
 		])
 	);
 
-	console.log(tempSummaryData)
+	console.log(tempSummaryData);
 
 	ptData.forEach((row) => {
 		if (row.status != compVal) {
-			isFound = true
-			tempText = ""
+			isFound = true;
+			tempText = "";
 		}
-	})
+	});
 
 	if (isFound) {
 		ptData.forEach((row) =>
@@ -41,7 +45,6 @@ export default function printReportPTData(ptData, startDate, endDate, ptSummaryD
 				row.pawnTicketID,
 				row.branchName,
 				row.status,
-				row.loanDate,
 				row.maturityDate,
 				row.expiryDate,
 				row.loanAmount,
@@ -52,7 +55,6 @@ export default function printReportPTData(ptData, startDate, endDate, ptSummaryD
 			tempData.push([
 				row.pawnTicketID,
 				row.branchName,
-				row.loanDate,
 				row.maturityDate,
 				row.expiryDate,
 				row.loanAmount,
@@ -89,7 +91,7 @@ export default function printReportPTData(ptData, startDate, endDate, ptSummaryD
 		);
 
 		doc.setFont("Arial", "bold");
-		const headerText3 = "PAWN TICKET REPORT"  + tempText;
+		const headerText3 = "PAWN TICKET REPORT" + tempText;
 		const headerWidth3 = doc.getTextWidth(headerText3);
 		doc.text(
 			headerText3,
@@ -107,7 +109,7 @@ export default function printReportPTData(ptData, startDate, endDate, ptSummaryD
 			headerText4 = startDate + " to " + endDate;
 		} else {
 			headerText4 =
-				ptData[0].loanDate + " to " + ptData[ptData.length - 1].loanDate;
+				ptData[0].maturityDate + " to " + ptData[ptData.length - 1].expiryDate;
 		}
 
 		const headerWidth4 = doc.getTextWidth(headerText4);
@@ -133,15 +135,10 @@ export default function printReportPTData(ptData, startDate, endDate, ptSummaryD
 		// doc.text(`Page ${data.pageNumber} of ${pageCount}`, doc.internal.pageSize.width - data.settings.margin.right - footerWidth, doc.internal.pageSize.height - 0.5);
 	};
 
-	let summaryTableHeader
+	let summaryTableHeader;
 
 	summaryTableHeader = [
-		[
-			"Branch Name",
-			"Average Loan",
-			"Active Count",
-			"Renewal Rate",
-		],
+		["Branch Name", "Average Loan", "Active Count", "Renewal Rate"],
 	];
 
 	doc.autoTable({
@@ -156,33 +153,22 @@ export default function printReportPTData(ptData, startDate, endDate, ptSummaryD
 		columnStyles: {
 			1: { halign: "right" },
 		},
-		tableWidth: 'wrap',
+		tableWidth: "wrap",
 	});
 
-	let tableHeader
-
+	let tableHeader;
 
 	// // Define the header data for the table
 	if (!isFound) {
-
 		tableHeader = [
-			[
-				"PT-Number",
-				"Branch",
-				"Loan Date",
-				"Maturity Date",
-				"Expiry Date",
-				"Amount of Loan",
-			],
+			["PT-Number", "Branch", "Maturity Date", "Expiry Date", "Amount of Loan"],
 		];
-
 	} else {
 		tableHeader = [
 			[
 				"PT-Number",
 				"Branch",
 				"Status",
-				"Loan Date",
 				"Maturity Date",
 				"Expiry Date",
 				"Amount of Loan",
@@ -191,7 +177,6 @@ export default function printReportPTData(ptData, startDate, endDate, ptSummaryD
 	}
 
 	if (!isFound) {
-
 		doc.autoTable({
 			head: tableHeader,
 			body: tempData,
@@ -209,9 +194,7 @@ export default function printReportPTData(ptData, startDate, endDate, ptSummaryD
 				footer(data);
 			},
 		});
-
-	}
-	else {
+	} else {
 		// Add the table to the document
 		doc.autoTable({
 			head: tableHeader,
