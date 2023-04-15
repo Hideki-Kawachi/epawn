@@ -137,7 +137,7 @@ export default function printReportPTData(ptData, startDate, endDate, ptSummaryD
 
 	summaryTableHeader = [
 		[
-			"Branch Namer",
+			"Branch Name",
 			"Average Loan",
 			"Active Count",
 			"Renewal Rate",
