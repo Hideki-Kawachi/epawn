@@ -307,7 +307,7 @@ function NotificationTable({ role, data }) {
 			) : (
 				<div>
 					<div className="pt-20 pb-32 text-lg font-bold text-center text-gray-400 font-nunito">
-						No past transactions
+						No current transactions
 					</div>
 				</div>
 			)}

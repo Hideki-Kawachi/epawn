@@ -31,7 +31,7 @@ function LogsTable({ data, branchData }) {
         Header: "Cash In",
         accessor: "cashIn",
         Cell: ({ value }) => {
-          return <div className="text-right mr-16">{convertFloat(value)}</div>;
+          return <div className="text-right">{convertFloat(value)}</div>;
         },
         disableGlobalFilter: true,
       },
@@ -39,13 +39,24 @@ function LogsTable({ data, branchData }) {
         Header: "Cash Out",
         accessor: "cashOut",
         Cell: ({ value }) => {
-          return <div className="text-right mr-16">{convertFloat(value)}</div>;
+          return <div className="text-right">{convertFloat(value)}</div>;
         },
         disableGlobalFilter: true,
       },
       {
         Header: "Clerk",
         accessor: "clerkName",
+        Cell: ({ value }) => {
+          return value == null ? (
+            <div className="text-center">
+              ---------------
+            </div>
+          ) : (
+            <div className="text-center">
+              {value}
+            </div>
+          );
+        },
         disableGlobalFilter: true,
       },
       {
@@ -58,7 +69,9 @@ function LogsTable({ data, branchData }) {
         Header: "Time",
         accessor: "time",
         Cell: ({ value }) => {
-          return dayjs(value).format("h:mm A");
+          return (
+            <div className="text-center ">{dayjs(value).format("h:mm A")}</div>
+          );
         },
         disableGlobalFilter: true,
       },
@@ -204,8 +217,8 @@ function LogsTable({ data, branchData }) {
                   onClick={() => openRow(data[row.id])}
                   className={
                     i % 2 === 0
-                      ? "text-sm cursor-pointer hover:bg-green-100 pl-3  "
-                      : "text-sm cursor-pointer hover:bg-green-100 pl-3  bg-gray-150"
+                      ? "text-sm  pl-3  "
+                      : "text-sm  bg-gray-150"
                   }
                 >
                   {row.cells.map((cell) => {

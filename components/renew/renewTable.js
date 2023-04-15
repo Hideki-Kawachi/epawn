@@ -19,7 +19,7 @@ function RenewTable({ role, data }) {
       { Header: "PT Number", accessor: "ptNumber" },
       { Header: "Customer Name", accessor: "customerName" },
       {
-        Header: "Total Amount to be Paid",
+        Header: "Amount to Pay",
         accessor: "amountPaid",
         Cell: ({ value }) => {
           return <div className="text-right pl-20 pr-28">{value}</div>;
