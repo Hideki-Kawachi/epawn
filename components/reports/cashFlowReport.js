@@ -63,12 +63,13 @@ function CashFlowReport({
 				);
 			});
 		}
-
 		if (branchID != "") {
 			tempTransac = tempTransac.filter((transac) => {
 				return transac.branchID == branchID;
 			});
 		}
+
+		console.log("temp transac", tempTransac);
 
 		for (const currTransaction of tempTransac) {
 			let currBranch = branchData.find((branch) => {
@@ -81,7 +82,8 @@ function CashFlowReport({
 					(obj) =>
 						obj.transactDate ==
 						dayjs(new Date(currTransaction.creationDate)).format("MMM DD, YYYY")
-				)
+				) ||
+				!tempData.some((obj) => obj.branchName == currBranch.branchName)
 			) {
 				let tempCashIn = 0;
 				let tempCashOut = 0;
@@ -90,44 +92,31 @@ function CashFlowReport({
 				if (currTransaction.amountPaid >= 0) {
 					tempCashIn = currTransaction.amountPaid;
 				} else {
-					tempCashOut = currTransaction.amountPaid;
+					tempCashOut = Math.abs(currTransaction.amountPaid);
 				}
 
-				//If array length is 0, use current cashin and cashout (Else, get the previous)
-				if (tempData.length == 0) {
-					tempData.push({
-						branchName: currBranch.branchName,
-						transactDate: dayjs(new Date(currTransaction.creationDate)).format(
-							"MMM DD, YYYY"
-						),
-						cashInAmount: tempCashIn,
-						cashOutAmount: tempCashOut,
-						netCashFlow: (Number(tempCashIn) - Number(tempCashOut)).toFixed(2),
-					});
-				} else {
-					tempData.push({
-						branchName: currBranch.branchName,
-						transactDate: dayjs(new Date(currTransaction.creationDate)).format(
-							"MMM DD, YYYY"
-						),
-						cashInAmount: tempCashIn,
-						cashOutAmount: tempCashOut,
-						netCashFlow: (Number(tempCashIn) - Number(tempCashOut)).toFixed(2),
-						// Beginning and End implementation
-						// netCashFlow: (parseFloat(tempData[tempData.length - 1].netCashFlow) + parseFloat(tempCashIn) - parseFloat(tempCashOut)).toFixed(2),
-					});
-				}
+				tempData.push({
+					branchName: currBranch.branchName,
+					transactDate: dayjs(new Date(currTransaction.creationDate)).format(
+						"MMM DD, YYYY"
+					),
+					cashInAmount: tempCashIn,
+					cashOutAmount: tempCashOut,
+					netCashFlow: Number(tempCashIn) - Number(tempCashOut),
+				});
 			} else {
 				let index = tempData.findIndex(
 					(obj) =>
 						obj.transactDate ==
-						dayjs(new Date(currTransaction.creationDate)).format("MMM DD, YYYY")
+							dayjs(new Date(currTransaction.creationDate)).format(
+								"MMM DD, YYYY"
+							) && obj.branchName == currBranch.branchName
 				);
 
 				let newVal;
 				let newTotal;
 
-				let currAmountPaid = Number(currTransaction.amountPaid);
+				let currAmountPaid = currTransaction.amountPaid;
 
 				//If amountPaid is >= 0, then cashIn
 				if (currAmountPaid >= 0) {
@@ -135,13 +124,13 @@ function CashFlowReport({
 					tempData[index].cashInAmount = newVal;
 
 					newTotal = currAmountPaid + parseFloat(tempData[index].netCashFlow);
-					tempData[index].netCashFlow = newTotal.toFixed(2);
+					tempData[index].netCashFlow = newTotal;
 				} else {
 					newVal = currAmountPaid - Number(tempData[index].cashOutAmount);
 					tempData[index].cashOutAmount = Math.abs(newVal);
 
 					newTotal = currAmountPaid + parseFloat(tempData[index].netCashFlow);
-					tempData[index].netCashFlow = newTotal.toFixed(2);
+					tempData[index].netCashFlow = newTotal;
 				}
 			}
 		}

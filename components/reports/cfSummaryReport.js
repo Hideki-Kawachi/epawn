@@ -70,7 +70,8 @@ function CFSummaryReport({
 					(obj) =>
 						obj.transactDate ==
 						dayjs(new Date(currTransaction.creationDate)).format("MMM DD, YYYY")
-				)
+				) ||
+				!tempData.some((obj) => obj.branchName == currBranch.branchName)
 			) {
 				let tempCashIn = "0";
 				let tempCashOut = "0";
@@ -154,7 +155,7 @@ function CFSummaryReport({
 		for (const someItem of tempData) {
 			// console.log(someItem)
 
-			if (!branchList.some((obj) => obj.branchName === someItem.branchName)) {
+			if (!branchList.some((obj) => obj.branchName == someItem.branchName)) {
 				branchList.push({
 					branchName: someItem.branchName,
 					totalCashInAmount: someItem.cashInAmount,
@@ -162,8 +163,6 @@ function CFSummaryReport({
 					totalNetCashFlow: someItem.netCashFlow,
 				});
 			} else {
-				console.log("hello");
-
 				let index = branchList.findIndex(
 					(obj) => obj.branchName == someItem.branchName
 				);
