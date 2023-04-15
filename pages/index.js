@@ -117,10 +117,14 @@ export const getServerSideProps = withIronSessionSsr(
 			let cashIn = 0;
 			let cashOut = 0;
 
-			// let currCashflow = await Cashflow.findOne({
-			// 	branchID: req.session.userData.branchID,
-			// 	date: dayjs().format("YYYY-MM-DD"),
-			// });
+			let currCashflow = await Cashflow.findOne({
+				branchID: req.session.userData.branchID,
+				date: dayjs().format("YYYY-MM-DD"),
+			});
+
+			if (currCashflow) {
+				balance = currCashflow.beginningBalance;
+			}
 
 			for (const cashflow of cashflowTransac) {
 				if (
@@ -132,7 +136,6 @@ export const getServerSideProps = withIronSessionSsr(
 					balance += cashflow.amountPaid;
 				} else if (
 					cashflow.transactionType == "Redeem" ||
-					cashflow.transactionType == "Beginning Balance" ||
 					cashflow.transactionType == "Renew" ||
 					cashflow.transactionType == "Renew(Online)" ||
 					cashflow.transactionType == "Add. Funds"

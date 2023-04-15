@@ -34,22 +34,21 @@ export const getServerSideProps = withIronSessionSsr(
 					new mongoose.Types.ObjectId(query.transactionID)
 				);
 
-
 				let pawnTicketData = await PawnTicket.find({
 					itemListID: transactionInfo.itemListID,
 				}).sort({ loanDate: -1 });
-				
+
 				let currPawnTicket = await PawnTicket.findOne({
-          		itemListID: transactionInfo.itemListID,
-        		});
-				
+					itemListID: transactionInfo.itemListID,
+				});
+
 				let itemID = await ItemList.findOne({
-                    itemListID: currPawnTicket.itemListID,
-                  });
+					itemListID: currPawnTicket.itemListID,
+				});
 
 				let br = await Branch.findOne({
-                    branchID: itemID.branchID,
-                });
+					branchID: itemID.branchID,
+				});
 
 				let pawnHistory = [];
 
@@ -58,7 +57,6 @@ export const getServerSideProps = withIronSessionSsr(
 						_id: ticket.transactionID,
 						status: { $in: ["Done", "Approved"] },
 					});
-					
 
 					let branch = await Branch.findOne({
 						branchID: transaction.branchID,
@@ -360,7 +358,10 @@ function RenewManager({
 	}, [sendForm, customerID]);
 
 	useEffect(() => {
-		if (cashTendered >= amountToPay) {
+		if (
+			cashTendered >= amountToPay ||
+			transactionData.transactionType.includes("Online")
+		) {
 			setButton(false);
 		} else setButton(true);
 	}, [cashTendered, amountToPay]);
@@ -396,7 +397,7 @@ function RenewManager({
 					Renew
 				</p>
 				<p className="mb-5 text-lg text-green-500 font-dosis">
-					On-site Renewal (Manager)
+					Renewal (Manager)
 				</p>
 
 				<div className="flex">
@@ -412,6 +413,7 @@ function RenewManager({
 						setCashTendered={setCashTendered}
 						newLoan={newLoan}
 						getNewLoan={setNewLoan}
+						isOnline={transactionData.transactionType.includes("Online")}
 					/>
 				</div>
 
