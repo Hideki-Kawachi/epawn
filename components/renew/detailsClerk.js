@@ -106,7 +106,7 @@ function DetailsCardRenewClerk({
 		}
 	}
 
-	function getFullName(user, fname, mname, lname) {
+	function getFullName(fname, mname, lname) {
 		if (fname == undefined && lname == undefined) return " ";
 		else return fname + " " + mname + " " + lname;
 	}
@@ -236,7 +236,6 @@ function DetailsCardRenewClerk({
             <div className="ml-5 text-left">
               <p className="">
                 {getFullName(
-                  user,
                   user.firstName,
                   user.middleName,
                   user.lastName
@@ -260,7 +259,7 @@ function DetailsCardRenewClerk({
               onClick={mode ? null : historyOpen}
             >
               <svg
-                width="30 "
+                width="30"
                 height="30"
                 viewBox="10 0 30 45"
                 fill="none"
