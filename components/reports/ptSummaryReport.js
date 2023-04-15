@@ -27,7 +27,7 @@ function PawnTicketSummaryReport({ data }) {
 				accessor: "avgLoan",
 				disableGlobalFilter: true,
 				Cell: ({ value }) => {
-					return <div className="px-10 text-center">{"Php " + value}</div>;
+					return <div className="px-10 text-center">{value}</div>;
 				},
 			},
 			{
