@@ -56,7 +56,6 @@ export const getServerSideProps = withIronSessionSsr(
 
 			let notifData = [];
 			transactionData.forEach((transaction) => {
-				if (!transaction.status.includes("For")) {
 					let customerInfo = customerData.find(
 						(customer) => customer.userID == transaction.customerID
 					);
@@ -73,7 +72,6 @@ export const getServerSideProps = withIronSessionSsr(
 							status: transaction.status,
 						});
 					}
-				}
 			});
 
 			return {
