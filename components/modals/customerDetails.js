@@ -65,8 +65,8 @@ function CustomerDetails({ trigger, setTrigger, customerInfo, userInfo }) {
 							{/* Name*/}
 							<div className="font-bold text-right font-nunito">
 								<p>First Name:</p>
-								<p>Last Name:</p>
 								<p>Middle Name:</p>
+								<p>Last Name:</p>
 							</div>
 
 							<div className="mx-5 text-left">

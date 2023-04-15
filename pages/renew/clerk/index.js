@@ -127,7 +127,22 @@ function RenewClerk({ currentUser }) {
 						setTransactionID(data.transactionID);
 						setPTinfo(data);
 						setItemListID(data.itemListID);
-						
+
+						fetch("/api/users/customers/" + data.customerID, {
+                            method: "GET",
+                            headers: {
+                              Accept: "application/json",
+                              "Content-Type": "application/json",
+                            },
+                          })
+                            .then((res) => res.json())
+                            .then((customer) => {
+                              // console.log(data)
+                              if (customer != null) {
+                                setCusDetails(customer);
+                              }
+                            });
+
 							fetch("/api/users/" + data.customerID, {
 									method: "GET",
 									headers: {
@@ -144,20 +159,6 @@ function RenewClerk({ currentUser }) {
 									}
 									});
 
-								fetch("/api/users/customers/" + customerID, {
-									method: "GET",
-									headers: {
-										Accept: "application/json",
-										"Content-Type": "application/json",
-									},
-								})
-									.then((res) => res.json())
-									.then((customer) => {
-										// console.log(data)
-										if (customer != null) {
-											setCusDetails(customer);
-										}
-									});
 						if (data.isInactive) {
 							setButton(true);
 						} else {

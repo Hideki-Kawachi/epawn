@@ -259,7 +259,7 @@ function DetailsCardRenewClerk({
               onClick={mode ? null : historyOpen}
             >
               <svg
-                width="30 "
+                width="30"
                 height="30"
                 viewBox="10 0 30 45"
                 fill="none"
