@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import { useRouter } from "next/router";
 import React from "react";
+import LikeButton from "./likeButton";
 
 function PawnTicketCard({ pawnTicketData }) {
 	const router = useRouter();
@@ -24,6 +25,7 @@ function PawnTicketCard({ pawnTicketData }) {
 		}
 	}
 	return (
+		<>
 		<div
 			className="flex justify-between w-full p-2 leading-none bg-gray-100 border-2 border-gray-300 rounded-md shadow cursor-pointer h-fit"
 			onClick={() =>
@@ -55,6 +57,14 @@ function PawnTicketCard({ pawnTicketData }) {
 				{showAlert()}
 			</div>
 		</div>
+	
+			<div className="flex flex-col text-end w-fit absolute mr-0">
+				<span>
+					<LikeButton></LikeButton>
+				</span>
+				
+			</div>
+		</>
 	);
 }
 

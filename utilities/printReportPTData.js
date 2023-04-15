@@ -8,7 +8,9 @@ export default function printReportPTData(
 	ptData,
 	startDate,
 	endDate,
-	ptSummaryData
+	ptSummaryData,
+	branchID,
+	status
 ) {
 	// console.log(ptData);
 
@@ -18,10 +20,37 @@ export default function printReportPTData(
 	let tempSummaryData = [];
 
 	//For status filter
-	let compVal = ptData[0].status.toString();
-	let isFound = false;
-	let tempText = " - " + ptData[0].status.toString();
+	let statusComparison = ptData[0].status.toString();
+	let branchNameComparison = ""
 
+	let isBranchFound = false;
+	let isStatusFound = false;
+
+	// let tempText = " - " + ptData[0].status.toString();
+	let tempText = "";
+
+	
+	//Insert branch name for branch ID
+	if (branchID.toString() == "1") {
+		branchNameComparison = "Sta. Ana"
+	} else if (branchID.toString() == "2") {
+		branchNameComparison = "Starmall"
+	} else {
+		branchNameComparison = ""
+	}
+	
+	if (statusComparison == status.toString()) {
+		console.log("found status ")
+		isBranchFound = true
+	} 
+
+	if (branchNameComparison == ptData[0].branchName) {
+		console.log("found branch")
+		isStatusFound = true
+	}
+
+
+	//For Summary
 	ptSummaryData.forEach((summ) =>
 		tempSummaryData.push([
 			summ.branchName,
@@ -30,38 +59,38 @@ export default function printReportPTData(
 			summ.renewalRate,
 		])
 	);
-
-	console.log(tempSummaryData);
-
-	ptData.forEach((row) => {
-		if (row.status != compVal) {
-			isFound = true;
-			tempText = "";
-		}
-	});
-
-	if (isFound) {
+	
+	//Check if data is found
+	if (isBranchFound && isStatusFound) {
 		ptData.forEach((row) =>
 			tempData.push([
-				row.pawnTicketID,
-				row.branchName,
-				row.status,
-				row.maturityDate,
-				row.expiryDate,
-				row.loanAmount,
+				row.pawnTicketID, 
+				row.maturityDate, row.expiryDate, row.loanAmount,
+			])
+		);
+	} else if (isBranchFound) {
+		ptData.forEach((row) =>
+			tempData.push([
+				row.pawnTicketID, row.status,
+				row.maturityDate, row.expiryDate, row.loanAmount,
+			])
+		);
+	} else if (isStatusFound) {
+		ptData.forEach((row) =>
+			tempData.push([
+				row.pawnTicketID, row.branchName,
+				row.maturityDate, row.expiryDate, row.loanAmount,
 			])
 		);
 	} else {
 		ptData.forEach((row) =>
-			tempData.push([
-				row.pawnTicketID,
-				row.branchName,
-				row.maturityDate,
-				row.expiryDate,
-				row.loanAmount,
-			])
+		tempData.push([
+			row.pawnTicketID, row.branchName, row.status,
+			row.maturityDate, row.expiryDate, row.loanAmount,
+		])
 		);
 	}
+	
 
 	// Set up the document
 	const doc = new jsPDF({
@@ -159,25 +188,40 @@ export default function printReportPTData(
 
 	let tableHeader;
 
-	// // Define the header data for the table
-	if (!isFound) {
+
+	//Check if data is found
+	if (isBranchFound && isStatusFound) {
 		tableHeader = [
-			["PT-Number", "Branch", "Maturity Date", "Expiry Date", "Amount of Loan"],
+			[
+				"PT-Number", 
+				"Maturity Date", "Expiry Date", "Amount of Loan",
+			],
+		];
+	} else if (isBranchFound) {
+		tableHeader = [
+			[
+				"PT-Number", "Status", 
+				"Maturity Date", "Expiry Date", "Amount of Loan",
+			],
+		];
+	} else if (isStatusFound) {
+		tableHeader = [
+			[
+				"PT-Number", "Branch",
+				"Maturity Date", "Expiry Date", "Amount of Loan",
+			],
 		];
 	} else {
 		tableHeader = [
 			[
-				"PT-Number",
-				"Branch",
-				"Status",
-				"Maturity Date",
-				"Expiry Date",
-				"Amount of Loan",
+				"PT-Number", "Branch", "Status",
+				"Maturity Date", "Expiry Date", "Amount of Loan",
 			],
 		];
+		
 	}
 
-	if (!isFound) {
+	if (isBranchFound && isStatusFound) {
 		doc.autoTable({
 			head: tableHeader,
 			body: tempData,
@@ -188,13 +232,32 @@ export default function printReportPTData(
 				halign: "center",
 			},
 			columnStyles: {
-				5: { halign: "right" },
+				3: { halign: "right" },
 			},
 			didDrawPage: (data) => {
 				header(data);
 				footer(data);
 			},
 		});
+	} else if (isBranchFound || isStatusFound)  {
+		doc.autoTable({
+			head: tableHeader,
+			body: tempData,
+			startY: doc.autoTable.previous.finalY + 0.5,
+			margin: { top: 1 },
+			headStyles: {
+				fillColor: "#5dbe9d", // set the background color of the header row
+				halign: "center",
+			},
+			columnStyles: {
+				4: { halign: "right" },
+			},
+			didDrawPage: (data) => {
+				header(data);
+				footer(data);
+			},
+		});
+
 	} else {
 		// Add the table to the document
 		doc.autoTable({
@@ -207,7 +270,7 @@ export default function printReportPTData(
 				halign: "center",
 			},
 			columnStyles: {
-				6: { halign: "right" },
+				5: { halign: "right" },
 			},
 			didDrawPage: (data) => {
 				header(data);
