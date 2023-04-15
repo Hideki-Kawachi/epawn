@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { useGridLayout } from "react-table/dist/react-table.development";
@@ -216,5 +217,7 @@ export default function printReportPTData(
 	}
 
 	// Save the document
-	doc.save("PT_Report.pdf");
+	let name =
+		"PawnTicket_Report_" + dayjs().format("MM_DD_YYYY").toString() + ".pdf";
+	doc.save(name);
 }

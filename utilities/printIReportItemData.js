@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { useGridLayout } from "react-table/dist/react-table.development";
@@ -347,5 +348,6 @@ export default function printReportItemData(
 	});
 
 	// Save the document
-	doc.save("Item_Report.pdf");
+	let name = "Item_Report_" + dayjs().format("MM_DD_YYYY").toString() + ".pdf";
+	doc.save(name);
 }

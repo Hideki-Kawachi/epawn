@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { useGridLayout } from "react-table/dist/react-table.development";
@@ -188,5 +189,7 @@ export default function printReportCF(cfData, startDate, endDate) {
 	});
 
 	// Save the document
-	doc.save("CashFlow_Report.pdf");
+	let name =
+		"Cashflow_Report" + dayjs().format("MM_DD_YYYY").toString() + ".pdf";
+	doc.save(name);
 }
