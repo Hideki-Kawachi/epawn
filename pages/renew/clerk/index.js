@@ -127,6 +127,37 @@ function RenewClerk({ currentUser }) {
 						setTransactionID(data.transactionID);
 						setPTinfo(data);
 						setItemListID(data.itemListID);
+						
+							fetch("/api/users/" + data.customerID, {
+									method: "GET",
+									headers: {
+									Accept: "application/json",
+									"Content-Type": "application/json",
+									},
+								})
+									.then((res) => res.json())
+									.then((user) => {
+									// console.log(data)
+									if (user != null) {
+										// console.log(JSON.stringify(info))
+										setUserInfo(user);
+									}
+									});
+
+								fetch("/api/users/customers/" + customerID, {
+									method: "GET",
+									headers: {
+										Accept: "application/json",
+										"Content-Type": "application/json",
+									},
+								})
+									.then((res) => res.json())
+									.then((customer) => {
+										// console.log(data)
+										if (customer != null) {
+											setCusDetails(customer);
+										}
+									});
 						if (data.isInactive) {
 							setButton(true);
 						} else {
@@ -223,47 +254,6 @@ function RenewClerk({ currentUser }) {
 		}
 	}, [itemListID]);
 
-	// BACKEND TO RETRIEVE CUSTOMER NAME USING USER ID
-	useEffect(() => {
-		if (customerID != "N/A") {
-			fetch("/api/users/" + customerID, {
-				method: "GET",
-				headers: {
-					Accept: "application/json",
-					"Content-Type": "application/json",
-				},
-			})
-				.then((res) => res.json())
-				.then((user) => {
-					// console.log(data)
-					if (user != null) {
-						// console.log(JSON.stringify(info))
-						setUserInfo(user);
-					}
-
-				});
-		}
-	}, [customerID]);
-
-	// BACKEND TO RETRIEVE CUSTOMER DETAILS WITH USERID
-	useEffect(() => {
-		if (customerID != "N/A") {
-			fetch("/api/users/customers/" + customerID, {
-				method: "GET",
-				headers: {
-					Accept: "application/json",
-					"Content-Type": "application/json",
-				},
-			})
-				.then((res) => res.json())
-				.then((customer) => {
-					// console.log(data)
-					if (customer != null) {
-						setCusDetails(customer);
-					}
-				});
-		}
-	}, [customerID]);
 	useEffect(() => {
 		if (sendForm) {
 			setLoading(true);

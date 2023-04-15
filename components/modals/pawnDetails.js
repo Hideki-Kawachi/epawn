@@ -166,7 +166,7 @@ function PawnDetails({ trigger, setTrigger, itemDetails }) {
 							<p>Price: </p>
 						</div>
 						<div className="ml-5 text-left">
-							<p>{itemDetails.itemName}</p>
+							<p className="max-w-32">{itemDetails.itemName}</p>
 							<p>{itemDetails.itemType} </p>
 							<p>{itemDetails.itemID}</p>
 							<p>Php {itemDetails.price.toFixed(2)}</p>
