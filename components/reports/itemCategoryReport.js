@@ -43,7 +43,7 @@ function ItemCategoryReport({
 	]);
 
 	function getData() {
-		let ptData;
+		let ptData = [];
 		if (startDate && endDate) {
 			if (branchFilter == "") {
 				ptData = pawnTicketData.filter((pt) => {

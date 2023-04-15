@@ -151,9 +151,6 @@ function ItemReport({
 				Cell: ({ value }) => {
 					return <div className="text-center">{value}</div>;
 				},
-
-				// Header: "PT Number",
-				// accessor: "pawnTicketID",
 			},
 			{
 				Header: "Branch",
