@@ -58,12 +58,11 @@ export default function printReportCF(cfData, startDate, endDate) {
 		]);
 	});
 
-	// tempData.forEach((row) => {
-	// 	row.cashInAmount = convertFloat(row.cashInAmount);
-	// 	row.cashOutAmount = convertFloat(row.cashOutAmount);
-	// 	row.netCashFlow = convertFloat(row.netCashFlow);
-	// });
-
+	branchList.forEach((row) => {
+		row[1] = convertFloat(row[1]);
+		row[2] = convertFloat(row[2]);
+		row[3] = convertFloat(row[3]);
+	});
 	// Set up the document
 	const doc = new jsPDF({
 		orientation: "landscape",
@@ -158,6 +157,7 @@ export default function printReportCF(cfData, startDate, endDate) {
 			// fillColor: "#5dbe9d", // set the background color of the header row
 			halign: "center",
 		},
+		tableWidth: "wrap",
 		columnStyles: {
 			1: { halign: "right" },
 			2: { halign: "right" },
