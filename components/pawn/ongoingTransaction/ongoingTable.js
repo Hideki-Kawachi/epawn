@@ -153,7 +153,7 @@ function OngoingTable({ role, data }) {
         </div>
         <table
           {...getTableProps()}
-          className="w-full text-base font-nunito border"
+          className="w-full text-base font-nunito border text-center"
         >
           <thead>
             {headerGroups.map((headerGroup) => (
