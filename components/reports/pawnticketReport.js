@@ -264,7 +264,7 @@ function PawnTicketReport({
 	);
 
 	function printReport() {
-		printReportPTData(data, startDate, endDate, summaryData);
+		printReportPTData(data, startDate, endDate, summaryData, branchID, status);
 	}
 
 	function branchFilterSet(value) {

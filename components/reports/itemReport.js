@@ -250,7 +250,7 @@ function ItemReport({
 	);
 
 	function printReport() {
-		printReportItemData(data, startDate, endDate);
+		printReportItemData(data, startDate, endDate, branchID, status);
 	}
 
 	function branchFilter(branchName) {

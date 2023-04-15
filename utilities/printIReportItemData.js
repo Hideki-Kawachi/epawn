@@ -13,7 +13,13 @@ function convertFloat(number) {
 }
 
 //add to
-export default function printReportItemData(ptData, startDate, endDate) {
+export default function printReportItemData(
+	ptData,
+	startDate,
+	endDate,
+	branchFilter,
+	statusFilter
+) {
 	// console.log(ptData);
 
 	// Define the pt data for the table
@@ -24,16 +30,17 @@ export default function printReportItemData(ptData, startDate, endDate) {
 	let compVal = ptData[0].status.toString();
 	let isFound = false;
 
-	let tempText = " - " + ptData[0].status.toString();
+	let tempText = " - ";
 
 	// console.log(compVal)
 
-	ptData.forEach((row) => {
-		if (row.status != compVal) {
-			isFound = true;
-			tempText = "";
-		}
-	});
+	if (statusFilter != "") {
+		tempText = tempText + statusFilter.toUpperCase() + " ";
+	}
+
+	if (branchFilter != "") {
+		tempText = tempText + "/ " + ptData[0].branchName.toUpperCase();
+	}
 
 	//row (item element inside ptData to avoid conflict instead of using name: item)
 	ptData.forEach((row) => {
@@ -61,29 +68,54 @@ export default function printReportItemData(ptData, startDate, endDate) {
 			itemTypeList[index][1] = convertFloat(newVal);
 		}
 
-		if (isFound) {
-			tempData.push([
-				row.itemID,
-				row.branchName,
-				row.status,
-				row.loanDate,
-				row.expiryDate,
-				row.itemType,
-				row.itemCategory,
-				row.itemDesc,
-				row.loanAmount,
-			]);
+		if (branchFilter != "") {
+			if (statusFilter != "") {
+				tempData.push([
+					row.itemID,
+					row.loanDate,
+					row.expiryDate,
+					row.itemType,
+					row.itemCategory,
+					row.itemDesc,
+					row.loanAmount,
+				]);
+			} else {
+				tempData.push([
+					row.itemID,
+					row.status,
+					row.loanDate,
+					row.expiryDate,
+					row.itemType,
+					row.itemCategory,
+					row.itemDesc,
+					row.loanAmount,
+				]);
+			}
 		} else {
-			tempData.push([
-				row.itemID,
-				row.branchName,
-				row.loanDate,
-				row.expiryDate,
-				row.itemType,
-				row.itemCategory,
-				row.itemDesc,
-				row.loanAmount,
-			]);
+			if (statusFilter != "") {
+				tempData.push([
+					row.itemID,
+					row.branchName,
+					row.loanDate,
+					row.expiryDate,
+					row.itemType,
+					row.itemCategory,
+					row.itemDesc,
+					row.loanAmount,
+				]);
+			} else {
+				tempData.push([
+					row.itemID,
+					row.branchName,
+					row.status,
+					row.loanDate,
+					row.expiryDate,
+					row.itemType,
+					row.itemCategory,
+					row.itemDesc,
+					row.loanAmount,
+				]);
+			}
 		}
 	});
 
@@ -196,6 +228,64 @@ export default function printReportItemData(ptData, startDate, endDate) {
 		];
 	}
 
+	if (branchFilter != "") {
+		if (statusFilter != "") {
+			tableHeader = [
+				[
+					"Item ID",
+					"Loan Date",
+					"Expiry Date",
+					"Item Type",
+					"Item Category",
+					"Item Description",
+					"Appraisal Price",
+				],
+			];
+		} else {
+			tableHeader = [
+				[
+					"Item ID",
+					"Status",
+					"Loan Date",
+					"Expiry Date",
+					"Item Type",
+					"Item Category",
+					"Item Description",
+					"Appraisal Price",
+				],
+			];
+		}
+	} else {
+		if (statusFilter != "") {
+			tableHeader = [
+				[
+					"Item ID",
+					"Branch",
+					"Loan Date",
+					"Expiry Date",
+					"Item Type",
+					"Item Category",
+					"Item Description",
+					"Appraisal Price",
+				],
+			];
+		} else {
+			tableHeader = [
+				[
+					"Item ID",
+					"Branch",
+					"Status",
+					"Loan Date",
+					"Expiry Date",
+					"Item Type",
+					"Item Category",
+					"Item Description",
+					"Appraisal Price",
+				],
+			];
+		}
+	}
+
 	//For summary
 	doc.autoTable({
 		head: itemCatTableHeader,
@@ -230,44 +320,31 @@ export default function printReportItemData(ptData, startDate, endDate) {
 
 	//Real table
 	// Add the table to the document
-
-	if (!isFound) {
-		doc.autoTable({
-			head: tableHeader,
-			body: tempData,
-			startY: doc.autoTable.previous.finalY + 0.5,
-			margin: { top: 1 },
-			headStyles: {
-				fillColor: "#5dbe9d", // set the background color of the header row
-				halign: "center",
-			},
-			columnStyles: {
-				7: { halign: "right" },
-			},
-			didDrawPage: (data) => {
-				header(data);
-				footer(data);
-			},
-		});
-	} else {
-		doc.autoTable({
-			head: tableHeader,
-			body: tempData,
-			startY: doc.autoTable.previous.finalY + 0.5,
-			margin: { top: 1 },
-			headStyles: {
-				fillColor: "#5dbe9d", // set the background color of the header row
-				halign: "center",
-			},
-			columnStyles: {
-				8: { halign: "right" },
-			},
-			didDrawPage: (data) => {
-				header(data);
-				footer(data);
-			},
-		});
+	let columnAdd = 7;
+	if (branchFilter != "") {
+		columnAdd++;
 	}
+	if (statusFilter != "") {
+		columnAdd++;
+	}
+
+	doc.autoTable({
+		head: tableHeader,
+		body: tempData,
+		startY: doc.autoTable.previous.finalY + 0.5,
+		margin: { top: 1 },
+		headStyles: {
+			fillColor: "#5dbe9d", // set the background color of the header row
+			halign: "center",
+		},
+		columnStyles: {
+			columnAdd: { halign: "right" },
+		},
+		didDrawPage: (data) => {
+			header(data);
+			footer(data);
+		},
+	});
 
 	// Save the document
 	doc.save("Item_Report.pdf");
