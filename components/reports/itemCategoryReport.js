@@ -27,21 +27,24 @@ function ItemCategoryReport({
 	const [data, setData] = useState([{}]);
 
 	useEffect(() => {
-		getData(pawnTicketData);
+		getData();
 	}, [
-		userData,
 		pawnTicketData,
+		userData,
 		itemData,
 		branchData,
 		transactionData,
+		startDate,
+		endDate,
+		branchFilter,
 		statusFilter,
 		typeFilter,
 		categoryFilter,
 	]);
 
-	useEffect(() => {
+	function getData() {
+		let ptData;
 		if (startDate && endDate) {
-			let ptData;
 			if (branchFilter == "") {
 				ptData = pawnTicketData.filter((pt) => {
 					let start = new Date(startDate).setHours(0, 0, 0, 0);
@@ -69,10 +72,7 @@ function ItemCategoryReport({
 					);
 				});
 			}
-
-			getData(ptData);
 		} else if (!startDate && !endDate) {
-			let ptData;
 			if (branchFilter == "") {
 				ptData = pawnTicketData;
 			} else {
@@ -87,11 +87,7 @@ function ItemCategoryReport({
 					return found;
 				});
 			}
-			getData(ptData);
 		}
-	}, [startDate, endDate, branchFilter]);
-
-	function getData(ptData) {
 		//Get all items
 		let tempIDList = [];
 
