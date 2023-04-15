@@ -40,10 +40,13 @@ function CashFlowReport({
 	]);
 
 	function convertFloat(number) {
-		return Number(number).toLocaleString("en-US", {
-			minimumFractionDigits: 2,
-			maximumFractionDigits: 2,
-		});
+		return (
+			"Php " +
+			Number(number).toLocaleString("en-US", {
+				minimumFractionDigits: 2,
+				maximumFractionDigits: 2,
+			})
+		);
 	}
 
 	function getData(startDate, endDate, branchID) {
@@ -143,6 +146,12 @@ function CashFlowReport({
 			}
 		}
 
+		tempData.forEach((row) => {
+			row.cashInAmount = convertFloat(row.cashInAmount);
+			row.cashOutAmount = convertFloat(row.cashOutAmount);
+			row.netCashFlow = convertFloat(row.netCashFlow);
+		});
+
 		setData(tempData);
 	}
 
@@ -179,22 +188,14 @@ function CashFlowReport({
 			{
 				Header: "Cash In",
 				Cell: ({ value }) => {
-					return (
-						<div className="text-right ml-[-60px] mr-20">
-							{"Php " + convertFloat(value)}
-						</div>
-					);
+					return <div className="text-right ml-[-60px] mr-20">{value}</div>;
 				},
 				accessor: "cashInAmount",
 			},
 			{
 				Header: "Cash Out",
 				Cell: ({ value }) => {
-					return (
-						<div className="text-right ml-[-60px] mr-20">
-							{"Php " + convertFloat(value)}
-						</div>
-					);
+					return <div className="text-right ml-[-60px] mr-20">{value}</div>;
 				},
 				accessor: "cashOutAmount",
 			},
@@ -202,15 +203,15 @@ function CashFlowReport({
 				Header: "Net Cash Flow",
 				accessor: "netCashFlow",
 				Cell: ({ value }) => {
-					return Number(value) < 0 ? (
-						<div className="text-right ml-[-40px] mr-40 text-red-500">
-							{"Php " + convertFloat(value)}
-						</div>
-					) : (
-						<div className="text-right ml-[-60px] mr-40">
-							{"Php " + convertFloat(value)}
-						</div>
-					);
+					if (value) {
+						return parseFloat(value.split(" ")[1].replace(/,/g, "")) < 0 ? (
+							<div className="text-right ml-[-40px] mr-32 text-red-500">
+								{value}
+							</div>
+						) : (
+							<div className="text-right ml-[-60px] mr-32">{value}</div>
+						);
+					}
 				},
 			},
 		],
