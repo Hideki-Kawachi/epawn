@@ -171,7 +171,11 @@ function PawnTicketReport({
 		});
 
 		tempSummaryData.forEach((row) => {
-			row.avgLoan = "Php " + row.avgLoan.toFixed(2);
+			row.avgLoan = convertFloat(row.avgLoan);
+		});
+
+		tempData.forEach((row) => {
+			row.loanAmount = convertFloat(row.loanAmount);
 		});
 
 		setSummaryData(tempSummaryData);
@@ -231,11 +235,7 @@ function PawnTicketReport({
 				Header: "Loan Amount",
 				accessor: "loanAmount",
 				Cell: ({ value }) => {
-					return (
-						<div className="text-right pl-[-20px] pr-10">
-							{convertFloat(value)}
-						</div>
-					);
+					return <div className="text-right pl-[-20px] pr-10">{value}</div>;
 				},
 				disableGlobalFilter: true,
 			},
