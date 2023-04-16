@@ -56,7 +56,7 @@ function RejectRedeemManager({
             value={rejectionMessage}
             onChange={(e) => setRejectionMessage(e.target.value)}
           ></textarea>
-          <div className="flex gap-10 mt-10">
+          <div className="flex gap-10 mt-10 ml-80">
             <button
               className="px-24 text-base bg-green-300"
               onClick={closeModal}

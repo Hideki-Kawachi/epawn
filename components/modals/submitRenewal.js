@@ -70,7 +70,7 @@ export const Submit = ({
 					) : (
 						<> </>
 					)}
-					<div className="flex flex-row justify-center gap-10 mt-8">
+					<div className="flex flex-row gap-10 mt-8 ml-[500px]">
 						<button className="text-base bg-red-300" onClick={closeModal}>
 							Cancel
 						</button>
