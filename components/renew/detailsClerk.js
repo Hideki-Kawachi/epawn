@@ -178,6 +178,14 @@ function DetailsCardRenewClerk({
         </Modal>
         {/* Left Side of the Card (Details) */}
         <div className="flex flex-col m-10">
+          {pawnTicket == "N/A" && PTNumber.length >= 8 ? (
+            <span className="mb-3 font-bold text-center text-red-400 bg-gray-200 font-nunito">
+              PawnTicket does not exist!
+            </span>
+          ) : (
+            <></>
+          )}
+
           {pawnTicket.isInactive ? (
             <span className="mb-3 font-bold text-center text-red-400 bg-gray-200 font-nunito">
               PawnTicket is already inactive!
@@ -235,11 +243,7 @@ function DetailsCardRenewClerk({
             </div>
             <div className="ml-5 text-left">
               <p className="">
-                {getFullName(
-                  user.firstName,
-                  user.middleName,
-                  user.lastName
-                )}
+                {getFullName(user.firstName, user.middleName, user.lastName)}
               </p>
               <p className="">{customer.contactNumber}</p>
               <p className="max-w-md">
@@ -349,6 +353,17 @@ function DetailsCardRenewClerk({
                 ) : (
                   <></>
                 )}
+
+                {amountToPay > loanAmount && mode == false ? (
+                  <p className="text-[16px] text-red-500 font-bold">
+                    {" "}
+                    Payment exceeds loan amount!
+                    <br />
+                  </p>
+                ) : (
+                  <></>
+                )}
+
                 {loanAmount - amountToPay <= 2500 && mode == false ? (
                   <p className="text-[16px] text-red-500">
                     {" "}

@@ -264,6 +264,13 @@ function DetailsCardClerk({
         </Modal>
         {/* Left Side of the Card (Details) */}
         <div className="flex flex-col m-10">
+          {pawnTicket == "N/A" && PTNumber.length >= 8 ? (
+            <span className="mb-3 font-bold text-center text-red-400 bg-gray-200 font-nunito">
+              PawnTicket does not exist!
+            </span>
+          ) : (
+            <></>
+          )}
           {pawnTicket.isInactive ? (
             <span className="mb-3 font-bold text-center text-red-400 bg-gray-200 font-nunito">
               PawnTicket is already inactive!
