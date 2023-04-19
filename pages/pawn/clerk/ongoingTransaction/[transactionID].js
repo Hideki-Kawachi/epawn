@@ -275,6 +275,13 @@ function OngoingTransactionTransactionID({
 		}
 	}
 
+	function convertFloat(number) {
+      return Number(number).toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    }
+
 	return (
 		<>
 			<LoadingSpinner isLoading={loading}></LoadingSpinner>
@@ -320,7 +327,7 @@ function OngoingTransactionTransactionID({
 						</span>
 						<span className="flex justify-end w-full font-normal pr-[35%]">
 							<span className="mr-2 font-bold">Appraisal Price: </span>
-							Php {priceHistory[priceHistory.length - 1].appraisalPrice}
+							Php {convertFloat(priceHistory[priceHistory.length - 1].appraisalPrice)}
 						</span>
 					</div>
 				</div>

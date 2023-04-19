@@ -74,6 +74,7 @@ export const getServerSideProps = withIronSessionSsr(
 	ironOptions
 );
 
+
 function NegotiationTransactionID({
 	currentUser,
 	transactionData,
@@ -126,6 +127,13 @@ function NegotiationTransactionID({
 		// console.log("Set Item is:", itemList);
 		setItemList(newList);
 	}
+	
+	function convertFloat(number) {
+    return Number(number).toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  }
 
 	useEffect(() => {
 		let sum = 0;
@@ -231,7 +239,7 @@ function NegotiationTransactionID({
 					<div className="flex flex-col items-center w-full text-base">
 						<span className="flex justify-end w-full pr-[35%] font-normal">
 							<span className="mr-2 font-bold">Asking Price: </span>
-							Php {priceHistory[0].askPrice.toFixed(2)}
+							Php {convertFloat(priceHistory[0].askPrice)}
 						</span>
 						<button
 							className="absolute ml-[30vw] text-sm bg-blue-300"
@@ -244,7 +252,7 @@ function NegotiationTransactionID({
 							Php{" "}
 							{isNaN(appraisalPrice)
 								? "0.00"
-								: Number(appraisalPrice).toFixed(2)}
+								: convertFloat(appraisalPrice)}
 						</span>
 
 						<h2 className="mt-10 font-bold text-center">Item Details</h2>

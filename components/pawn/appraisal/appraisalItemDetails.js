@@ -31,6 +31,13 @@ function AppraisalItemsDetails({ itemDetails, setItemDetails }) {
 	// 	}
 	// }
 
+	function convertFloat(number) {
+      return Number(number).toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    }
+
 	useEffect(() => {
 		if (itemDetails) {
 			if (

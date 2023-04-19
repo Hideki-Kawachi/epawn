@@ -131,7 +131,13 @@ function PawnDetails({ trigger, setTrigger, itemDetails }) {
 			</>
 		),
 	};
-
+	
+	function convertFloat(number) {
+      return Number(number).toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    }
 	return (
 		<>
 			<div id="modal-content-area">
@@ -169,7 +175,7 @@ function PawnDetails({ trigger, setTrigger, itemDetails }) {
 							<p className="max-w-32">{itemDetails.itemName}</p>
 							<p>{itemDetails.itemType} </p>
 							<p>{itemDetails.itemID}</p>
-							<p>Php {itemDetails.price.toFixed(2)}</p>
+							<p>Php {convertFloat(itemDetails.price)}</p>
 						</div>
 						<div className="relative object-contain w-1/3 left-1/4 aspect-square ">
 							<Image

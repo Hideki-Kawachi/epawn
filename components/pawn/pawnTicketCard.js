@@ -21,6 +21,13 @@ function PawnTicketCard({ itemList, pawnTicketID, deletePawnTicket }) {
 		setAdvInterest(tempAdvInterest.toFixed(2));
 		setNetProceeds((loanAmount - tempAdvInterest).toFixed(2));
 	}, [loanAmount]);
+	
+	function convertFloat(number) {
+      return Number(number).toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    }
 
 	return (
 		<>
@@ -45,8 +52,8 @@ function PawnTicketCard({ itemList, pawnTicketID, deletePawnTicket }) {
 							<span>Item Count:</span>
 						</div>
 						<div className="flex flex-col text-end whitespace-nowrap">
-							<span>Php {loanAmount.toFixed(2)}</span>
-							<span>Php {netProceeds}</span>
+							<span>Php {convertFloat(loanAmount)}</span>
+							<span>Php {convertFloat(netProceeds)}</span>
 							<span className="text-start">{itemList.length}</span>
 						</div>
 					</div>

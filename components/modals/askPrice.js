@@ -8,6 +8,13 @@ function AskPrice({
 	setSubmitOpen,
 	setSendForm,
 }) {
+
+	function convertFloat(number) {
+      return Number(number).toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    }
 	return (
 		<>
 			<div id="modal-content-area">
@@ -23,7 +30,7 @@ function AskPrice({
 					</p>
 
 					<p className="text-base text-center">
-						For a total of <b>Php {askPrice}</b>
+						For a total of <b>Php {convertFloat(askPrice)}</b>
 					</p>
 					<div className="flex items-center justify-center w-full gap-10 mt-5">
 						<button
