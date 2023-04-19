@@ -21,6 +21,7 @@ function ItemReport({
 	itemData,
 	branchData,
 	transactionData,
+	currentUser,
 }) {
 	const [data, setData] = useState([{}]);
 	const [startDate, setStartDate] = useState();
@@ -247,7 +248,14 @@ function ItemReport({
 	);
 
 	function printReport() {
-		printReportItemData(data, startDate, endDate, branchID, status);
+		printReportItemData(
+			data,
+			startDate,
+			endDate,
+			branchID,
+			status,
+			currentUser.lastName + ", " + currentUser.firstName
+		);
 	}
 
 	function branchFilter(branchName) {

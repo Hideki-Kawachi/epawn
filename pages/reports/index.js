@@ -45,8 +45,6 @@ export const getServerSideProps = withIronSessionSsr(
 					transactionInfo.push(transac);
 				}
 			}
-			
-
 
 			let userInfo = await User.find(
 				{ isDisabled: false },
@@ -134,6 +132,7 @@ function Reports({
 				itemData={itemData}
 				branchData={branchData}
 				transactionData={transactionData}
+				currentUser={currentUser}
 			></PawnTicketReport>
 		),
 		Cashflow: (
@@ -143,29 +142,18 @@ function Reports({
 				itemData={itemData}
 				branchData={branchData}
 				transactionData={transactionData}
-			>
-			</CashFlowReport>
-			// <CustomerSearch
-			// 	userData={userData}
-			// 	transactionData={transactionData}
-			// 	pawnTicketData={pawnTicketData}
-			// 	itemData={itemData}
-			// ></CustomerSearch>
+				currentUser={currentUser}
+			></CashFlowReport>
 		),
 		Items: (
-			// <ItemSearch
-			// 	pawnTicketData={pawnTicketData}
-			// 	userData={userData}
-			// 	itemData={itemData}
-			// ></ItemSearch>
 			<ItemReport
 				pawnTicketData={pawnTicketData}
 				userData={userData}
 				itemData={itemData}
 				branchData={branchData}
 				transactionData={transactionData}
-			>
-			</ItemReport>
+				currentUser={currentUser}
+			></ItemReport>
 		),
 	};
 
