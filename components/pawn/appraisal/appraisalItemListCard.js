@@ -8,6 +8,12 @@ function AppraisalItemListCard({
 	price,
 	itemType,
 }) {
+	function convertFloat(number) {
+      return Number(number).toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    }
 	return (
 		<>
 			<div
@@ -22,7 +28,7 @@ function AppraisalItemListCard({
 				<div className="flex flex-col w-full">
 					<span>{itemName}</span>
 					<span>{itemType}</span>
-					<span>{price ? price : "0"}</span>
+					<span>Php {price ? convertFloat(price) : "0"}</span>
 				</div>
 				<button className="x-button" onClick={() => deleteItem(itemID)}>
 					<svg

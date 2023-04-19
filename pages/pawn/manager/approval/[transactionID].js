@@ -165,6 +165,13 @@ function ApprovalTransactionID({
 		router.replace("/");
 	}
 
+	function convertFloat(number) {
+      return Number(number).toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    }
+
 	return (
 		<>
 			<LoadingSpinner isLoading={loading}></LoadingSpinner>
@@ -263,11 +270,11 @@ function ApprovalTransactionID({
 									<p className="">Total Net Proceeds:</p>
 								</div>
 								<div className="ml-5 text-end">
-									<p className="w-full">Php {loanAmount.toFixed(2)}</p>
-									<p className="w-full">Php {advInterest.toFixed(2)}</p>
+									<p className="w-full">Php {convertFloat(loanAmount)}</p>
+									<p className="w-full">Php {convertFloat(advInterest)}</p>
 									<hr></hr>
 									<p className="w-full font-bold">
-										Php {netProceeds.toFixed(2)}
+										Php {convertFloat(netProceeds)}
 									</p>
 								</div>
 							</div>

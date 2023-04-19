@@ -116,6 +116,12 @@ function RejectedTransactionID({
 			});
 	}
 
+	function convertFloat(number) {
+    return Number(number).toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  }
 	return (
 		<>
 			<LoadingSpinner isLoading={loading}></LoadingSpinner>
@@ -134,7 +140,7 @@ function RejectedTransactionID({
 							<b>Customer Name:</b> {userData.firstName} {userData.lastName}
 						</span>
 						<span className="mb-5">
-							<b>Asking Price:</b> Php {priceHistoryData[0].askPrice.toFixed(2)}
+							<b>Asking Price:</b> Php {convertFloat(priceHistoryData[0].askPrice)}
 						</span>
 						<span className="font-bold">Item List:</span>
 						<div className="overflow-y-scroll border-2">

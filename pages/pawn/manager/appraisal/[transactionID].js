@@ -167,7 +167,13 @@ function AppraisalTransactionID({
 			setRejectShow(true);
 		}
 	}
-
+	
+	function convertFloat(number) {
+      return Number(number).toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    }
 	return (
 		<>
 			<LoadingSpinner isLoading={loading}></LoadingSpinner>
@@ -214,14 +220,14 @@ function AppraisalTransactionID({
 					<div className="flex flex-col items-center w-full text-base">
 						<span className="flex justify-end w-full pr-[35%] font-normal">
 							<span className="mr-2 font-bold">Asking Price: </span>
-							Php {priceHistory[0].askPrice.toFixed(2)}
+							Php {convertFloat(priceHistory[0].askPrice)}
 						</span>
 						<span className="flex justify-end w-full font-normal pr-[35%]">
 							<span className="mr-2 font-bold">Appraisal Price: </span>
 							Php{" "}
 							{isNaN(appraisalPrice)
 								? "0.00"
-								: Number(appraisalPrice).toFixed(2)}
+								: convertFloat(appraisalPrice)}
 						</span>
 						<h2 className="mt-10 font-bold text-center">Item Details</h2>
 						<div className="h-[50vh] overflow-y-scroll w-full bg-gray-100 border-2 p-4 flex flex-col gap-4">

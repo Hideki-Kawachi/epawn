@@ -14,6 +14,14 @@ function ViewPawnTicketDetails({
 	function closeModal() {
 		setTrigger(!trigger);
 	}
+
+	function convertFloat(number) {
+      return Number(number).toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    }
+
 	return (
 		<>
 			<div id="modal-content-area">
@@ -32,10 +40,10 @@ function ViewPawnTicketDetails({
 								<span className="font-bold">Net Proceeds:</span>
 							</div>
 							<div className="flex flex-col text-end whitespace-nowrap">
-								<span>Php {loanAmount.toFixed(2)}</span>
-								<span>Php {advInterest}</span>
+								<span>Php {convertFloat(loanAmount)}</span>
+								<span>Php {convertFloat(advInterest)}</span>
 								<hr></hr>
-								<span className="font-bold">Php {netProceeds}</span>
+								<span className="font-bold">Php {convertFloat(netProceeds)}</span>
 							</div>
 						</div>
 						<h1 className="w-full mt-3 font-bold text-start">Item List:</h1>

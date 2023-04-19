@@ -156,7 +156,12 @@ function PawnTicketTransactionID({
 			}
 		}
 	}
-
+	function convertFloat(number) {
+      return Number(number).toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    }
 	function openPawnTicketModal() {
 		if (selectedItems.length > 0) {
 			setPawnTicketModal(true);
@@ -331,10 +336,10 @@ function PawnTicketTransactionID({
 									<p className="">Total Net Proceeds:</p>
 								</div>
 								<div className="ml-5 text-end">
-									<p className="w-full">Php {loanAmount}</p>
-									<p className="w-full">Php {advInterest}</p>
+									<p className="w-full">Php {convertFloat(loanAmount)}</p>
+									<p className="w-full">Php {convertFloat(advInterest)}</p>
 									<hr></hr>
-									<p className="w-full font-bold">Php {netProceeds}</p>
+									<p className="w-full font-bold">Php {convertFloat(netProceeds)}</p>
 								</div>
 							</div>
 						</div>
