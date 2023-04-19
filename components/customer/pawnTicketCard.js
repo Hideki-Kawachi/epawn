@@ -6,6 +6,13 @@ import LikeButton from "./likeButton";
 function PawnTicketCard({ pawnTicketData }) {
 	const router = useRouter();
 
+	function convertFloat(number) {
+
+          return Number(number).toLocaleString("en-US", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          });
+    }
 	function showAlert() {
 		let maturityDate = new Date(pawnTicketData.maturityDate);
 		let expiryDate = new Date(pawnTicketData.expiryDate);
@@ -50,7 +57,7 @@ function PawnTicketCard({ pawnTicketData }) {
 				<div className="flex flex-col items-end gap-2">
 					<div className="flex flex-col text-end w-fit ">
 						<span className="font-semibold">
-							Php {pawnTicketData.loanAmount.toFixed(2)}
+							Php {convertFloat(pawnTicketData.loanAmount.toFixed(2))}
 						</span>
 						<span className="text-[0.9rem] text-gray-400">Loan Amount</span>
 					</div>

@@ -191,6 +191,12 @@ function RenewPawnTicketID({
 		setMinPayment(pawnTicketData.loanAmount * 0.035);
 	}, []);
 
+	function convertFloat(number) {
+    return Number(number).toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  }
 	return (
 		<div className="flex flex-col items-center">
 			<div className="fixed flex flex-col items-center w-full h-full border-2 md:w-1/4 ">
@@ -214,7 +220,7 @@ function RenewPawnTicketID({
 								</div>
 								<div className="flex flex-col text-end w-fit ">
 									<span className="font-semibold">
-										Php {pawnTicketData.loanAmount.toFixed(2)}
+										Php {convertFloat(pawnTicketData.loanAmount)}
 									</span>
 									<span className="text-[0.9rem] text-gray-400">
 										Loan Amount
@@ -291,25 +297,25 @@ function RenewPawnTicketID({
 											<span>Remaining Balance:</span>
 										</div>
 										<div className="flex flex-col items-end">
-											<span>Php {pawnTicketData.loanAmount.toFixed(2)}</span>
-											<span>Php {interest.toFixed(2)}</span>
+											<span>Php {convertFloat(pawnTicketData.loanAmount.toFixed(2))}</span>
+											<span>Php {convertFloat(interest.toFixed(2))}</span>
 											<span>
 												Php{" "}
 												{advInterest >= 0
-													? advInterest.toFixed(2)
+													? convertFloat(advInterest)
 													: "----------"}
 											</span>
-											<span>Php {penalties.toFixed(2)}</span>
+											<span>Php {convertFloat(penalties)}</span>
 											<span>
 												Php{" "}
 												{partialPayment >= 0
-													? partialPayment.toFixed(2)
+													? convertFloat(partialPayment)
 													: "----------"}
 											</span>
 											<span>
 												Php{" "}
 												{newLoanAmount >= 0
-													? newLoanAmount.toFixed(2)
+													? convertFloat(newLoanAmount)
 													: "----------"}
 											</span>
 										</div>
@@ -317,7 +323,7 @@ function RenewPawnTicketID({
 									{newLoanAmount < 2500 && newLoanAmount != 0 ? (
 										<div className="text-center">
 											<span className="text-sm text-red-500">
-												Remaining balance is below Php 2500.00. Please redeem
+												Remaining balance is below Php 2,500.00. Please redeem
 												the PawnTicket or lessen the amount to pay.
 											</span>
 										</div>
@@ -339,10 +345,10 @@ function RenewPawnTicketID({
 												Minimum Payment:{" "}
 												{minPayment >= amountToPay ? (
 													<span className="font-semibold text-red-500">
-														Php {minPayment.toFixed(2)}
+														Php {convertFloat(minPayment)}
 													</span>
 												) : (
-													<>Php {minPayment.toFixed(2)}</>
+													<>Php {convertFloat(minPayment)}</>
 												)}
 											</span>
 										</div>

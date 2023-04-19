@@ -3,6 +3,14 @@ import { useRouter } from "next/router";
 import React from "react";
 
 function TransactionCard({ pawnTicketData, transactionData }) {
+
+	function convertFloat(number) {
+      return Number(number).toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    }
+
 	const router = useRouter();
 	return (
 		<div
@@ -30,7 +38,7 @@ function TransactionCard({ pawnTicketData, transactionData }) {
 						<>
 							{" "}
 							<span className="font-bold text-green-400">
-								Php {pawnTicketData.loanAmount.toFixed(2)}
+								Php {convertFloat(pawnTicketData.loanAmount.toFixed(2))}
 							</span>
 							<span className="text-[0.9rem] text-gray-400">
 								Amount Received
@@ -39,7 +47,7 @@ function TransactionCard({ pawnTicketData, transactionData }) {
 					) : (
 						<>
 							<span className="font-bold text-red-500">
-								Php {transactionData.amountPaid.toFixed(2)}
+								Php {convertFloat(transactionData.amountPaid.toFixed(2))}
 							</span>
 							<span className="text-[0.9rem] text-gray-400">Amount Paid</span>
 						</>
