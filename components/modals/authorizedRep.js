@@ -18,6 +18,7 @@ function AuthorizedRep({
 	const [fName, setfName] = useState("");
 	const [mName, setmName] = useState("");
 	const [lName, setlName] = useState("");
+	const [imageError, setImageError] = useState(false);
 
 	function closeModal() {
 		setTrigger(!trigger);
@@ -25,8 +26,27 @@ function AuthorizedRep({
 	}
 
 	useEffect(() => {
-		if (fName != "" && lName != "" && authRepID && authProof) setFilled(true);
-		else setFilled(false);
+		if (authRepID) {
+			if (!authRepID.type.toString().includes("image")) {
+				setImageError(true);
+			} else {
+				setImageError(false);
+			}
+		}
+
+		if (authProof) {
+			if (!authProof.type.toString().includes("image")) {
+				setImageError(true);
+			} else {
+				setImageError(false);
+			}
+		}
+
+		if (fName != "" && lName != "" && authRepID && authProof) {
+			setFilled(true);
+		} else {
+			setFilled(false);
+		}
 	}, [fName, lName, authRepID, authProof]);
 
 	function saveButton() {
@@ -103,6 +123,13 @@ function AuthorizedRep({
 								only accepts .png and .jpeg files
 							</p>
 							<p className="text-gray-300"> Max file size: 5 MB</p>
+							{imageError ? (
+								<span className="font-bold text-center text-red-400">
+									Upload image files only!
+								</span>
+							) : (
+								<></>
+							)}
 						</div>
 					</div>
 
@@ -132,7 +159,7 @@ function AuthorizedRep({
 							<button
 								className="px-10 mx-2 mt-10 text-base bg-green-300"
 								onClick={saveButton}
-								disabled={!filled}
+								disabled={!filled || imageError}
 							>
 								Save
 							</button>
