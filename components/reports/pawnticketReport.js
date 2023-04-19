@@ -18,6 +18,7 @@ function PawnTicketReport({
 	itemData,
 	branchData,
 	transactionData,
+	currentUser,
 }) {
 	const [data, setData] = useState([{}]);
 	const [startDate, setStartDate] = useState();
@@ -264,7 +265,15 @@ function PawnTicketReport({
 	);
 
 	function printReport() {
-		printReportPTData(data, startDate, endDate, summaryData, branchID, status);
+		printReportPTData(
+			data,
+			startDate,
+			endDate,
+			summaryData,
+			branchID,
+			status,
+			currentUser.lastName + ", " + currentUser.firstName
+		);
 	}
 
 	function branchFilterSet(value) {

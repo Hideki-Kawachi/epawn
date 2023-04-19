@@ -20,6 +20,7 @@ function CashFlowReport({
 	itemData,
 	branchData,
 	transactionData,
+	currentUser,
 }) {
 	const [data, setData] = useState([{}]);
 	const [startDate, setStartDate] = useState("");
@@ -236,7 +237,12 @@ function CashFlowReport({
 	);
 
 	function printReport() {
-		printReportCF(data, startDate, endDate);
+		printReportCF(
+			data,
+			startDate,
+			endDate,
+			currentUser.lastName + ", " + currentUser.firstName
+		);
 	}
 
 	return (
